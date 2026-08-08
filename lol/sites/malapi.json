@@ -1,0 +1,18 @@
+{
+  "id": "malapi",
+  "name": "MalAPI.io",
+  "url": "https://malapi.io/",
+  "repository": "https://github.com/mrd0x/malapi",
+  "platform": "windows",
+  "focus": "Windows API functions commonly used by malware, grouped by capability (injection, evasion, credential access, etc.).",
+  "data_format": "Site entries per API with category and description.",
+  "content_type": "reference-catalog",
+  "example_entries": [
+    "VirtualAllocEx",
+    "WriteProcessMemory",
+    "CreateRemoteThread"
+  ],
+  "attack_mapping": "Capability groupings align to ATT&CK tactics (e.g. Process Injection T1055).",
+  "notes": "Useful for malware analysis and for building behavioural detections.",
+  "last_reviewed": "2026-08-08"
+}

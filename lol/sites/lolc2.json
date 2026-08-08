@@ -1,0 +1,18 @@
+{
+  "id": "lolc2",
+  "name": "LOLC2 (Living Off the Land Command and Control)",
+  "url": "https://lolc2.github.io/",
+  "repository": "https://github.com/lolc2/lolc2.github.io",
+  "platform": "cross-platform",
+  "focus": "Legitimate third-party services (SaaS, cloud, collaboration platforms) abused as covert C2 channels - e.g. Slack, Discord, Telegram, GitHub, Google/Microsoft services.",
+  "data_format": "Structured entries listing the abused service, the C2 project/tool that uses it, and references.",
+  "content_type": "technique-catalog",
+  "example_entries": [
+    "Slack as C2",
+    "Google Sheets as C2",
+    "GitHub as C2"
+  ],
+  "attack_mapping": "Aligns with T1102 (Web Service) and T1071 (Application Layer Protocol).",
+  "notes": "Focuses on C2-over-trusted-service tradecraft and which tools implement each channel.",
+  "last_reviewed": "2026-08-08"
+}

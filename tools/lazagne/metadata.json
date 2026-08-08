@@ -1,0 +1,65 @@
+{
+  "id": "lazagne",
+  "name": "LaZagne",
+  "categories": [
+    "credential-access"
+  ],
+  "summary": "Open-source application that recovers passwords stored locally by a wide range of software (browsers, mail clients, Wi-Fi, databases, sysadmin tools) on Windows, Linux and macOS.",
+  "description": "LaZagne aggregates dozens of per-application credential recovery routines into a single tool. Rather than touching LSASS, it harvests secrets from application stores: browsers, chats, databases, git/svn, Wi-Fi, and OS keyrings. Useful for situational credential collection that complements memory-based dumpers.",
+  "authors": [
+    "Alessandro Zanni (pixis / AlessandroZ)"
+  ],
+  "language": "Python",
+  "license": "LGPL-3.0",
+  "os": [
+    "windows",
+    "linux",
+    "macos"
+  ],
+  "type": "standalone-binary",
+  "repository": "https://github.com/AlessandroZ/LaZagne",
+  "homepage": "https://github.com/AlessandroZ/LaZagne",
+  "mitre_software_id": "S0349",
+  "attack_techniques": [
+    {
+      "id": "T1555.003",
+      "name": "Credentials from Password Stores: Credentials from Web Browsers"
+    },
+    {
+      "id": "T1555",
+      "name": "Credentials from Password Stores"
+    },
+    {
+      "id": "T1552.001",
+      "name": "Unsecured Credentials: Credentials In Files"
+    },
+    {
+      "id": "T1003",
+      "name": "OS Credential Dumping"
+    }
+  ],
+  "usage": [
+    "lazagne.exe all              # run every module",
+    "lazagne.exe browsers         # only browser modules",
+    "lazagne.exe all -oJ          # write results as JSON"
+  ],
+  "detection": [
+    "Read access to browser credential stores (e.g. Login Data, key4.db/logins.json) by unexpected processes.",
+    "Known-bad hashes / AV signatures for the packaged PyInstaller binary.",
+    "Bulk access to many application config paths in a short window."
+  ],
+  "references": [
+    {
+      "title": "Official repository",
+      "url": "https://github.com/AlessandroZ/LaZagne"
+    },
+    {
+      "title": "MITRE ATT&CK S0349",
+      "url": "https://attack.mitre.org/software/S0349/"
+    }
+  ],
+  "status": "active",
+  "first_seen": "2015",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

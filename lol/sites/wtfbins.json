@@ -1,0 +1,16 @@
+{
+  "id": "wtfbins",
+  "name": "WTFBins",
+  "url": "https://wtfbins.wtf/",
+  "repository": "https://github.com/wtfbins/wtfbins.github.io",
+  "platform": "cross-platform",
+  "focus": "Benign binaries that exhibit malware-like behaviour (network beacons, odd process trees) - useful for tuning detections and reducing false positives, the inverse of a LOLBin catalog.",
+  "data_format": "Structured entries describing the confusing behaviour.",
+  "content_type": "reference-catalog",
+  "example_entries": [
+    "Legit apps that beacon or inject and look malicious"
+  ],
+  "attack_mapping": "N/A - defensive false-positive reference.",
+  "notes": "Complements LOLBAS: what looks bad but is actually normal.",
+  "last_reviewed": "2026-08-08"
+}

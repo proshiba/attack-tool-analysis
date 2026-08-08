@@ -1,0 +1,72 @@
+{
+  "id": "rubeus",
+  "name": "Rubeus",
+  "categories": [
+    "credential-access",
+    "lateral-movement",
+    "privilege-escalation"
+  ],
+  "summary": "C# toolset for raw Kerberos interaction and abuse: ticket requests, Kerberoasting, AS-REP roasting, pass-the-ticket, overpass-the-hash, delegation abuse, and S4U.",
+  "description": "Rubeus (part of GhostPack) is the go-to tool for Active Directory Kerberos attacks. It can request and renew TGTs/TGSs, harvest and inject tickets, perform Kerberoasting and AS-REP roasting for offline cracking, and abuse constrained / unconstrained / resource-based constrained delegation.",
+  "authors": [
+    "Will Schroeder (@harmj0y)",
+    "GhostPack / SpecterOps"
+  ],
+  "language": "C#",
+  "license": "BSD-3-Clause",
+  "os": [
+    "windows"
+  ],
+  "type": "dotnet-assembly",
+  "repository": "https://github.com/GhostPack/Rubeus",
+  "homepage": "https://github.com/GhostPack/Rubeus",
+  "mitre_software_id": null,
+  "attack_techniques": [
+    {
+      "id": "T1558.003",
+      "name": "Steal or Forge Kerberos Tickets: Kerberoasting"
+    },
+    {
+      "id": "T1558.004",
+      "name": "Steal or Forge Kerberos Tickets: AS-REP Roasting"
+    },
+    {
+      "id": "T1550.003",
+      "name": "Use Alternate Authentication Material: Pass the Ticket"
+    },
+    {
+      "id": "T1558.001",
+      "name": "Steal or Forge Kerberos Tickets: Golden Ticket"
+    },
+    {
+      "id": "T1484.002",
+      "name": "Domain Policy Modification: Domain Trust Modification"
+    }
+  ],
+  "usage": [
+    "Rubeus.exe kerberoast /outfile:hashes.txt",
+    "Rubeus.exe asreproast /format:hashcat",
+    "Rubeus.exe asktgt /user:svc /rc4:<ntlm> /ptt   # overpass-the-hash",
+    "Rubeus.exe s4u /user:... /rc4:... /impersonateuser:administrator /msdsspn:..."
+  ],
+  "detection": [
+    "4769 (TGS requests) with RC4 (etype 0x17) for many SPNs from one host -> Kerberoasting.",
+    "4768 AS-REQ for accounts with 'do not require pre-auth' -> AS-REP roasting.",
+    "Ticket-granting activity that does not correlate with normal interactive logons.",
+    "Honeypot service accounts / SPNs to catch roasting attempts."
+  ],
+  "references": [
+    {
+      "title": "Official repository",
+      "url": "https://github.com/GhostPack/Rubeus"
+    },
+    {
+      "title": "harmj0y - Rubeus intro",
+      "url": "https://blog.harmj0y.net/redteaming/from-kekeo-to-rubeus/"
+    }
+  ],
+  "status": "active",
+  "first_seen": "2018",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

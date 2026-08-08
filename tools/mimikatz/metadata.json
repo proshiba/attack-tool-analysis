@@ -1,0 +1,90 @@
+{
+  "id": "mimikatz",
+  "name": "mimikatz",
+  "categories": [
+    "credential-access",
+    "privilege-escalation",
+    "lateral-movement"
+  ],
+  "summary": "Post-exploitation toolkit for extracting plaintext passwords, hashes, PINs and Kerberos tickets from Windows memory, and for abusing Kerberos (pass-the-hash, pass-the-ticket, golden/silver tickets, DCSync).",
+  "description": "mimikatz is the reference tool for Windows credential theft. Its `sekurlsa` module reads secrets from the LSASS process (plaintext passwords via WDigest, NTLM hashes, Kerberos tickets). Other modules cover LSA secrets, the DPAPI master keys, the SAM database, Kerberos ticket forging (golden/silver tickets), and directory replication abuse (`lsadump::dcsync`). It is bundled into almost every offensive framework and drives a large share of real-world AD compromises.",
+  "authors": [
+    "Benjamin Delpy (gentilkiwi)",
+    "Vincent Le Toux"
+  ],
+  "language": "C",
+  "license": "CC-BY-4.0",
+  "os": [
+    "windows"
+  ],
+  "type": "standalone-binary",
+  "repository": "https://github.com/gentilkiwi/mimikatz",
+  "homepage": "https://blog.gentilkiwi.com/mimikatz",
+  "mitre_software_id": "S0002",
+  "attack_techniques": [
+    {
+      "id": "T1003.001",
+      "name": "OS Credential Dumping: LSASS Memory"
+    },
+    {
+      "id": "T1003.002",
+      "name": "OS Credential Dumping: Security Account Manager"
+    },
+    {
+      "id": "T1003.004",
+      "name": "OS Credential Dumping: LSA Secrets"
+    },
+    {
+      "id": "T1003.006",
+      "name": "OS Credential Dumping: DCSync"
+    },
+    {
+      "id": "T1558.001",
+      "name": "Steal or Forge Kerberos Tickets: Golden Ticket"
+    },
+    {
+      "id": "T1558.002",
+      "name": "Steal or Forge Kerberos Tickets: Silver Ticket"
+    },
+    {
+      "id": "T1550.002",
+      "name": "Use Alternate Authentication Material: Pass the Hash"
+    },
+    {
+      "id": "T1550.003",
+      "name": "Use Alternate Authentication Material: Pass the Ticket"
+    }
+  ],
+  "usage": [
+    "privilege::debug            # acquire SeDebugPrivilege",
+    "sekurlsa::logonpasswords    # dump creds/tickets from LSASS memory",
+    "lsadump::sam                # dump local SAM hashes",
+    "lsadump::dcsync /user:krbtgt  # pull hashes via DC replication",
+    "kerberos::golden /user:... /domain:... /sid:... /krbtgt:... /ptt"
+  ],
+  "detection": [
+    "Monitor for non-standard processes opening a handle to lsass.exe with PROCESS_VM_READ (Sysmon Event ID 10; target lsass.exe).",
+    "Sensitive-privilege use / SeDebugPrivilege assignment (Windows Event ID 4673/4703).",
+    "Enable and alert on 4662 (directory replication, 'DS-Replication-Get-Changes') from non-DC accounts to catch DCSync.",
+    "Golden/silver tickets: TGTs with anomalous lifetimes, encryption downgrade (RC4), and 4769 requests without a preceding 4768.",
+    "Credential Guard / LSASS PPL (RunAsPPL) raise the bar for sekurlsa memory reads."
+  ],
+  "references": [
+    {
+      "title": "Official repository",
+      "url": "https://github.com/gentilkiwi/mimikatz"
+    },
+    {
+      "title": "MITRE ATT&CK S0002",
+      "url": "https://attack.mitre.org/software/S0002/"
+    },
+    {
+      "title": "adsecurity.org - Unofficial mimikatz guide",
+      "url": "https://adsecurity.org/?page_id=1821"
+    }
+  ],
+  "status": "active",
+  "first_seen": "2007",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

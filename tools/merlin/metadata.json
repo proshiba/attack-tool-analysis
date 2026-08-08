@@ -1,0 +1,64 @@
+{
+  "id": "merlin",
+  "name": "Merlin",
+  "categories": [
+    "command-and-control"
+  ],
+  "summary": "Cross-platform post-exploitation C2 written in Go, notable for early adoption of HTTP/2 and HTTP/3 (QUIC) channels.",
+  "description": "Merlin is an OSS C2 framework focused on modern web transports. Agents are written in Go and run on Windows/Linux/macOS, communicating over HTTP/1.1, HTTP/2 and HTTP/3 (QUIC). It supports in-memory .NET assembly execution, BOFs, and modules, and is often used to study detection of newer protocol channels.",
+  "authors": [
+    "Russel Van Tuyl (@Ne0nd0g)"
+  ],
+  "language": "Go",
+  "license": "GPL-3.0",
+  "os": [
+    "windows",
+    "linux",
+    "macos"
+  ],
+  "type": "c2-framework",
+  "repository": "https://github.com/Ne0nd0g/merlin",
+  "homepage": "https://merlin-c2.readthedocs.io/",
+  "mitre_software_id": null,
+  "attack_techniques": [
+    {
+      "id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols"
+    },
+    {
+      "id": "T1573.002",
+      "name": "Encrypted Channel: Asymmetric Cryptography"
+    },
+    {
+      "id": "T1105",
+      "name": "Ingress Tool Transfer"
+    },
+    {
+      "id": "T1027",
+      "name": "Obfuscated Files or Information"
+    }
+  ],
+  "usage": [
+    "./merlinServer-Linux-x64",
+    "# generate an agent, start an https/h2/h3 listener, interact with agents"
+  ],
+  "detection": [
+    "HTTP/2 and HTTP/3 (QUIC) egress from unusual client processes.",
+    "Default agent JA3/JA3S and URL patterns.",
+    "Beaconing analysis; community Sigma rules."
+  ],
+  "references": [
+    {
+      "title": "Official repository",
+      "url": "https://github.com/Ne0nd0g/merlin"
+    },
+    {
+      "title": "Documentation",
+      "url": "https://merlin-c2.readthedocs.io/"
+    }
+  ],
+  "status": "active",
+  "first_seen": "2018",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

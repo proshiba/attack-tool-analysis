@@ -1,0 +1,19 @@
+{
+  "id": "filesec",
+  "name": "Filesec.io",
+  "url": "https://filesec.io/",
+  "repository": "https://github.com/mttaggart/filesec",
+  "platform": "windows",
+  "focus": "File extensions abused by attackers (for delivery, execution, defense evasion), with notes on how each is used and mitigations.",
+  "data_format": "JSON/site entries per extension.",
+  "content_type": "reference-catalog",
+  "example_entries": [
+    ".lnk",
+    ".iso",
+    ".hta",
+    ".one"
+  ],
+  "attack_mapping": "Maps to phishing/execution/defense-evasion techniques (e.g. T1204 User Execution).",
+  "notes": "Handy for phishing-payload and email-filtering discussions.",
+  "last_reviewed": "2026-08-08"
+}

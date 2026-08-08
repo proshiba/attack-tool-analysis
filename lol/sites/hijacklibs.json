@@ -1,0 +1,16 @@
+{
+  "id": "hijacklibs",
+  "name": "HijackLibs",
+  "url": "https://hijacklibs.net/",
+  "repository": "https://github.com/wietze/HijackLibs",
+  "platform": "windows",
+  "focus": "Catalog of DLL hijacking opportunities: which legitimate executables load which DLLs from hijackable search-order locations.",
+  "data_format": "YAML per entry mapping vulnerable executable -> hijackable DLL and expected path.",
+  "content_type": "technique-catalog",
+  "example_entries": [
+    "Signed apps vulnerable to DLL search-order hijacking / sideloading"
+  ],
+  "attack_mapping": "T1574.001 (DLL Search Order Hijacking), T1574.002 (DLL Side-Loading).",
+  "notes": "Directly supports both offensive persistence/execution and defensive detection.",
+  "last_reviewed": "2026-08-08"
+}

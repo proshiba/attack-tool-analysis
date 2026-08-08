@@ -1,0 +1,17 @@
+{
+  "id": "loldrivers",
+  "name": "LOLDrivers (Living Off The Land Drivers)",
+  "url": "https://www.loldrivers.io/",
+  "repository": "https://github.com/magicsword-io/LOLDrivers",
+  "platform": "windows",
+  "focus": "Known vulnerable and malicious Windows drivers (BYOVD - Bring Your Own Vulnerable Driver) used to disable EDR, escalate to kernel, etc.",
+  "data_format": "YAML per driver with hashes, signatures and detections; provides Sigma/YARA and blocklist material.",
+  "content_type": "technique-catalog",
+  "example_entries": [
+    "Vulnerable signed drivers (e.g. RTCore64.sys)",
+    "malicious drivers"
+  ],
+  "attack_mapping": "T1068 (Exploitation for Privilege Escalation), T1211/T1562 (impair defenses via BYOVD).",
+  "notes": "Includes ready-to-use detection artifacts and hash lists for blocklisting.",
+  "last_reviewed": "2026-08-08"
+}

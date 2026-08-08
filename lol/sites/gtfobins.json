@@ -1,0 +1,18 @@
+{
+  "id": "gtfobins",
+  "name": "GTFOBins",
+  "url": "https://gtfobins.github.io/",
+  "repository": "https://github.com/GTFOBins/GTFOBins.github.io",
+  "platform": "unix",
+  "focus": "Unix binaries that can be abused to bypass local security restrictions - SUID/sudo privesc, shell escape, file read/write, reverse shells.",
+  "data_format": "Markdown + YAML front matter per binary (repo /_gtfobins).",
+  "content_type": "technique-catalog",
+  "example_entries": [
+    "find (sudo/SUID shell)",
+    "vim (shell escape)",
+    "tar (command execution)"
+  ],
+  "attack_mapping": "Function tags (shell, command, file-read, suid, sudo, capabilities) rather than ATT&CK IDs.",
+  "notes": "The Unix counterpart to LOLBAS; essential for Linux privilege escalation.",
+  "last_reviewed": "2026-08-08"
+}

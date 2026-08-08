@@ -1,0 +1,69 @@
+{
+  "id": "powerup-sharpup",
+  "name": "PowerUp / SharpUp",
+  "categories": [
+    "privilege-escalation",
+    "discovery"
+  ],
+  "summary": "Windows local privilege-escalation checks. PowerUp is the PowerShell original; SharpUp is the C# port that enumerates common misconfigurations (unquoted service paths, weak service/registry ACLs, DLL hijack candidates, AlwaysInstallElevated).",
+  "description": "PowerUp (from PowerSploit's Privesc module) and its GhostPack C# port SharpUp automate discovery of common Windows privilege-escalation vectors: modifiable services and service binaries, unquoted service paths, weak registry ACLs, writable %PATH% directories, AlwaysInstallElevated, and stored credentials. PowerUp additionally offers abuse functions to weaponise several findings.",
+  "authors": [
+    "Will Schroeder (@harmj0y)",
+    "PowerSploit / GhostPack"
+  ],
+  "language": "PowerShell, C#",
+  "license": "BSD-3-Clause",
+  "os": [
+    "windows"
+  ],
+  "type": "script-and-dotnet-assembly",
+  "repository": "https://github.com/GhostPack/SharpUp",
+  "homepage": "https://github.com/PowerShellMafia/PowerSploit",
+  "mitre_software_id": null,
+  "attack_techniques": [
+    {
+      "id": "T1574.010",
+      "name": "Hijack Execution Flow: Services File Permissions Weakness"
+    },
+    {
+      "id": "T1574.011",
+      "name": "Hijack Execution Flow: Services Registry Permissions Weakness"
+    },
+    {
+      "id": "T1574.009",
+      "name": "Hijack Execution Flow: Path Interception by Unquoted Path"
+    },
+    {
+      "id": "T1547.001",
+      "name": "Boot or Logon Autostart Execution: Registry Run Keys"
+    },
+    {
+      "id": "T1078",
+      "name": "Valid Accounts"
+    }
+  ],
+  "usage": [
+    "Import-Module .\\PowerUp.ps1; Invoke-AllChecks",
+    "SharpUp.exe audit",
+    "SharpUp.exe   # default = run all checks"
+  ],
+  "detection": [
+    "Rapid enumeration of service configs and ACLs (sc.exe, WMI, registry reads).",
+    "PowerShell script-block logging (Event ID 4104) matching PowerUp function names.",
+    "AMSI / signature detection of the well-known script and assembly."
+  ],
+  "references": [
+    {
+      "title": "SharpUp repository",
+      "url": "https://github.com/GhostPack/SharpUp"
+    },
+    {
+      "title": "PowerSploit (PowerUp)",
+      "url": "https://github.com/PowerShellMafia/PowerSploit"
+    }
+  ],
+  "status": "maintenance",
+  "first_seen": "2014",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

@@ -1,0 +1,63 @@
+{
+  "id": "certify",
+  "name": "Certify",
+  "categories": [
+    "privilege-escalation",
+    "credential-access",
+    "discovery"
+  ],
+  "summary": "C# tool to enumerate and abuse misconfigurations in Active Directory Certificate Services (AD CS) - the ESC1-ESC8 escalation paths.",
+  "description": "Certify (GhostPack) finds vulnerable certificate templates and CA misconfigurations in AD CS and can request certificates that allow authentication as arbitrary users (domain escalation). It pairs with Rubeus / ForgeCert to turn issued certificates into Kerberos TGTs. It operationalises the ESC1-ESC8 techniques from the 'Certified Pre-Owned' research.",
+  "authors": [
+    "Will Schroeder (@harmj0y)",
+    "Lee Christensen (@tifkin_)",
+    "SpecterOps"
+  ],
+  "language": "C#",
+  "license": "BSD-3-Clause",
+  "os": [
+    "windows"
+  ],
+  "type": "dotnet-assembly",
+  "repository": "https://github.com/GhostPack/Certify",
+  "homepage": "https://posts.specterops.io/certified-pre-owned-d95910965cd2",
+  "mitre_software_id": null,
+  "attack_techniques": [
+    {
+      "id": "T1649",
+      "name": "Steal or Forge Authentication Certificates"
+    },
+    {
+      "id": "T1552.004",
+      "name": "Unsecured Credentials: Private Keys"
+    },
+    {
+      "id": "T1078.002",
+      "name": "Valid Accounts: Domain Accounts"
+    }
+  ],
+  "usage": [
+    "Certify.exe find /vulnerable",
+    "Certify.exe request /ca:CA01\\corp-CA /template:VulnTemplate /altname:administrator",
+    "# convert the resulting .pfx to a TGT with Rubeus asktgt /certificate:"
+  ],
+  "detection": [
+    "AD CS certificate issuance events (4886/4887) with a subject alternative name that differs from the requester.",
+    "Certificate-based logons (4768 with certificate info) for privileged accounts.",
+    "Audit and lock down template enrollment permissions and 'supply subject in request'."
+  ],
+  "references": [
+    {
+      "title": "Certify repository",
+      "url": "https://github.com/GhostPack/Certify"
+    },
+    {
+      "title": "Certified Pre-Owned (SpecterOps)",
+      "url": "https://posts.specterops.io/certified-pre-owned-d95910965cd2"
+    }
+  ],
+  "status": "active",
+  "first_seen": "2021",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}
