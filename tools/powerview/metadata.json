@@ -1,0 +1,65 @@
+{
+  "id": "powerview",
+  "name": "PowerView",
+  "categories": [
+    "discovery"
+  ],
+  "summary": "PowerShell tool for Active Directory reconnaissance: users, groups, ACLs, GPOs, trusts, sessions and local admin access, without needing RSAT.",
+  "description": "PowerView (part of PowerSploit, and continued in the 'dev' branch / PowerView.py) provides a rich set of Get-Domain* / Find-* cmdlets for enumerating Active Directory relationships and hunting for user sessions and local-admin access. It is a long-standing staple of AD recon and the conceptual precursor to BloodHound collection.",
+  "authors": [
+    "Will Schroeder (@harmj0y)",
+    "PowerSploit"
+  ],
+  "language": "PowerShell",
+  "license": "BSD-3-Clause",
+  "os": [
+    "windows"
+  ],
+  "type": "script",
+  "repository": "https://github.com/PowerShellMafia/PowerSploit",
+  "homepage": "https://powersploit.readthedocs.io/",
+  "mitre_software_id": "S0194",
+  "attack_techniques": [
+    {
+      "id": "T1087.002",
+      "name": "Account Discovery: Domain Account"
+    },
+    {
+      "id": "T1069.002",
+      "name": "Permission Groups Discovery: Domain Groups"
+    },
+    {
+      "id": "T1482",
+      "name": "Domain Trust Discovery"
+    },
+    {
+      "id": "T1018",
+      "name": "Remote System Discovery"
+    }
+  ],
+  "usage": [
+    "Import-Module .\\PowerView.ps1",
+    "Get-DomainUser -SPN            # find kerberoastable accounts",
+    "Find-DomainUserLocation        # hunt for target-user sessions",
+    "Get-DomainObjectAcl -Identity 'Domain Admins' -ResolveGUIDs"
+  ],
+  "detection": [
+    "PowerShell script-block logging (4104) matching PowerView function names.",
+    "Bulk LDAP enumeration and SAMR session queries from a workstation.",
+    "AMSI detection of the module content."
+  ],
+  "references": [
+    {
+      "title": "PowerSploit repository",
+      "url": "https://github.com/PowerShellMafia/PowerSploit"
+    },
+    {
+      "title": "MITRE ATT&CK S0194 (PowerSploit)",
+      "url": "https://attack.mitre.org/software/S0194/"
+    }
+  ],
+  "status": "maintenance",
+  "first_seen": "2014",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

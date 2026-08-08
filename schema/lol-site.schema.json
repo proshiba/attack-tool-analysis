@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/proshiba/attack-tool-analysis/schema/lol-site.schema.json",
+  "title": "Living-Off-The-Land reference site entry",
+  "type": "object",
+  "required": ["id", "name", "url", "platform", "focus"],
+  "additionalProperties": true,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "name": { "type": "string" },
+    "url": { "type": "string", "format": "uri" },
+    "repository": { "type": "string", "format": "uri" },
+    "platform": {
+      "type": "string",
+      "enum": ["windows", "unix", "linux", "macos", "cross-platform"]
+    },
+    "focus": { "type": "string" },
+    "data_format": { "type": "string", "description": "How the underlying data is structured (YAML, JSON, ...)." },
+    "content_type": {
+      "type": "string",
+      "enum": ["technique-catalog", "reference-catalog"],
+      "description": "technique-catalog = abusable techniques; reference-catalog = supporting lookup data."
+    },
+    "example_entries": { "type": "array", "items": { "type": "string" } },
+    "attack_mapping": { "type": "string" },
+    "notes": { "type": "string" },
+    "last_reviewed": { "type": "string" }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "lolbas",
+  "name": "LOLBAS (Living Off The Land Binaries, Scripts and Libraries)",
+  "url": "https://lolbas-project.github.io/",
+  "repository": "https://github.com/LOLBAS-Project/LOLBAS",
+  "platform": "windows",
+  "focus": "Signed/native Windows binaries, scripts and libraries that can be abused for execution, download, upload, credential theft, UAC bypass, etc.",
+  "data_format": "YAML per entry (repo /yml), machine-consumable; site is a searchable index.",
+  "content_type": "technique-catalog",
+  "example_entries": [
+    "certutil.exe (download)",
+    "regsvr32.exe (execute)",
+    "msbuild.exe (execute)"
+  ],
+  "attack_mapping": "Each entry lists abuse commands and maps to MITRE ATT&CK where relevant (e.g. T1218 Signed Binary Proxy Execution).",
+  "notes": "The canonical Windows LOLBin reference. Community-maintained, actively updated via PRs.",
+  "last_reviewed": "2026-08-08"
+}

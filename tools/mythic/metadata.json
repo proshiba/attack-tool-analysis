@@ -1,0 +1,71 @@
+{
+  "id": "mythic",
+  "name": "Mythic",
+  "categories": [
+    "command-and-control"
+  ],
+  "summary": "Plug-n-play, multi-agent C2 framework with a web UI. Payloads ('agents') and communication channels ('C2 profiles') are containerised and swappable (Apollo, Poseidon, Medusa, etc.).",
+  "description": "Mythic is a modular, collaborative C2 platform built around Docker. The core provides operator UI, task/response tracking and reporting, while agents and C2 profiles are separate installable components. This lets teams mix an OS-specific agent (e.g. Apollo for Windows/.NET, Poseidon for cross-platform Go) with an arbitrary transport, and to extend the framework cleanly.",
+  "authors": [
+    "Cody Thomas (@its_a_feature_ / SpecterOps)"
+  ],
+  "language": "Python, Go, JavaScript",
+  "license": "BSD-3-Clause",
+  "os": [
+    "linux"
+  ],
+  "type": "c2-framework",
+  "repository": "https://github.com/its-a-feature/Mythic",
+  "homepage": "https://docs.mythic-c2.net/",
+  "mitre_software_id": null,
+  "attack_techniques": [
+    {
+      "id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols"
+    },
+    {
+      "id": "T1071.004",
+      "name": "Application Layer Protocol: DNS"
+    },
+    {
+      "id": "T1105",
+      "name": "Ingress Tool Transfer"
+    },
+    {
+      "id": "T1573",
+      "name": "Encrypted Channel"
+    },
+    {
+      "id": "T1055",
+      "name": "Process Injection"
+    }
+  ],
+  "usage": [
+    "sudo ./mythic-cli install github https://github.com/MythicAgents/apollo",
+    "sudo ./mythic-cli start",
+    "# browse to the web UI, generate a payload, create a C2 profile instance"
+  ],
+  "detection": [
+    "Per-agent indicators (Apollo/Poseidon/Medusa each have their own signatures).",
+    "C2-profile defaults when unmodified; beaconing analysis on the chosen transport.",
+    "SpecterOps and community detections published per agent."
+  ],
+  "references": [
+    {
+      "title": "Official repository",
+      "url": "https://github.com/its-a-feature/Mythic"
+    },
+    {
+      "title": "Documentation",
+      "url": "https://docs.mythic-c2.net/"
+    },
+    {
+      "title": "Mythic agents org",
+      "url": "https://github.com/MythicAgents"
+    }
+  ],
+  "status": "active",
+  "first_seen": "2018",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

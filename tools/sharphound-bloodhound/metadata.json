@@ -1,0 +1,72 @@
+{
+  "id": "sharphound-bloodhound",
+  "name": "SharpHound / BloodHound",
+  "categories": [
+    "discovery"
+  ],
+  "summary": "Active Directory attack-path mapping. SharpHound is the collector; BloodHound ingests the data into a graph so operators can find shortest paths to Domain Admin and other high-value targets.",
+  "description": "BloodHound uses graph theory to reveal hidden and unintended relationships in an Active Directory (and Azure AD/Entra) environment. SharpHound (C#) collects sessions, ACLs, group memberships, trusts, GPOs and more; the BloodHound UI then computes attack paths (e.g. 'who can reach Domain Admin'). Both attackers and defenders (and the Community Edition / legacy versions) use it.",
+  "authors": [
+    "Andy Robbins",
+    "Rohan Vazarkar",
+    "Will Schroeder",
+    "SpecterOps"
+  ],
+  "language": "C#, TypeScript",
+  "license": "Apache-2.0",
+  "os": [
+    "windows",
+    "linux",
+    "macos"
+  ],
+  "type": "collector-and-server",
+  "repository": "https://github.com/SpecterOps/BloodHound",
+  "homepage": "https://bloodhound.specterops.io/",
+  "mitre_software_id": "S0521",
+  "attack_techniques": [
+    {
+      "id": "T1087.002",
+      "name": "Account Discovery: Domain Account"
+    },
+    {
+      "id": "T1069.002",
+      "name": "Permission Groups Discovery: Domain Groups"
+    },
+    {
+      "id": "T1482",
+      "name": "Domain Trust Discovery"
+    },
+    {
+      "id": "T1033",
+      "name": "System Owner/User Discovery"
+    }
+  ],
+  "usage": [
+    "SharpHound.exe -c All",
+    "SharpHound.exe --collectionmethods Session,LoggedOn --loop",
+    "# import the resulting zip into the BloodHound GUI and run built-in queries"
+  ],
+  "detection": [
+    "High-volume LDAP queries enumerating users/groups/ACLs from a single host.",
+    "SAMR / network session enumeration (SharpHound Session/LoggedOn) across many hosts.",
+    "4662 with broad property reads; ldap traffic anomalies; honeytoken objects."
+  ],
+  "references": [
+    {
+      "title": "BloodHound repository",
+      "url": "https://github.com/SpecterOps/BloodHound"
+    },
+    {
+      "title": "Documentation",
+      "url": "https://bloodhound.specterops.io/"
+    },
+    {
+      "title": "MITRE ATT&CK S0521",
+      "url": "https://attack.mitre.org/software/S0521/"
+    }
+  ],
+  "status": "active",
+  "first_seen": "2016",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

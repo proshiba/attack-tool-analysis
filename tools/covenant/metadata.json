@@ -1,0 +1,59 @@
+{
+  "id": "covenant",
+  "name": "Covenant",
+  "categories": [
+    "command-and-control"
+  ],
+  "summary": ".NET (C#) collaborative C2 framework with a web interface. Uses 'Grunt' implants and 'Elite'/Task tasking; historically important as an early open .NET C2, now in maintenance.",
+  "description": "Covenant is a .NET command-and-control framework that emphasises usability and collaboration. Its Grunt implants run on .NET (Framework/Core), tasking is done through a web UI, and it pioneered accessible .NET post-exploitation tooling. Development has largely stalled (maintenance), but it remains a common lab/training C2 and a useful reference implementation.",
+  "authors": [
+    "Ryan Cobb (@cobbr_io)"
+  ],
+  "language": "C#",
+  "license": "GPL-3.0",
+  "os": [
+    "windows",
+    "linux"
+  ],
+  "type": "c2-framework",
+  "repository": "https://github.com/cobbr/Covenant",
+  "homepage": "https://github.com/cobbr/Covenant/wiki",
+  "mitre_software_id": null,
+  "attack_techniques": [
+    {
+      "id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols"
+    },
+    {
+      "id": "T1059.003",
+      "name": "Command and Scripting Interpreter: Windows Command Shell"
+    },
+    {
+      "id": "T1055",
+      "name": "Process Injection"
+    },
+    {
+      "id": "T1105",
+      "name": "Ingress Tool Transfer"
+    }
+  ],
+  "usage": [
+    "dotnet run   # or run via the provided Docker image",
+    "# create an HTTP listener, generate a Grunt launcher, task Grunts from the web UI"
+  ],
+  "detection": [
+    "Default Grunt HTTP profiles (URIs, cookies, response formats).",
+    "Well-known JA3/certificate and staging indicators.",
+    "Community Sigma/YARA rules; EDR .NET in-memory execution telemetry."
+  ],
+  "references": [
+    {
+      "title": "Official repository",
+      "url": "https://github.com/cobbr/Covenant"
+    }
+  ],
+  "status": "maintenance",
+  "first_seen": "2019",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

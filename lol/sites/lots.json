@@ -1,0 +1,18 @@
+{
+  "id": "lots",
+  "name": "LOTS Project (Living Off Trusted Sites)",
+  "url": "https://lots-project.com/",
+  "repository": "https://github.com/mrd0x/lots-project.com",
+  "platform": "cross-platform",
+  "focus": "Legitimate, trusted domains that attackers abuse for phishing, download, data exfiltration and C2 because traffic to them blends in.",
+  "data_format": "Site entries per trusted domain/service.",
+  "content_type": "technique-catalog",
+  "example_entries": [
+    "github.com",
+    "pastebin.com",
+    "*.blob.core.windows.net"
+  ],
+  "attack_mapping": "T1102 (Web Service), T1567 (Exfiltration Over Web Service).",
+  "notes": "Complements LOLC2: which trusted domains blend into normal traffic.",
+  "last_reviewed": "2026-08-08"
+}

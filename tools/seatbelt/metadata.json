@@ -1,0 +1,66 @@
+{
+  "id": "seatbelt",
+  "name": "Seatbelt",
+  "categories": [
+    "discovery"
+  ],
+  "summary": "C# host survey / situational-awareness tool that runs dozens of 'safety checks' from both offensive and defensive perspectives (OS config, security products, credentials on disk, network, user data).",
+  "description": "Seatbelt (GhostPack) is the standard local enumeration tool for red teams on Windows. It bundles many collection commands (AV/EDR presence, AppLocker/WDAC, UAC/LAPS config, PowerShell logging, saved RDP/Wi-Fi creds, browser data, cloud credentials, scheduled tasks) so an operator can quickly understand a foothold and find escalation or looting opportunities.",
+  "authors": [
+    "Will Schroeder (@harmj0y)",
+    "Lee Christensen (@tifkin_)",
+    "GhostPack"
+  ],
+  "language": "C#",
+  "license": "BSD-3-Clause",
+  "os": [
+    "windows"
+  ],
+  "type": "dotnet-assembly",
+  "repository": "https://github.com/GhostPack/Seatbelt",
+  "homepage": "https://github.com/GhostPack/Seatbelt",
+  "mitre_software_id": null,
+  "attack_techniques": [
+    {
+      "id": "T1082",
+      "name": "System Information Discovery"
+    },
+    {
+      "id": "T1518.001",
+      "name": "Software Discovery: Security Software Discovery"
+    },
+    {
+      "id": "T1087",
+      "name": "Account Discovery"
+    },
+    {
+      "id": "T1083",
+      "name": "File and Directory Discovery"
+    },
+    {
+      "id": "T1552.001",
+      "name": "Unsecured Credentials: Credentials In Files"
+    }
+  ],
+  "usage": [
+    "Seatbelt.exe -group=all",
+    "Seatbelt.exe -group=user",
+    "Seatbelt.exe -group=remote -computername=host2",
+    "Seatbelt.exe OSInfo AntiVirus PowerShell"
+  ],
+  "detection": [
+    "In-memory .NET assembly execution (execute-assembly) - CLR load into non-managed processes; ETW/AMSI .NET telemetry.",
+    "Burst of diverse registry/WMI/file reads characteristic of mass enumeration.",
+    "Signature/YARA on the assembly when dropped to disk."
+  ],
+  "references": [
+    {
+      "title": "Official repository",
+      "url": "https://github.com/GhostPack/Seatbelt"
+    }
+  ],
+  "status": "active",
+  "first_seen": "2018",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

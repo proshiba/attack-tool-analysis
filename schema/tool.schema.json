@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/proshiba/attack-tool-analysis/schema/tool.schema.json",
+  "title": "Post-exploitation tool entry",
+  "type": "object",
+  "required": ["id", "name", "categories", "summary", "description", "os", "repository"],
+  "additionalProperties": true,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Folder-safe unique identifier (matches tools/<id>/)."
+    },
+    "name": { "type": "string" },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "credential-access",
+          "privilege-escalation",
+          "discovery",
+          "lateral-movement",
+          "command-and-control",
+          "collection",
+          "defense-evasion",
+          "persistence",
+          "exfiltration"
+        ]
+      }
+    },
+    "summary": { "type": "string", "description": "One-line description." },
+    "description": { "type": "string", "description": "Full prose description." },
+    "authors": { "type": "array", "items": { "type": "string" } },
+    "language": { "type": "string" },
+    "license": { "type": "string", "description": "SPDX id where possible." },
+    "os": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "enum": ["windows", "linux", "macos", "cross-platform"] }
+    },
+    "type": { "type": "string", "description": "e.g. c2-framework, dotnet-assembly, script, standalone-binary." },
+    "repository": { "type": "string", "format": "uri" },
+    "homepage": { "type": "string" },
+    "mitre_software_id": {
+      "type": ["string", "null"],
+      "description": "MITRE ATT&CK software id (e.g. S0002) or null."
+    },
+    "attack_techniques": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^T\\d{4}(\\.\\d{3})?$" },
+          "name": { "type": "string" }
+        }
+      }
+    },
+    "usage": { "type": "array", "items": { "type": "string" } },
+    "detection": { "type": "array", "items": { "type": "string" } },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "url"],
+        "properties": {
+          "title": { "type": "string" },
+          "url": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+    "release_history": {
+      "type": "array",
+      "description": "Notable upstream releases tracked over time.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "string" },
+          "date": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "status": { "type": "string", "enum": ["active", "maintenance", "archived", "unknown"] },
+    "first_seen": { "type": "string" },
+    "last_reviewed": { "type": "string", "description": "YYYY-MM-DD of last human review." }
+  }
+}

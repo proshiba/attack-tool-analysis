@@ -1,0 +1,59 @@
+{
+  "id": "adrecon",
+  "name": "ADRecon",
+  "categories": [
+    "discovery"
+  ],
+  "summary": "PowerShell tool that gathers Active Directory information and produces a consolidated Excel (or CSV/JSON) report covering users, groups, computers, GPOs, trusts, ACLs and security posture.",
+  "description": "ADRecon extracts a broad, structured snapshot of an Active Directory environment and generates an analyst-friendly report. It is popular for both offensive recon and defensive assessments / audits because the single report highlights weak configurations (Kerberos policy, delegation, stale accounts, ACL issues).",
+  "authors": [
+    "Prashant Mahajan (@sense_of_security / Sense of Security)"
+  ],
+  "language": "PowerShell",
+  "license": "GPL-3.0",
+  "os": [
+    "windows"
+  ],
+  "type": "script",
+  "repository": "https://github.com/adrecon/ADRecon",
+  "homepage": "https://github.com/adrecon/ADRecon",
+  "mitre_software_id": null,
+  "attack_techniques": [
+    {
+      "id": "T1087.002",
+      "name": "Account Discovery: Domain Account"
+    },
+    {
+      "id": "T1482",
+      "name": "Domain Trust Discovery"
+    },
+    {
+      "id": "T1069.002",
+      "name": "Permission Groups Discovery: Domain Groups"
+    },
+    {
+      "id": "T1615",
+      "name": "Group Policy Discovery"
+    }
+  ],
+  "usage": [
+    ".\\ADRecon.ps1",
+    ".\\ADRecon.ps1 -DomainController dc01 -Credential corp\\user",
+    ".\\ADRecon.ps1 -OutputType CSV,JSON"
+  ],
+  "detection": [
+    "Large single-session LDAP enumeration touching most directory partitions.",
+    "PowerShell logging of ADRecon function names / module import.",
+    "Excel/COM automation spawned from PowerShell on a non-analyst host."
+  ],
+  "references": [
+    {
+      "title": "Official repository",
+      "url": "https://github.com/adrecon/ADRecon"
+    }
+  ],
+  "status": "maintenance",
+  "first_seen": "2018",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

@@ -1,0 +1,551 @@
+{
+  "schema_version": "1.0",
+  "project": "attack-tool-analysis",
+  "description": "Catalog of free/OSS post-exploitation tools (privilege escalation, credential theft, internal recon, remote operation / C2) and living-off-the-land methodology references used in pentest / red team.",
+  "generated_by": "generate_index.py",
+  "counts": {
+    "tools": 14,
+    "lol_sites": 9
+  },
+  "categories": [
+    {
+      "key": "command-and-control",
+      "label": "Command & Control (Remote Ops)",
+      "count": 5
+    },
+    {
+      "key": "credential-access",
+      "label": "Credential Access",
+      "count": 4
+    },
+    {
+      "key": "discovery",
+      "label": "Discovery / Situational Awareness",
+      "count": 6
+    },
+    {
+      "key": "lateral-movement",
+      "label": "Lateral Movement",
+      "count": 3
+    },
+    {
+      "key": "privilege-escalation",
+      "label": "Privilege Escalation",
+      "count": 4
+    }
+  ],
+  "tools": [
+    {
+      "id": "adrecon",
+      "name": "ADRecon",
+      "categories": [
+        "discovery"
+      ],
+      "summary": "PowerShell tool that gathers Active Directory information and produces a consolidated Excel (or CSV/JSON) report covering users, groups, computers, GPOs, trusts, ACLs and security posture.",
+      "os": [
+        "windows"
+      ],
+      "language": "PowerShell",
+      "license": "GPL-3.0",
+      "type": "script",
+      "repository": "https://github.com/adrecon/ADRecon",
+      "homepage": "https://github.com/adrecon/ADRecon",
+      "mitre_software_id": null,
+      "attack_techniques": [
+        "T1087.002",
+        "T1482",
+        "T1069.002",
+        "T1615"
+      ],
+      "status": "maintenance",
+      "first_seen": "2018",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/adrecon/",
+      "metadata": "tools/adrecon/metadata.json"
+    },
+    {
+      "id": "certify",
+      "name": "Certify",
+      "categories": [
+        "privilege-escalation",
+        "credential-access",
+        "discovery"
+      ],
+      "summary": "C# tool to enumerate and abuse misconfigurations in Active Directory Certificate Services (AD CS) - the ESC1-ESC8 escalation paths.",
+      "os": [
+        "windows"
+      ],
+      "language": "C#",
+      "license": "BSD-3-Clause",
+      "type": "dotnet-assembly",
+      "repository": "https://github.com/GhostPack/Certify",
+      "homepage": "https://posts.specterops.io/certified-pre-owned-d95910965cd2",
+      "mitre_software_id": null,
+      "attack_techniques": [
+        "T1649",
+        "T1552.004",
+        "T1078.002"
+      ],
+      "status": "active",
+      "first_seen": "2021",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/certify/",
+      "metadata": "tools/certify/metadata.json"
+    },
+    {
+      "id": "covenant",
+      "name": "Covenant",
+      "categories": [
+        "command-and-control"
+      ],
+      "summary": ".NET (C#) collaborative C2 framework with a web interface. Uses 'Grunt' implants and 'Elite'/Task tasking; historically important as an early open .NET C2, now in maintenance.",
+      "os": [
+        "windows",
+        "linux"
+      ],
+      "language": "C#",
+      "license": "GPL-3.0",
+      "type": "c2-framework",
+      "repository": "https://github.com/cobbr/Covenant",
+      "homepage": "https://github.com/cobbr/Covenant/wiki",
+      "mitre_software_id": null,
+      "attack_techniques": [
+        "T1071.001",
+        "T1059.003",
+        "T1055",
+        "T1105"
+      ],
+      "status": "maintenance",
+      "first_seen": "2019",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/covenant/",
+      "metadata": "tools/covenant/metadata.json"
+    },
+    {
+      "id": "havoc",
+      "name": "Havoc",
+      "categories": [
+        "command-and-control"
+      ],
+      "summary": "Modern, open-source C2 framework with a Qt GUI team server, a malleable-style profile, sleep obfuscation, and an extensible agent ('Demon') written in C.",
+      "os": [
+        "windows",
+        "linux"
+      ],
+      "language": "Go, C, Python",
+      "license": "GPL-3.0",
+      "type": "c2-framework",
+      "repository": "https://github.com/HavocFramework/Havoc",
+      "homepage": "https://havocframework.com/",
+      "mitre_software_id": null,
+      "attack_techniques": [
+        "T1071.001",
+        "T1055",
+        "T1027",
+        "T1620",
+        "T1573"
+      ],
+      "status": "active",
+      "first_seen": "2022",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/havoc/",
+      "metadata": "tools/havoc/metadata.json"
+    },
+    {
+      "id": "lazagne",
+      "name": "LaZagne",
+      "categories": [
+        "credential-access"
+      ],
+      "summary": "Open-source application that recovers passwords stored locally by a wide range of software (browsers, mail clients, Wi-Fi, databases, sysadmin tools) on Windows, Linux and macOS.",
+      "os": [
+        "windows",
+        "linux",
+        "macos"
+      ],
+      "language": "Python",
+      "license": "LGPL-3.0",
+      "type": "standalone-binary",
+      "repository": "https://github.com/AlessandroZ/LaZagne",
+      "homepage": "https://github.com/AlessandroZ/LaZagne",
+      "mitre_software_id": "S0349",
+      "attack_techniques": [
+        "T1555.003",
+        "T1555",
+        "T1552.001",
+        "T1003"
+      ],
+      "status": "active",
+      "first_seen": "2015",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/lazagne/",
+      "metadata": "tools/lazagne/metadata.json"
+    },
+    {
+      "id": "merlin",
+      "name": "Merlin",
+      "categories": [
+        "command-and-control"
+      ],
+      "summary": "Cross-platform post-exploitation C2 written in Go, notable for early adoption of HTTP/2 and HTTP/3 (QUIC) channels.",
+      "os": [
+        "windows",
+        "linux",
+        "macos"
+      ],
+      "language": "Go",
+      "license": "GPL-3.0",
+      "type": "c2-framework",
+      "repository": "https://github.com/Ne0nd0g/merlin",
+      "homepage": "https://merlin-c2.readthedocs.io/",
+      "mitre_software_id": null,
+      "attack_techniques": [
+        "T1071.001",
+        "T1573.002",
+        "T1105",
+        "T1027"
+      ],
+      "status": "active",
+      "first_seen": "2018",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/merlin/",
+      "metadata": "tools/merlin/metadata.json"
+    },
+    {
+      "id": "mimikatz",
+      "name": "mimikatz",
+      "categories": [
+        "credential-access",
+        "privilege-escalation",
+        "lateral-movement"
+      ],
+      "summary": "Post-exploitation toolkit for extracting plaintext passwords, hashes, PINs and Kerberos tickets from Windows memory, and for abusing Kerberos (pass-the-hash, pass-the-ticket, golden/silver tickets, DCSync).",
+      "os": [
+        "windows"
+      ],
+      "language": "C",
+      "license": "CC-BY-4.0",
+      "type": "standalone-binary",
+      "repository": "https://github.com/gentilkiwi/mimikatz",
+      "homepage": "https://blog.gentilkiwi.com/mimikatz",
+      "mitre_software_id": "S0002",
+      "attack_techniques": [
+        "T1003.001",
+        "T1003.002",
+        "T1003.004",
+        "T1003.006",
+        "T1558.001",
+        "T1558.002",
+        "T1550.002",
+        "T1550.003"
+      ],
+      "status": "active",
+      "first_seen": "2007",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/mimikatz/",
+      "metadata": "tools/mimikatz/metadata.json"
+    },
+    {
+      "id": "mythic",
+      "name": "Mythic",
+      "categories": [
+        "command-and-control"
+      ],
+      "summary": "Plug-n-play, multi-agent C2 framework with a web UI. Payloads ('agents') and communication channels ('C2 profiles') are containerised and swappable (Apollo, Poseidon, Medusa, etc.).",
+      "os": [
+        "linux"
+      ],
+      "language": "Python, Go, JavaScript",
+      "license": "BSD-3-Clause",
+      "type": "c2-framework",
+      "repository": "https://github.com/its-a-feature/Mythic",
+      "homepage": "https://docs.mythic-c2.net/",
+      "mitre_software_id": null,
+      "attack_techniques": [
+        "T1071.001",
+        "T1071.004",
+        "T1105",
+        "T1573",
+        "T1055"
+      ],
+      "status": "active",
+      "first_seen": "2018",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/mythic/",
+      "metadata": "tools/mythic/metadata.json"
+    },
+    {
+      "id": "powerup-sharpup",
+      "name": "PowerUp / SharpUp",
+      "categories": [
+        "privilege-escalation",
+        "discovery"
+      ],
+      "summary": "Windows local privilege-escalation checks. PowerUp is the PowerShell original; SharpUp is the C# port that enumerates common misconfigurations (unquoted service paths, weak service/registry ACLs, DLL hijack candidates, AlwaysInstallElevated).",
+      "os": [
+        "windows"
+      ],
+      "language": "PowerShell, C#",
+      "license": "BSD-3-Clause",
+      "type": "script-and-dotnet-assembly",
+      "repository": "https://github.com/GhostPack/SharpUp",
+      "homepage": "https://github.com/PowerShellMafia/PowerSploit",
+      "mitre_software_id": null,
+      "attack_techniques": [
+        "T1574.010",
+        "T1574.011",
+        "T1574.009",
+        "T1547.001",
+        "T1078"
+      ],
+      "status": "maintenance",
+      "first_seen": "2014",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/powerup-sharpup/",
+      "metadata": "tools/powerup-sharpup/metadata.json"
+    },
+    {
+      "id": "powerview",
+      "name": "PowerView",
+      "categories": [
+        "discovery"
+      ],
+      "summary": "PowerShell tool for Active Directory reconnaissance: users, groups, ACLs, GPOs, trusts, sessions and local admin access, without needing RSAT.",
+      "os": [
+        "windows"
+      ],
+      "language": "PowerShell",
+      "license": "BSD-3-Clause",
+      "type": "script",
+      "repository": "https://github.com/PowerShellMafia/PowerSploit",
+      "homepage": "https://powersploit.readthedocs.io/",
+      "mitre_software_id": "S0194",
+      "attack_techniques": [
+        "T1087.002",
+        "T1069.002",
+        "T1482",
+        "T1018"
+      ],
+      "status": "maintenance",
+      "first_seen": "2014",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/powerview/",
+      "metadata": "tools/powerview/metadata.json"
+    },
+    {
+      "id": "rubeus",
+      "name": "Rubeus",
+      "categories": [
+        "credential-access",
+        "lateral-movement",
+        "privilege-escalation"
+      ],
+      "summary": "C# toolset for raw Kerberos interaction and abuse: ticket requests, Kerberoasting, AS-REP roasting, pass-the-ticket, overpass-the-hash, delegation abuse, and S4U.",
+      "os": [
+        "windows"
+      ],
+      "language": "C#",
+      "license": "BSD-3-Clause",
+      "type": "dotnet-assembly",
+      "repository": "https://github.com/GhostPack/Rubeus",
+      "homepage": "https://github.com/GhostPack/Rubeus",
+      "mitre_software_id": null,
+      "attack_techniques": [
+        "T1558.003",
+        "T1558.004",
+        "T1550.003",
+        "T1558.001",
+        "T1484.002"
+      ],
+      "status": "active",
+      "first_seen": "2018",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/rubeus/",
+      "metadata": "tools/rubeus/metadata.json"
+    },
+    {
+      "id": "seatbelt",
+      "name": "Seatbelt",
+      "categories": [
+        "discovery"
+      ],
+      "summary": "C# host survey / situational-awareness tool that runs dozens of 'safety checks' from both offensive and defensive perspectives (OS config, security products, credentials on disk, network, user data).",
+      "os": [
+        "windows"
+      ],
+      "language": "C#",
+      "license": "BSD-3-Clause",
+      "type": "dotnet-assembly",
+      "repository": "https://github.com/GhostPack/Seatbelt",
+      "homepage": "https://github.com/GhostPack/Seatbelt",
+      "mitre_software_id": null,
+      "attack_techniques": [
+        "T1082",
+        "T1518.001",
+        "T1087",
+        "T1083",
+        "T1552.001"
+      ],
+      "status": "active",
+      "first_seen": "2018",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/seatbelt/",
+      "metadata": "tools/seatbelt/metadata.json"
+    },
+    {
+      "id": "sharphound-bloodhound",
+      "name": "SharpHound / BloodHound",
+      "categories": [
+        "discovery"
+      ],
+      "summary": "Active Directory attack-path mapping. SharpHound is the collector; BloodHound ingests the data into a graph so operators can find shortest paths to Domain Admin and other high-value targets.",
+      "os": [
+        "windows",
+        "linux",
+        "macos"
+      ],
+      "language": "C#, TypeScript",
+      "license": "Apache-2.0",
+      "type": "collector-and-server",
+      "repository": "https://github.com/SpecterOps/BloodHound",
+      "homepage": "https://bloodhound.specterops.io/",
+      "mitre_software_id": "S0521",
+      "attack_techniques": [
+        "T1087.002",
+        "T1069.002",
+        "T1482",
+        "T1033"
+      ],
+      "status": "active",
+      "first_seen": "2016",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/sharphound-bloodhound/",
+      "metadata": "tools/sharphound-bloodhound/metadata.json"
+    },
+    {
+      "id": "sliver",
+      "name": "Sliver",
+      "categories": [
+        "command-and-control",
+        "lateral-movement"
+      ],
+      "summary": "Open-source, cross-platform adversary-emulation / C2 framework by Bishop Fox. Supports implants over mTLS, WireGuard, HTTP(S) and DNS, with multiplayer operations, staging, and a large post-exploitation feature set.",
+      "os": [
+        "windows",
+        "linux",
+        "macos"
+      ],
+      "language": "Go",
+      "license": "GPL-3.0",
+      "type": "c2-framework",
+      "repository": "https://github.com/BishopFox/sliver",
+      "homepage": "https://sliver.sh/",
+      "mitre_software_id": "S1068",
+      "attack_techniques": [
+        "T1071.001",
+        "T1071.004",
+        "T1573.002",
+        "T1572",
+        "T1055",
+        "T1105"
+      ],
+      "status": "active",
+      "first_seen": "2019",
+      "last_reviewed": "2026-08-08",
+      "path": "tools/sliver/",
+      "metadata": "tools/sliver/metadata.json"
+    }
+  ],
+  "lol_sites": [
+    {
+      "id": "filesec",
+      "name": "Filesec.io",
+      "url": "https://filesec.io/",
+      "repository": "https://github.com/mttaggart/filesec",
+      "platform": "windows",
+      "content_type": "reference-catalog",
+      "focus": "File extensions abused by attackers (for delivery, execution, defense evasion), with notes on how each is used and mitigations.",
+      "path": "lol/sites/filesec.json"
+    },
+    {
+      "id": "gtfobins",
+      "name": "GTFOBins",
+      "url": "https://gtfobins.github.io/",
+      "repository": "https://github.com/GTFOBins/GTFOBins.github.io",
+      "platform": "unix",
+      "content_type": "technique-catalog",
+      "focus": "Unix binaries that can be abused to bypass local security restrictions - SUID/sudo privesc, shell escape, file read/write, reverse shells.",
+      "path": "lol/sites/gtfobins.json"
+    },
+    {
+      "id": "hijacklibs",
+      "name": "HijackLibs",
+      "url": "https://hijacklibs.net/",
+      "repository": "https://github.com/wietze/HijackLibs",
+      "platform": "windows",
+      "content_type": "technique-catalog",
+      "focus": "Catalog of DLL hijacking opportunities: which legitimate executables load which DLLs from hijackable search-order locations.",
+      "path": "lol/sites/hijacklibs.json"
+    },
+    {
+      "id": "lolbas",
+      "name": "LOLBAS (Living Off The Land Binaries, Scripts and Libraries)",
+      "url": "https://lolbas-project.github.io/",
+      "repository": "https://github.com/LOLBAS-Project/LOLBAS",
+      "platform": "windows",
+      "content_type": "technique-catalog",
+      "focus": "Signed/native Windows binaries, scripts and libraries that can be abused for execution, download, upload, credential theft, UAC bypass, etc.",
+      "path": "lol/sites/lolbas.json"
+    },
+    {
+      "id": "lolc2",
+      "name": "LOLC2 (Living Off the Land Command and Control)",
+      "url": "https://lolc2.github.io/",
+      "repository": "https://github.com/lolc2/lolc2.github.io",
+      "platform": "cross-platform",
+      "content_type": "technique-catalog",
+      "focus": "Legitimate third-party services (SaaS, cloud, collaboration platforms) abused as covert C2 channels - e.g. Slack, Discord, Telegram, GitHub, Google/Microsoft services.",
+      "path": "lol/sites/lolc2.json"
+    },
+    {
+      "id": "loldrivers",
+      "name": "LOLDrivers (Living Off The Land Drivers)",
+      "url": "https://www.loldrivers.io/",
+      "repository": "https://github.com/magicsword-io/LOLDrivers",
+      "platform": "windows",
+      "content_type": "technique-catalog",
+      "focus": "Known vulnerable and malicious Windows drivers (BYOVD - Bring Your Own Vulnerable Driver) used to disable EDR, escalate to kernel, etc.",
+      "path": "lol/sites/loldrivers.json"
+    },
+    {
+      "id": "lots",
+      "name": "LOTS Project (Living Off Trusted Sites)",
+      "url": "https://lots-project.com/",
+      "repository": "https://github.com/mrd0x/lots-project.com",
+      "platform": "cross-platform",
+      "content_type": "technique-catalog",
+      "focus": "Legitimate, trusted domains that attackers abuse for phishing, download, data exfiltration and C2 because traffic to them blends in.",
+      "path": "lol/sites/lots.json"
+    },
+    {
+      "id": "malapi",
+      "name": "MalAPI.io",
+      "url": "https://malapi.io/",
+      "repository": "https://github.com/mrd0x/malapi",
+      "platform": "windows",
+      "content_type": "reference-catalog",
+      "focus": "Windows API functions commonly used by malware, grouped by capability (injection, evasion, credential access, etc.).",
+      "path": "lol/sites/malapi.json"
+    },
+    {
+      "id": "wtfbins",
+      "name": "WTFBins",
+      "url": "https://wtfbins.wtf/",
+      "repository": "https://github.com/wtfbins/wtfbins.github.io",
+      "platform": "cross-platform",
+      "content_type": "reference-catalog",
+      "focus": "Benign binaries that exhibit malware-like behaviour (network beacons, odd process trees) - useful for tuning detections and reducing false positives, the inverse of a LOLBin catalog.",
+      "path": "lol/sites/wtfbins.json"
+    }
+  ]
+}

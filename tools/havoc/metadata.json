@@ -1,0 +1,70 @@
+{
+  "id": "havoc",
+  "name": "Havoc",
+  "categories": [
+    "command-and-control"
+  ],
+  "summary": "Modern, open-source C2 framework with a Qt GUI team server, a malleable-style profile, sleep obfuscation, and an extensible agent ('Demon') written in C.",
+  "description": "Havoc is a free C2 framework aimed at red teams and researchers. Its 'Demon' agent features indirect syscalls, sleep obfuscation (Ekko/Foliage-style), return-address spoofing, and support for object-file (BOF) execution. The team server is written in Go with a Python/C extensibility layer and a cross-platform GUI client.",
+  "authors": [
+    "Paul Ungur (@C5pider)",
+    "HavocFramework"
+  ],
+  "language": "Go, C, Python",
+  "license": "GPL-3.0",
+  "os": [
+    "windows",
+    "linux"
+  ],
+  "type": "c2-framework",
+  "repository": "https://github.com/HavocFramework/Havoc",
+  "homepage": "https://havocframework.com/",
+  "mitre_software_id": null,
+  "attack_techniques": [
+    {
+      "id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols"
+    },
+    {
+      "id": "T1055",
+      "name": "Process Injection"
+    },
+    {
+      "id": "T1027",
+      "name": "Obfuscated Files or Information"
+    },
+    {
+      "id": "T1620",
+      "name": "Reflective Code Loading"
+    },
+    {
+      "id": "T1573",
+      "name": "Encrypted Channel"
+    }
+  ],
+  "usage": [
+    "./havoc server --profile ./profiles/havoc.yaotl -v",
+    "# connect with the GUI client, create an HTTP/HTTPS listener",
+    "# build a Demon agent and use built-in / BOF post-ex commands"
+  ],
+  "detection": [
+    "Default Demon agent indicators / signatures (research by security vendors).",
+    "Sleep-obfuscation memory artifacts; unbacked executable memory with periodic RW->RX.",
+    "Malleable profile defaults (URIs, headers) when operators do not customise them.",
+    "Community YARA and Sigma rules for the Demon agent."
+  ],
+  "references": [
+    {
+      "title": "Official repository",
+      "url": "https://github.com/HavocFramework/Havoc"
+    },
+    {
+      "title": "Project site",
+      "url": "https://havocframework.com/"
+    }
+  ],
+  "status": "active",
+  "first_seen": "2022",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}

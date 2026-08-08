@@ -1,0 +1,81 @@
+{
+  "id": "sliver",
+  "name": "Sliver",
+  "categories": [
+    "command-and-control",
+    "lateral-movement"
+  ],
+  "summary": "Open-source, cross-platform adversary-emulation / C2 framework by Bishop Fox. Supports implants over mTLS, WireGuard, HTTP(S) and DNS, with multiplayer operations, staging, and a large post-exploitation feature set.",
+  "description": "Sliver is a mature, actively developed OSS Command-and-Control framework and a common free alternative to Cobalt Strike. Implants are compiled in Go for Windows/Linux/macOS and communicate over mutually-authenticated TLS, WireGuard, HTTP(S) or DNS. It provides an armory of extensions, BOF/COFF loading, in-memory .NET execution, SOCKS/pivots, and multiplayer team operation via gRPC.",
+  "authors": [
+    "Bishop Fox"
+  ],
+  "language": "Go",
+  "license": "GPL-3.0",
+  "os": [
+    "windows",
+    "linux",
+    "macos"
+  ],
+  "type": "c2-framework",
+  "repository": "https://github.com/BishopFox/sliver",
+  "homepage": "https://sliver.sh/",
+  "mitre_software_id": "S1068",
+  "attack_techniques": [
+    {
+      "id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols"
+    },
+    {
+      "id": "T1071.004",
+      "name": "Application Layer Protocol: DNS"
+    },
+    {
+      "id": "T1573.002",
+      "name": "Encrypted Channel: Asymmetric Cryptography"
+    },
+    {
+      "id": "T1572",
+      "name": "Protocol Tunneling"
+    },
+    {
+      "id": "T1055",
+      "name": "Process Injection"
+    },
+    {
+      "id": "T1105",
+      "name": "Ingress Tool Transfer"
+    }
+  ],
+  "usage": [
+    "# server console",
+    "generate --mtls example.com --os windows --save ./implant.exe",
+    "https --lport 443            # start an HTTPS listener",
+    "sessions ; use <id> ; interactive",
+    "armory install <extension>"
+  ],
+  "detection": [
+    "JARM/JA3(S) and default certificate fingerprints of Sliver listeners.",
+    "Named-pipe and staging patterns; known default HTTP URIs/headers (tunable, so not reliable alone).",
+    "Beaconing/jitter analysis on egress; DNS tunneling volume anomalies.",
+    "Community Sigma/Suricata rules and the Sliver detection research from Immunefi/Microsoft; EDR detections for BOF/execute-assembly behaviour."
+  ],
+  "references": [
+    {
+      "title": "Official repository",
+      "url": "https://github.com/BishopFox/sliver"
+    },
+    {
+      "title": "Documentation / wiki",
+      "url": "https://sliver.sh/docs"
+    },
+    {
+      "title": "MITRE ATT&CK S1068",
+      "url": "https://attack.mitre.org/software/S1068/"
+    }
+  ],
+  "status": "active",
+  "first_seen": "2019",
+  "last_reviewed": "2026-08-08",
+  "release_history": []
+}
