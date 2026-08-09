@@ -45,8 +45,15 @@ verify along a realistic operator flow so the resulting detections are practical
   context**. Keep the flow bounded and reproducible.
 
 ## 4. Collect telemetry (all five dimensions)
-- Windows: run `C:\Tools\collect-run.ps1 -StartUtc <start> -EndUtc <end> -OutDir <dir>` and, for
-  network/C2 tools, capture pcap with `pktmon` around the run. `lab-pull` the output to the repo.
+- Windows: run `C:\Tools\collect-run.ps1 -StartUtc <start> -EndUtc <end> -OutDir <dir>` for the
+  endpoint EVTX/JSON; `lab-pull` to the repo.
+- **Network dimension (NSM)** — for any tool with network activity (C2, downloaders, scanners),
+  capture a **FULL packet pcap** on the target around the run (`pktmon start --capture --pkt-size 0
+  -f cap.etl` → `pktmon stop` → `pktmon pcapng cap.etl -o cap.pcapng`), `lab-pull` the `.pcapng`, then
+  run **`~/bin/nsm-analyze <cap.pcapng> <outdir>`** (NSM VM 106: Zeek + Suricata). This yields Zeek
+  `conn/http/ssl(JA3/JARM)/dns/x509` logs and Suricata `eve.json` alerts — the real substrate for
+  network-dimension detection (endpoint EID 3/22 alone can't express JA3, HTTP profile, or beacon
+  periodicity).
 - From the captured events, extract what the tool did in EACH dimension:
   1. **Network destinations** — Sysmon EID 3 (DestinationIp/Hostname/Port) + EID 22 DNS (QueryName)
   2. **Files** created / modified / deleted — Sysmon EID 11 / 2 / 23 / 26 (+ 15 stream hash)
@@ -66,7 +73,10 @@ so it is a complement, not the primary.
 - **Tier 1 (preferred — write a rule per characteristic dimension):**
   - `process_creation` — Image / OriginalFileName / path, **CommandLine**, and **parent-child**
     (ParentImage / ParentCommandLine)
-  - `dns_query` + `network_connection` — destination host / IP / port, QueryName
+  - network — endpoint `dns_query` + `network_connection` (dest host/IP/port, QueryName) AND,
+    from the NSM (step 4), **Zeek/Suricata**-sourced rules: JA3/JARM TLS fingerprints, HTTP
+    request profile (URI/headers/UA), DNS, and beaconing/flow periodicity. Use Sigma logsource
+    `product: zeek` (category tls/http/dns/…) or `product: suricata`. Never key on the lab C2 IP.
   - `file_event` — files created / modified / deleted
   - `registry_event` / `registry_set` — keys/values created / modified / deleted
 - **Tier 2 (complement / fallback):** Sysmon-native depth — `process_access` (EID 10, e.g. LSASS

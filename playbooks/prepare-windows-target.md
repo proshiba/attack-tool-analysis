@@ -60,8 +60,11 @@ noise, not an error.
 5. **Collection toolset** at `C:\Tools`:
    - **Sysinternals Suite** → `C:\Tools\Sysinternals` (EULAs pre-accepted, on PATH) — Procmon
      (deep file/reg/proc trace), Autoruns, Handle, Sigcheck, Process Explorer, Tcpview, PsTools.
-   - **Network capture**: built-in **`pktmon`** (pcap for network/C2 tools). Npcap+tshark optional
-     (note: free Npcap has no unattended silent installer).
+   - **Network capture**: built-in **`pktmon`** for a **full-packet** pcap of network/C2 tool runs
+     (`pktmon start --capture --pkt-size 0 -f cap.etl` → `pktmon stop` → `pktmon pcapng cap.etl -o
+     cap.pcapng`). The `.pcapng` is analyzed off-host by the **NSM VM 106** (Zeek+Suricata+JA3) via
+     the AI-VM helper `~/bin/nsm-analyze` — see verify-tool.md step 4. (Npcap+tshark optional; free
+     Npcap has no unattended silent installer.)
    - **`C:\Tools\collect-run.ps1 -StartUtc <iso8601> -EndUtc <iso8601> -OutDir <path>`** — exports
      the `Microsoft-Windows-Sysmon/Operational`, `Security`, `Microsoft-Windows-PowerShell/Operational`,
      and `Microsoft-Windows-Windows Defender/Operational` channels (time-filtered EVTX) plus a
