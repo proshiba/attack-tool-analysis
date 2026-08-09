@@ -27,9 +27,10 @@
       "disable_ioav_protection": true,
       "disable_script_scanning": true,
       "maps_reporting": "Disabled",
-      "submit_samples_consent": "NeverSend"
+      "submit_samples_consent": "NeverSend",
+      "persistence": "Real-time monitoring disablement is backed by local policy and was verified after a cold boot."
     },
-    "notes": "The canonical snapshot was taken through the Proxmox API while the guest filesystem was frozen, then the guest was thawed before execution."
+    "notes": "The run began from a filesystem-frozen Defender-off snapshot. The first post-run cold rollback showed Windows re-enabling real-time protection, so the baseline was corrected with local policy, cold-boot tested, and recreated through the Proxmox API under the same sysmon_baseline_defoff name after confirming all mimikatz artifacts were absent. The final rollback preserved Defender-off and Sysmon-on state."
   },
   "tool": {
     "name": "mimikatz",

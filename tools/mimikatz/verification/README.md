@@ -6,6 +6,12 @@ filesystem-frozen `sysmon_baseline_defoff` baseline. Defender Tamper Protection
 and real-time protection were off; Sysmon 15.21 was running with targeted LSASS
 ProcessAccess and mimikatz ImageLoad coverage.
 
+The first post-run cold rollback showed Windows re-enabling real-time protection.
+The canonical baseline was therefore corrected with a local-policy-backed
+real-time monitoring disablement, cold-boot tested, and recreated under the same
+snapshot name after confirming that no mimikatz artifacts remained. A final
+rollback preserved Defender-off and Sysmon-on state.
+
 The bounded run executed from `C:\lab` as `NT AUTHORITY\SYSTEM`:
 
 ```text
