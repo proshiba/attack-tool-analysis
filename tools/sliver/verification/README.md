@@ -1,102 +1,76 @@
-# Sliver multi-signal verification
+# Sliver mTLS verification with NSM
 
-Official Sliver `v1.7.3` was verified end to end in the contained vmbr1 lab.
-Kali VM 100 (`192.168.1.50`) hosted the Sliver server; Windows 10 VM 104
-(`192.168.1.52`) ran a generated amd64 beacon from the clean
-`win_verify_baseline` snapshot. The only implant C2 endpoint was the Kali
-listener on TCP/18080.
+Official Sliver v1.7.3 was verified end to end in the contained vmbr1 lab.
+Kali VM 100 (`192.168.1.50`) hosted a raw mTLS listener; Windows 10 VM 104
+(`192.168.1.52`) ran the generated amd64 beacon from the clean
+`win_verify_baseline`; NSM VM 106 (`10.9.0.20`) processed the full-packet
+capture with Zeek 8.2.1, Salesforce JA3, Suricata 7.0.10, and 52,234 ET Open
+alert rules.
 
-The generated beacon SHA-256 was
-`DEC80089EF9183F7E741E129D5744E7733BEE72C92E44F087C1A87F98883B622`.
-It used Sliver's HTTP(S) transport with a five-second interval, zero jitter,
-and the default HTTP C2 profile. Packet capture showed cleartext HTTP framing
-with Sliver-encrypted application payloads; no public or external C2 endpoint
-was configured.
+The implant SHA-256 was
+`A0961CB48E51E2B898578658B4AC582D7816F8C65396D983617A82127F24BD9C`.
+It used TLS 1.3 mTLS with a 10-second beacon interval and 3-second jitter. The
+Sliver beacon was confirmed as SYSTEM, and all bounded survey, execute, and
+download tasks completed.
 
-## Feasibility and canonical flow
+## What the NSM layer added
 
-Before touching VM 104, Sliver's native `--rc` script mechanism successfully
-started the listener and generated the Windows beacon non-interactively. The
-server reported `v1.7.3`, commit
-`3bbaf805104dcc4a75414ee0084e8de50702cad4`. Sliver state was isolated under
-`/tmp/sliver-verification/state`; pre-existing Kali `/root/.sliver` data was
-not used or removed.
-
-After rollback, the beacon was delivered into `C:\lab` from a temporary HTTP
-server bound only to Kali's lab address. This fallback was necessary because
-the installed `lab-push` helper invokes `bash` in the guest, and VM 104 has no
-`bash.exe`; a target hash check proved the transferred file was exact. The
-temporary staging server was stopped immediately.
-
-The beacon first contacted the listener at `2026-08-09T08:57:17Z` as
-`NT AUTHORITY\SYSTEM`. The bounded operator flow then completed `whoami`,
-`info`, `pwd`, `ls`, `ps`, a parser-safe `cmd.exe /c whoami`, marker creation,
-and download of the fixed 28-byte marker. Several earlier `execute` attempts
-used paths that Sliver's client parser normalized incorrectly; those attempts
-failed harmlessly and are retained in the action record because three still
-created useful implant-to-`cmd.exe` telemetry.
-
-## Five observation dimensions
-
-| Dimension | Result | Verified telemetry |
+| Question | Endpoint-only evidence | New NSM evidence |
 | --- | --- | --- |
-| Network / DNS | Observed network; no implant DNS | Sysmon EID 3 recorded 213 initiated TCP connections from the implant to Kali TCP/18080. The literal-IP C2 produced zero implant EID 22 queries. Pktmon captured 1,931 filtered C2 packets over 596 seconds. |
-| Files | Observed | EID 11 recorded PowerShell writing the implant, Windows creating its Prefetch file, and implant-spawned `cmd.exe` creating the marker. No related EID 23/26 was observed. |
-| Registry | Observed, nonspecific | The implant emitted ten EID 12 CreateKey events under Internet Settings/Connections and TenantRestrictions/Payload. No attributed EID 13/14 occurred; the paths are too common for a useful standalone rule. |
-| Process identity / command | Observed | EID 1 recorded the generated implant with absent PE identity metadata, its SHA-256, SYSTEM context, and PowerShell parent. |
-| Parent-child | Observed | EID 1 recorded five direct `sliver-verify.exe` → `cmd.exe` children, including successful `whoami` and marker creation. No EID 17/18 named pipes occurred in this HTTP-beacon flow. |
+| Which process connected? | Sysmon EID 3 attributed 18 connections to the implant | Zeek and Suricata independently reconstructed 18 TLS flows |
+| Was it actually TLS? | EID 3 showed only TCP | TLS 1.3, `TLS_AES_128_GCM_SHA256`, and `X25519MLKEM768` were parsed |
+| Can the encrypted channel be fingerprinted? | No TLS client/server fingerprint fields | JA3 `2196848d251b217de8b2c037e356c11d` and JA3S `f4febc55ea12b31ae17cfb7e614afda8` |
+| Was there SNI, HTTP, DNS C2, or visible x509? | No implant EID 22 query | No SNI, no HTTP log, no hostname C2, and no passively visible C2 certificate chain/x509 row |
+| Was the traffic periodic? | Repeated EID 3 connections, but no aggregate timing proof | 16 inter-flow gaps ranged 10.04–12.79 seconds, matching the configured 10+0–3 second schedule |
+| Did IDS content rules fire? | Not answerable | No ET Open Sliver/content alert; only pktmon checksum-offload decoder events fired |
 
-The endpoint collection window was `2026-08-09T08:56:50.000Z` through
-`2026-08-09T09:07:15.709Z`. Pktmon covered the C2 window from
-`08:57:17.360Z` through `09:07:15.709Z`.
+The active JARM measurement was run from NSM VM 106 while the listener was
+live. It returned the all-zero value
+`00000000000000000000000000000000000000000000000000000000000000`
+because generic JARM probes could not complete Sliver's client-authenticated
+mTLS handshake. That negative result is recorded honestly and is not used as a
+detection key. JA3/JA3S are the actionable passive fingerprints for this run.
 
-## Detection tiers
+## Detection coverage
 
-Tier 1 uses fields commonly normalized by endpoint products:
+Endpoint Tier 1 rules cover:
 
-- `proc_creation_unversioned_executable_from_script_host.yml` detects an
-  unversioned executable launched by a script/command host without relying on
-  the Sliver name, path, or hash.
-- `proc_creation_untrusted_parent_spawns_shell_or_lolbin.yml` detects a generic
-  executable parent spawning a shell or LOLBin while filtering common
-  interactive and management parents.
-- `file_event_script_host_writes_executable.yml` detects script-oriented tools
-  writing Windows executable payloads.
-- `network_connection_non_browser_web_egress.yml` detects a non-browser
-  executable initiating connections to web or alternate-web ports. It does
-  not contain the lab C2 IP and should be correlated for repeated connections.
+- an unversioned executable launched by a script/command host;
+- a generic executable parent spawning a shell or script utility; and
+- a script-oriented writer creating a Windows executable payload.
 
-Tier 2 adds `pipe_created_executable_from_user_writable_path.yml`, a
-Sysmon-native rule for a named-pipe server created by an executable in a
-writable staging location. Sliver supports operator-selected named-pipe pivot
-C2, so the rule does not hardcode a pipe name. It was not exercised in this
-HTTP-beacon run and is a future-scenario detection.
+Network rules cover:
 
-All five rules are `experimental`, include ATT&CK tags and realistic false
-positives, and parsed successfully with pySigma.
+- the observed JA3+JA3S pair in Zeek TLS logs;
+- the same pair in Suricata EVE TLS events; and
+- a lower-confidence Zeek hunt for repeated TLS 1.3 with no SNI or passively
+  visible certificate chain.
 
-## Network visibility limitation
+No rule hardcodes the lab C2 address or listener port. Beacon periodicity is
+documented as a correlation requirement because a single-event Sigma rule
+cannot express rolling inter-arrival timing. No named pipe, implant-attributed
+registry event, or deep process-access event occurred, so no unsupported Tier
+2 endpoint detection was added.
 
-Endpoint EID 3 establishes which process connected where, but a single-event
-Sigma rule cannot robustly model beacon periodicity or encrypted C2 semantics.
-This lab should add Suricata or Zeek flow/HTTP/TLS telemetry for beacon timing,
-HTTP-profile analysis, and JA3/JARM when HTTPS or mTLS is exercised. This run
-used cleartext HTTP framing, so no JA3/JARM fingerprint existed; Sliver still
-encrypted its application payload.
+## Evidence and sanitization
 
-The raw pcap is deliberately not committed because it contained ephemeral C2
-cookie material. `evidence/pcap-summary.json` retains only the capture hash,
-5-tuple, timing, packet/request counts, and a non-secret user-agent field.
-`evidence/multidimensional-signals.json` contains only sanitized Sysmon fields
-used to support the findings and rules. No host file contents, tokens,
-credentials, or C2 secrets are present.
+`evidence/endpoint-signals.json` contains only the process, parent-child, file,
+network, DNS, registry, and Tier 2 fields needed to support the endpoint rules.
+`evidence/network-signals.json` contains only TLS fingerprints, aggregate flow
+timing/volume, NSM versions, IDS alert summaries, and capture provenance.
+
+The raw 812,176-byte pcapng, ETL, EVTX, 154 MB endpoint JSON, Suricata EVE,
+Zeek logs, implant, Sliver database, operator profile, and TLS key material are
+not committed. No credential, token, cookie, private certificate material, or
+unrelated host data is present in this directory.
 
 ## Cleanup
 
-After PR creation, the isolated Sliver client/server and listeners were
-stopped on Kali, TCP/18080, TCP/18081, and TCP/31338 were confirmed closed,
-and `/tmp/sliver-verification` was deleted. Pre-existing `/root/.sliver` state
-was preserved. VM 104 was rolled back to `win_verify_baseline`; the rollback
-task completed with `OK`, and the implant, marker, pcap, telemetry exports,
-evidence extract, and Sliver process were all confirmed absent. Sysmon was
-running with the expected baseline configuration after rollback.
+After PR creation, the isolated Sliver server and mTLS listener were stopped on
+Kali, ports 31337/31338 were confirmed closed, and `/tmp/sliver-nsm` was
+deleted; pre-existing `/root/.sliver` state was preserved. VM 104 was rolled
+back to `win_verify_baseline` with Proxmox task result `OK`. After startup, the
+implant, marker, packet capture, telemetry exports, delivery chunks, helper
+scripts, and implant process were absent; pktmon was stopped; Sysmon 15.21 was
+running with the canonical config hash; and the Defender-off baseline state
+was intact.
