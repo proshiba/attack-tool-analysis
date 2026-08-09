@@ -1,36 +1,66 @@
-# mimikatz verification
+# mimikatz multi-signal verification
 
-Official mimikatz `2.2.0-20220919` was verified on VM 104
+Official mimikatz `2.2.0-20220919` was re-verified on VM 104
 (`WIN10-ANALYSIS`, Windows 10 Enterprise LTSC build 19044) from the
-filesystem-frozen `sysmon_baseline_defoff` baseline. Defender Tamper Protection
-and real-time protection were off; Sysmon 15.21 was running with targeted LSASS
-ProcessAccess and mimikatz ImageLoad coverage.
+`win_verify_baseline` snapshot. Sysmon 15.21 was running the verification-grade
+configuration that collects unfiltered process, network, DNS, file, and
+registry telemetry plus focused LSASS ProcessAccess events. The configuration
+SHA-256 was
+`5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71`.
+Defender real-time and behavior monitoring were off.
 
-The first post-run cold rollback showed Windows re-enabling real-time protection.
-The canonical baseline was therefore corrected with a local-policy-backed
-real-time monitoring disablement, cold-boot tested, and recreated under the same
-snapshot name after confirming that no mimikatz artifacts remained. A final
-rollback preserved Defender-off and Sysmon-on state.
+## Canonical run
 
-The bounded run executed from `C:\lab` as `NT AUTHORITY\SYSTEM`:
+The x64 binary reported `OriginalFileName=mimikatz.exe`, version `2.2.0.0`, and
+SHA-256
+`61C0810A23580CF492A6BA4F7654566108331E7A4134C968C2D6A05261B2D8A1`.
+It was executed from `C:\lab` as `NT AUTHORITY\SYSTEM` at System integrity:
 
 ```text
 mimikatz.exe privilege::debug sekurlsa::logonpasswords exit
 ```
 
-The process ran from `2026-08-09T05:27:51.0700727Z` through
-`2026-08-09T05:27:52.0925087Z` and exited with code 0. Sysmon recorded one EID 1
-process creation, 62 EID 7 image loads, and one EID 10 in which mimikatz opened
-`lsass.exe` with `GrantedAccess=0x1010`. No Defender events occurred in the
-collection window.
+The bounded invocation ran from `2026-08-09T06:47:26.1701945Z` through
+`2026-08-09T06:47:26.2598068Z` and exited with code 0. The telemetry collection
+window was `2026-08-09T06:47:25.170Z` through
+`2026-08-09T06:47:28.259Z`.
 
-The committed evidence contains only the single EID 10 ProcessAccess event used
-by the Sigma rule. It includes the source/target process metadata, access mask,
-and CallTrace. Mimikatz credential-dump output was redirected to a secret-only
-file, never inspected or pulled from the VM, and deleted immediately after the
-run. No harvested credentials or hashes are present in this directory.
+## Five observation dimensions
 
-The experimental Sigma rule detects LSASS access with memory-read-capable access
-masks without relying on the source process name, path, or file hash. Expected
-false positives include endpoint security products and authorized diagnostic or
-crash-dump tooling.
+| Dimension | Result | Verified telemetry |
+| --- | --- | --- |
+| Network / DNS | None observed | No Sysmon EID 3 or EID 22 occurred in the window. |
+| Files | Observed, indirect | Windows replaced `C:\Windows\Prefetch\MIMIKATZ.EXE-A381AD0F.pf`: EID 23 then EID 11 from `svchost.exe`. No direct mimikatz file write was observed. |
+| Registry | None observed | EID 12/13 background activity existed, but none was attributed to the mimikatz ProcessGuid or image; EID 14 count was zero. |
+| Process identity / command | Observed | EID 1 recorded the image, path, `OriginalFileName`, hashes, and the `privilege::debug sekurlsa::logonpasswords exit` command. |
+| Parent-child | Observed | EID 1 recorded PowerShell (PID 1224) launching mimikatz (PID 4452), both as SYSTEM. |
+
+Separately, the Tier 2 sensor recorded Sysmon EID 10 when mimikatz opened
+`lsass.exe` with `GrantedAccess=0x1010`, which includes `PROCESS_VM_READ`.
+
+## Detection model
+
+Tier 1 favors fields normalized by many endpoint products:
+
+- `proc_creation_mimikatz_cmdline.yml` is the primary rule. It uses the PE
+  original filename and characteristic double-colon credential-module tokens,
+  with parent-process context.
+- `file_event_mimikatz_prefetch.yml` is a supplemental, name-dependent rule for
+  the real Prefetch artifact observed in this run.
+
+Tier 2 complements those portable rules with the deeper Sysmon-native
+`process_access_lsass_read.yml`, which detects memory-read-capable access to
+LSASS without depending on a mimikatz name, path, or hash.
+
+No registry or network rule was authored because the canonical run produced no
+mimikatz-attributed signal in those dimensions. This avoids rules based on
+unobserved behavior.
+
+## Evidence and sanitization
+
+`evidence/multidimensional-signals.json` contains only the event fields needed
+to support the five-dimension findings. The ProcessAccess event is retained in
+`evidence/sysmon-eid10-lsass-process-access.json` for the Tier 2 rule. Native
+mimikatz output was discarded on the VM and was never pulled or inspected. No
+credential material, hashes harvested from LSASS, or raw security log is
+committed.

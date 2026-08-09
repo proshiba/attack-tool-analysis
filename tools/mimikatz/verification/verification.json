@@ -8,34 +8,38 @@
       "version": "10.0.19044",
       "architecture": "64-bit"
     },
-    "baseline_snapshot": "sysmon_baseline_defoff",
+    "baseline_snapshot": "win_verify_baseline",
     "sensors": [
       {
         "name": "Sysmon",
         "version": "15.21",
         "service_status": "Running",
-        "config_sha256": "D563B5CE648A0BEA4E5BC987A4A853DECAFF842F51D27374036C06DB23905A61",
+        "config_path": "C:\\Tools\\sysmon-verification.xml",
+        "config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
         "config_notes": [
-          "ProcessAccess includes TargetImage end with lsass.exe for EID 10.",
-          "ImageLoad includes Image end with mimikatz.exe for targeted EID 7 collection."
+          "Unfiltered EID 1 process creation.",
+          "Unfiltered EID 3 network connection and EID 22 DNS query.",
+          "Unfiltered EID 11/23 file and EID 12/13/14 registry telemetry.",
+          "Focused EID 10 ProcessAccess where TargetImage ends with lsass.exe."
         ]
       }
     ],
     "defender": {
-      "tamper_protected": false,
+      "am_service_enabled": true,
+      "antivirus_enabled": true,
       "real_time_protection_enabled": false,
-      "disable_ioav_protection": true,
-      "disable_script_scanning": true,
-      "maps_reporting": "Disabled",
-      "submit_samples_consent": "NeverSend",
-      "persistence": "Real-time monitoring disablement is backed by local policy and was verified after a cold boot."
-    },
-    "notes": "The run began from a filesystem-frozen Defender-off snapshot. The first post-run cold rollback showed Windows re-enabling real-time protection, so the baseline was corrected with local policy, cold-boot tested, and recreated through the Proxmox API under the same sysmon_baseline_defoff name after confirming all mimikatz artifacts were absent. The final rollback preserved Defender-off and Sysmon-on state."
+      "behavior_monitor_enabled": false,
+      "tamper_protected": false,
+      "disable_realtime_monitoring": true,
+      "notes": "The Defender service/engine remained installed, while real-time and behavior monitoring were confirmed off before execution."
+    }
   },
   "tool": {
     "name": "mimikatz",
     "version": "2.2.0-20220919",
     "file_version": "2.2.0.0",
+    "original_file_name": "mimikatz.exe",
+    "company": "gentilkiwi (Benjamin DELPY)",
     "source": "https://github.com/gentilkiwi/mimikatz/releases/tag/2.2.0-20220919",
     "release_asset": {
       "url": "https://github.com/gentilkiwi/mimikatz/releases/download/2.2.0-20220919/mimikatz_trunk.zip",
@@ -49,56 +53,112 @@
       {
         "working_directory": "C:\\lab",
         "invocation": "mimikatz.exe privilege::debug sekurlsa::logonpasswords exit",
-        "sysmon_command_line": "\"C:\\lab\\mimikatz.exe\" privilege::debug sekurlsa::logonpasswords exit ",
+        "sysmon_command_line": "\"C:\\lab\\mimikatz.exe\" privilege::debug sekurlsa::logonpasswords exit",
         "account": "NT AUTHORITY\\SYSTEM",
         "integrity_level": "System",
-        "process_id": 8748,
+        "process_id": 4452,
+        "process_guid": "{d6daef74-227e-6a78-6902-000000000b00}",
         "exit_code": 0,
-        "started_at": "2026-08-09T05:27:51.0700727Z",
-        "ended_at": "2026-08-09T05:27:52.0925087Z"
+        "started_at": "2026-08-09T06:47:26.1701945Z",
+        "sysmon_process_created_at": "2026-08-09T06:47:26.177Z",
+        "ended_at": "2026-08-09T06:47:26.2598068Z",
+        "sysmon_process_terminated_at": "2026-08-09T06:47:26.259Z"
       }
     ]
+  },
+  "observed_signals": {
+    "network_and_dns": {
+      "event_ids": [3, 22],
+      "status": "none observed",
+      "details": "No network connection or DNS query event occurred in the canonical collection window."
+    },
+    "files": {
+      "event_ids": [11, 23],
+      "status": "observed",
+      "details": "Windows svchost.exe emitted EID 23 then EID 11 while replacing C:\\Windows\\Prefetch\\MIMIKATZ.EXE-A381AD0F.pf immediately after process termination. No direct mimikatz file write was observed."
+    },
+    "registry": {
+      "event_ids": [12, 13, 14],
+      "status": "none observed",
+      "details": "The window contained 133 EID 12 and 7 EID 13 background events from svchost.exe/taskhostw.exe, zero EID 14, and no event attributed to the mimikatz ProcessGuid or image."
+    },
+    "process_identity_and_command": {
+      "event_ids": [1],
+      "status": "observed",
+      "details": "Image, path, OriginalFileName=mimikatz.exe, command line with privilege::debug and sekurlsa::logonpasswords, user, integrity level, and hashes were recorded."
+    },
+    "parent_child": {
+      "event_ids": [1],
+      "status": "observed",
+      "details": "PowerShell PID 1224 launched mimikatz PID 4452 as NT AUTHORITY\\SYSTEM."
+    }
   },
   "observed_techniques": [
     {
       "id": "T1003.001",
       "name": "OS Credential Dumping: LSASS Memory",
-      "observation": "Sysmon EID 10 recorded mimikatz opening lsass.exe with GrantedAccess 0x1010; the mask includes PROCESS_VM_READ."
+      "observation": "Sysmon EID 10 recorded mimikatz opening lsass.exe with GrantedAccess 0x1010, including PROCESS_VM_READ."
     }
   ],
   "telemetry_summary": {
     "collection_window": {
-      "start": "2026-08-09T05:27:50Z",
-      "end": "2026-08-09T05:27:54Z"
+      "start": "2026-08-09T06:47:25.170Z",
+      "end": "2026-08-09T06:47:28.259Z"
     },
     "sysmon": {
-      "event_id_1": 1,
-      "event_id_7": 62,
+      "event_id_1_total": 2,
+      "event_id_1_mimikatz": 1,
+      "event_id_3": 0,
       "event_id_10_mimikatz_to_lsass": 1,
+      "event_id_11": 1,
+      "event_id_12": 133,
+      "event_id_13": 7,
+      "event_id_14": 0,
+      "event_id_22": 0,
+      "event_id_23": 1,
       "process_access_granted_access": "0x1010"
-    },
-    "defender_events": 0
+    }
   },
   "evidence": [
     {
+      "path": "evidence/multidimensional-signals.json",
+      "event_ids": [1, 3, 11, 12, 13, 14, 22, 23],
+      "description": "Sanitized event fields and honest presence/absence findings for all five observation dimensions."
+    },
+    {
       "path": "evidence/sysmon-eid10-lsass-process-access.json",
-      "event_ids": [
-        10
-      ],
-      "description": "One sanitized Sysmon ProcessAccess event showing mimikatz opening LSASS with GrantedAccess 0x1010 and the associated CallTrace."
+      "event_ids": [10],
+      "description": "Sanitized Sysmon ProcessAccess event showing mimikatz opening LSASS with GrantedAccess 0x1010."
     }
   ],
   "sigma": [
     {
-      "path": "sigma/win_sysmon_lsass_vm_read_access.yml",
+      "path": "sigma/proc_creation_mimikatz_cmdline.yml",
+      "tier": 1,
+      "logsource": "windows/process_creation",
       "status": "experimental",
-      "description": "Behavior-based detection for LSASS access masks that include memory-read rights; it does not depend on the mimikatz path or hash."
+      "description": "Primary portable detection for mimikatz OriginalFileName or characteristic double-colon credential-module command lines with parent context."
+    },
+    {
+      "path": "sigma/file_event_mimikatz_prefetch.yml",
+      "tier": 1,
+      "logsource": "windows/file_event",
+      "status": "experimental",
+      "description": "Supplemental portable file-event detection for the name-dependent Prefetch artifact observed in the run."
+    },
+    {
+      "path": "sigma/process_access_lsass_read.yml",
+      "tier": 2,
+      "logsource": "windows/sysmon/process_access",
+      "status": "experimental",
+      "description": "Deep Sysmon-native detection for memory-read-capable LSASS access masks independent of mimikatz identity."
     }
   ],
   "sanitization": {
     "credential_output_committed": false,
-    "notes": "Mimikatz stdout was redirected to a secret-only file, never inspected or pulled, and deleted on the VM immediately after execution. Only Sigma-relevant process-access telemetry is committed."
+    "raw_event_export_committed": false,
+    "notes": "Native mimikatz output was discarded on the VM and never pulled or inspected. Only Sigma-relevant telemetry fields are committed; no recovered credentials or LSASS-derived hashes are present."
   },
-  "verified_at": "2026-08-09T05:27:52Z",
+  "verified_at": "2026-08-09T06:47:26Z",
   "verifier": "Codex lab orchestrator"
 }
