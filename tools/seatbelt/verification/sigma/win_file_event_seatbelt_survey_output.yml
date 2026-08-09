@@ -1,0 +1,30 @@
+title: Seatbelt Survey Output File Creation
+id: d2bc9610-2b09-45c1-9c70-86a463f5d72a
+status: experimental
+description: >-
+  Detects Seatbelt creating a text or JSON survey output file. This supporting
+  signal is present when an operator uses the outputfile argument and stages
+  enumeration results on the local host.
+references:
+  - https://github.com/GhostPack/Seatbelt
+author: Codex lab orchestrator
+date: '2026-08-09'
+tags:
+  - attack.collection
+  - attack.t1074.001
+logsource:
+  category: file_event
+  product: windows
+  service: sysmon
+detection:
+  selection_image:
+    Image|endswith: '\Seatbelt.exe'
+  selection_output:
+    TargetFilename|endswith:
+      - '.json'
+      - '.txt'
+  condition: selection_image and selection_output
+falsepositives:
+  - Authorized Seatbelt surveys that intentionally save results to disk
+  - Internal software named Seatbelt.exe that creates JSON or text reports
+level: medium

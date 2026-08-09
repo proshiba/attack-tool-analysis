@@ -1,0 +1,53 @@
+title: Seatbelt Host Enumeration From a Command Shell
+id: 8f05c2f4-e6ae-4b43-98c1-63ce4b8a90d2
+status: experimental
+description: >-
+  Detects a Seatbelt assembly launched by a command or script interpreter with
+  characteristic group or focused enumeration arguments. The rule combines
+  PE identity, command-line behavior, and parent-child context.
+references:
+  - https://github.com/GhostPack/Seatbelt
+author: Codex lab orchestrator
+date: '2026-08-09'
+tags:
+  - attack.discovery
+  - attack.t1082
+  - attack.t1518.001
+  - attack.t1087.001
+  - attack.t1012
+  - attack.t1057
+  - attack.t1033
+  - attack.t1016
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_identity_image:
+    Image|endswith: '\Seatbelt.exe'
+  selection_identity_original:
+    OriginalFileName: 'Seatbelt.exe'
+  selection_args_group:
+    CommandLine|contains: ' -group='
+  selection_args_commands:
+    CommandLine|contains:
+      - ' OSInfo'
+      - ' AntiVirus'
+      - ' PowerShell'
+      - ' AppLocker'
+      - ' LAPS'
+      - ' WindowsVault'
+      - ' CloudCredentials'
+      - ' ScheduledTasks'
+  selection_parent:
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+      - '\pwsh.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+  condition: >-
+    1 of selection_identity_* and 1 of selection_args_* and selection_parent
+falsepositives:
+  - Authorized red-team, penetration-test, or incident-response use of Seatbelt
+  - Internally developed inventory tooling that retains the Seatbelt PE original filename and command syntax
+level: high
