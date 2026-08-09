@@ -1,52 +1,77 @@
 # Playbook: Prepare a Windows target for attack-tool verification
 
-Audience: the lab orchestrator (Codex on the AI VM). Goal — bring a Windows
-analysis VM to a **clean, instrumented baseline** so an attack tool can be run and
-its telemetry captured for detection engineering (Sigma).
+Audience: the lab orchestrator (Codex on the AI VM). Goal — bring a Windows analysis VM to a
+clean, **richly instrumented** baseline so an attack tool can be run and its telemetry captured
+**comprehensively** for detection engineering (Sigma).
 
 ## Inputs
 - **Target VM**: default `104` = `WIN10-ANALYSIS`, `192.168.1.52` (Windows 10 LTSC).
-- **Helpers on the AI VM**: `~/bin/lab-exec <vmid> <cmd...>` (run a command in a VM via
-  the QEMU guest agent), `~/bin/lab-push <vmid> <local> <remote>`, `~/bin/lab-pull`.
-  Inspect the scripts if unsure of argument handling.
-- **Proxmox API creds**: `~/.config/lab/pve.env` (`PVE_HOST`, `PVE_TOKENID`, `PVE_TOKEN`).
-  Node = `analysis-proxmox`.
+- **Helpers**: `~/bin/lab-exec <vmid> <cmd...>`, `~/bin/lab-push`, `~/bin/lab-pull`
+  (lab-pull is Windows-capable — it uses native PowerShell Base64 for Windows targets).
+- **Proxmox API creds**: `~/.config/lab/pve.env` (node `analysis-proxmox`).
+- **Canonical baseline snapshot**: **`win_verify_baseline`** (Defender-off + verification-grade
+  Sysmon + the C:\Tools collection toolset).
 
 ## Running Windows commands over the guest agent
-Run PowerShell via the guest agent. For multi-line scripts the reliable pattern is to
-**base64-encode a UTF-16LE script** and run `powershell -NoProfile -EncodedCommand <B64>`,
-or `lab-push` a `.ps1` to `C:\lab\` and execute it. Always parse the guest-agent JSON
-result (`out-data` / `err-data` / `exitcode`). PowerShell writes CLIXML progress to
-stderr — that is noise, not an error.
+For multi-line PowerShell, base64-encode a UTF-16LE script and run
+`powershell -NoProfile -EncodedCommand <B64>`, or `lab-push` a `.ps1` to `C:\lab\`. Always parse
+the guest-agent JSON (`out-data`/`err-data`/`exitcode`). PowerShell CLIXML progress on stderr is
+noise, not an error.
 
 ## Steps (verify each; print evidence)
-1. **Confirm** VM is running and its Windows guest agent responds.
-2. **Install Sysmon** (the primary sensor):
-   - Create `C:\lab\`.
-   - Sysmon: download `https://download.sysinternals.com/files/Sysmon.zip`, expand to
-     `C:\lab\sysmon\` → `Sysmon64.exe`.
-   - Config: `https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml`
-     → `C:\lab\sysmonconfig.xml` (SwiftOnSecurity baseline; Olaf Hartong `sysmon-modular`
-     is an alternative).
-   - Install: `C:\lab\sysmon\Sysmon64.exe -accepteula -i C:\lab\sysmonconfig.xml`.
-   - **CRITICAL**: ensure Sysmon logs **ProcessAccess (Event ID 10) targeting `lsass.exe`**
-     — credential-access tools (mimikatz, etc.) depend on it. If the config lacks a
-     ProcessAccess include-rule for `lsass.exe`, add one and re-apply
-     (`Sysmon64.exe -c C:\lab\sysmonconfig.xml`), e.g.
-     `<ProcessAccess onmatch="include"><TargetImage condition="end with">lsass.exe</TargetImage></ProcessAccess>`.
-   - Verify: `Sysmon64` service **Running**; `Microsoft-Windows-Sysmon/Operational` log exists.
-   - *(Optional but recommended)* enable PowerShell ScriptBlock logging + relevant
-     Security-log auditing (process creation w/ command line, handle/privilege use).
-3. **Handle AV** for tools that will be flagged — document this as environment setup;
-   the VM is isolated and snapshotted:
-   - `Set-MpPreference -DisableRealtimeMonitoring $true`; `Add-MpPreference -ExclusionPath C:\lab`.
-   - Verify `(Get-MpComputerStatus).RealTimeProtectionEnabled` is `False`. If **Tamper
-     Protection** blocks it, report clearly (fallback: path exclusions only).
-4. **Snapshot the clean instrumented baseline** via the Proxmox API
-   (`POST .../nodes/analysis-proxmox/qemu/<vmid>/snapshot`, `snapname=sysmon_baseline`,
-   a description, fs-frozen). Every verification run rolls back to this snapshot afterward.
+1. **Confirm** the VM is running and its guest agent responds.
+
+2. **Defender OFF — prerequisite: Tamper Protection.** Signature-detected hacktools (mimikatz,
+   LaZagne, …) are blocked while real-time protection is on, and **a path exclusion alone is NOT
+   enough** (confirmed: mimikatz → `HackTool:Win32/Mimikatz`, Defender EID 1116/1117, no process,
+   no telemetry).
+   - **Tamper Protection must be turned off first, and this is MANUAL (by design)** — it cannot be
+     disabled programmatically. Toggle it once in the GUI: *Windows Security → Virus & threat
+     protection → Manage settings → Tamper Protection → Off*. Confirm `(Get-MpComputerStatus).IsTamperProtected`
+     is `False`.
+   - Then: `Set-MpPreference -DisableRealtimeMonitoring $true -DisableIOAVProtection $true`
+     `-DisableScriptScanning $true -MAPSReporting Disabled -SubmitSamplesConsent NeverSend`.
+   - **Persist across reboot**: Windows re-enables real-time protection on reboot unless backed by
+     local policy (`HKLM\SOFTWARE\Policies\Microsoft\Windows Defender`). Verify it stays off after
+     a reboot.
+
+3. **Sensor: Sysmon with a VERIFICATION-GRADE config.** A verification VM runs one tool briefly in
+   a clean state, so **completeness beats noise-reduction** — do NOT use a production-tuned config
+   that filters telemetry. (The stock SwiftOnSecurity config heavily filters network events and
+   WILL miss arbitrary C2.) Use a permissive config — Olaf Hartong `sysmon-modular` (full), or
+   SwiftOnSecurity with the network/file/registry exclusions removed — that captures, unfiltered,
+   the **five observation dimensions** used for detection:
+   - **Process creation (EID 1)** — Image, OriginalFileName, **CommandLine**, Hashes, and the
+     **parent** (ParentImage / ParentCommandLine / ParentProcessGuid), User, IntegrityLevel.
+   - **Network (EID 3) + DNS (EID 22)** — log **ALL** connections and queries (destination
+     IP/host/port, QueryName). Do not filter.
+   - **File (EID 11 create, EID 23/26 delete, EID 15 stream hash)** — broad.
+   - **Registry (EID 12 key/value create+delete, EID 13 value set, EID 14 rename)** — broad.
+   - **LSASS ProcessAccess (EID 10)** — keep the `lsass.exe` include-rule (credential-access depth).
+   - Image load (EID 7) may remain filtered (high volume; Tier-2 signal — see verify-tool.md).
+   Verify `Sysmon64` is Running and `Microsoft-Windows-Sysmon/Operational` is receiving these EIDs.
+
+4. **Additional telemetry** (make it reboot-persistent via policy, not just runtime):
+   - PowerShell **Script Block + Module + Transcription** logging
+     (transcripts → `C:\Tools\Logs\pstranscripts`) via `HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell\*`.
+   - Process-creation **command-line auditing** (`ProcessCreationIncludeCmdLine_Enabled=1`).
+   - `auditpol` for **Process Creation, Handle Manipulation, Sensitive Privilege Use, Logon** (success+failure).
+
+5. **Collection toolset** at `C:\Tools`:
+   - **Sysinternals Suite** → `C:\Tools\Sysinternals` (EULAs pre-accepted, on PATH) — Procmon
+     (deep file/reg/proc trace), Autoruns, Handle, Sigcheck, Process Explorer, Tcpview, PsTools.
+   - **Network capture**: built-in **`pktmon`** (pcap for network/C2 tools). Npcap+tshark optional
+     (note: free Npcap has no unattended silent installer).
+   - **`C:\Tools\collect-run.ps1 -StartUtc <iso8601> -EndUtc <iso8601> -OutDir <path>`** — exports
+     the `Microsoft-Windows-Sysmon/Operational`, `Security`, `Microsoft-Windows-PowerShell/Operational`,
+     and `Microsoft-Windows-Windows Defender/Operational` channels (time-filtered EVTX) plus a
+     combined `events.json`. This standardizes telemetry collection for a run window.
+
+6. **Snapshot** the clean instrumented baseline as **`win_verify_baseline`** (fs-frozen, via the
+   Proxmox API). Every verification run rolls back to this snapshot afterward.
 
 ## Output / report
-Sysmon service status; whether lsass **EID 10** ProcessAccess is covered (and any config
-augmentation you made); Defender `RealTimeProtectionEnabled`; and the `sysmon_baseline`
-snapshot result. **Do not run the attack tool in this playbook** — provisioning only.
+Defender/Tamper state (and reboot-persistence); Sysmon status + which of the five dimensions the
+active config captures (and any config change made); the collection toolset installed; the
+`collect-run.ps1` interface; and the `win_verify_baseline` snapshot result. **Do not run the
+attack tool in this playbook** — provisioning only.
