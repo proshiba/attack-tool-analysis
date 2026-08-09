@@ -1,0 +1,55 @@
+title: Non-Browser Executable Makes Outbound Web or Alternate-Web Connection
+id: 8a8a40c6-c117-4f17-9a49-02d1db8eab63
+status: experimental
+description: >-
+  Detects an executable other than a common browser or Windows networking
+  service initiating TCP connections to common web and alternate-web ports.
+  The verified Sliver beacon repeatedly connected to an HTTP listener on an
+  alternate port. This single-event rule should be correlated for repeated
+  short-lived connections from the same image; it intentionally contains no
+  lab C2 address, implant name, path, or hash.
+references:
+  - https://github.com/BishopFox/sliver
+  - https://github.com/BishopFox/sliver/wiki/Transport-Encryption
+author: Codex lab orchestrator
+date: '2026-08-09'
+tags:
+  - attack.command_and_control
+  - attack.t1071.001
+  - attack.t1573.002
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  selection_connection:
+    Initiated: 'true'
+    Protocol: tcp
+    Image|endswith: '.exe'
+    DestinationPort:
+      - 80
+      - 443
+      - 8000
+      - 8080
+      - 8443
+      - 8888
+      - 18080
+  filter_browsers:
+    Image|endswith:
+      - '\chrome.exe'
+      - '\msedge.exe'
+      - '\firefox.exe'
+      - '\iexplore.exe'
+      - '\brave.exe'
+      - '\opera.exe'
+  filter_windows_network_services:
+    Image|endswith:
+      - '\svchost.exe'
+      - '\backgroundtransferhost.exe'
+      - '\windowsupdatebox.exe'
+      - '\wuauclt.exe'
+  condition: selection_connection and not 1 of filter_*
+falsepositives:
+  - Non-browser business applications, update agents, and monitoring tools using HTTP(S)
+  - Command-line clients such as curl and custom API utilities
+  - Authorized penetration tests and malware-analysis labs
+level: medium

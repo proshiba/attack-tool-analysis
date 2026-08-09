@@ -1,0 +1,39 @@
+title: Script Host Writes a Windows Executable Payload
+id: 32c240c3-52c9-47b2-976a-1489bfc8581e
+status: experimental
+description: >-
+  Detects PowerShell or another script-oriented utility writing an executable
+  payload. PowerShell wrote the verified Sliver implant before execution. The
+  rule does not depend on the lab directory, generated filename, or hash.
+references:
+  - https://github.com/BishopFox/sliver
+author: Codex lab orchestrator
+date: '2026-08-09'
+tags:
+  - attack.command_and_control
+  - attack.t1105
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection_writer:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+      - '\mshta.exe'
+      - '\certutil.exe'
+      - '\bitsadmin.exe'
+  selection_payload:
+    TargetFilename|endswith:
+      - '.exe'
+      - '.dll'
+      - '.scr'
+      - '.com'
+  condition: selection_writer and selection_payload
+falsepositives:
+  - Enterprise software deployment and bootstrap scripts
+  - Developer build or packaging workflows
+  - Authorized penetration tests and malware-analysis labs
+level: medium
