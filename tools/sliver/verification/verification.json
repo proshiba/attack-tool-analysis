@@ -334,6 +334,12 @@
     "pysigma": "All five rules parsed successfully with pySigma on 2026-08-09.",
     "json": "verification.json and both evidence JSON files passed jq validation on 2026-08-09."
   },
+  "cleanup": {
+    "confirmed_at": "2026-08-09T09:28:23Z",
+    "attacker": "Stopped the isolated Sliver client/server and listeners; confirmed TCP 18080, 18081, and 31338 closed; deleted /tmp/sliver-verification; preserved pre-existing /root/.sliver state.",
+    "target": "Proxmox rollback to win_verify_baseline completed with exitstatus OK; confirmed the implant, marker, pcap, telemetry directories, evidence extract, and Sliver process were absent after startup.",
+    "baseline_health": "Sysmon64 was Running with config SHA-256 5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71; Defender real-time and behavior monitoring remained off as defined by the baseline."
+  },
   "verified_at": "2026-08-09T09:07:15Z",
   "verifier": "Codex lab orchestrator"
 }

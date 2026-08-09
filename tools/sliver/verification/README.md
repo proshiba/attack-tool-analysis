@@ -90,3 +90,13 @@ cookie material. `evidence/pcap-summary.json` retains only the capture hash,
 `evidence/multidimensional-signals.json` contains only sanitized Sysmon fields
 used to support the findings and rules. No host file contents, tokens,
 credentials, or C2 secrets are present.
+
+## Cleanup
+
+After PR creation, the isolated Sliver client/server and listeners were
+stopped on Kali, TCP/18080, TCP/18081, and TCP/31338 were confirmed closed,
+and `/tmp/sliver-verification` was deleted. Pre-existing `/root/.sliver` state
+was preserved. VM 104 was rolled back to `win_verify_baseline`; the rollback
+task completed with `OK`, and the implant, marker, pcap, telemetry exports,
+evidence extract, and Sliver process were all confirmed absent. Sysmon was
+running with the expected baseline configuration after rollback.
