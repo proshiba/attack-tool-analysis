@@ -1,0 +1,22 @@
+[
+  {
+    "EventId": 1,
+    "RecordId": 212208,
+    "UtcTime": "2026-08-09 08:25:02.021",
+    "ProcessGuid": "{d6daef74-395e-6a78-6204-000000000b00}",
+    "ProcessId": 3056,
+    "Image": "C:\\lab\\Seatbelt.exe",
+    "FileVersion": "1.0.0.0",
+    "OriginalFileName": "Seatbelt.exe",
+    "CommandLine": "\"C:\\lab\\Seatbelt.exe\" -group=all -q -outputfile=C:\\lab\\seatbelt-run.json",
+    "CurrentDirectory": "C:\\lab\\",
+    "User": "NT AUTHORITY\\SYSTEM",
+    "IntegrityLevel": "System",
+    "Hashes": "SHA1=D629A75DA297DAADDEE17C420BF08CAB0F043971,MD5=54C935CEF5CD76EC8E8BBD7F354E6A79,SHA256=D5D5B5C724F7F509BF685952A58D5B9C4C3C46C0E6A6DCB68BAD72FDD21D38E8,IMPHASH=F34D5F2D4577ED6D9CEEC516C1F5A744",
+    "ParentProcessGuid": "{d6daef74-395d-6a78-6104-000000000b00}",
+    "ParentProcessId": 3852,
+    "ParentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "ParentCommandLine": "powershell.exe -NoLogo -NoProfile -NonInteractive -Command <lab wrapper setting C:\\lab and invoking .\\Seatbelt.exe -group=all -q -outputfile=C:\\lab\\seatbelt-run.json>",
+    "ParentUser": "NT AUTHORITY\\SYSTEM"
+  }
+]

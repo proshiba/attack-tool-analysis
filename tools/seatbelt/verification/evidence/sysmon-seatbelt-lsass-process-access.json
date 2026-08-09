@@ -1,0 +1,32 @@
+[
+  {
+    "EventId": 10,
+    "RecordId": 212482,
+    "UtcTime": "2026-08-09 08:25:02.440",
+    "SourceProcessGUID": "{d6daef74-395e-6a78-6204-000000000b00}",
+    "SourceProcessId": 3056,
+    "SourceImage": "C:\\lab\\Seatbelt.exe",
+    "TargetProcessGUID": "{d6daef74-3540-6a78-0c00-000000000b00}",
+    "TargetProcessId": 732,
+    "TargetImage": "C:\\Windows\\system32\\lsass.exe",
+    "GrantedAccess": "0x1000",
+    "CallTrace": "C:\\Windows\\SYSTEM32\\ntdll.dll+9dad4|C:\\Windows\\System32\\KERNELBASE.dll+28d3e|UNKNOWN(00007FFF4245A118)",
+    "SourceUser": "NT AUTHORITY\\SYSTEM",
+    "TargetUser": "NT AUTHORITY\\SYSTEM"
+  },
+  {
+    "EventId": 10,
+    "RecordId": 212533,
+    "UtcTime": "2026-08-09 08:25:02.940",
+    "SourceProcessGUID": "{d6daef74-395e-6a78-6204-000000000b00}",
+    "SourceProcessId": 3056,
+    "SourceImage": "C:\\lab\\Seatbelt.exe",
+    "TargetProcessGUID": "{d6daef74-3540-6a78-0c00-000000000b00}",
+    "TargetProcessId": 732,
+    "TargetImage": "C:\\Windows\\system32\\lsass.exe",
+    "GrantedAccess": "0x1410",
+    "CallTrace": "C:\\Windows\\SYSTEM32\\ntdll.dll+9dad4|C:\\Windows\\System32\\KERNELBASE.dll+28d3e|C:\\Windows\\assembly\\NativeImages_v4.0.30319_64\\System\\7445c290449652faf35238f59f3455cc\\System.ni.dll+34f460|C:\\Windows\\assembly\\NativeImages_v4.0.30319_64\\System\\7445c290449652faf35238f59f3455cc\\System.ni.dll+2cd80e|C:\\Windows\\assembly\\NativeImages_v4.0.30319_64\\System\\7445c290449652faf35238f59f3455cc\\System.ni.dll+2ccc4f|C:\\Windows\\assembly\\NativeImages_v4.0.30319_64\\System\\7445c290449652faf35238f59f3455cc\\System.ni.dll+2ccb86|C:\\Windows\\assembly\\NativeImages_v4.0.30319_64\\System\\7445c290449652faf35238f59f3455cc\\System.ni.dll+2cbd00|UNKNOWN(00007FFF42471F8B)",
+    "SourceUser": "NT AUTHORITY\\SYSTEM",
+    "TargetUser": "NT AUTHORITY\\SYSTEM"
+  }
+]

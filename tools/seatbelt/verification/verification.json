@@ -1,0 +1,261 @@
+{
+  "scenario": {
+    "id": "broad-post-compromise-host-survey",
+    "name": "Broad post-compromise host survey with local result staging",
+    "description": "Run Seatbelt's all group to enumerate host, security-control, account, process, network, file, credential-opportunity, browser, token, and scheduled-task context, then stage the survey in a local JSON file.",
+    "design": "scenarios.md",
+    "attack_mapping": [
+      "T1082",
+      "T1518.001",
+      "T1012",
+      "T1087.001",
+      "T1033",
+      "T1057",
+      "T1016",
+      "T1083",
+      "T1552.001",
+      "T1555",
+      "T1217",
+      "T1053.005",
+      "T1074.001"
+    ]
+  },
+  "environment": {
+    "target": {
+      "vmid": 104,
+      "name": "WIN10-ANALYSIS",
+      "address": "192.168.1.52",
+      "os": "Microsoft Windows 10 Enterprise LTSC Evaluation",
+      "version": "10.0.19044",
+      "architecture": "64-bit"
+    },
+    "proxmox_node": "analysis-proxmox",
+    "baseline_snapshot": "win_verify_baseline",
+    "sensors": [
+      {
+        "name": "Sysmon",
+        "version": "15.21",
+        "service_status": "Running",
+        "config_path": "C:\\Tools\\sysmon-verification.xml",
+        "config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
+        "config_notes": "Verification-grade unfiltered process, network, DNS, file, and registry coverage; LSASS ProcessAccess EID 10 enabled."
+      }
+    ],
+    "defender": {
+      "real_time_protection_enabled": false
+    },
+    "collector": {
+      "path": "C:\\Tools\\collect-run.ps1",
+      "pktmon_used": false,
+      "pktmon_reason": "The scenario was local host enumeration. Sysmon recorded the only loopback connection and localhost DNS query, so a packet capture would not add useful detection evidence."
+    }
+  },
+  "tool": {
+    "name": "Seatbelt",
+    "version": "1.0.0.0 (unreleased upstream commit)",
+    "repository": "https://github.com/GhostPack/Seatbelt",
+    "commit": "392171df84472591d4eae7ebd5b1cdc96ba91377",
+    "commit_date": "2025-01-10T20:12:46Z",
+    "acquisition": {
+      "method": "built_from_official_source",
+      "official_compiled_release_available": false,
+      "source_archive_sha256": "57026EA5FF6121AB8B794FBF9CA354737E3F53CFA1E5C7DA2FFA3390C6702AD9",
+      "source_modified": false,
+      "build_tool": "Microsoft Visual Studio Build Tools 2022 / MSBuild 17.14.51+25f168cee",
+      "build_command": "C:\\BuildTools\\MSBuild\\Current\\Bin\\MSBuild.exe C:\\lab\\Seatbelt-src\\Seatbelt.sln /t:Rebuild /p:Configuration=Release /p:Platform=\"Any CPU\" /p:TargetFrameworkVersion=v4.7.2 /m /v:minimal",
+      "build_notes": "The upstream project requests .NET Framework 3.5, whose legacy reference pack is not included with current Build Tools. The exact source was compiled unchanged with a command-line v4.7.2 target override using Microsoft's installed reference assemblies.",
+      "transfer_notes": "lab-push was attempted but failed because the helper invokes bash, which is absent in the Windows guest. The archive was transferred in bounded chunks through lab-exec over QEMU guest agent; the reassembled SHA-256 matched. Telemetry was retrieved with lab-pull after in-guest compression."
+    },
+    "binary": {
+      "path": "C:\\lab\\Seatbelt.exe",
+      "size_bytes": 611328,
+      "sha256": "D5D5B5C724F7F509BF685952A58D5B9C4C3C46C0E6A6DCB68BAD72FDD21D38E8",
+      "original_filename": "Seatbelt.exe",
+      "file_version": "1.0.0.0",
+      "signature_status": "NotSigned"
+    },
+    "commands": [
+      {
+        "working_directory": "C:\\lab",
+        "invocation": "Seatbelt.exe -group=all -q -outputfile=C:\\lab\\seatbelt-run.json",
+        "sysmon_command_line": "\"C:\\lab\\Seatbelt.exe\" -group=all -q -outputfile=C:\\lab\\seatbelt-run.json",
+        "account": "NT AUTHORITY\\SYSTEM",
+        "privilege": "Administrator with System integrity",
+        "process_id": 3056,
+        "process_guid": "{d6daef74-395e-6a78-6204-000000000b00}",
+        "exit_code": 0,
+        "started_at": "2026-08-09T08:25:02.0183486Z",
+        "ended_at": "2026-08-09T08:25:04.7370978Z"
+      }
+    ]
+  },
+  "observed_techniques": [
+    {
+      "id": "T1082",
+      "name": "System Information Discovery",
+      "observation": "The all group invoked OS, hotfix, runtime, environment, and system configuration checks."
+    },
+    {
+      "id": "T1518.001",
+      "name": "Software Discovery: Security Software Discovery",
+      "observation": "The all group invoked AntiVirus, WindowsDefender, Sysmon, AMSIProviders, and firewall checks."
+    },
+    {
+      "id": "T1012",
+      "name": "Query Registry",
+      "observation": "The scenario invoked registry-backed configuration checks. Sysmon exposed 37 Seatbelt-attributed write-class registry events but does not log the broader reads."
+    },
+    {
+      "id": "T1087.001",
+      "name": "Account Discovery: Local Account",
+      "observation": "The all group invoked LocalUsers and LocalGroups."
+    },
+    {
+      "id": "T1033",
+      "name": "System Owner/User Discovery",
+      "observation": "The all group invoked session, process-owner, token-group, and token-privilege checks."
+    },
+    {
+      "id": "T1057",
+      "name": "Process Discovery",
+      "observation": "The all group invoked Processes and InterestingProcesses; Sysmon also recorded two Seatbelt-to-LSASS ProcessAccess events."
+    },
+    {
+      "id": "T1016",
+      "name": "System Network Configuration Discovery",
+      "observation": "The all group invoked ARP, DNS, network-profile, share, and connection checks; Sysmon recorded loopback RPC and localhost resolution."
+    },
+    {
+      "id": "T1083",
+      "name": "File and Directory Discovery",
+      "observation": "The all group invoked directory, interesting-file, browser-presence, and credential-file checks."
+    },
+    {
+      "id": "T1552.001",
+      "name": "Unsecured Credentials: Credentials In Files",
+      "observation": "The all group invoked CloudCredentials, WindowsCredentialFiles, DPAPI master-key, and application configuration checks. No result content was inspected."
+    },
+    {
+      "id": "T1555",
+      "name": "Credentials from Password Stores",
+      "observation": "The all group invoked WindowsVault, CredEnum, saved RDP, and Wi-Fi profile checks. No result content was inspected."
+    },
+    {
+      "id": "T1217",
+      "name": "Browser Bookmark Discovery",
+      "observation": "The all group invoked ChromiumBookmarks and browser history checks."
+    },
+    {
+      "id": "T1053.005",
+      "name": "Scheduled Task/Job: Scheduled Task",
+      "observation": "The all group invoked the ScheduledTasks check to identify non-Microsoft task opportunities."
+    },
+    {
+      "id": "T1074.001",
+      "name": "Data Staged: Local Data Staging",
+      "observation": "Seatbelt created C:\\lab\\seatbelt-run.json through its outputfile argument."
+    }
+  ],
+  "observed_signals": {
+    "collection_window": {
+      "start": "2026-08-09T08:25:00Z",
+      "end": "2026-08-09T08:25:07Z",
+      "total_events_all_collected_channels": 771,
+      "raw_events_json_sha256": "F8FD179826A0C3084B605413DE788595E816C05E9E17CA6F9E0A8990EB3C4347",
+      "raw_sysmon_evtx_sha256": "A610B04B02754511518D3F07C5515B7B8170F23AD3E161BC9151E753D8B2A8A3"
+    },
+    "network": {
+      "status": "observed",
+      "event_id_3": 1,
+      "event_id_22": 1,
+      "assessment": "Seatbelt initiated loopback TCP to 127.0.0.1:135 and resolved localhost. Both are generic local RPC/enumeration behavior, so no standalone Sigma rule was authored."
+    },
+    "files": {
+      "status": "observed",
+      "event_id_11": 1,
+      "event_id_23": 0,
+      "assessment": "EID 11 recorded creation of the explicit C:\\lab\\seatbelt-run.json output. No file deletion was observed."
+    },
+    "registry": {
+      "status": "observed",
+      "event_id_12": 29,
+      "event_id_13": 8,
+      "event_id_14": 0,
+      "assessment": "Sysmon recorded CreateKey and SetValue-class activity attributed to Seatbelt. These events do not expose the broad read activity, and the targets were too generic for a standalone rule."
+    },
+    "process_identity": {
+      "status": "observed",
+      "event_id_1": 1,
+      "assessment": "Sysmon captured Image, OriginalFileName, path, hashes, System integrity, and the characteristic all-group command line."
+    },
+    "parent_child": {
+      "status": "observed",
+      "event_id_1": 1,
+      "assessment": "The Seatbelt EID 1 recorded powershell.exe as ParentImage and the wrapper invocation in ParentCommandLine."
+    },
+    "additional_process_access": {
+      "status": "observed",
+      "event_id_10": 2,
+      "assessment": "Seatbelt accessed LSASS with 0x1000 and 0x1410; the latter included a managed .NET System.ni.dll call trace."
+    }
+  },
+  "evidence": [
+    {
+      "path": "evidence/sysmon-seatbelt-process-creation.json",
+      "event_ids": [1],
+      "description": "Sanitized process identity, command line, working directory, and parent-child fields from the Seatbelt process creation event."
+    },
+    {
+      "path": "evidence/sysmon-seatbelt-observed-signals.json",
+      "event_ids": [3, 11, 12, 13, 22],
+      "description": "Sanitized network and file events plus registry counts and representative target objects for the five-dimension assessment."
+    },
+    {
+      "path": "evidence/sysmon-seatbelt-lsass-process-access.json",
+      "event_ids": [10],
+      "description": "Two sanitized Seatbelt-to-LSASS ProcessAccess events, including the managed .NET call trace used by Tier 2."
+    }
+  ],
+  "sigma": [
+    {
+      "path": "sigma/win_process_creation_seatbelt_enumeration.yml",
+      "tier": 1,
+      "role": "primary",
+      "logsource": "windows/process_creation",
+      "status": "experimental"
+    },
+    {
+      "path": "sigma/win_file_event_seatbelt_survey_output.yml",
+      "tier": 1,
+      "role": "supporting",
+      "logsource": "windows/sysmon/file_event",
+      "status": "experimental"
+    },
+    {
+      "path": "sigma/win_sysmon_managed_dotnet_lsass_vm_read.yml",
+      "tier": 2,
+      "role": "complement",
+      "logsource": "windows/sysmon/process_access",
+      "status": "experimental"
+    }
+  ],
+  "sanitization": {
+    "seatbelt_output_committed": false,
+    "raw_log_export_committed": false,
+    "notes": "The Seatbelt JSON survey was never inspected or pulled. Raw collector output was used transiently for analysis and excluded from the repository. The committed evidence contains selected telemetry fields only; the long lab wrapper in ParentCommandLine is summarized."
+  },
+  "rollback_confirmation": {
+    "snapshot": "win_verify_baseline",
+    "completed_at": "2026-08-09T08:30:49Z",
+    "proxmox_task_exit": "OK",
+    "vm_started_for_confirmation": true,
+    "sysmon_service": "Running",
+    "sysmon_config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
+    "defender_real_time_protection_enabled": false,
+    "seatbelt_present": false,
+    "survey_output_present": false,
+    "temporary_build_tools_present": false
+  },
+  "verified_at": "2026-08-09T08:25:04Z",
+  "verifier": "Codex lab orchestrator"
+}
