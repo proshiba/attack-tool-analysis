@@ -14,6 +14,20 @@ that **many different services/EDRs can catch it** — not just one specialized 
   - Dangerous / destructive / live-C2 → prefer the airgapped **vmbr2 detonation VM** (once it
     exists); until then use an existing VM you can snapshot + roll back.
 
+## 0b. Design the attack scenario(s) / use-cases — *scenario-driven verification*
+Before running anything, reason about **what real attacks this tool enables** — do NOT just run it
+once. Multi-function / network tools (C2 such as Sliver, Havoc) are meaningless as a bare "it ran":
+verify along a realistic operator flow so the resulting detections are practical.
+- From the tool's purpose + `attack_techniques`, enumerate its **common attack use-cases** (how
+  operators actually use it, each mapped to ATT&CK) and choose a **representative end-to-end flow**
+  to exercise for this verification — e.g. *C2*: stage a listener → deliver + run the implant →
+  beacon → a few representative post-exploitation tasks; *survey/enumeration tool*: run the
+  characteristic collection groups.
+- **Write `tools/<id>/verification/scenarios.md`**: the scenarios/use-cases you considered, which
+  flow you verified here, the ATT&CK techniques each covers, and further scenarios a reader could
+  verify next. This makes the catalog a springboard for future verification, not a one-shot run.
+- Keep the verified flow bounded and reproducible; document the rest as future scenarios.
+
 ## 1. Provision (clean, richly-instrumented baseline)
 - Windows: **roll back to `win_verify_baseline`** first so the run starts clean (Defender off,
   verification-grade Sysmon capturing all five dimensions, C:\Tools collection toolset). If that
@@ -23,10 +37,12 @@ that **many different services/EDRs can catch it** — not just one specialized 
 - Fetch from `metadata.repository` (release/binary). Treat as untrusted. `lab-push` to the
   target's `C:\lab`. Record exact **version/commit** and SHA-256.
 
-## 3. Run representative behavior
-- Execute the characteristic commands (from `usage`) that exercise the in-scope ATT&CK techniques.
-- Record **exact command lines, the UTC start/end window, and account/privilege context**. Keep
-  the run bounded and reproducible.
+## 3. Run the scenario flow
+- Execute the **representative attack flow chosen in step 0b** (the tool's characteristic
+  operator actions), exercising the in-scope ATT&CK techniques end-to-end — not a single bare
+  command for a multi-function tool.
+- Record **exact command lines / operator actions, the UTC start/end window, and account/privilege
+  context**. Keep the flow bounded and reproducible.
 
 ## 4. Collect telemetry (all five dimensions)
 - Windows: run `C:\Tools\collect-run.ps1 -StartUtc <start> -EndUtc <end> -OutDir <dir>` and, for
@@ -63,8 +79,9 @@ Cross-check against metadata `detection`.
 
 ## 6. Record `verification.json`
 `tools/<id>/verification/verification.json`, one entry per run:
+- `scenario` (which use-case/flow from `scenarios.md` was verified in this run)
 - `environment` (target VM/OS, `baseline_snapshot`, sensors + config notes)
-- `tool` (version/source/SHA-256, exact commands)
+- `tool` (version/source/SHA-256, exact commands / operator actions)
 - `observed_techniques` (ATT&CK IDs actually exercised)
 - `observed_signals` (what appeared in each of the five dimensions — even "none" is useful)
 - `evidence` (file refs + what each shows) and `sigma` (rule refs + tier + status)
