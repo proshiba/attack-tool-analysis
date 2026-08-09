@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "collection_window": {
+    "start_utc": "2026-08-09T06:47:25.170Z",
+    "end_utc": "2026-08-09T06:47:28.259Z"
+  },
+  "attribution": {
+    "process_guid": "{d6daef74-227e-6a78-6902-000000000b00}",
+    "process_id": 4452,
+    "image": "C:\\lab\\mimikatz.exe",
+    "method": "Exact ProcessGuid/Image matching for direct activity; characteristic Prefetch target name and immediate timing for the OS-generated file artifact."
+  },
+  "dimensions": {
+    "network_and_dns": {
+      "queried_event_ids": [3, 22],
+      "events_in_window": 0,
+      "tool_attributed_events": 0,
+      "result": "none observed"
+    },
+    "files": {
+      "queried_event_ids": [11, 23],
+      "events_in_window": 2,
+      "scenario_attributed_events": 2,
+      "direct_mimikatz_process_events": 0,
+      "result": "observed OS-generated Prefetch replacement; no direct file write by the mimikatz process",
+      "events": [
+        {
+          "EventId": 23,
+          "UtcTime": "2026-08-09 06:47:26.259",
+          "RecordId": 78085,
+          "ProcessId": 1856,
+          "Image": "C:\\Windows\\system32\\svchost.exe",
+          "TargetFilename": "C:\\Windows\\Prefetch\\MIMIKATZ.EXE-A381AD0F.pf",
+          "Archived": true
+        },
+        {
+          "EventId": 11,
+          "UtcTime": "2026-08-09 06:47:26.259",
+          "RecordId": 78086,
+          "ProcessId": 1856,
+          "Image": "C:\\Windows\\system32\\svchost.exe",
+          "TargetFilename": "C:\\Windows\\Prefetch\\MIMIKATZ.EXE-A381AD0F.pf",
+          "CreationUtcTime": "2026-08-09 06:46:28.404"
+        }
+      ]
+    },
+    "registry": {
+      "queried_event_ids": [12, 13, 14],
+      "events_in_window": {
+        "12": 133,
+        "13": 7,
+        "14": 0
+      },
+      "tool_attributed_events": 0,
+      "result": "none observed; all registry events were background svchost.exe or taskhostw.exe activity"
+    },
+    "process_identity_and_command": {
+      "queried_event_ids": [1],
+      "tool_attributed_events": 1,
+      "result": "observed",
+      "event": {
+        "EventId": 1,
+        "UtcTime": "2026-08-09 06:47:26.177",
+        "RecordId": 78082,
+        "ProcessGuid": "{d6daef74-227e-6a78-6902-000000000b00}",
+        "ProcessId": 4452,
+        "Image": "C:\\lab\\mimikatz.exe",
+        "FileVersion": "2.2.0.0",
+        "Description": "mimikatz for Windows",
+        "Product": "mimikatz",
+        "Company": "gentilkiwi (Benjamin DELPY)",
+        "OriginalFileName": "mimikatz.exe",
+        "CommandLine": "\"C:\\lab\\mimikatz.exe\" privilege::debug sekurlsa::logonpasswords exit",
+        "CurrentDirectory": "C:\\lab\\",
+        "User": "NT AUTHORITY\\SYSTEM",
+        "IntegrityLevel": "System",
+        "Hashes": {
+          "SHA256": "61C0810A23580CF492A6BA4F7654566108331E7A4134C968C2D6A05261B2D8A1"
+        }
+      }
+    },
+    "parent_child": {
+      "queried_event_ids": [1],
+      "tool_attributed_events": 1,
+      "result": "observed",
+      "event": {
+        "ProcessGuid": "{d6daef74-227e-6a78-6902-000000000b00}",
+        "Image": "C:\\lab\\mimikatz.exe",
+        "ParentProcessGuid": "{d6daef74-227b-6a78-6802-000000000b00}",
+        "ParentProcessId": 1224,
+        "ParentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "ParentUser": "NT AUTHORITY\\SYSTEM"
+      }
+    }
+  }
+}

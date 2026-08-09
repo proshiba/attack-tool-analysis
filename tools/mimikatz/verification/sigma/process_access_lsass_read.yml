@@ -2,10 +2,10 @@ title: Process Access to LSASS with a Memory Read Access Mask
 id: caf6daf0-615c-46f2-ba61-a8bb927605a6
 status: experimental
 description: >-
-  Detects a process opening LSASS with an access mask that includes memory-read
-  rights. This behavior was verified with mimikatz sekurlsa::logonpasswords and
-  is characteristic of LSASS credential dumping regardless of the source image
-  name, path, or hash.
+  Detects a process opening LSASS with a commonly observed access mask that
+  includes PROCESS_VM_READ. The verified mimikatz sekurlsa::logonpasswords run
+  requested 0x1010. The rule intentionally does not depend on the source image
+  name, path, command line, or hash.
 references:
   - https://github.com/gentilkiwi/mimikatz
 author: Codex lab orchestrator
@@ -22,6 +22,8 @@ detection:
     TargetImage|endswith: '\lsass.exe'
   selection_access:
     GrantedAccess:
+      - '0x0010'
+      - '0x0410'
       - '0x1010'
       - '0x1410'
       - '0x1438'
@@ -29,6 +31,6 @@ detection:
       - '0x1fffff'
   condition: selection_target and selection_access
 falsepositives:
-  - Endpoint security, identity protection, and EDR products inspecting LSASS
-  - Authorized debuggers, crash dump utilities, and administrator diagnostics
+  - Endpoint security, identity-protection, and EDR products inspecting LSASS
+  - Authorized debuggers, crash-dump utilities, and administrator diagnostics
 level: high
