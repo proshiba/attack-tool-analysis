@@ -1,0 +1,19 @@
+[
+  {
+    "EventId": 10,
+    "UtcTime": "2026-08-09 05:27:51.311",
+    "RecordId": 3213,
+    "RuleName": "CredentialAccess-lsass",
+    "SourceProcessGUID": "{d6daef74-0fd7-6a78-9302-000000000600}",
+    "SourceProcessId": 8748,
+    "SourceThreadId": 6984,
+    "SourceImage": "C:\\lab\\mimikatz.exe",
+    "TargetProcessGUID": "{d6daef74-0bed-6a78-0c00-000000000600}",
+    "TargetProcessId": 720,
+    "TargetImage": "C:\\Windows\\system32\\lsass.exe",
+    "GrantedAccess": "0x1010",
+    "CallTrace": "C:\\Windows\\SYSTEM32\\ntdll.dll+9dad4|C:\\Windows\\System32\\KERNELBASE.dll+28d3e|C:\\lab\\mimikatz.exe+c291e|C:\\lab\\mimikatz.exe+c2cf5|C:\\lab\\mimikatz.exe+c285d|C:\\lab\\mimikatz.exe+85a44|C:\\lab\\mimikatz.exe+8587c|C:\\lab\\mimikatz.exe+855af|C:\\lab\\mimikatz.exe+c97a5|C:\\Windows\\System32\\KERNEL32.DLL+17374|C:\\Windows\\SYSTEM32\\ntdll.dll+4cc91",
+    "SourceUser": "NT AUTHORITY\\SYSTEM",
+    "TargetUser": "NT AUTHORITY\\SYSTEM"
+  }
+]

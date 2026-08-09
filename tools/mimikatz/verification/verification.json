@@ -1,0 +1,104 @@
+{
+  "environment": {
+    "target": {
+      "vmid": 104,
+      "name": "WIN10-ANALYSIS",
+      "address": "192.168.1.52",
+      "os": "Microsoft Windows 10 Enterprise LTSC Evaluation",
+      "version": "10.0.19044",
+      "architecture": "64-bit"
+    },
+    "baseline_snapshot": "sysmon_baseline_defoff",
+    "sensors": [
+      {
+        "name": "Sysmon",
+        "version": "15.21",
+        "service_status": "Running",
+        "config_sha256": "D563B5CE648A0BEA4E5BC987A4A853DECAFF842F51D27374036C06DB23905A61",
+        "config_notes": [
+          "ProcessAccess includes TargetImage end with lsass.exe for EID 10.",
+          "ImageLoad includes Image end with mimikatz.exe for targeted EID 7 collection."
+        ]
+      }
+    ],
+    "defender": {
+      "tamper_protected": false,
+      "real_time_protection_enabled": false,
+      "disable_ioav_protection": true,
+      "disable_script_scanning": true,
+      "maps_reporting": "Disabled",
+      "submit_samples_consent": "NeverSend",
+      "persistence": "Real-time monitoring disablement is backed by local policy and was verified after a cold boot."
+    },
+    "notes": "The run began from a filesystem-frozen Defender-off snapshot. The first post-run cold rollback showed Windows re-enabling real-time protection, so the baseline was corrected with local policy, cold-boot tested, and recreated through the Proxmox API under the same sysmon_baseline_defoff name after confirming all mimikatz artifacts were absent. The final rollback preserved Defender-off and Sysmon-on state."
+  },
+  "tool": {
+    "name": "mimikatz",
+    "version": "2.2.0-20220919",
+    "file_version": "2.2.0.0",
+    "source": "https://github.com/gentilkiwi/mimikatz/releases/tag/2.2.0-20220919",
+    "release_asset": {
+      "url": "https://github.com/gentilkiwi/mimikatz/releases/download/2.2.0-20220919/mimikatz_trunk.zip",
+      "sha256": "7ACCD179E8A6B2FC907E7E8D087C52A7F48084852724B03D25BEBCADA1ACBCA5"
+    },
+    "binary": {
+      "path": "C:\\lab\\mimikatz.exe",
+      "sha256": "61C0810A23580CF492A6BA4F7654566108331E7A4134C968C2D6A05261B2D8A1"
+    },
+    "commands": [
+      {
+        "working_directory": "C:\\lab",
+        "invocation": "mimikatz.exe privilege::debug sekurlsa::logonpasswords exit",
+        "sysmon_command_line": "\"C:\\lab\\mimikatz.exe\" privilege::debug sekurlsa::logonpasswords exit ",
+        "account": "NT AUTHORITY\\SYSTEM",
+        "integrity_level": "System",
+        "process_id": 8748,
+        "exit_code": 0,
+        "started_at": "2026-08-09T05:27:51.0700727Z",
+        "ended_at": "2026-08-09T05:27:52.0925087Z"
+      }
+    ]
+  },
+  "observed_techniques": [
+    {
+      "id": "T1003.001",
+      "name": "OS Credential Dumping: LSASS Memory",
+      "observation": "Sysmon EID 10 recorded mimikatz opening lsass.exe with GrantedAccess 0x1010; the mask includes PROCESS_VM_READ."
+    }
+  ],
+  "telemetry_summary": {
+    "collection_window": {
+      "start": "2026-08-09T05:27:50Z",
+      "end": "2026-08-09T05:27:54Z"
+    },
+    "sysmon": {
+      "event_id_1": 1,
+      "event_id_7": 62,
+      "event_id_10_mimikatz_to_lsass": 1,
+      "process_access_granted_access": "0x1010"
+    },
+    "defender_events": 0
+  },
+  "evidence": [
+    {
+      "path": "evidence/sysmon-eid10-lsass-process-access.json",
+      "event_ids": [
+        10
+      ],
+      "description": "One sanitized Sysmon ProcessAccess event showing mimikatz opening LSASS with GrantedAccess 0x1010 and the associated CallTrace."
+    }
+  ],
+  "sigma": [
+    {
+      "path": "sigma/win_sysmon_lsass_vm_read_access.yml",
+      "status": "experimental",
+      "description": "Behavior-based detection for LSASS access masks that include memory-read rights; it does not depend on the mimikatz path or hash."
+    }
+  ],
+  "sanitization": {
+    "credential_output_committed": false,
+    "notes": "Mimikatz stdout was redirected to a secret-only file, never inspected or pulled, and deleted on the VM immediately after execution. Only Sigma-relevant process-access telemetry is committed."
+  },
+  "verified_at": "2026-08-09T05:27:52Z",
+  "verifier": "Codex lab orchestrator"
+}
