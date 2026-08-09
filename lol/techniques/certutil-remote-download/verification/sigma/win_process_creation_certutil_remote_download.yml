@@ -1,0 +1,47 @@
+title: Certutil Remote File Download From a Command or Script Interpreter
+id: 6aaceadd-7bb2-4a77-a434-e2d42c55d210
+status: experimental
+description: >-
+  Detects the Microsoft certutil binary launched by a command or script
+  interpreter with URL-cache download switches and an HTTP or HTTPS URL. This
+  behavior can transfer a staged payload with a signed Windows utility.
+references:
+  - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+  - https://attack.mitre.org/techniques/T1105/
+author: Codex lab orchestrator
+date: '2026-08-09'
+tags:
+  - attack.command_and_control
+  - attack.t1105
+  - attack.defense_evasion
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_identity_image:
+    Image|endswith: '\certutil.exe'
+  selection_identity_original:
+    OriginalFileName: 'CertUtil.exe'
+  selection_flags:
+    CommandLine|contains|all:
+      - ' -urlcache '
+      - ' -split '
+      - ' -f '
+  selection_url:
+    CommandLine|contains:
+      - 'http://'
+      - 'https://'
+  selection_parent:
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+      - '\pwsh.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+      - '\mshta.exe'
+  condition: >-
+    1 of selection_identity_* and selection_flags and selection_url and selection_parent
+falsepositives:
+  - Administrators or certificate-management scripts intentionally fetching certificate, CRL, or trust material with certutil
+  - Software deployment or troubleshooting workflows that invoke certutil from a shell with all of the selected switches
+level: high

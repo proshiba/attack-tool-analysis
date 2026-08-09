@@ -1,0 +1,64 @@
+{
+  "capture": {
+    "source": "Windows pktmon",
+    "command": "pktmon.exe start --capture --pkt-size 0 -f C:\\lab\\certutil-remote-download.etl",
+    "full_packet": true,
+    "started_at": "2026-08-09T23:07:11.4823786Z",
+    "ended_at": "2026-08-09T23:07:13.7948783Z",
+    "pcapng_size_bytes": 45664,
+    "pcapng_sha256": "477FCA043736EB77D3B08D37E93F65FCA63F39BA132EB1426C822E149C462A89",
+    "packets_analyzed": 132,
+    "capture_loss_percent": 0.0
+  },
+  "nsm": {
+    "vmid": 106,
+    "zeek_version": "8.2.1",
+    "suricata_version": "7.0.10",
+    "analyzed_at": "2026-08-09T23:08:05Z"
+  },
+  "zeek_http": [
+    {
+      "timestamp": "2026-08-09T23:07:12.339237Z",
+      "uid": "CjgjpN39Z4LeFGFaHd",
+      "source_ip": "192.168.1.52",
+      "source_port": 49681,
+      "destination_ip": "192.168.1.50",
+      "destination_port": 18080,
+      "method": "GET",
+      "host": "192.168.1.50:18080",
+      "uri": "/benign-stage.bin",
+      "http_version": "1.0",
+      "user_agent": "Microsoft-CryptoAPI/10.0",
+      "status_code": 200,
+      "response_body_len": 3768,
+      "response_mime_type": "text/plain"
+    },
+    {
+      "timestamp": "2026-08-09T23:07:12.351502Z",
+      "uid": "CXK65g4GixZYBITjY7",
+      "source_ip": "192.168.1.52",
+      "source_port": 49682,
+      "destination_ip": "192.168.1.50",
+      "destination_port": 18080,
+      "method": "GET",
+      "host": "192.168.1.50:18080",
+      "uri": "/benign-stage.bin",
+      "http_version": "1.0",
+      "user_agent": "CertUtil URL Agent",
+      "status_code": 200,
+      "response_body_len": 3768,
+      "response_mime_type": "text/plain"
+    }
+  ],
+  "zeek_files": {
+    "records": 2,
+    "source": "HTTP",
+    "seen_bytes_each": 3768,
+    "missing_bytes_each": 0,
+    "sha256_each": "92EE1BBE6EE3B6CC7CD6ED720B594C6C3394D362838DB8C02C6CA6732E94F86A"
+  },
+  "suricata": {
+    "http_records": 2,
+    "assessment": "Suricata independently decoded both HTTP GETs and both User-Agent values. Alerts were limited to the expected Python SimpleHTTP banner and pktmon checksum/retransmission artifacts; no high-confidence technique alert fired."
+  }
+}

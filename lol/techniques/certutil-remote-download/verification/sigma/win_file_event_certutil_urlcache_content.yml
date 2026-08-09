@@ -1,0 +1,30 @@
+title: Certutil Writes Cryptnet URL Cache Content
+id: e44710d9-5a31-45ab-b949-12acdefc5713
+status: experimental
+description: >-
+  Detects certutil writing a file into the CryptnetUrlCache content directory.
+  This supporting endpoint signal was observed while certutil transferred a
+  remote file with URL-cache download switches.
+references:
+  - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+  - https://attack.mitre.org/techniques/T1105/
+author: Codex lab orchestrator
+date: '2026-08-09'
+tags:
+  - attack.command_and_control
+  - attack.t1105
+  - attack.defense_evasion
+logsource:
+  category: file_event
+  product: windows
+  service: sysmon
+detection:
+  selection_image:
+    Image|endswith: '\certutil.exe'
+  selection_cache_content:
+    TargetFilename|contains: '\Microsoft\CryptnetUrlCache\Content\'
+  condition: selection_image and selection_cache_content
+falsepositives:
+  - Legitimate certutil retrieval of certificates, certificate trust lists, or certificate revocation lists
+  - Authorized certificate troubleshooting that refreshes the Cryptnet URL cache
+level: medium
