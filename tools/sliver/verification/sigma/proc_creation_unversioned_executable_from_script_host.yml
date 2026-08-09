@@ -1,12 +1,11 @@
 title: Unversioned Executable Launched by a Script or Command Host
-id: a06799a0-3ca8-43a8-a219-9b40db75dbe3
+id: 52c0ffc4-43f7-4524-b697-807e6279f264
 status: experimental
 description: >-
   Detects an executable with absent PE identity metadata launched by a script
   or command host. The verified generated Sliver implant had no company,
-  product, or original filename metadata and was started by PowerShell. The
-  rule is behavioral and does not depend on the generated implant name, path,
-  or hash.
+  product, or original filename metadata and was launched by PowerShell. The
+  rule does not depend on the generated filename, hash, C2 address, or port.
 references:
   - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
 author: Codex lab orchestrator

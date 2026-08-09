@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "capture": {
+    "start_utc": "2026-08-09T21:32:59.2924878Z",
+    "end_utc": "2026-08-09T21:36:07.2405916Z",
+    "format": "pcapng",
+    "full_packet": true,
+    "packets_total": 3628,
+    "packets_dropped": 0,
+    "bytes": 812176,
+    "sha256": "991FD2155275598D174B04A1EC6EDB67C6B38EF5285DF0FBAE6118794FA037C0",
+    "raw_committed": false
+  },
+  "nsm": {
+    "vmid": 106,
+    "address": "10.9.0.20",
+    "zeek_version": "8.2.1",
+    "suricata_version": "7.0.10",
+    "zeek_ja3_source": "salesforce/ja3",
+    "zeek_ja3_commit": "502cc6395811c54743b0561419d61900a6df3ff7",
+    "et_open_alert_rules_loaded": 52234,
+    "analyzed_utc": "2026-08-09T21:37:37Z"
+  },
+  "tls": {
+    "transport": "Sliver mTLS over raw TCP",
+    "zeek_tls_rows": 18,
+    "suricata_tls_events": 18,
+    "version": "TLS 1.3",
+    "cipher": "TLS_AES_128_GCM_SHA256",
+    "curve": "X25519MLKEM768",
+    "established": true,
+    "ja3": "2196848d251b217de8b2c037e356c11d",
+    "ja3_string": "771,49195-49199-49196-49200-52393-52392-49161-49171-49162-49172-4865-4866-4867,11-65281-23-18-5-10-13-50-43-51,4588-29-23-24-25,0",
+    "ja3s": "f4febc55ea12b31ae17cfb7e614afda8",
+    "ja3s_string": "771,4865,43-51",
+    "sni": null,
+    "server_certificate_chain_visible": false,
+    "client_certificate_chain_visible": false,
+    "c2_x509_rows": 0,
+    "certificate_note": "The passive TLS 1.3 mTLS trace exposed JA3/JA3S but no SNI, certificate chain fingerprint, subject, issuer, SAN, or validation status. No certificate-specific IOC was invented."
+  },
+  "jarm": {
+    "measurement_type": "Active server fingerprint from NSM VM 106 while the listener was live; not derived from the passive pcap",
+    "tool_source": "salesforce/JARM",
+    "tool_commit": "2c0cf5ce8418c7a1d03edb219acea3c18e068289",
+    "value": "00000000000000000000000000000000000000000000000000000000000000",
+    "interpretation": "All ten generic JARM probes failed to negotiate a fingerprintable response because the Sliver listener required its mTLS client identity. The all-zero result is honest negative evidence and is not used in Sigma."
+  },
+  "flow": {
+    "connections": 18,
+    "first_utc": "2026-08-09T21:32:59.498468Z",
+    "last_utc": "2026-08-09T21:36:02.321105Z",
+    "originator_bytes": 49670,
+    "responder_bytes": 42643,
+    "originator_packets": 2310,
+    "responder_packets": 1140,
+    "connection_states": {
+      "SF": 17,
+      "S1": 1
+    },
+    "median_duration_seconds": 1.006108,
+    "maximum_duration_seconds": 90.050547,
+    "beacon_configuration": {
+      "interval_seconds": 10,
+      "jitter_seconds": 3
+    },
+    "periodic_start_gaps_seconds": {
+      "sample_count": 16,
+      "minimum": 10.043022,
+      "maximum": 12.785949,
+      "mean": 11.363188,
+      "median": 11.319193,
+      "standard_deviation": 0.913273,
+      "method": "Successive Zeek conn start times after excluding the one-second initial dual connection"
+    }
+  },
+  "application_protocols": {
+    "http_events": 0,
+    "http_log_present": false,
+    "http_profile": "not applicable; raw mTLS transport did not use HTTP",
+    "dns_c2_queries": 0,
+    "dns_observation": "No hostname-based C2. Zeek saw only reverse PTR/LLMNR/NetBIOS resolution for the literal listener address; unique queries were 50.1.168.192.in-addr.arpa and '*'."
+  },
+  "suricata": {
+    "c2_flow_events": 18,
+    "c2_alert_events": 4620,
+    "alert_signatures": [
+      {
+        "signature_id": 2200073,
+        "signature": "SURICATA IPv4 invalid checksum",
+        "category": "Generic Protocol Command Decode"
+      },
+      {
+        "signature_id": 2200074,
+        "signature": "SURICATA TCPv4 invalid checksum",
+        "category": "Generic Protocol Command Decode"
+      }
+    ],
+    "et_open_sliver_or_content_alerts": 0,
+    "interpretation": "Only Suricata decoder-event checksum rules fired. The repeated invalid checksums are pktmon/checksum-offload capture artifacts, not Sliver content detections and not ET Open Sliver alerts."
+  }
+}

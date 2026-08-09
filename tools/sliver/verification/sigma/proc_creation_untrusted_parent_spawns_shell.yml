@@ -1,14 +1,13 @@
-title: Executable Parent Outside Common Operator Hosts Spawns a Shell or LOLBin
-id: 12e5c200-3bc3-407b-9bf7-412a8a32a104
+title: Unrecognized Executable Parent Spawns a Shell or Script Utility
+id: 726f2e47-becc-4b98-89d0-cfb67d0fa19d
 status: experimental
 description: >-
-  Detects a generic executable spawning a command shell, script host, or
-  frequently abused Windows utility while excluding common interactive,
-  management, service, and installer parents. The verified Sliver beacon
-  directly spawned cmd.exe for execute tasks. The parent name and hash are not
-  fixed, so a renamed implant remains in scope.
+  Detects a generic executable parent spawning a command shell or common
+  script/LOLBin child while excluding frequent Windows and management parents.
+  The verified Sliver execute task directly spawned cmd.exe from the generated
+  implant. Correlate with an unversioned parent, unusual path, or network C2.
 references:
-  - https://github.com/BishopFox/sliver
+  - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
 author: Codex lab orchestrator
 date: '2026-08-09'
 tags:
@@ -28,28 +27,26 @@ detection:
       - '\mshta.exe'
       - '\rundll32.exe'
       - '\regsvr32.exe'
-      - '\certutil.exe'
-      - '\bitsadmin.exe'
   selection_parent:
     ParentImage|endswith: '.exe'
   filter_common_parents:
     ParentImage|endswith:
-      - '\explorer.exe'
       - '\cmd.exe'
       - '\powershell.exe'
       - '\pwsh.exe'
+      - '\explorer.exe'
+      - '\services.exe'
+      - '\svchost.exe'
       - '\wmiprvse.exe'
       - '\wsmprovhost.exe'
       - '\winrs.exe'
-      - '\services.exe'
-      - '\psexesvc.exe'
       - '\taskeng.exe'
       - '\taskhostw.exe'
       - '\msiexec.exe'
-      - '\setup.exe'
+      - '\psexesvc.exe'
   condition: selection_child and selection_parent and not filter_common_parents
 falsepositives:
-  - Line-of-business applications that legitimately invoke shells or helper utilities
-  - Updaters, build systems, and endpoint-management agents not covered by the filter
+  - Line-of-business applications that legitimately invoke shells or helpers
+  - Updaters, build systems, and endpoint-management agents not in the filter
   - Authorized penetration tests and malware-analysis labs
 level: medium

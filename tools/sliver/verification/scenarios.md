@@ -1,63 +1,54 @@
 # Sliver verification scenarios
 
-Sliver is a multi-protocol command-and-control framework, so a useful
-verification follows an operator workflow rather than treating successful
-startup as sufficient evidence. All scenarios below assume an authorized,
-isolated lab and a C2 endpoint controlled by the analyst.
+Sliver is a multi-transport C2 framework, so a useful verification must cover
+an operator flow rather than a bare process launch. The lab considered the
+following contained use cases.
 
-## Verified flow: bounded HTTP C2 foothold and host survey
+| Scenario | ATT&CK mapping | Status in this run |
+| --- | --- | --- |
+| TLS foothold, host survey, command execution, and small file transfer | T1573.002, T1105, T1033, T1082, T1057, T1083, T1059.003, T1041 | Verified with an mTLS beacon |
+| HTTPS C2 using a web profile | T1071.001, T1573.002 | Future scenario; not claimed for raw mTLS |
+| DNS beaconing/tunneling | T1071.004, T1572 | Future scenario; not claimed for literal-IP mTLS |
+| Named-pipe pivot or lateral movement | T1090, T1021, T1572 | Future scenario; no pipe event occurred here |
+| In-memory BOF, .NET, or process-injection tasking | T1055 and task-specific techniques | Future higher-risk scenario |
 
-This run uses Kali VM 100 (`192.168.1.50`) as the Sliver server and Windows 10
-VM 104 (`192.168.1.52`) as the implant host. The generated Windows amd64
-implant is configured with the sole C2 endpoint
-`http://192.168.1.50:18080`. No redirector, public listener, DNS C2, or other
-external endpoint is configured.
+## Verified scenario
 
-The bounded flow is:
+The selected scenario was a bounded mTLS C2 foothold and host survey:
 
-1. Start an HTTP listener on Kali, generate a beacon-mode Windows implant,
-   transfer it from the contained Kali host into `C:\lab`, and execute it on the target
-   (**T1071.001 — Application Layer Protocol: Web Protocols**, **T1105 —
-   Ingress Tool Transfer**).
-2. Confirm the target's C2 session on the Sliver server
-   (**T1071.001**, **T1573.002 — Encrypted Channel: Asymmetric Cryptography**).
-3. Run `whoami`, `info`, `pwd`, `ls`, and `ps` to exercise account, system,
-   file/directory, and process discovery (**T1033**, **T1082**, **T1083**,
-   **T1057**).
-4. Run one benign `cmd.exe /c` command which writes a marker containing no
-   host data (**T1059.003 — Windows Command Shell**).
-5. Download that small marker through the established C2 channel
-   (**T1041 — Exfiltration Over C2 Channel**). The marker is used only to
-   prove file transfer and contains no secret or host-derived content.
+1. Roll Windows VM 104 back to `win_verify_baseline` and verify Defender is
+   off, Sysmon 15.21 is running, and the collection toolset is present.
+2. On Kali VM 100, start official Sliver v1.7.3 with isolated state, create an
+   mTLS listener on the contained lab interface, and generate one Windows amd64
+   beacon with a 10-second interval and 3-second jitter.
+3. Deliver the exact implant to `C:\lab` through chunked, out-of-band
+   `lab-push`; reassemble it and prove its target SHA-256 matches Kali.
+4. Start full-packet pktmon capture, launch the beacon as SYSTEM, and confirm
+   it in the Sliver operator console.
+5. Run `getuid`, `info`, `ls C:\lab`, and `ps`; perform one benign
+   `cmd.exe` marker creation; download that fixed 19-byte marker over C2.
+6. Stop and convert the capture, export endpoint EVTX, and process the pcap on
+   NSM VM 106 with Zeek, JA3/JA3S, Suricata, and ET Open rules.
 
-This flow deliberately excludes credential access, persistence, process
-injection, lateral movement, pivoting, and execution of third-party payloads.
+The observed technique mapping is intentionally narrower than Sliver's full
+capability set:
 
-## Additional realistic scenarios (not executed)
+- T1573.002: the beacon used mutually authenticated TLS 1.3.
+- T1105: the implant was transferred into the target over the contained
+  out-of-band lab channel.
+- T1033 and T1082: `getuid` and `info` returned SYSTEM and host information.
+- T1057 and T1083: `ps` and `ls` performed process and directory discovery.
+- T1059.003: the implant directly spawned `cmd.exe` for a benign command.
+- T1041: a fixed non-host-data marker was downloaded through the C2 channel.
 
-- **Initial foothold and alternate transports:** exercise HTTPS, mTLS, or DNS
-  implants and staged delivery; map to T1071.001/T1071.004, T1573.002, and
-  T1105. Each transport needs its own network baseline and capture.
-- **Host and Active Directory reconnaissance:** enumerate users, groups,
-  domain trusts, network configuration, services, shares, and sessions; map to
-  T1087.001/T1087.002, T1069.001/T1069.002, T1482, T1016, T1007, T1135,
-  and T1049.
-- **Credential and loot collection:** validate approved credential-access
-  extensions and collection of test-only files; map to T1003, T1555, T1005,
-  T1074.001, and T1041. Never retain harvested secrets in evidence.
-- **Lateral movement and pivoting:** test SOCKS, TCP pivots, named-pipe pivots,
-  remote-service execution, and tool transfer between disposable targets; map
-  to T1572, T1090, T1021, and T1570.
-- **In-memory execution:** exercise `execute-assembly`, BOF/COFF execution, and
-  sacrificial-process behavior with inert test assemblies; map observed
-  injection and interpreter behavior to T1055 and T1059 only when telemetry
-  proves those techniques.
-- **File transfer:** test upload and download size ranges and server-to-host
-  staging across each transport; map to T1105, T1570, and T1041 as applicable.
-- **Persistence:** in an isolated rollback-only run, exercise one persistence
-  mechanism at a time (for example a scheduled task, service, or Run key) and
-  map to T1053.005, T1543.003, or T1547.001 based on the mechanism.
+T1071.001 and T1071.004 are documented because Sliver supports HTTPS and DNS,
+but neither is falsely marked observed: raw mTLS produced no HTTP log, and the
+literal-IP listener produced no implant-attributed DNS query.
 
-Each future scenario should start from `win_verify_baseline`, use a narrow UTC
-window, collect all five endpoint dimensions plus packet data, and commit only
-sanitized detection-relevant telemetry.
+## Safety boundaries
+
+The implant contacted only Kali `192.168.1.50` on vmbr1. The marker contained
+fixed lab text, no credential or host content was collected, and no injection,
+privilege escalation, persistence, lateral movement, or external C2 was used.
+Raw implants, pcap, ETL, EVTX, C2 state, operator configurations, cookies, and
+certificate/private-key material are excluded from the repository.
