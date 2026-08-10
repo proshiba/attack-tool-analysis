@@ -223,7 +223,20 @@
       "role": "primary",
       "logsource": "windows/process_creation",
       "status": "experimental",
-      "description": "Primary portable, name-agnostic detection for -group= syntax or multiple distinctive Seatbelt check names in one command line."
+      "fp_likelihood": "low",
+      "recommended_role": "alert",
+      "level": "high",
+      "precision_measurement": {
+        "measured": false,
+        "reason": "sigma-syntax-error",
+        "fp_count": null,
+        "fp_share_of_category_percent": null,
+        "category_denominator": 23695,
+        "detection_hit": null,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      },
+      "description": "Primary portable, name-agnostic detection for -group= syntax or at least two distinctive Seatbelt check names; the repaired condition explicitly enumerates every pair of seven checks."
     },
     {
       "path": "sigma/win_sysmon_managed_dotnet_lsass_vm_read.yml",
@@ -231,6 +244,18 @@
       "role": "complement",
       "logsource": "windows/sysmon/process_access",
       "status": "experimental",
+      "fp_likelihood": "medium",
+      "recommended_role": "hunt",
+      "level": "medium",
+      "precision_measurement": {
+        "measured": true,
+        "fp_count": 0,
+        "fp_share_of_category_percent": 0.0,
+        "category_denominator": 1619360,
+        "detection_hit": false,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      },
       "description": "Deep Sysmon-native, name-agnostic detection for managed .NET access to LSASS with VM-read rights."
     }
   ],

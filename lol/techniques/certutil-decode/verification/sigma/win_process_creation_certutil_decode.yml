@@ -25,6 +25,13 @@ detection:
       - ' -decodehex '
   condition: 1 of selection_identity_* and selection_decode
 falsepositives:
-  - Administrators or certificate-management scripts legitimately decoding certificate, request, or troubleshooting data
-  - Software deployment workflows that use certutil as a general base64 decoder
+  - Administrators or certificate-management scripts decoding certificate requests, exported certificates, or troubleshooting data
+  - Software deployment workflows using certutil to reconstruct approved Base64 or hexadecimal content
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The clean corpus produced 0 matches among 23695 process starts, while two
+  independent attack-corpus certutil decode commands matched. Legitimate PKI
+  and deployment decoding can still match; prioritize cases that also create
+  an unsigned PE or script in a user-writable path or are followed by execution.
 level: medium

@@ -31,6 +31,15 @@ detection:
       - '0x1fffff'
   condition: selection_target and selection_access
 falsepositives:
-  - Endpoint security, identity-protection, and EDR products inspecting LSASS
-  - Authorized debuggers, crash-dump utilities, and administrator diagnostics
-level: high
+  - Antivirus, EDR, identity-protection, backup, and inventory agents inspecting LSASS
+  - Authorized debuggers, crash-dump utilities, administrator diagnostics, and Seatbelt-style process enumeration using 0x1410
+fp_likelihood: high
+recommended_role: hunt
+precision_notes: >-
+  The clean corpus produced 0 matches among 1619360 process-access events, but
+  it contained only 7637 LSASS-targeted events. Seatbelt itself used listed
+  access 0x1410, and AV, EDR, identity, backup, and crash-dump tools routinely
+  open LSASS with these broad masks. Act on this hunt only with an unsigned or
+  unusual source image plus mimikatz module syntax, a suspicious CallTrace, or
+  dump-file creation.
+level: low

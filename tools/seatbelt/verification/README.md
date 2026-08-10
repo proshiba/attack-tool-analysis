@@ -48,9 +48,12 @@ loopback connection and DNS query.
 ## Sigma detections
 
 - Tier 1 / `process_creation`: the invariant `-group=` syntax or at least two
-  distinctive Seatbelt check names in one command line. The rule has no image
-  or original-filename dependency and survives executable renaming. A renamed
-  run with only one innocuous check is intentionally not covered because a
+  distinctive Seatbelt check names in one command line. Because pySigma 3.1.0
+  accepts `1 of` and `all of` but not `2 of`, the rule explicitly enumerates
+  every pair of its seven named checks. Any pair therefore means at least two
+  distinct check names; this is not a weakened single-token match. The rule has
+  no image or original-filename dependency and survives executable renaming. A
+  renamed run with only one check remains intentionally uncovered because a
   single check-name match would be too noisy.
 - Tier 2 / Sysmon `process_access`: managed .NET access to LSASS with `0x1410`,
   independent of the source executable name.

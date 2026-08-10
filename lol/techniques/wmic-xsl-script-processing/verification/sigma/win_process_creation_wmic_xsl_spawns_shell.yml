@@ -30,5 +30,13 @@ detection:
       - '\rundll32.exe'
   condition: selection_parent and selection_child
 falsepositives:
-  - Custom legacy XSL reporting templates that intentionally launch a helper interpreter
+  - Custom legacy WMIC XSL reporting templates that intentionally launch an approved helper interpreter
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The clean corpus produced 0 matches among 23695 process starts and the rule
+  hit the verified attack sample. A custom legacy reporting stylesheet can
+  legitimately launch a helper interpreter, but this proves script execution
+  rather than merely stylesheet retrieval. Correlate with remote /format or
+  XSL network/cache evidence and JScript-start telemetry.
 level: high

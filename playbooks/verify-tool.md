@@ -102,6 +102,33 @@ IS the signal); `status: experimental`; correct `logsource`; `tags` = ATT&CK tec
 realistic `falsepositives`; a `level`. Store all rules under `tools/<id>/verification/sigma/`.
 Cross-check against metadata `detection`. Validate with pySigma.
 
+### Required precision convention
+
+Every verification Sigma rule MUST place these four fields together:
+
+- `fp_likelihood`: `low`, `medium`, or `high`; the likelihood that benign activity matches, not
+  the impact if the match is malicious.
+- `recommended_role`: `alert` for a sufficiently precise standalone signal or `hunt` for a lead
+  that requires correlation.
+- `precision_notes`: concrete measured benign matches and the correlation or enrichment needed to
+  make the rule actionable.
+- `level`: the operational alert level, kept consistent with precision. Severity-if-true is not
+  precision; a broad, noisy rule MUST NOT retain a high level.
+
+`fp_likelihood` MUST be measured with `audit/bin/audit-rule.sh`, not guessed. The clean-corpus
+measurement is a floor: a reviewer may raise the likelihood based on qualitative production
+evidence, but must never lower it. Read the false-positive rate against the rule's own `logsource`
+category, never against the entire corpus; `audit/catalog/baseline-category-metrics.json` contains
+the category denominators. Broad behavioral patterns such as parent-to-shell and
+script-host-to-PE are hunts with a low `level`. Precise signals such as a paired JA3/JA3S,
+mimikatz module syntax, or a LOLBIN combined with abuse flags are alerts.
+
+Record each rule's precision values and measurement provenance in the verification's `sigma`
+entry: FP count, share of its own category, category denominator, detection hit, corpus version,
+and measured repository commit. A Zeek or Suricata rule cannot be exercised on an EVTX corpus;
+judge it qualitatively and record `measured: false` with `reason: not-testable-on-evtx`, never
+invent zero matches or treat the missing measurement as clean.
+
 ## 6. Record `verification.json`
 `tools/<id>/verification/verification.json`, one entry per run:
 - `scenario` (which use-case/flow from `scenarios.md` was verified in this run)

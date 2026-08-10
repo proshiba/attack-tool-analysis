@@ -21,5 +21,13 @@ detection:
     TargetFilename|endswith: '.sct'
   condition: selection
 falsepositives:
-  - Authorized testing or legacy registration workflows that intentionally use SCT files
+  - Authorized application-compatibility testing or legacy registration workflows that intentionally cache SCT files
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The clean corpus produced 0 matches among 542441 file events. Authorized
+  legacy registration or application-compatibility testing with remote SCT
+  files can match, but regsvr32 writing an SCT in INetCache has little routine
+  benign use. Correlate with the regsvr32 /i process command, the matching HTTP
+  request, or JScript-start registry telemetry.
 level: high

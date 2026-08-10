@@ -23,4 +23,12 @@ detection:
   condition: selection
 falsepositives:
   - Legacy enterprise applications retrieving legitimate SCT resources through the Windows URL-moniker stack
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  This Zeek rule is not testable on the EVTX corpus. A benign legacy
+  application could retrieve an SCT resource with the MSIE 7.0 and Trident/7.0
+  URL-moniker profile, but that combined request shape is rare. Correlate with
+  regsvr32 /i remote-scriptlet execution, JScript telemetry, or a shell child
+  on the requesting endpoint.
 level: high

@@ -27,6 +27,14 @@ detection:
       - '\System.ni.dll'
   condition: selection_target and selection_access and selection_managed_calltrace
 falsepositives:
-  - Managed endpoint-security, identity-protection, or EDR components inspecting LSASS
-  - Authorized managed diagnostic or process-inventory utilities
+  - Managed endpoint-security, identity-protection, EDR, or inventory agents inspecting LSASS through .NET Framework
+  - Authorized managed diagnostic or process-inventory utilities using access 0x1410
+fp_likelihood: medium
+recommended_role: hunt
+precision_notes: >-
+  The clean corpus produced 0 matches among 1619360 process-access events and
+  only 7637 of those targeted LSASS. Managed EDR, identity, inventory, and
+  diagnostic agents can produce the same 0x1410 plus .NET Framework CallTrace.
+  Make it actionable with Seatbelt-style -group or multi-check syntax, an
+  unsigned unusual source image, or correlated discovery activity.
 level: medium

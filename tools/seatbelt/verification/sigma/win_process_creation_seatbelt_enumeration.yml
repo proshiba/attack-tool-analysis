@@ -2,10 +2,13 @@ title: Seatbelt-Style Host Enumeration Arguments
 id: 8f05c2f4-e6ae-4b43-98c1-63ce4b8a90d2
 status: experimental
 description: >-
-  Detects the invariant Seatbelt -group= argument syntax or multiple distinctive
-  Seatbelt check names in one process command line. The rule does not depend on
-  image or original filename and therefore survives executable renaming. A
-  renamed run of only one innocuous check is intentionally difficult to detect.
+  Detects the invariant Seatbelt -group= argument syntax or at least two
+  distinct Seatbelt check names in one process command line. Because pySigma
+  does not support "2 of", the condition enumerates every pair of the seven
+  named checks; matching any pair implements the at-least-two semantics. The
+  rule does not depend on image or original filename and therefore survives
+  executable renaming. A renamed run of only one check is intentionally not
+  detected.
 references:
   - https://github.com/GhostPack/Seatbelt
 author: Codex lab orchestrator
@@ -39,9 +42,40 @@ detection:
     CommandLine|contains: 'WindowsCredentialFiles'
   selection_check_dpapi_master_keys:
     CommandLine|contains: 'DpapiMasterKeys'
-  condition: selection_group or 2 of selection_check_*
+  condition: >-
+    selection_group or
+    (selection_check_windows_vault and selection_check_cloud_credentials) or
+    (selection_check_windows_vault and selection_check_laps) or
+    (selection_check_windows_vault and selection_check_amsi_providers) or
+    (selection_check_windows_vault and selection_check_rdp_saved_connections) or
+    (selection_check_windows_vault and selection_check_windows_credential_files) or
+    (selection_check_windows_vault and selection_check_dpapi_master_keys) or
+    (selection_check_cloud_credentials and selection_check_laps) or
+    (selection_check_cloud_credentials and selection_check_amsi_providers) or
+    (selection_check_cloud_credentials and selection_check_rdp_saved_connections) or
+    (selection_check_cloud_credentials and selection_check_windows_credential_files) or
+    (selection_check_cloud_credentials and selection_check_dpapi_master_keys) or
+    (selection_check_laps and selection_check_amsi_providers) or
+    (selection_check_laps and selection_check_rdp_saved_connections) or
+    (selection_check_laps and selection_check_windows_credential_files) or
+    (selection_check_laps and selection_check_dpapi_master_keys) or
+    (selection_check_amsi_providers and selection_check_rdp_saved_connections) or
+    (selection_check_amsi_providers and selection_check_windows_credential_files) or
+    (selection_check_amsi_providers and selection_check_dpapi_master_keys) or
+    (selection_check_rdp_saved_connections and selection_check_windows_credential_files) or
+    (selection_check_rdp_saved_connections and selection_check_dpapi_master_keys) or
+    (selection_check_windows_credential_files and selection_check_dpapi_master_keys)
 falsepositives:
   - Authorized red-team, penetration-test, or incident-response use of Seatbelt
-  - Inventory or audit tooling that independently uses -group= syntax or combines several listed check names
-  - A renamed Seatbelt run with only one innocuous check is not covered by design to avoid noisy single-token matches
+  - Inventory or audit tooling that uses a -group= argument or combines at least two of the seven named credential and host-enumeration checks
+  - Documentation or security-test command lines containing multiple listed Seatbelt check names
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The authoritative harness could not measure this rule because its former "2
+  of" condition did not compile; its process-creation denominator was 23695.
+  The repaired rule preserves the narrow -group= or two-distinct-check intent,
+  though authorized red-team, IR, inventory, or test commands can match. Confirm
+  with an unsigned or renamed managed image, clustered discovery activity, or
+  the managed .NET LSASS-access companion signal.
 level: high

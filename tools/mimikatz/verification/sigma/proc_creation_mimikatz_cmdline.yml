@@ -31,5 +31,14 @@ detection:
   condition: selection_command
 falsepositives:
   - Authorized penetration tests, red-team exercises, and malware-analysis labs
-  - Administrator scripts that reuse mimikatz-style module tokens as test data
+  - Build or CI command lines and security-test data containing generic C++ scope tokens such as crypto::, token::, vault::, or kerberos::
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The clean corpus produced 0 matches among 23695 process starts; the positive
+  corpus has no mimikatz command line, so its no-hit result is not negative
+  evidence. The short crypto::, token::, vault::, and kerberos:: tokens can
+  occur in build/CI commands or security test data. Prioritize sekurlsa:: or
+  lsadump:: matches plus LSASS access, an unsigned image, or credential-dumping
+  follow-on activity.
 level: high

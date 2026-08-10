@@ -185,21 +185,58 @@
       "tier": 1,
       "role": "primary",
       "logsource": "windows/process_creation",
-      "status": "experimental"
+      "status": "experimental",
+      "fp_likelihood": "low",
+      "recommended_role": "alert",
+      "level": "high",
+      "precision_measurement": {
+        "measured": true,
+        "fp_count": 0,
+        "fp_share_of_category_percent": 0.0,
+        "category_denominator": 23695,
+        "detection_hit": true,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      }
     },
     {
       "path": "sigma/network_zeek_certutil_cryptoapi_user_agent.yml",
       "tier": 1,
       "role": "network",
       "logsource": "zeek/http",
-      "status": "experimental"
+      "status": "experimental",
+      "fp_likelihood": "high",
+      "recommended_role": "hunt",
+      "level": "low",
+      "precision_measurement": {
+        "measured": false,
+        "reason": "not-testable-on-evtx",
+        "fp_count": null,
+        "fp_share_of_category_percent": null,
+        "category_denominator": null,
+        "detection_hit": null,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      }
     },
     {
       "path": "sigma/win_file_event_certutil_urlcache_content.yml",
       "tier": 1,
       "role": "supporting",
       "logsource": "windows/sysmon/file_event",
-      "status": "experimental"
+      "status": "experimental",
+      "fp_likelihood": "medium",
+      "recommended_role": "hunt",
+      "level": "medium",
+      "precision_measurement": {
+        "measured": true,
+        "fp_count": 0,
+        "fp_share_of_category_percent": 0.0,
+        "category_denominator": 542441,
+        "detection_hit": false,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      }
     }
   ],
   "sanitization": {

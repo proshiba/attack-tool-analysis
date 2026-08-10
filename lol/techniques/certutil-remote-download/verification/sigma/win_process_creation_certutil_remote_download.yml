@@ -42,6 +42,14 @@ detection:
   condition: >-
     1 of selection_identity_* and selection_flags and selection_url and selection_parent
 falsepositives:
-  - Administrators or certificate-management scripts intentionally fetching certificate, CRL, or trust material with certutil
-  - Software deployment or troubleshooting workflows that invoke certutil from a shell with all of the selected switches
+  - PKI administrators fetching certificate, CRL, CTL, or trust material with certutil from a shell
+  - Software deployment or troubleshooting workflows invoking certutil with urlcache, split, and force switches
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The clean corpus produced 0 matches among 23695 process starts and the rule
+  matched a known certutil URL-cache download in the attack corpus. Legitimate
+  PKI or deployment retrieval with this exact shell-launched switch set can
+  match; raise priority when the URL is external and the download is followed
+  by an unsigned image write, execution, or beacon.
 level: high

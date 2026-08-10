@@ -27,5 +27,12 @@ detection:
       - '\rundll32.exe'
   condition: selection_parent and selection_child
 falsepositives:
-  - Unusual but legitimate COM registration packages that start a helper interpreter
+  - Installer or COM-registration packages that use regsvr32 and legitimately shell out to a helper interpreter
+fp_likelihood: medium
+recommended_role: alert
+precision_notes: >-
+  The clean corpus produced 0 matches among 23695 process starts and the rule
+  hit the verified attack sample, but installer and COM-registration packages
+  can occasionally make regsvr32 start a helper shell. Correlate with a remote
+  /i scriptlet command, SCT network/cache evidence, or JScript-start telemetry.
 level: high

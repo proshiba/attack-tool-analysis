@@ -46,7 +46,16 @@ detection:
       - '\psexesvc.exe'
   condition: selection_child and selection_parent and not filter_common_parents
 falsepositives:
-  - Line-of-business applications that legitimately invoke shells or helpers
-  - Updaters, build systems, and endpoint-management agents not in the filter
+  - VS Code, Dropbox, PeaZip, and other user applications that legitimately invoke shells or helpers
+  - Firefox and print-component installers, setup.exe, iissetup.exe, and other installers spawning regsvr32
+  - Build systems and endpoint-management agents not present in the finite parent filter
   - Authorized penetration tests and malware-analysis labs
-level: medium
+fp_likelihood: high
+recommended_role: hunt
+precision_notes: >-
+  The clean corpus produced 321 matches, 1.354716% of all 23695 process starts.
+  Benign parents included VS Code (56), Dropbox (29), setup.exe (27), PeaZip
+  (10), and iissetup.exe (9), plus 106 regsvr32 children from ordinary Firefox
+  and print-software installation. This is actionable only with an unsigned or
+  unversioned parent, unusual path, and an external beacon or matching JA3 pair.
+level: low

@@ -20,5 +20,13 @@ detection:
     TargetObject|endswith: '\Microsoft\Windows Script\Settings\Telemetry\wmic.exe\JScriptSetScriptStateStarted'
   condition: selection
 falsepositives:
-  - Legitimate WMIC workflows that apply XSL containing JScript
+  - Approved legacy WMIC inventory or reporting workflows that apply XSL containing JScript
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The clean corpus produced 0 matches among 1151508 registry-set events.
+  Approved WMIC reporting with JScript-bearing XSL can create the value, but it
+  records actual script-engine initialization and survives URL or extension
+  changes. Correlate with a /format process, stylesheet retrieval/cache event,
+  or WMIC shell child.
 level: high

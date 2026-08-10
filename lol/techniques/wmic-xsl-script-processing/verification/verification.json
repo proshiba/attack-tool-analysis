@@ -156,12 +156,122 @@
     }
   ],
   "sigma": [
-    {"path": "sigma/win_process_creation_wmic_remote_xsl.yml", "tier": 1, "role": "primary", "logsource": "windows/process_creation", "status": "experimental"},
-    {"path": "sigma/win_process_creation_wmic_xsl_spawns_shell.yml", "tier": 1, "role": "parent-child", "logsource": "windows/process_creation", "status": "experimental"},
-    {"path": "sigma/network_zeek_wmic_remote_xsl.yml", "tier": 1, "role": "network", "logsource": "zeek/http", "status": "experimental"},
-    {"path": "sigma/network_suricata_wmic_remote_xsl.yml", "tier": 1, "role": "network", "logsource": "suricata/http", "status": "experimental"},
-    {"path": "sigma/win_file_event_wmic_xsl_cache.yml", "tier": 1, "role": "file", "logsource": "windows/sysmon/file_event", "status": "experimental"},
-    {"path": "sigma/win_registry_set_wmic_jscript_telemetry.yml", "tier": 2, "role": "registry-depth", "logsource": "windows/sysmon/registry_set", "status": "experimental"}
+    {
+      "path": "sigma/win_process_creation_wmic_remote_xsl.yml",
+      "tier": 1,
+      "role": "primary",
+      "logsource": "windows/process_creation",
+      "status": "experimental",
+      "fp_likelihood": "low",
+      "recommended_role": "alert",
+      "level": "high",
+      "precision_measurement": {
+        "measured": true,
+        "fp_count": 0,
+        "fp_share_of_category_percent": 0.0,
+        "category_denominator": 23695,
+        "detection_hit": true,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      }
+    },
+    {
+      "path": "sigma/win_process_creation_wmic_xsl_spawns_shell.yml",
+      "tier": 1,
+      "role": "parent-child",
+      "logsource": "windows/process_creation",
+      "status": "experimental",
+      "fp_likelihood": "low",
+      "recommended_role": "alert",
+      "level": "high",
+      "precision_measurement": {
+        "measured": true,
+        "fp_count": 0,
+        "fp_share_of_category_percent": 0.0,
+        "category_denominator": 23695,
+        "detection_hit": true,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      }
+    },
+    {
+      "path": "sigma/network_zeek_wmic_remote_xsl.yml",
+      "tier": 1,
+      "role": "network",
+      "logsource": "zeek/http",
+      "status": "experimental",
+      "fp_likelihood": "medium",
+      "recommended_role": "alert",
+      "level": "high",
+      "precision_measurement": {
+        "measured": false,
+        "reason": "not-testable-on-evtx",
+        "fp_count": null,
+        "fp_share_of_category_percent": null,
+        "category_denominator": null,
+        "detection_hit": null,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      }
+    },
+    {
+      "path": "sigma/network_suricata_wmic_remote_xsl.yml",
+      "tier": 1,
+      "role": "network",
+      "logsource": "suricata/http",
+      "status": "experimental",
+      "fp_likelihood": "medium",
+      "recommended_role": "alert",
+      "level": "high",
+      "precision_measurement": {
+        "measured": false,
+        "reason": "not-testable-on-evtx",
+        "fp_count": null,
+        "fp_share_of_category_percent": null,
+        "category_denominator": null,
+        "detection_hit": null,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      }
+    },
+    {
+      "path": "sigma/win_file_event_wmic_xsl_cache.yml",
+      "tier": 1,
+      "role": "file",
+      "logsource": "windows/sysmon/file_event",
+      "status": "experimental",
+      "fp_likelihood": "low",
+      "recommended_role": "alert",
+      "level": "high",
+      "precision_measurement": {
+        "measured": true,
+        "fp_count": 0,
+        "fp_share_of_category_percent": 0.0,
+        "category_denominator": 542441,
+        "detection_hit": false,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      }
+    },
+    {
+      "path": "sigma/win_registry_set_wmic_jscript_telemetry.yml",
+      "tier": 2,
+      "role": "registry-depth",
+      "logsource": "windows/sysmon/registry_set",
+      "status": "experimental",
+      "fp_likelihood": "low",
+      "recommended_role": "alert",
+      "level": "high",
+      "precision_measurement": {
+        "measured": true,
+        "fp_count": 0,
+        "fp_share_of_category_percent": 0.0,
+        "category_denominator": 1151508,
+        "detection_hit": false,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      }
+    }
   ],
   "validation": {
     "pysigma": "All six Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",

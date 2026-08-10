@@ -33,6 +33,15 @@ detection:
   condition: selection_executable and selection_parent
 falsepositives:
   - Internally compiled Go, Rust, or C/C++ utilities without version resources
+  - THOR utility updates, winget upgrades, and pip installs launched from command or PowerShell hosts
   - Software installers and administrator tooling launched from deployment scripts
   - Authorized penetration tests and malware-analysis labs
+fp_likelihood: medium
+recommended_role: hunt
+precision_notes: >-
+  The clean corpus produced 3 matches, 0.012661% of 23695 process starts:
+  thor-util.exe update, winget.exe upgrade, and pip.exe install sigma-cli.
+  Internal Go, Rust, and C/C++ utilities also commonly lack version resources.
+  Escalate only with a user-writable or unusual path plus payload-write telemetry,
+  suspicious child activity, or an external beacon or matching JA3 pair.
 level: medium
