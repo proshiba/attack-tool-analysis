@@ -57,3 +57,7 @@ committed; their SHA-256 values are recorded in `evidence/endpoint-signals.json`
 VM 104 was finally rolled back to `win_verify_baseline`. Sysmon was running with
 the expected config, and the temporary account, task, fixtures, outputs, runner
 scripts, and telemetry directories were absent.
+
+Audit gate iteration 3 passed at commit `e78ed8b`: safety `safe`, two rules
+`pass`, the ambient data/text tier at non-blocking `no-corpus-coverage`, zero
+blocking findings, and scenario coverage 5/6 (83%, above the 60% floor).
