@@ -67,9 +67,15 @@ every process start** in a clean corpus; only the second number is decision-grad
 **4. Rules that cannot be tested here say so.** Zeek and Suricata rules have no EVTX
 representation at all. They are marked `not-testable-on-evtx` and excluded from the corpus
 runs entirely, instead of being failed for "no detection hit". Likewise a detection miss is
-`needs-work` with the code `no-positive-corpus-sample`, because
-`EVTX-ATTACK-SAMPLES` contains no mimikatz command line — SigmaHQ's own mimikatz rule misses
-it too. Confirm with a control rule before reading a miss as a rule defect.
+its own **non-blocking** verdict `no-corpus-coverage` (code `no-positive-corpus-sample`),
+because `EVTX-ATTACK-SAMPLES` contains no mimikatz command line — SigmaHQ's own mimikatz rule
+misses it too. No rule edit can clear it; only adding a positive sample can. Confirm with a
+control rule, then judge recall qualitatively against the verification's own `evidence/`.
+
+**5. Blocking is separate from severity.** `BLOCKING_VERDICTS` (`needs-work`, `void`, `fail`)
+is the authoritative set the merge gate consumes; every scorecard and summary carries a
+`blocking` boolean and a `blocking_count`. `no-corpus-coverage` and `not-testable-on-evtx`
+state a limit of the corpus, so they are reported but never route work back to the author.
 
 ## Precision-convention enforcement
 
@@ -97,10 +103,20 @@ Thresholds (share of the rule's category, on a clean corpus):
 | `FP_CATEGORY_HIGH_PERCENT` | `0.1` | floor becomes `high` |
 | `FP_CATEGORY_MEDIUM_PERCENT` | `0.001` | floor becomes `medium` |
 | `FP_CATEGORY_FAIL_PERCENT` | `5.0` | verdict becomes `fail` |
-| `REQUIRE_PRECISION_FIELDS` | `true` | missing fields are `needs-work` |
+| `REQUIRE_PRECISION_FIELDS` | `true` | missing fields are `needs-work` (blocking) |
 
 ## Verdicts
 
-`pass` · `not-testable-on-evtx` · `needs-work` · `void` (could not be measured) · `fail`
-(does not compile, or absurd FP share). A verdict carries every reason code that fired, not
-just the first.
+Ordered by severity, lowest first:
+
+| Verdict | Blocking | Meaning |
+|---|---|---|
+| `pass` | no | every deterministic threshold satisfied |
+| `no-corpus-coverage` | no | no hit in the positive corpus — the corpus does not carry this tool |
+| `not-testable-on-evtx` | no | Zeek/Suricata rule; an EVTX corpus cannot exercise it at all |
+| `needs-work` | **yes** | a precision claim contradicts the measurement, or required fields are missing |
+| `void` | **yes** | could not be measured |
+| `fail` | **yes** | does not compile, fails the schema gate, or has an absurd FP share |
+
+A verdict carries every reason code that fired, not just the first, and the rule's verdict is
+the worst of them.

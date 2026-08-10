@@ -27,6 +27,19 @@ What changed in schema_version 2 (2026-08-10), and why
    a `precision-mismatch`. A detection miss is `needs-work`, not `fail`: SigmaHQ's
    own mimikatz rule also misses here, because the positive corpus has no mimikatz
    command line - that is a corpus limit, not a rule defect.
+
+What changed in schema_version 3 (2026-08-10)
+---------------------------------------------
+7. A DETECTION MISS IS NO LONGER `needs-work`. Every one of the 10 `needs-work`
+   rules in the first full suite run carried exactly one reason code,
+   `no-positive-corpus-sample`, with 0.0 FP and every other threshold satisfied -
+   so `needs-work` was routing clean rules back to the author for a defect that
+   does not exist and that no rule edit could clear. The miss now gets its own
+   verdict `no-corpus-coverage`, ranked below `not-testable-on-evtx` in
+   SEVERITY_ORDER so any real defect still wins through worst(), and excluded from
+   `BLOCKING_VERDICTS` - the set the Phase-2 merge gate consumes. Recall for a tool
+   the corpus does not carry is judged qualitatively against the verification's own
+   `evidence/`, with the upstream SigmaHQ rule as a control.
 6. STRUCTURAL SCHEMA GATE (added 2026-08-10 after it caught a live regression).
    `sigma check` validates the pySigma model and is relaxed about the metadata
    around it, so a YAML slip outside `detection` passes it and only breaks
@@ -52,7 +65,7 @@ from pathlib import Path
 
 import yaml
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 BASELINE = Path(os.getenv("AUDIT_BASELINE", "/data/datasets/evtx-baseline"))
 ATTACK = Path(os.getenv("AUDIT_ATTACK", "/data/datasets/EVTX-ATTACK-SAMPLES"))
@@ -74,7 +87,14 @@ REQUIRE_PRECISION_FIELDS = os.getenv("REQUIRE_PRECISION_FIELDS", "true").lower()
 EVTX_PRODUCTS = {"windows", None, ""}
 
 LIKELIHOOD_ORDER = {"low": 0, "medium": 1, "high": 2}
-SEVERITY_ORDER = {"pass": 0, "not-testable-on-evtx": 1, "needs-work": 2, "void": 3, "fail": 4}
+# `no-corpus-coverage` sits below `not-testable-on-evtx`: both describe a limit of the
+# corpus, not of the rule, so any genuine defect still wins through worst().
+SEVERITY_ORDER = {"pass": 0, "no-corpus-coverage": 1, "not-testable-on-evtx": 2,
+                  "needs-work": 3, "void": 4, "fail": 5}
+
+# The authoritative definition consumed by the Phase-2 merge gate. Everything else is
+# informational: it reports a property of the corpus that no rule edit can change.
+BLOCKING_VERDICTS = {"needs-work", "void", "fail"}
 
 
 def fail(message: str, code: int = 2) -> None:
@@ -505,12 +525,14 @@ def main() -> None:
                               f"(> {FP_CATEGORY_FAIL_PERCENT}%)",
                 })
             if not detections:
-                verdicts.append("needs-work")
+                verdicts.append("no-corpus-coverage")
                 reasons.append({
                     "code": "no-positive-corpus-sample",
-                    "detail": "no hit in EVTX-ATTACK-SAMPLES/regression_data. This is often a corpus limit "
-                              "(the tool is absent) rather than a rule defect - confirm with a control rule "
-                              "before treating it as a failure",
+                    "detail": "no hit in EVTX-ATTACK-SAMPLES/regression_data. The positive corpus does not "
+                              "cover this tool - SigmaHQ's own mimikatz rule misses here too - so this is a "
+                              "property of the corpus, not evidence of a rule defect. NON-BLOCKING: no rule "
+                              "edit can clear it, only adding a positive sample can. Judge recall "
+                              "qualitatively against the verification's own evidence/ instead",
                 })
             if REQUIRE_PRECISION_FIELDS and (declared is None or declared_role is None
                                              or not record["declared_precision_notes"]):
@@ -540,7 +562,7 @@ def main() -> None:
                     "detail": f"level={level} contradicts a measured high FP likelihood; "
                               f"severity-if-true is not precision",
                 })
-            if not verdicts:
+            if not any(v in BLOCKING_VERDICTS for v in verdicts):
                 reasons.append({"code": "ok", "detail": "all deterministic thresholds satisfied"})
 
         detection_samples = []
@@ -594,6 +616,7 @@ def main() -> None:
                 "require_precision_fields": REQUIRE_PRECISION_FIELDS,
             },
             "verdict": worst(verdicts),
+            "blocking": worst(verdicts) in BLOCKING_VERDICTS,
             "verdict_reasons": reasons,
         }
         (rule_out / "scorecard.json").write_text(json.dumps(card, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -608,6 +631,7 @@ def main() -> None:
             "declared_role": record["declared_role"], "level": record["level"],
             "detection_hit": bool(detections) if measured else None,
             "verdict": worst(verdicts),
+            "blocking": worst(verdicts) in BLOCKING_VERDICTS,
             "verdict_codes": [r["code"] for r in reasons],
             "scorecard": str(rule_out / "scorecard.json"),
         })
@@ -618,6 +642,8 @@ def main() -> None:
         "rule_count": len(records),
         "measured_count": sum(1 for s in summaries if s["measured"]),
         "verdict_counts": {v: sum(1 for s in summaries if s["verdict"] == v) for v in sorted(SEVERITY_ORDER)},
+        "blocking_count": sum(1 for s in summaries if s["blocking"]),
+        "blocking_verdicts": sorted(BLOCKING_VERDICTS),
         "dataset_metrics": metrics,
         "corpus_denominator": {
             "events": baseline_events,

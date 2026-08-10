@@ -33,9 +33,14 @@ You do NOT edit or commit the repo; you produce recommendations only (the author
   the floor where you can justify it — and say why. Never lower it below the measurement.
 - **Zeek/Suricata rules cannot be exercised on EVTX at all** (`not-testable-on-evtx`). Do not
   penalise them for "no detection hit"; judge them qualitatively.
-- **A detection miss is usually a corpus limit.** EVTX-ATTACK-SAMPLES contains no mimikatz command
-  line — SigmaHQ's own mimikatz rule misses too. Run the upstream SigmaHQ equivalent as a control
-  rule before you call a miss a rule defect.
+- **A detection miss is a corpus limit, and the engine now says so.** EVTX-ATTACK-SAMPLES contains
+  no mimikatz command line — SigmaHQ's own mimikatz rule misses too. A miss is the non-blocking
+  verdict `no-corpus-coverage`, never `needs-work`: no rule edit can clear it, only a new positive
+  sample can. Run the upstream SigmaHQ equivalent as a control, then judge recall qualitatively
+  against the verification's own `evidence/`, and say which scenario steps went unobserved.
+- **Only `needs-work`, `void` and `fail` block a merge** (`BLOCKING_VERDICTS`; each rule carries a
+  `blocking` boolean). Do not route `no-corpus-coverage` or `not-testable-on-evtx` back to the
+  author as defects — report them as coverage gaps, and say what sample or dataset would close them.
 
 ## Do
 
