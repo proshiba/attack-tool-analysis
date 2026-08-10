@@ -18,7 +18,7 @@ logsource:
 detection:
   selection:
     method: 'GET'
-    user_agent: 'CertUtil URL Agent'
+    user_agent|contains: 'CertUtil URL Agent'
   condition: selection
 falsepositives:
   - Legitimate certutil URL-cache retrievals used by administrators, deployment tooling, or troubleshooting workflows
@@ -28,6 +28,7 @@ precision_notes: >-
   This Zeek rule is not testable on the EVTX baseline. The exact User-Agent
   appeared on the second GET in three independent lab runs and LOLBAS names
   it as a certutil IOC, making it substantially more specific than Microsoft-
-  CryptoAPI/. Benign certutil downloads still match, so destination context
-  and endpoint certutil process/cache telemetry remain useful qualifiers.
+  CryptoAPI/. It was absent from the verifyctl run, and neither User-Agent is
+  visible under HTTPS. Benign certutil downloads still match, so destination
+  context and endpoint process/cache telemetry remain useful qualifiers.
 level: medium
