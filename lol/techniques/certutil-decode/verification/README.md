@@ -1,43 +1,56 @@
 # Certutil decode verification
 
-This verification exercised **Deobfuscate/Decode Files or Information
-(T1140)** with the Microsoft-signed `certutil.exe`. A 114-byte PEM-style
-base64 fixture decoded into a 42-byte inert text marker. Certutil explicitly
-reported successful completion, and the output SHA-256
-`86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1`
-matched the expected plaintext bytes.
+This verification covers **Deobfuscate/Decode Files or Information (T1140)**
+with the Microsoft-signed `certutil.exe`. Four new, scope-checked runs replaced
+the unprovable historical flow: `-decodehex`, `-f -decode` to an inert DLL-named
+file, a non-admin standard-user decode, and `/decode`. Together they cover five
+grounded use cases because the latter three include ordinary base64 decode. Every run began from a
+fresh `win_verify_baseline` rollback, decoded only the same 42-byte inert marker,
+and never loaded or executed its output.
 
-Sysmon recorded the process lifetime as
-`2026-08-10T01:42:11.656Z`–`2026-08-10T01:42:11.706Z` under
-`NT AUTHORITY\SYSTEM`. The numeric exit property was not retained after a
-post-run reporting-wrapper error, so `verification.json` records it as null
-rather than guessing; certutil's success text, the output file, and its matching
-hash establish the result.
+## Run results
 
-## Five-dimension result
+| Run | Network | Files | Registry | Process | Parent-child |
+|---|---|---|---|---|---|
+| `-decodehex` as SYSTEM | None: EID 3/22 = 0 | EID 11 `.bin` | 3 EID 12 + 3 EID 13 OID leaf changes | EID 1 matched process rule | PowerShell parent; no direct child |
+| `-f -decode` to `.dll` as SYSTEM | None: EID 3/22 = 0 | EID 11 `.dll`; first executable/script-tier positive | 3 EID 12 + 3 EID 13 OID leaf changes | EID 1 matched process rule | PowerShell parent; output not loaded or executed |
+| `-decode` as standard user | None: EID 3/22 = 0 | EID 11 under `C:\Users\certlab` | No three OID leaf writes; OID ancestor attempts and per-user MuiCache activity instead | EID 1 at Medium integrity matched process rule | Task Scheduler parent; only `conhost.exe` child |
+| `/decode` as SYSTEM | None: EID 3/22 = 0 | EID 11 `.bin` | 3 EID 12 + 3 EID 13 OID leaf changes | Old selector missed; `windash` rule matches | PowerShell parent; no direct child |
 
-| Dimension | Result |
-|---|---|
-| Network | None: no Sysmon EID 3 or EID 22. This was a local-only flow, so no packet capture was required. |
-| Files | Observed: certutil-attributed EID 11 for the decoded 42-byte output. |
-| Registry | Observed: three EID 12 and three EID 13 cryptography OID initialization records; legitimate and not decode-specific enough for a rule. |
-| Process | Observed: EID 1 captured certutil, `-decode`, both paths, hashes, user, and integrity. |
-| Parent-child | Observed: controlled PowerShell→certutil ancestry; only normal `conhost.exe` below certutil, and no decoded content execution. |
+The standard-user comparison shows that the SYSTEM-only OID leaf writes are
+privilege-context initialization rather than a stable decode invariant. The
+user output moved from the SYSTEM runs' `C:\lab` paths to
+`C:\Users\certlab\decoded-marker-user.txt`; the user process did not create any
+of the three `311.60.3.x` leaf keys or their `Name` values.
 
 ## Sigma coverage
 
-| Tier | Logsource | Rule |
-|---|---|---|
-| 1 | `windows/process_creation` | `win_process_creation_certutil_decode.yml` |
-| 1 | `windows/sysmon/file_event` | `win_file_event_certutil_suspicious_output.yml` |
+| Tier | Logsource | Role | Rule |
+|---|---|---|---|
+| 1 | `windows/process_creation` | alert | `win_process_creation_certutil_decode.yml` |
+| 1 | `windows/sysmon/file_event` | hunt, executable/script tier | `win_file_event_certutil_suspicious_output.yml` |
+| 1 | `windows/sysmon/file_event` | hunt, ambient data/text tier | `win_file_event_certutil_data_output.yml` |
 
-The process rule is the primary technique signal. The file rule is deliberately
-low severity because file-event telemetry cannot see `-decode`; it should be
-correlated with the process event. No Tier 2 registry rule was emitted because
-the observed OID writes were generic certutil initialization rather than a
-decode invariant. Both rules parsed successfully with pySigma 1.5.0.
+The process rule uses `windash` and trailing-space-only decode verbs, so the
+verified slash form is covered. The file rule is split: `.exe .dll .ps1 .bat
+.cmd .vbs .js .hta` remain the higher-confidence correlation tier, while `.zip
+.bin .dat .txt` are an explicitly ambient hunt tier. `.txt` no longer shapes the
+high-confidence rule merely because the original lab fixture used that suffix.
 
-Raw EVTX and combined events remain outside the repository. VM 104 was rolled
-back to `win_verify_baseline`; the input, output, and telemetry directory were
-absent, and final batch validation found Sysmon running with the expected
-configuration and Defender real-time protection off.
+The clean-corpus zeroes are null results: controls found no certutil process
+start or certutil file write anywhere in the relevant clean categories. The
+process rule's low FP judgement therefore rests on the documented decode abuse
+verbs, while both file tiers remain high-FP, low-level hunts requiring process,
+path, signer, size, or follow-on-execution context.
+
+## Safety and cleanup
+
+`evidence/safety/lab-scope.json` is generated by
+`safety/check-lab-scope.py`, includes Sysmon EID 3 attribution for all four new
+windows, and reads `PASS` with zero violations. No packet capture was required
+for these local-only transforms. Raw EVTX and combined JSON exports are not
+committed; their SHA-256 values are recorded in `evidence/endpoint-signals.json`.
+
+VM 104 was finally rolled back to `win_verify_baseline`. Sysmon was running with
+the expected config, and the temporary account, task, fixtures, outputs, runner
+scripts, and telemetry directories were absent.

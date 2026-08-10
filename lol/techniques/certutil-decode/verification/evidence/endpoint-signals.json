@@ -1,65 +1,299 @@
 {
-  "source": {
-    "collector": "C:\\Tools\\collect-run.ps1",
-    "window_start": "2026-08-10T01:42:10.643Z",
-    "window_end": "2026-08-10T01:42:15.675Z",
-    "event_count_all_channels": 258,
-    "sysmon_event_count": 211,
-    "raw_events_json_sha256": "C0B02F3F28DBCB79BF3F841CBAF1FFD4A40B13BB7F2D9E5818ECA051563B5178",
-    "raw_sysmon_evtx_sha256": "0F9731BC2F75445076EBF12F5B23977D6652943E7D6A199CBB48A0101FFFAB21"
+  "schema_version": 2,
+  "fixture": {
+    "decoded_content": "benign-certutil-decode-marker-2026-08-10 followed by CRLF",
+    "decoded_size_bytes": 42,
+    "decoded_sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1",
+    "decoded_base64": "YmVuaWduLWNlcnR1dGlsLWRlY29kZS1tYXJrZXItMjAyNi0wOC0xMA0K",
+    "execution": "never executed or loaded"
   },
-  "process": {
-    "event_id": 1,
-    "started_at": "2026-08-10T01:42:11.656Z",
-    "ended_at": "2026-08-10T01:42:11.706Z",
-    "end_source": "Sysmon EID 5",
-    "process_guid": "{d6daef74-2c73-6a79-9500-000000000b00}",
-    "process_id": 5600,
-    "image": "C:\\Windows\\System32\\certutil.exe",
-    "original_file_name": "CertUtil.exe",
-    "file_version": "10.0.19041.5794 (WinBuild.160101.0800)",
-    "company": "Microsoft Corporation",
-    "command_line": "\"C:\\Windows\\System32\\certutil.exe\" -decode C:\\lab\\benign-marker.b64 C:\\lab\\decoded-marker.txt",
-    "user": "NT AUTHORITY\\SYSTEM",
-    "integrity_level": "System",
-    "sha256": "FD1670B43E2D9188B12B233780BF043C5A90A67A2C6E3FCDC564A5C246531BC2",
-    "completion_output": "CertUtil: -decode command completed successfully."
-  },
-  "parent_child": {
-    "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-    "child_image": "C:\\Windows\\System32\\certutil.exe",
-    "direct_children": [
-      "C:\\Windows\\System32\\conhost.exe"
-    ],
-    "assessment": "PowerShell launched certutil through the controlled lab wrapper. Certutil created only its normal console-host child; no decoded content was executed."
-  },
-  "network": {
-    "event_id_3_count": 0,
-    "event_id_22_count": 0,
-    "assessment": "No network activity was part of the local decode flow and none was observed."
-  },
-  "files": {
-    "input": {
-      "path": "C:\\lab\\benign-marker.b64",
-      "size_bytes": 114,
-      "sha256": "7CE922075A02088655CEEB4A3C74793CCEF999D82ED343A054B8AAF46432C2A3"
+  "runs": [
+    {
+      "id": "certutil-decodehex-system",
+      "source": {
+        "collector": "C:\\Tools\\collect-run.ps1",
+        "window_start": "2026-08-10T12:38:59.029Z",
+        "window_end": "2026-08-10T12:39:01.810Z",
+        "event_count_all_channels": 562,
+        "sysmon_event_count": 553,
+        "raw_events_json_sha256": "C26CBFF7761BE7A84402570D57BF50885E3946CAEDEF9F5D93AE06FDA9B8FD44",
+        "raw_sysmon_evtx_sha256": "B54AF7E14C422CA7AC022CD2FC1D216ADA8A846279657EB40087084E62658C36"
+      },
+      "process": {
+        "event_id": 1,
+        "started_at": "2026-08-10T12:38:59.787Z",
+        "ended_at": "2026-08-10T12:38:59.810Z",
+        "process_guid": "{d6daef74-c663-6a79-ad00-000000000b00}",
+        "process_id": 5864,
+        "image": "C:\\Windows\\System32\\certutil.exe",
+        "original_file_name": "CertUtil.exe",
+        "command_line": "\"C:\\Windows\\System32\\certutil.exe\" -decodehex C:\\lab\\benign-marker.hex C:\\lab\\decoded-marker.bin",
+        "user": "NT AUTHORITY\\SYSTEM",
+        "integrity_level": "System",
+        "sha256": "FD1670B43E2D9188B12B233780BF043C5A90A67A2C6E3FCDC564A5C246531BC2",
+        "exit_code": 0,
+        "completion_output": "CertUtil: -decodehex command completed successfully."
+      },
+      "parent_child": {
+        "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "parent_context": "controlled SYSTEM lab wrapper",
+        "direct_children": [],
+        "assessment": "PowerShell launched certutil; no direct child or decoded-content execution was observed."
+      },
+      "network": {
+        "event_id_3_count": 0,
+        "event_id_22_count": 0,
+        "assessment": "No certutil network connection or DNS query was observed."
+      },
+      "files": {
+        "input": {
+          "path": "C:\\lab\\benign-marker.hex",
+          "size_bytes": 129,
+          "sha256": "9E17EF1991CA8F8B1948230D22BEEEF3253C4FE8BE9F9F8DB6B35D424EAE650B"
+        },
+        "output": {
+          "event_id": 11,
+          "utc_time": "2026-08-10T12:38:59.810Z",
+          "image": "C:\\Windows\\System32\\certutil.exe",
+          "path": "C:\\lab\\decoded-marker.bin",
+          "size_bytes": 42,
+          "sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1",
+          "expected_hash_match": true
+        }
+      },
+      "registry": {
+        "event_id_12_relevant_count": 3,
+        "event_id_13_relevant_count": 3,
+        "event_id_14_relevant_count": 0,
+        "oid_leafs": [
+          "1.3.6.1.4.1.311.60.3.1!7",
+          "1.3.6.1.4.1.311.60.3.2!7",
+          "1.3.6.1.4.1.311.60.3.3!7"
+        ],
+        "assessment": "SYSTEM created three CryptDllFindOIDInfo leaf keys and set each Name value."
+      },
+      "rule_evaluation": {
+        "win_process_creation_certutil_decode.yml": true,
+        "win_file_event_certutil_suspicious_output.yml": false,
+        "win_file_event_certutil_data_output.yml": true
+      }
     },
-    "output": {
-      "event_id": 11,
-      "utc_time": "2026-08-10T01:42:11.690Z",
-      "image": "C:\\Windows\\System32\\certutil.exe",
-      "path": "C:\\lab\\decoded-marker.txt",
-      "size_bytes": 42,
-      "sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1",
-      "base64": "YmVuaWduLWNlcnR1dGlsLWRlY29kZS1tYXJrZXItMjAyNi0wOC0xMA0K",
-      "expected_hash_match": true
+    {
+      "id": "certutil-force-decode-dll-system",
+      "source": {
+        "collector": "C:\\Tools\\collect-run.ps1",
+        "window_start": "2026-08-10T12:41:22.974Z",
+        "window_end": "2026-08-10T12:41:25.756Z",
+        "event_count_all_channels": 410,
+        "sysmon_event_count": 380,
+        "raw_events_json_sha256": "02FB32B5A77F3CA40F9756B2EEC73B8412E282526D5239E967BF725CFD03FBE1",
+        "raw_sysmon_evtx_sha256": "7F9125836939E33B6E9E7220203CE59A176274871EBAEBE4488778D4A1B463AA"
+      },
+      "process": {
+        "event_id": 1,
+        "started_at": "2026-08-10T12:41:23.733Z",
+        "ended_at": "2026-08-10T12:41:23.756Z",
+        "process_guid": "{d6daef74-c6f3-6a79-0501-000000000b00}",
+        "process_id": 1220,
+        "image": "C:\\Windows\\System32\\certutil.exe",
+        "original_file_name": "CertUtil.exe",
+        "command_line": "\"C:\\Windows\\System32\\certutil.exe\" -f -decode C:\\lab\\benign-marker.b64 C:\\lab\\decoded-marker.dll",
+        "user": "NT AUTHORITY\\SYSTEM",
+        "integrity_level": "System",
+        "sha256": "FD1670B43E2D9188B12B233780BF043C5A90A67A2C6E3FCDC564A5C246531BC2",
+        "exit_code": 0,
+        "completion_output": "CertUtil: -decode command completed successfully."
+      },
+      "parent_child": {
+        "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "parent_context": "controlled SYSTEM lab wrapper",
+        "direct_children": [],
+        "assessment": "PowerShell launched certutil; the DLL-named output was not loaded or executed."
+      },
+      "network": {
+        "event_id_3_count": 0,
+        "event_id_22_count": 0,
+        "assessment": "No certutil network connection or DNS query was observed."
+      },
+      "files": {
+        "input": {
+          "path": "C:\\lab\\benign-marker.b64",
+          "size_bytes": 58,
+          "sha256": "C27E9DA8581E00AAAE56A77EA8255D1A6AA673B29AAF14C2CDE7FB5E46AB870D"
+        },
+        "output": {
+          "event_id": 11,
+          "utc_time": "2026-08-10T12:41:23.756Z",
+          "image": "C:\\Windows\\System32\\certutil.exe",
+          "path": "C:\\lab\\decoded-marker.dll",
+          "size_bytes": 42,
+          "sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1",
+          "expected_hash_match": true,
+          "executed_or_loaded": false
+        }
+      },
+      "registry": {
+        "event_id_12_relevant_count": 3,
+        "event_id_13_relevant_count": 3,
+        "event_id_14_relevant_count": 0,
+        "assessment": "SYSTEM created the same three CryptDllFindOIDInfo leaf keys and Name values as the other fresh-baseline SYSTEM runs."
+      },
+      "rule_evaluation": {
+        "win_process_creation_certutil_decode.yml": true,
+        "win_file_event_certutil_suspicious_output.yml": true,
+        "win_file_event_certutil_data_output.yml": false
+      }
+    },
+    {
+      "id": "certutil-decode-standard-user",
+      "source": {
+        "collector": "C:\\Tools\\collect-run.ps1",
+        "window_start": "2026-08-10T12:51:50.000Z",
+        "window_end": "2026-08-10T12:51:55.000Z",
+        "event_count_all_channels": 421,
+        "sysmon_event_count": 388,
+        "raw_events_json_sha256": "0C1F3D949C98A311A2E2C6E18C8F1B215FDF4E6331EB557C45C19B8032FBD4C3",
+        "raw_sysmon_evtx_sha256": "32810E1CAD6C28D8B4276D8ED0177617145694995460C9D81CF04C4FE53F27B7",
+        "collection_note": "The wrapper's first collection attempt stopped before combined JSON creation. The unmodified event channels were re-exported for the exact 12:51:50Z-12:51:55Z run window; hashes above refer to that recovered export."
+      },
+      "process": {
+        "event_id": 1,
+        "started_at": "2026-08-10T12:51:52.376Z",
+        "ended_at": "2026-08-10T12:51:52.428Z",
+        "process_guid": "{d6daef74-c968-6a79-a600-000000000b00}",
+        "process_id": 5332,
+        "image": "C:\\Windows\\System32\\certutil.exe",
+        "original_file_name": "CertUtil.exe",
+        "command_line": "\"C:\\Windows\\System32\\certutil.exe\" -decode C:\\lab\\benign-marker.b64 C:\\Users\\certlab\\decoded-marker-user.txt",
+        "user": "WIN10-ANALYSIS\\certlab",
+        "integrity_level": "Medium",
+        "account_context": "temporary local Users-group member; not a member of Administrators; granted Log on as a batch job for this run only",
+        "sha256": "FD1670B43E2D9188B12B233780BF043C5A90A67A2C6E3FCDC564A5C246531BC2",
+        "exit_code": 0,
+        "completion_assessment": "Task Scheduler LastTaskResult was 0 and the output hash matched the expected inert bytes."
+      },
+      "parent_child": {
+        "parent_image": "C:\\Windows\\System32\\svchost.exe",
+        "parent_command_line": "C:\\Windows\\system32\\svchost.exe -k netsvcs -p -s Schedule",
+        "direct_children": [
+          "C:\\Windows\\System32\\conhost.exe"
+        ],
+        "assessment": "Task Scheduler launched certutil in the non-admin account; certutil launched only conhost and did not execute decoded content."
+      },
+      "network": {
+        "event_id_3_count": 0,
+        "event_id_22_count": 0,
+        "assessment": "No certutil network connection or DNS query was observed."
+      },
+      "files": {
+        "input": {
+          "path": "C:\\lab\\benign-marker.b64",
+          "size_bytes": 58,
+          "sha256": "C27E9DA8581E00AAAE56A77EA8255D1A6AA673B29AAF14C2CDE7FB5E46AB870D"
+        },
+        "output": {
+          "event_id": 11,
+          "utc_time": "2026-08-10T12:51:52.428Z",
+          "image": "C:\\Windows\\System32\\certutil.exe",
+          "path": "C:\\Users\\certlab\\decoded-marker-user.txt",
+          "size_bytes": 42,
+          "sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1",
+          "expected_hash_match": true
+        }
+      },
+      "registry": {
+        "event_id_12_total_for_certutil": 20,
+        "event_id_13_total_for_certutil": 8,
+        "event_id_14_total_for_certutil": 0,
+        "oid_ancestor_event_id_12_count": 9,
+        "oid_leaf_event_id_12_count": 0,
+        "oid_leaf_event_id_13_count": 0,
+        "per_user_activity": "MuiCache initialization under HKU\\<temporary-user-SID>_Classes",
+        "assessment": "Unlike SYSTEM, the standard user did not create the three 311.60.3.x OID leaf keys or set their Name values. Sysmon recorded repeated HKLM OID ancestor access/create attempts and per-user MuiCache initialization instead."
+      },
+      "rule_evaluation": {
+        "win_process_creation_certutil_decode.yml": true,
+        "win_file_event_certutil_suspicious_output.yml": false,
+        "win_file_event_certutil_data_output.yml": true
+      }
+    },
+    {
+      "id": "certutil-slash-decode-system",
+      "source": {
+        "collector": "C:\\Tools\\collect-run.ps1",
+        "window_start": "2026-08-10T12:54:07.138Z",
+        "window_end": "2026-08-10T12:54:09.935Z",
+        "event_count_all_channels": 202,
+        "sysmon_event_count": 191,
+        "raw_events_json_sha256": "A5B9D4E06C6723D72126984525382014A26AB44F229AB1E5189298C3ED361B31",
+        "raw_sysmon_evtx_sha256": "30DC84819DB02B315054667F33010F3CDA7B3E03470AD2EC5DA898C52D2FBA82"
+      },
+      "process": {
+        "event_id": 1,
+        "started_at": "2026-08-10T12:54:07.895Z",
+        "ended_at": "2026-08-10T12:54:07.919Z",
+        "process_guid": "{d6daef74-c9ef-6a79-9b00-000000000b00}",
+        "process_id": 5660,
+        "image": "C:\\Windows\\System32\\certutil.exe",
+        "original_file_name": "CertUtil.exe",
+        "command_line": "\"C:\\Windows\\System32\\certutil.exe\" /decode C:\\lab\\benign-marker.b64 C:\\lab\\decoded-marker-slash.bin",
+        "user": "NT AUTHORITY\\SYSTEM",
+        "integrity_level": "System",
+        "sha256": "FD1670B43E2D9188B12B233780BF043C5A90A67A2C6E3FCDC564A5C246531BC2",
+        "exit_code": 0,
+        "completion_output": "CertUtil: -decode command completed successfully."
+      },
+      "parent_child": {
+        "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "parent_context": "controlled SYSTEM lab wrapper",
+        "direct_children": [],
+        "assessment": "PowerShell launched certutil; no direct child or decoded-content execution was observed."
+      },
+      "network": {
+        "event_id_3_count": 0,
+        "event_id_22_count": 0,
+        "assessment": "No certutil network connection or DNS query was observed."
+      },
+      "files": {
+        "input": {
+          "path": "C:\\lab\\benign-marker.b64",
+          "size_bytes": 58,
+          "sha256": "C27E9DA8581E00AAAE56A77EA8255D1A6AA673B29AAF14C2CDE7FB5E46AB870D"
+        },
+        "output": {
+          "event_id": 11,
+          "utc_time": "2026-08-10T12:54:07.919Z",
+          "image": "C:\\Windows\\System32\\certutil.exe",
+          "path": "C:\\lab\\decoded-marker-slash.bin",
+          "size_bytes": 42,
+          "sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1",
+          "expected_hash_match": true
+        }
+      },
+      "registry": {
+        "event_id_12_relevant_count": 3,
+        "event_id_13_relevant_count": 3,
+        "event_id_14_relevant_count": 0,
+        "assessment": "SYSTEM created the same three CryptDllFindOIDInfo leaf keys and Name values as the other fresh-baseline SYSTEM runs."
+      },
+      "rule_evaluation": {
+        "win_process_creation_certutil_decode.yml": true,
+        "plain_contains_rule_before_fix": false,
+        "win_file_event_certutil_suspicious_output.yml": false,
+        "win_file_event_certutil_data_output.yml": true
+      }
     }
-  },
-  "registry": {
-    "event_id_12_relevant_count": 3,
-    "event_id_13_relevant_count": 3,
-    "event_id_14_relevant_count": 0,
-    "representative_target": "HKLM\\SOFTWARE\\Microsoft\\Cryptography\\OID\\EncodingType 0\\CryptDllFindOIDInfo",
-    "assessment": "Certutil initialized three cryptography OID entries. They are legitimate API state and are not distinctive enough for a standalone decode rule."
+  ],
+  "account_context_diff": {
+    "system_output_paths": [
+      "C:\\lab\\decoded-marker.bin",
+      "C:\\lab\\decoded-marker.dll",
+      "C:\\lab\\decoded-marker-slash.bin"
+    ],
+    "standard_user_output_path": "C:\\Users\\certlab\\decoded-marker-user.txt",
+    "system_oid_leaf_changes": "3 EID 12 CreateKey plus 3 EID 13 Name SetValue events on the 311.60.3.1/2/3 leafs",
+    "standard_user_oid_leaf_changes": "none",
+    "standard_user_other_registry": "20 EID 12 and 8 EID 13 total, including 9 OID ancestor EID 12 events and per-user MuiCache initialization",
+    "assessment": "The SYSTEM-only leaf writes are privilege-context initialization, not a stable decode invariant, and remain unsuitable for a detection rule."
   }
 }

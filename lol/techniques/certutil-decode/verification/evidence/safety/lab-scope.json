@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 1 - attack traffic never leaves the isolated lab",
+  "allowed_networks": [
+    "192.168.1.0/24"
+  ],
+  "management_networks": [
+    "10.9.0.0/24"
+  ],
+  "inputs": {
+    "zeek_dir": "lol/techniques/certutil-decode/verification/evidence/safety/nsm-local-only",
+    "sysmon_json": "lol/techniques/certutil-decode/verification/evidence/safety/sysmon-eid3-attribution.json",
+    "sysmon_attribution_available": true
+  },
+  "violation_count": 0,
+  "violations": [],
+  "os_background_destinations": [],
+  "verdict": "PASS"
+}
