@@ -1,5 +1,19 @@
 # Certutil decode scenarios
 
+## Scope
+
+- **VM 104 — `WIN10-ANALYSIS` — `192.168.1.52` — target and local fixture
+  host.** The recorded run decoded the fixture here as
+  `NT AUTHORITY\SYSTEM`. No attacker or NSM VM is named in this verification.
+- **Destinations.** The evidence records no Sysmon network-connection or DNS
+  events, and the run used only local input and output paths. Its only
+  scenario host was `192.168.1.52`, inside `192.168.1.0/24`; nothing outside
+  the lab was contacted.
+- **Hosting and references.** The inert input fixture was staged locally at
+  `C:\lab\benign-marker.b64` on VM 104. No payload, stager, C2, download
+  source, or external citation was used. The record does not state where the
+  fixture was created or which host staged it before the run.
+
 `certutil.exe` is a Microsoft-signed certificate utility that can decode
 base64 or hexadecimal content into an arbitrary output file. Attackers can use
 that legitimate capability to turn an encoded staging artifact into its usable

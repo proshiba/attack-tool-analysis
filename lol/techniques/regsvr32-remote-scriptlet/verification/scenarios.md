@@ -1,5 +1,27 @@
 # Regsvr32 remote-scriptlet scenarios
 
+## Scope
+
+- **VM 100 — `kalivm` — `192.168.1.50` — attacker and scriptlet host.** Its
+  Python HTTP server hosted the benign `benign.sct` payload on TCP 18081 and
+  was bound only to the lab interface.
+- **VM 104 — `WIN10-ANALYSIS` — `192.168.1.52` — target.** It ran
+  `regsvr32.exe` as `NT AUTHORITY\SYSTEM`, retrieved the scriptlet, and wrote
+  the local marker.
+- **VM 106 — `nsm` — `10.9.0.20` (the only address recorded) — offline NSM.**
+  It analyzed the captured traffic with Zeek and Suricata; it was not a run
+  traffic destination.
+- **Destinations.** The target contacted only
+  `192.168.1.50:18081` on VM 100. The run used an IP literal and made no DNS
+  query. Every run destination was inside `192.168.1.0/24`, nothing outside
+  the lab was contacted, and VM 106's recorded `10.9.0.20` address was used
+  for neither scriptlet hosting nor run traffic.
+- **Hosting and references.** VM 100 hosted the only payload, the benign SCT;
+  no stager or C2 was used. `regsvr32.exe` was the target's built-in Windows
+  binary, so no external tool repository was contacted or cited for the run.
+  The record does not state the account that ran the Kali HTTP service or the
+  account used for offline NSM analysis.
+
 `regsvr32.exe` is a Microsoft-signed registration utility. Loading the
 `scrobj.dll` scriptlet component with an `/i:` URL lets the trusted binary
 retrieve and execute script contained in a remote SCT file. This is the

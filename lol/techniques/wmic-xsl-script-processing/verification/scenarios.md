@@ -1,5 +1,27 @@
 # WMIC XSL script-processing scenarios
 
+## Scope
+
+- **VM 100 — `kalivm` — `192.168.1.50` — attacker and stylesheet host.** Its
+  Python HTTP server hosted the benign `benign.xsl` payload on TCP 18082 and
+  was bound only to the lab interface.
+- **VM 104 — `WIN10-ANALYSIS` — `192.168.1.52` — target.** It ran `WMIC.exe`
+  as `NT AUTHORITY\SYSTEM`, retrieved and processed the stylesheet, and wrote
+  the local marker.
+- **VM 106 — `nsm` — `10.9.0.20` (the only address recorded) — offline NSM.**
+  It analyzed the captured traffic with Zeek and Suricata; it was not a run
+  traffic destination.
+- **Destinations.** The target contacted only
+  `192.168.1.50:18082` on VM 100. The run used an IP literal and made no DNS
+  query. Every run destination was inside `192.168.1.0/24`, nothing outside
+  the lab was contacted, and VM 106's recorded `10.9.0.20` address was used
+  for neither stylesheet hosting nor run traffic.
+- **Hosting and references.** VM 100 hosted the only payload, the benign XSL;
+  no stager or C2 was used. `WMIC.exe` was the target's built-in Windows
+  binary, so no external tool repository was contacted or cited for the run.
+  The record does not state the account that ran the Kali HTTP service or the
+  account used for offline NSM analysis.
+
 `wmic.exe` can apply an XSL stylesheet to command output through `/format:`.
 Microsoft's XSLT engine supports embedded script through `ms:script`, so a
 remote stylesheet can turn the signed WMI command-line utility into a script
