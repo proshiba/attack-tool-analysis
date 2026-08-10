@@ -1,0 +1,27 @@
+title: Microsoft CryptoAPI User-Agent in Zeek HTTP Traffic
+id: 480db6be-6961-4879-b866-b506723f76c5
+status: experimental
+description: >-
+  Detects HTTP GET requests carrying the Microsoft-CryptoAPI User-Agent. A
+  certutil URL-cache transfer produced this service-portable network signal
+  before a second request with the CertUtil URL Agent value.
+references:
+  - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+  - https://attack.mitre.org/techniques/T1105/
+author: Codex lab orchestrator
+date: '2026-08-09'
+tags:
+  - attack.command_and_control
+  - attack.t1105
+logsource:
+  category: http
+  product: zeek
+detection:
+  selection:
+    method: 'GET'
+    user_agent|startswith: 'Microsoft-CryptoAPI/'
+  condition: selection
+falsepositives:
+  - Legitimate Windows certificate-chain, CRL, trust-list, or application retrieval through CryptoAPI
+  - Enterprise certificate enrollment and trust-maintenance traffic sent over HTTP
+level: medium
