@@ -1,5 +1,10 @@
 # Certutil remote-download verification
 
+Audit-gate iteration 3 passed at `58fc04c` with safety `safe`, 0 blocking
+findings, and 5/7 grounded reference use-cases covered (71%). A `PASS` means
+that no blocking defect was found; it does not mean that every rule was
+exercised.
+
 Five new, independently rolled-back runs verify the remote-download shapes
 that the prior lab-shaped rule missed: canonical `-urlcache -f` without
 `-split`, `-verifyctl -f`, a `services.exe` parent, Kali-only HTTPS, and an
