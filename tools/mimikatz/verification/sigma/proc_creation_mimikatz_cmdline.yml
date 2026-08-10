@@ -31,7 +31,7 @@ detection:
   condition: selection_command
 falsepositives:
   - Authorized penetration tests, red-team exercises, and malware-analysis labs
-  - Build or CI command lines and security-test data containing generic C++ scope tokens such as crypto::, token::, vault::, or kerberos::
+  - "Build or CI command lines and security-test data containing generic C++ scope tokens such as crypto::, token::, vault::, or kerberos::"
 fp_likelihood: low
 recommended_role: alert
 precision_notes: >-

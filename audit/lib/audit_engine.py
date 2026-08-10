@@ -27,6 +27,16 @@ What changed in schema_version 2 (2026-08-10), and why
    a `precision-mismatch`. A detection miss is `needs-work`, not `fail`: SigmaHQ's
    own mimikatz rule also misses here, because the positive corpus has no mimikatz
    command line - that is a corpus limit, not a rule defect.
+6. STRUCTURAL SCHEMA GATE (added 2026-08-10 after it caught a live regression).
+   `sigma check` validates the pySigma model and is relaxed about the metadata
+   around it, so a YAML slip outside `detection` passes it and only breaks
+   downstream. A `falsepositives:` entry ending in `kerberos::` at end-of-line is
+   read by YAML as a mapping key, so the list item becomes a dict: sigma-cli
+   accepted it, the Go checker refused the whole rule with "cannot unmarshal !!map
+   into string", and the rule silently stopped being measurable. That class is now
+   `fail` / `rule-schema-invalid` at the gate, and a rule the checker refuses even
+   in isolation is `fail` / `rule-unparseable-by-checker` carrying the checker's own
+   error - not the generic `void`.
 """
 
 from __future__ import annotations
@@ -125,29 +135,33 @@ def stage(records: list[dict], directory: Path) -> Path:
 
 
 def measure(records: list[dict], evtx_paths: list[Path], outdir: Path, tag: str,
-            workspace: Path) -> tuple[list[dict], list[dict], list[str]]:
+            workspace: Path, quarantine_reasons: dict[str, str]) -> tuple[list[dict], list[dict], list[str]]:
     """Measure `records` against `evtx_paths`.
 
     Returns (findings, notes, quarantined_staged_names). A checker abort never
     yields zeros: the offenders are bisected out and reported, and the survivors
-    are re-measured on their own.
+    are re-measured on their own. `quarantine_reasons` is filled in with the
+    checker's own error message per offending rule, so the scorecard can say WHY
+    the rule could not be loaded instead of only that it could not.
     """
     notes: list[dict] = []
     quarantined: list[str] = []
 
-    def attempt(subset: list[dict], label: str) -> tuple[int, list[dict]]:
+    def attempt(subset: list[dict], label: str) -> tuple[int, list[dict], Path]:
         if not subset:
-            return 0, []
+            return 0, [], workspace / "empty.stderr.txt"
         directory = workspace / f"{tag}-{label}"
         stage(subset, directory)
+        err_out = (outdir / f"{tag}-checker.stderr.txt" if label == "all"
+                   else workspace / f"{tag}-{label}.stderr.txt")
         code, rows = checker(
             directory, evtx_paths,
             outdir / f"{tag}-findings.raw.jsonl" if label == "all" else workspace / f"{tag}-{label}.jsonl",
-            outdir / f"{tag}-checker.stderr.txt" if label == "all" else workspace / f"{tag}-{label}.stderr.txt",
+            err_out,
         )
-        return code, rows
+        return code, rows, err_out
 
-    code, rows = attempt(records, "all")
+    code, rows, _ = attempt(records, "all")
     if code == 0:
         return rows, notes, quarantined
 
@@ -162,16 +176,23 @@ def measure(records: list[dict], evtx_paths: list[Path], outdir: Path, tag: str,
         """Return the subset that measured cleanly; append offenders to `quarantined`."""
         if not subset:
             return []
-        code, _ = attempt(subset, f"b{depth}-{len(subset)}-{subset[0]['index']}")
+        code, _, err_out = attempt(subset, f"b{depth}-{len(subset)}-{subset[0]['index']}")
         if code == 0:
             return subset
         if len(subset) == 1:
+            message = ""
+            if err_out.exists():
+                message = " ".join(err_out.read_text(encoding="utf-8", errors="replace").split())[:600]
             quarantined.append(subset[0]["staged_name"])
+            quarantine_reasons[subset[0]["staged_name"]] = (
+                f"evtx-sigma-checker exits {code} when this rule is loaded alone"
+                + (f": {message}" if message else "")
+            )
             notes.append({
                 "event": "rule-quarantined",
                 "corpus": tag,
                 "rule": str(subset[0]["source"]),
-                "reason": f"evtx-sigma-checker exits {code} when this rule is loaded alone",
+                "reason": quarantine_reasons[subset[0]["staged_name"]],
             })
             return []
         middle = len(subset) // 2
@@ -180,7 +201,7 @@ def measure(records: list[dict], evtx_paths: list[Path], outdir: Path, tag: str,
     survivors = bisect(records, 0)
     if not survivors:
         return [], notes, quarantined
-    code, rows = attempt(survivors, "survivors")
+    code, rows, _ = attempt(survivors, "survivors")
     if code != 0:
         notes.append({"event": "checker-aborted-after-quarantine", "corpus": tag, "returncode": code})
         return [], notes, [record["staged_name"] for record in records]
@@ -256,6 +277,41 @@ def measured_likelihood(share_percent: float | None) -> str | None:
     return "low"
 
 
+def schema_errors(metadata: dict) -> list[str]:
+    """Structural checks `sigma check` does not make.
+
+    pySigma parses a rule into its own model and is relaxed about the surrounding
+    metadata, so a YAML slip outside `detection` sails through it and only surfaces
+    downstream. The one that actually happened: a `falsepositives` entry ending in
+    `kerberos::` at end-of-line, which YAML reads as a mapping key, turning the list
+    item into a dict. sigma-cli accepted it; the Go checker refused to load the rule
+    ("cannot unmarshal !!map into string") and every consumer expecting a list of
+    strings would too. Catch that class here, at the gate, with a clear reason.
+    """
+    problems: list[str] = []
+    for key in ("falsepositives", "tags", "references"):
+        value = metadata.get(key)
+        if value is None:
+            continue
+        if not isinstance(value, list):
+            problems.append(f"{key} must be a list of strings, got {type(value).__name__}")
+            continue
+        for index, item in enumerate(value):
+            if not isinstance(item, str):
+                hint = ""
+                if isinstance(item, dict) and len(item) == 1:
+                    hint = (" - a list entry ending in ':' or '::' is read by YAML as a mapping key; "
+                            "quote the string")
+                problems.append(f"{key}[{index}] must be a string, got {type(item).__name__}{hint}")
+    for key in ("logsource", "detection"):
+        if key in metadata and not isinstance(metadata[key], dict):
+            problems.append(f"{key} must be a mapping, got {type(metadata[key]).__name__}")
+    for key in ("title", "id", "level", "description"):
+        if key in metadata and metadata[key] is not None and not isinstance(metadata[key], str):
+            problems.append(f"{key} must be a string, got {type(metadata[key]).__name__}")
+    return problems
+
+
 def worst(verdicts: list[str]) -> str:
     return max(verdicts, key=lambda v: SEVERITY_ORDER.get(v, 0)) if verdicts else "pass"
 
@@ -302,10 +358,11 @@ def main() -> None:
             parse_error = None
         except Exception as exc:  # noqa: BLE001 - the parse error itself is the finding
             metadata, parse_error = {}, str(exc)
-        logsource = metadata.get("logsource") or {}
+        logsource = metadata.get("logsource") if isinstance(metadata.get("logsource"), dict) else {}
         records.append({
             "index": index,
             "source": rule,
+            "metadata": metadata,
             "staged_name": f"{index:04d}__{rule.name}",
             "id": metadata.get("id"),
             "title": metadata.get("title", rule.stem),
@@ -326,7 +383,9 @@ def main() -> None:
         syntax = run(["sigma", "check", str(record["source"])], 300)
         record["syntax_text"] = syntax.stdout + syntax.stderr
         record["syntax_exit_code"] = syntax.returncode
-        record["syntax_ok"] = syntax.returncode == 0 and record["parse_error"] is None
+        record["schema_errors"] = schema_errors(record["metadata"])
+        record["syntax_ok"] = (syntax.returncode == 0 and record["parse_error"] is None
+                               and not record["schema_errors"])
     compiling = [r for r in records if r["syntax_ok"]]
     rejected = [r for r in records if not r["syntax_ok"]]
 
@@ -345,20 +404,23 @@ def main() -> None:
             "event": "rules-excluded-before-measurement",
             "count": len(rejected),
             "rules": [str(r["source"]) for r in rejected],
-            "reason": "sigma check failed; excluded so their neighbours still get real numbers",
+            "reason": "sigma check or the structural schema check failed; excluded so their "
+                      "neighbours still get real numbers",
         })
 
     fp_all: list[dict] = []
     detection_all: list[dict] = []
     quarantined_fp: list[str] = []
     quarantined_detection: list[str] = []
+    quarantine_reasons: dict[str, str] = {}
 
     with tempfile.TemporaryDirectory(prefix="sigma-audit-") as temporary:
         workspace = Path(temporary)
         if testable:
-            fp_all, fp_notes, quarantined_fp = measure(testable, [BASELINE], outdir, "fp", workspace)
+            fp_all, fp_notes, quarantined_fp = measure(
+                testable, [BASELINE], outdir, "fp", workspace, quarantine_reasons)
             detection_all, detection_notes, quarantined_detection = measure(
-                testable, [ATTACK, REGRESSION], outdir, "detection", workspace)
+                testable, [ATTACK, REGRESSION], outdir, "detection", workspace, quarantine_reasons)
             notes += fp_notes + detection_notes
 
     summaries = []
@@ -403,7 +465,13 @@ def main() -> None:
         reasons: list[dict] = []
         verdicts: list[str] = []
 
-        if not record["syntax_ok"]:
+        if record["schema_errors"]:
+            verdicts.append("fail")
+            reasons.append({
+                "code": "rule-schema-invalid",
+                "detail": "; ".join(record["schema_errors"]),
+            })
+        elif not record["syntax_ok"]:
             verdicts.append("fail")
             reasons.append({
                 "code": "sigma-syntax-error",
@@ -415,6 +483,12 @@ def main() -> None:
                 "code": "not-testable-on-evtx",
                 "detail": f"logsource product={record['product']!r} category={record['category']!r} "
                           f"cannot be exercised against a Windows EVTX corpus; judge qualitatively",
+            })
+        elif staged_name in quarantine_reasons:
+            verdicts.append("fail")
+            reasons.append({
+                "code": "rule-unparseable-by-checker",
+                "detail": quarantine_reasons[staged_name],
             })
         elif not measured:
             verdicts.append("void")
@@ -486,6 +560,7 @@ def main() -> None:
             },
             "syntax_ok": record["syntax_ok"],
             "syntax_exit_code": record["syntax_exit_code"],
+            "schema_errors": record["schema_errors"],
             "testable_on_evtx": record.get("testable_on_evtx", False),
             "measured": measured,
             "fp": {
