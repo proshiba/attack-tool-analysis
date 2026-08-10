@@ -722,11 +722,57 @@
     "reported_upstream": {"status": "not_reported", "reason": "local rules remain experimental and Linux endpoint precision was only judged qualitatively against run-local evidence"}
   },
   "audit_gate": {
-    "status": "pending",
-    "measured_commit": null,
-    "iteration": null,
-    "exit_code": null,
-    "output": null
+    "status": "PASS",
+    "measured_commit": "8a4cad0a352b46299fe809f654638a13fa79ffc1",
+    "iteration": 2,
+    "iteration_count": 2,
+    "exit_code": 0,
+    "output": "/opt/audit/results/gate-tools-sliver-20260810-2101/gate-result.md",
+    "report_hashes": {
+      "gate_result_json_sha256": "8c6c621665da7e50fba5b279cefab76a5860c5de25738582d5fdc275805b6e22",
+      "auditor_report_json_sha256": "1a26a8b41a111b6fa1f0e95f905ad9c2d58eabc6c45682d133480b8bd8c4ebc0"
+    },
+    "safety": "safe",
+    "blockers": 0,
+    "non_blocking_findings": 10,
+    "harness": {
+      "rule_count": 12,
+      "blocking": 0,
+      "pass": 3,
+      "not_testable_on_evtx": 9
+    },
+    "precision_source": {
+      "path": "/opt/audit/results/gate-tools-sliver-20260810-2101/precision/precision-input.json",
+      "repo_commit_measured": "8a4cad0",
+      "auditor_report_commit": "8a4cad0a352b46299fe809f654638a13fa79ffc1",
+      "reconciliation_rule": "fp_likelihood = max(measured floor, auditor judgement); high fp_likelihood forces recommended_role=hunt and recommended level<=low"
+    },
+    "precision": [
+      {"rule": "file_event_lnx_curl_writes_hidden_transient_executable.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": 542441, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "file_event_script_host_writes_executable.yml", "harness_verdict": "pass", "fp_count": 64, "fp_share_of_category_percent": 0.011799, "category_denominator": 542441, "detection_hit": true, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "network_suricata_sliver_dns_encoded_query_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_suricata_sliver_http_request_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_suricata_sliver_mtls_ja3_pair.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "repository_level_at_measured_commit": "medium", "recommended_level": "low"},
+      {"rule": "network_zeek_sliver_dns_encoded_query_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_zeek_sliver_http_request_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_zeek_sliver_mtls_ja3_pair.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "repository_level_at_measured_commit": "medium", "recommended_level": "low"},
+      {"rule": "network_zeek_tls13_no_sni_no_visible_cert.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "proc_creation_lnx_hidden_executable_var_tmp.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": 23695, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "proc_creation_untrusted_parent_spawns_shell.yml", "harness_verdict": "pass", "fp_count": 321, "fp_share_of_category_percent": 1.354716, "category_denominator": 23695, "detection_hit": true, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "proc_creation_unversioned_executable_from_script_host.yml", "harness_verdict": "pass", "fp_count": 3, "fp_share_of_category_percent": 0.012661, "category_denominator": 23695, "detection_hit": true, "fp_likelihood": "medium", "recommended_role": "hunt", "recommended_level": "medium"}
+    ],
+    "scenario_coverage": {
+      "verified_grounded_use_cases": 6,
+      "grounded_denominator": 10,
+      "coverage_percent": 60,
+      "floor_percent": 60,
+      "verdict": "expand",
+      "merge_effect": "above the floor; remaining additions are non-blocking future scenarios"
+    },
+    "history": [
+      {"iteration": 1, "measured_commit": "6ad937e88eb453ef3109d069668e0c7202861c94", "decision": "BLOCKED", "blockers": 4},
+      {"iteration": 2, "measured_commit": "8a4cad0a352b46299fe809f654638a13fa79ffc1", "decision": "PASS", "blockers": 0}
+    ]
   },
   "detection_limitations": [
     "Generated names, hashes, ports, transport profiles, and TLS stacks are operator- or version-dependent; no rule hardcodes the lab address or port.",
