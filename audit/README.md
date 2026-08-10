@@ -12,10 +12,15 @@ audit/
   bin/build-baseline-metrics.sh   measure per-category event denominators (run once per corpus)
   bin/audit-rule.sh               grade one rule or one verification's sigma/ directory
   bin/build-scenario-reference.sh ATT&CK + LOLBAS/GTFOBins + daily-news reference for a tool
+  bin/audit-gate.sh               ONE gate iteration for one verification: measure, judge, decide
   lib/baseline_metrics.py         per-file event counting -> category denominators
   lib/audit_engine.py             syntax + FP + detection + precision-convention scoring
   lib/audit_suite.py              run the engine across a whole repo, merge into a scorecard
   lib/scenario_reference.py       scenario grounding data builder
+  lib/precision_input.py          join measurement with judgement -> what the author applies
+  lib/gate_decide.py              the merge decision, deterministic; imports BLOCKING_VERDICTS
+  prompts/rule-audit-agent.md     the auditor's standing instructions (repo-wide audit)
+  prompts/audit-gate-agent.md     the same, narrowed to one verification as a merge gate
   catalog/                        small derived catalogs (committed) — never raw corpora
   datasets/SOURCES.md             where every corpus comes from and what it can/cannot prove
 ```
@@ -41,6 +46,45 @@ Long runs must be detached — an ssh drop otherwise kills them:
 setsid bash -c 'python3 lib/audit_suite.py … > run.log 2>&1' </dev/null &
 pgrep -f '[a]udit_suite'   # bracket the first char, or pgrep matches its own command line
 ```
+
+## The merge gate
+
+`bin/audit-gate.sh <verification-id> --ref <branch>` runs **one** gate iteration for one
+verification and returns the verdict as its exit code — `0` PASS, `1` BLOCKED, `2` gate error
+(inconclusive; never merge on a 2). It reads the branch from GitHub, so the branch under audit
+must be pushed first. The workflow that calls it is `playbooks/verify-tool.md` step 8.
+
+```
+harness (audit_suite.py)      what the rules MEASURE on a clean corpus  ─┐
+scenario_reference.py         ATT&CK + LOLBAS + real cases, as grounding ├─> auditor (claude -p,
+check-scenario-scope.py       design-time safety, re-run deterministically┘   a different model)
+                                                                              ↓ audit-report.json
+                              precision_input.py  →  gate_decide.py  →  gate-result.json
+                              (max(floor, judgement))  (deterministic)     route-to-author.md
+```
+
+Separation of powers is the point: the harness decides the numbers, the auditor decides the
+judgement calls, and `gate_decide.py` only combines them — it asks no model anything, so the same
+two inputs always produce the same verdict. It imports `BLOCKING_VERDICTS` from `audit_engine.py`
+instead of restating the set, so the gate can never drift from the engine that assigns verdicts.
+
+Blocking: a safety verdict of `reject`/`needs-change`, a harness verdict in `BLOCKING_VERDICTS`,
+an auditor `blocking_defect`, a scenario `redo`, or a scenario `expand` below
+`SCENARIO_COVERAGE_MIN` (default `0.6`). Explicitly NOT blocking: `no-corpus-coverage` and
+`not-testable-on-evtx` — they describe a limit of the corpus, and routing them to the author asks
+for a fix that does not exist.
+
+`route-to-author.md` splits blocked work into **light** (rule text edits), **heavy** (needs a new
+lab run) and **safety** (fix the scenario, never the finding), because those are three different
+tasks for the author. Iterations are capped at 3 by the playbook; the cap lives with the human
+loop, not in this script.
+
+| Variable | Default | Effect |
+|---|---|---|
+| `SCENARIO_COVERAGE_MIN` | `0.6` | coverage below this makes an `expand` scenario blocking |
+| `AUDITOR_TIMEOUT_SECONDS` | `5400` | hard timeout on the auditor run |
+| `GATE_REPO` | `/opt/audit/scratch/gate-repo` | read-only checkout of the ref under audit |
+| `REPO_URL` | the public repo | where the audited branch is fetched from |
 
 ## What the engine measures, and the four defects it was built to fix
 
