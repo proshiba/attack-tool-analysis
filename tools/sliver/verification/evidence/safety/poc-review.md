@@ -55,8 +55,11 @@ backstop against an overlooked public destination.
 - HTTP C2: `192.168.1.50:8080` from VM 103.
 - HTTPS C2: `192.168.1.50:8443` from VM 103.
 - Raw mTLS C2: `192.168.1.50:31337` from VM 103.
-- No hostname, DNS C2, public update, ACME, Armory, proxy, or alternate C2 is
-  configured or permitted during execution.
+- DNS C2: the lab-only parent `c2.sliver.lab.` was sent through VM 103's
+  temporary exclusive resolver `192.168.1.50:53`; no public resolver or
+  fallback was permitted.
+- No public update, ACME, Armory, proxy, or alternate C2 was configured or
+  permitted during execution.
 
 ## Verdict
 

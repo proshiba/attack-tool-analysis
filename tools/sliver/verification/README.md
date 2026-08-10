@@ -1,7 +1,8 @@
 # Sliver cross-platform verification with NSM
 
-The 2026-08-10 extension adds a renamed Linux amd64 implant on Ubuntu VM 103
-across clear HTTP beacon, HTTPS beacon, and raw mTLS session transports. Each
+The 2026-08-10 extension adds renamed Linux amd64 implants on Ubuntu VM 103
+across clear HTTP beacon, HTTPS beacon, DNS beacon, and raw mTLS session
+transports. Each
 implant was fetched realistically from the contained Kali HTTP staging server,
 then hashed, chmodded, and executed while Sysmon for Linux, auditd, and tcpdump
 collected separate flow windows. VM 103 was restored to
@@ -15,7 +16,10 @@ and raw mTLS unexpectedly shared JA3
 `2196848d251b217de8b2c037e356c11d`, JA3S
 `f4febc55ea12b31ae17cfb7e614afda8`, and all-zero JARM; their discriminating
 shape was repeated short HTTPS connections versus one 60.057947-second mTLS
-session flow.
+session flow. DNS exposed 73 A/TXT queries in 15 bursts, with burst starts
+10.212-13.521 seconds apart. Twenty-three queries had the rename-, address-,
+and parent-domain-independent structure used by the new DNS rules: two
+63-character restricted-alphabet labels followed by an 18-63-character label.
 
 Linux endpoint additions are rename-resilient and deliberately narrow:
 
@@ -24,11 +28,16 @@ Linux endpoint additions are rename-resilient and deliberately narrow:
 - hidden `/var/tmp` execution, filling a form left by upstream's existing
   `/tmp` and `/dev/shm` rules; and
 - Zeek and Suricata HTTP request-profile rules with a documented rolling-window
-  periodicity requirement.
+  periodicity requirement; and
+- Zeek and Suricata DNS encoded-query rules with the same backend correlation
+  requirement.
 
 The combined `check-lab-scope.py` evidence is `PASS`. Process ownership was
 proved with `collect-run.sh`'s auditd-correlated network attribution because
-raw Sysmon EID 3 can carry a stale pre-exec image. macOS remains a
+raw Sysmon EID 3 can carry a stale pre-exec image. For DNS, auditd attributed
+72 successful implant connects to the local resolver stub, while the exclusive
+resolver configuration and pcap proved the resolver leg terminated on Kali.
+macOS remains a
 lab-capability gap because the lab has no macOS host; it is not recorded as a
 scenario gap. The detailed Linux record is in `verification.json`,
 `scenarios.md`, and the two `evidence/linux-*-signals.json` files.
@@ -78,6 +87,7 @@ Network rules cover:
 
 - the observed JA3+JA3S pair in Zeek TLS logs;
 - the same pair in Suricata EVE TLS events; and
+- the observed long encoded DNS query structure in Zeek and Suricata; and
 - a lower-confidence Zeek hunt for repeated TLS 1.3 with no SNI or passively
   visible certificate chain.
 

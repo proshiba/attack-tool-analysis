@@ -1,13 +1,12 @@
-title: Sliver TLS JA3 and JA3S Pair in Suricata TLS Events
+title: Default Go Crypto TLS 1.3 JA3 and Minimal Server JA3S Pair in Suricata
 id: 9a6daa77-1974-4655-96e6-afbd23ab2042
 status: experimental
 description: >-
-  Detects the client/server TLS fingerprint pair observed by Suricata for the
-  official Sliver v1.7.3 Windows mTLS and Linux HTTPS/mTLS implants. The Linux
-  HTTPS and mTLS transports produced the same pair, so this rule intentionally
-  does not claim transport discrimination. It contains no lab address, port,
-  hostname, or implant name. Correlate five matches between the same endpoints
-  in 75 seconds to model HTTPS beacon timing.
+  Detects the default Go crypto/tls client fingerprint paired with a minimal
+  TLS 1.3 ServerHello. Sliver v1.7.3 Windows mTLS and Linux HTTPS/mTLS produced
+  this pair, but it is a Go-runtime signal, not a Sliver identifier or a
+  transport discriminator. It contains no lab address, port, hostname, or
+  implant name. Use only as a hunt pivot with endpoint and flow-shape context.
 references:
   - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
   - https://docs.suricata.io/en/latest/output/eve/eve-json-format.html
@@ -28,12 +27,14 @@ detection:
 falsepositives:
   - Internal Go clients talking to Go TLS 1.3 services with the same generic crypto/tls fingerprint pair
   - Authorized Sliver red-team infrastructure and malware-analysis labs
-fp_likelihood: medium
-recommended_role: alert
+fp_likelihood: high
+recommended_role: hunt
 precision_notes: >-
-  This Suricata rule is not testable on the EVTX corpus. It matched all 15 Linux
-  HTTPS flows and the one Linux mTLS session. The pair can represent non-Sliver
-  Go TLS peers and is pinned to this Sliver/Go profile. Correlate repeated HTTPS
-  matches with 9-14 second gaps; correlate session-mode mTLS with long flow
-  duration and unusual Linux execution.
-level: high
+  This Suricata rule is not testable on the EVTX corpus. It matched all 15
+  Linux HTTPS flows and the one Linux mTLS session. Ordinary Go clients and TLS
+  1.3 servers can match continuously. The five-in-75-seconds and 9-14-second
+  cadence is calibrated only to this lab's configured 10+0-3 second beacon and
+  must be parameterized for a production interval. Correlate session-mode mTLS
+  with long flow duration and unusual endpoint execution. Go version changes
+  can invalidate the hash.
+level: medium

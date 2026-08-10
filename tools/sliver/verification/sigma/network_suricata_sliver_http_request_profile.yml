@@ -5,8 +5,10 @@ description: >-
   Detects the combined User-Agent, POST response, query, and randomized
   script-like URI vocabulary observed from a Sliver v1.7.3 Linux HTTP beacon
   in Suricata EVE HTTP events. It does not key on a C2 address, port, hostname,
-  or implant filename. A periodic beacon analytic should require at least five
-  matching flows for an endpoint pair in 75 seconds with starts 9-14 seconds apart.
+  or implant filename. A periodic beacon analytic calibrated to this run can
+  require at least five matching flows for an endpoint pair in 75 seconds with
+  starts 9-14 seconds apart; production deployments must parameterize these
+  values to their expected beacon interval.
 references:
   - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
   - https://docs.suricata.io/en/latest/output/eve/eve-json-format.html
@@ -44,6 +46,7 @@ precision_notes: >-
   Suricata HTTP events are not testable on the EVTX corpus. The rule matched
   all 12 Sliver POST events in this trace and no staging request. The User-Agent
   and web profile are operator-configurable. Aggregate by endpoint pair to test
-  the measured 10.061-12.907 second cadence; single-event Sigma cannot itself
-  assert periodicity.
+  the measured 10.061-12.907 second cadence. That window is a lab-fast
+  configuration, not a general Sliver interval; single-event Sigma cannot
+  itself assert periodicity.
 level: medium

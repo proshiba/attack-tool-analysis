@@ -102,6 +102,7 @@
         "ja3": "2196848d251b217de8b2c037e356c11d",
         "ja3s": "f4febc55ea12b31ae17cfb7e614afda8",
         "jarm": "00000000000000000000000000000000000000000000000000000000000000",
+        "zeek_ascii_tsv_no_sni_no_visible_cert_matches": 15,
         "http_request_profile": {
           "status": "not_observed",
           "reason": "encrypted on the wire; Zeek and Suricata exposed TLS metadata, not C2 URI or headers"
@@ -155,6 +156,7 @@
         "ja3": "2196848d251b217de8b2c037e356c11d",
         "ja3s": "f4febc55ea12b31ae17cfb7e614afda8",
         "jarm": "00000000000000000000000000000000000000000000000000000000000000",
+        "zeek_ascii_tsv_no_sni_no_visible_cert_matches": 1,
         "http_request_profile": {
           "status": "not_applicable",
           "reason": "raw mTLS is not HTTP"
@@ -170,14 +172,104 @@
         "sliver_alerts": 0,
         "other_alerts": ["ET INFO Python SimpleHTTP ServerBanner on the staging flow", "SURICATA TCPv4 invalid checksum from checksum offload"]
       }
+    },
+    {
+      "id": "linux-dns-beacon",
+      "capture_window_utc": {
+        "start": "2026-08-10T20:43:56Z",
+        "end": "2026-08-10T20:46:42Z"
+      },
+      "pcap": {
+        "bytes": 27939667,
+        "sha256": "f62779183c726ee9210f2a73917ad2f92760334d5f48b0b1f6a44a6d2bd171d1",
+        "zeek_packets_read": 926,
+        "zeek_bytes_read": 27924827,
+        "offlab_ipv4_packets": 0,
+        "offlab_ipv6_packets": 0,
+        "capture_loss_note": "Full-packet tcpdump on VM 103; Zeek and Suricata parsed the DNS C2 and the HTTP staging transfer."
+      },
+      "delivery": {
+        "method": "GET",
+        "uri": "/dns-beacon",
+        "user_agent": "curl/8.5.0",
+        "destination_port": 18080,
+        "response_bytes": 32407700,
+        "response_mime": "application/x-executable"
+      },
+      "c2": {
+        "transport": "DNS beacon through the target's local systemd-resolved stub",
+        "parent_domain": "c2.sliver.lab.",
+        "resolver": "192.168.1.50:53",
+        "queries": 73,
+        "query_types": {
+          "A": 39,
+          "TXT": 34
+        },
+        "rcode": "NOERROR for all 73 C2 queries",
+        "qname_length": {
+          "min": 30,
+          "max": 251,
+          "mean": 93.09589,
+          "median": 42
+        },
+        "encoded_alphabet": "0123456789abcdefghjkmnpqrtuvwxyz",
+        "long_encoded_profile": {
+          "shape": "two 63-character labels followed by an 18-63-character label, using the restricted lower-case alphanumeric alphabet",
+          "zeek_matches": 23,
+          "suricata_matches": 23,
+          "shannon_entropy_bits_per_character": {
+            "min": 4.769419,
+            "max": 4.918446,
+            "mean": 4.85888,
+            "median": 4.864212
+          }
+        },
+        "periodicity": {
+          "configured_interval_seconds": 10,
+          "configured_jitter_seconds": 3,
+          "bursts": 15,
+          "queries_per_burst_min": 4,
+          "queries_per_burst_max": 13,
+          "burst_start_gap_count": 14,
+          "min_seconds": 10.212432,
+          "max_seconds": 13.520596,
+          "mean_seconds": 11.435653,
+          "median_seconds": 11.301192,
+          "population_stdev_seconds": 0.881865,
+          "analytic": "at least five long encoded-profile queries by source and terminal parent domain in 75 seconds with successive burst starts 9-14 seconds apart"
+        },
+        "ja3": null,
+        "ja3s": null,
+        "jarm": {
+          "status": "not_applicable",
+          "reason": "the selected DNS C2 listener used UDP DNS rather than TLS or a TCP TLS service"
+        },
+        "http_request_profile": {
+          "status": "not_applicable",
+          "reason": "the C2 transport was DNS; HTTP appeared only in the separate staging flow"
+        }
+      },
+      "attribution": {
+        "implant_auditd_connects_to_local_stub": 72,
+        "local_stub": "127.0.0.53:53",
+        "source": "collect-run auditd:lab_connect SYSCALL and SOCKADDR pairs",
+        "resolver_leg": "pcap showed the encoded queries only from 192.168.1.51 to Kali 192.168.1.50:53",
+        "raw_sysmon_eid3_used_as_sole_owner": false
+      },
+      "suricata": {
+        "dns_c2_query_events": 73,
+        "encoded_profile_matches": 23,
+        "sliver_alerts": 0,
+        "other_alerts": ["ET INFO Python SimpleHTTP ServerBanner on the staging flow", "SURICATA TCPv4 invalid checksum from checksum offload"]
+      }
     }
   ],
   "transport_comparison": {
-    "result": "HTTPS and mTLS were not distinguishable by JA3, JA3S, or JARM in this Sliver v1.7.3 run",
+    "result": "HTTPS and mTLS were not distinguishable by JA3, JA3S, or JARM in this Sliver v1.7.3 run; HTTP and DNS had no TLS fingerprints and were distinguished by their application profiles and regularity",
     "shared_ja3": "2196848d251b217de8b2c037e356c11d",
     "shared_ja3s": "f4febc55ea12b31ae17cfb7e614afda8",
     "shared_jarm": "00000000000000000000000000000000000000000000000000000000000000",
-    "distinguishing_flow_shape": "HTTPS beacon opened repeated short TLS connections on a 10+0-3 second cadence; mTLS session mode held one connection for the bounded session.",
+    "distinguishing_flow_shape": "HTTP and HTTPS beacons opened repeated request/connection flows on a 10+0-3 second cadence; DNS produced encoded A/TXT query bursts on the same schedule; mTLS session mode held one connection for the bounded session.",
     "jarm_tool": {
       "source": "https://github.com/salesforce/jarm",
       "commit": "2c0cf5ce8418c7a1d03edb219acea3c18e068289",

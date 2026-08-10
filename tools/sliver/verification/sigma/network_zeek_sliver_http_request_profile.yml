@@ -5,8 +5,10 @@ description: >-
   Detects the combined User-Agent, POST response, query, and randomized
   script-like URI vocabulary observed from a Sliver v1.7.3 Linux HTTP beacon.
   It does not key on a C2 address, port, hostname, or implant filename. A
-  periodic beacon analytic should require at least five matching connections
-  for an endpoint pair in 75 seconds with successive starts 9-14 seconds apart.
+  periodic beacon analytic calibrated to this run can require at least five
+  matching connections for an endpoint pair in 75 seconds with successive
+  starts 9-14 seconds apart; production deployments must parameterize these
+  values to their expected beacon interval.
 references:
   - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
   - https://docs.zeek.org/en/current/logs/http.html
@@ -44,6 +46,7 @@ precision_notes: >-
   Zeek HTTP logs are not testable on the EVTX corpus. The rule matched all 12
   Sliver POST events in this trace, including startup, and no staging request.
   The User-Agent and web profile are operator-configurable. Aggregating the
-  rule by endpoint pair exposes the measured 10.061-12.907 second beacon gaps;
+  rule by endpoint pair exposes the measured 10.061-12.907 second beacon gaps.
+  That window is a lab-fast configuration, not a general Sliver interval;
   single-event Sigma cannot itself assert periodicity.
 level: medium

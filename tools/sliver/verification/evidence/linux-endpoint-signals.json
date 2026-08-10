@@ -51,6 +51,20 @@
         "parent_child": {"status": "observed delivery ancestry; none observed from implant tasking", "details": "the shell parented curl, chmod, nohup, and the renamed implant; getuid, info, ls, and download were handled in-process and produced no implant child process"}
       },
       "rule_matches": {"linux_curl_hidden_file": 1, "upstream_dev_shm_execution": 1, "linux_hidden_var_tmp_execution": 0}
+    },
+    {
+      "id": "linux-dns-beacon",
+      "collection_window_utc": {"start": "2026-08-10T20:43:56Z", "end": "2026-08-10T20:46:42Z"},
+      "counts": {"process": 23, "network": 1, "file": 28, "parent_child": 23, "registry": 0},
+      "dimensions": {
+        "network_and_dns": {"status": "observed", "details": "auditd attributed 72 successful connects from the renamed implant to the local 127.0.0.53:53 resolver stub; the exclusive link resolver and pcap showed 73 encoded C2 queries only to Kali 192.168.1.50:53; the one collector network event attributed TCP/18080 delivery to curl"},
+        "files": {"status": "observed", "details": "auditd and Sysmon recorded curl creating the hidden staged object and chmod changing it; /etc/hostname was read and returned by the in-process download task without a target-side file write"},
+        "registry": {"status": "not_applicable", "details": "Linux has no Windows Registry analogue"},
+        "process_identity_and_command": {"status": "observed", "details": "Sysmon EID 1 plus auditd identity recorded curl, sha256sum, chmod, nohup, and execution of the renamed ELF as root"},
+        "parent_child": {"status": "observed delivery ancestry; none observed from implant tasking", "details": "the shell parented curl, chmod, nohup, and the renamed implant; getuid, info, ls, and download were handled in-process and produced no implant child process"}
+      },
+      "attribution_caveat": "Sysmon EID 3 did not provide implant ownership for the UDP stub traffic. The retained attribution uses collect-run's auditd lab_connect SYSCALL/SOCKADDR records for the implant-to-stub leg and the exclusive resolver configuration plus pcap for the stub-to-Kali leg.",
+      "rule_matches": {"linux_curl_hidden_file": 1, "linux_hidden_var_tmp_execution": 1, "zeek_dns_encoded_profile": 23, "suricata_dns_encoded_profile": 23, "upstream_proc_creation_lnx_curl_usage": 1}
     }
   ],
   "marker": {

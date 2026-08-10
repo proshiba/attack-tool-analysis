@@ -34,7 +34,7 @@
       "severity": "info",
       "check": "citation-host",
       "file": "verification.json",
-      "line": 500,
+      "line": 564,
       "detail": "cited host github.com",
       "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
       "evidence": "\"source_repository\": \"https://github.com/BishopFox/sliver\","
@@ -43,7 +43,7 @@
       "severity": "info",
       "check": "citation-host",
       "file": "verification.json",
-      "line": 501,
+      "line": 565,
       "detail": "cited host github.com",
       "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
       "evidence": "\"release_url\": \"https://github.com/BishopFox/sliver/releases/tag/v1.7.3\","

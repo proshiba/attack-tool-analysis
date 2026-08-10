@@ -7,21 +7,31 @@
   "management_networks": [
     "10.9.0.0/24"
   ],
+  "allowed_domains": [
+    {
+      "name": "c2.sliver.lab",
+      "reason": "non-public lab-only Sliver DNS parent served by Kali 192.168.1.50"
+    },
+    {
+      "name": "ntp.ubuntu.com",
+      "reason": "48 base-OS time-service lookups were sent to the lab resolver and received no path to a public resolver; they were not implant traffic"
+    }
+  ],
   "inputs": {
-    "zeek_dir": "/tmp/sliver-scope-combined",
-    "sysmon_json": "/tmp/sliver-scope-combined/network.json",
+    "zeek_dir": "/tmp/sliver-scope-combined-v2",
+    "sysmon_json": "/tmp/sliver-scope-combined-v2/network.json",
     "sysmon_attribution_available": true,
-    "composition": "conn.log and network.json combined the HTTP, HTTPS, and mTLS flow outputs before this check"
+    "composition": "conn.log, dns.log, and network.json combined HTTP, HTTPS, mTLS, the safety-aborted DNS attempt, and the completed DNS flow before this check"
   },
   "process_attribution": {
-    "source": "collect-run auditd:lab_connect correlation applied to Sysmon EID 3",
+    "source": "collect-run auditd:lab_connect correlation plus auditd SOCKADDR records; raw Sysmon EID 3 Image was not used as sole ownership proof",
     "raw_sysmon_image_not_used_as_sole_owner": true,
     "attributed_connections": [
       {
         "role": "delivery downloader",
         "owning_process_image": "/usr/bin/curl",
         "destination_port": 18080,
-        "count": 3
+        "count": 5
       },
       {
         "role": "renamed HTTP implant",
@@ -40,8 +50,33 @@
         "owning_process_image": "/dev/shm/.dbus-helper-417",
         "destination_port": 31337,
         "count": 1
+      },
+      {
+        "role": "renamed DNS implant",
+        "owning_process_image": "/var/tmp/.net-cache-284e",
+        "destination": "127.0.0.53:53 local systemd-resolved stub",
+        "count": 72,
+        "attribution_source": "successful auditd lab_connect SYSCALL plus SOCKADDR pairs"
       }
-    ]
+    ],
+    "dns_resolution_chain": "The completed pcap recorded 73 encoded C2 queries from 192.168.1.51 only to 192.168.1.50:53. Link-specific resolvectl evidence named only 192.168.1.50, and the target egress guard rejected all non-lab IPv4/IPv6 output.",
+    "raw_eid3_caveat": "Sysmon did not emit a usable EID 3 owner for the implant-to-local-stub UDP traffic; auditd attributed the local connects and the pcap plus exclusive resolver configuration established the resolver-to-Kali leg."
+  },
+  "execution_guard": {
+    "completed_dns_flow_offlab_pcap_packets": {
+      "ipv4": 0,
+      "ipv6": 0
+    },
+    "completed_dns_flow_target_firewall_rejections": {
+      "ipv4_packets": 4,
+      "ipv6_packets": 3
+    },
+    "aborted_dns_attempt": {
+      "reason": "link status still advertised 1.1.1.1 after the first resolver change",
+      "action": "implant stopped before tasking; pcap and telemetry preserved; VM 103 rolled back before retry",
+      "offlab_pcap_packets": 0,
+      "pcap_sha256": "2e14595773007abf753d65f63d915ddb8dfecdd3718bc095a51236633288d32c"
+    }
   },
   "violation_count": 0,
   "violations": [],

@@ -1,14 +1,13 @@
-title: Sliver TLS JA3 and JA3S Pair in Zeek TLS Logs
+title: Default Go Crypto TLS 1.3 JA3 and Minimal Server JA3S Pair in Zeek
 id: b0787147-05b5-425d-a623-17a94c107e03
 status: experimental
 description: >-
-  Detects the client/server TLS fingerprint pair observed for the official
-  Sliver v1.7.3 Windows mTLS and Linux HTTPS/mTLS implants. The Linux HTTPS and
-  mTLS transports produced the same pair, so this rule intentionally does not
-  claim transport discrimination. It does not key on an address, port,
-  hostname, SNI, implant name, or certificate. Fingerprints can change with
-  Sliver or Go TLS versions; correlate at least five repeated matches by origin
-  and responder in 75 seconds to identify the observed HTTPS beacon cadence.
+  Detects the default Go crypto/tls client fingerprint paired with a minimal
+  TLS 1.3 ServerHello. Sliver v1.7.3 Windows mTLS and Linux HTTPS/mTLS produced
+  this pair, but it is a Go-runtime signal, not a Sliver identifier or a
+  transport discriminator. It does not key on an address, port, hostname, SNI,
+  implant name, or certificate. Use only as a hunt pivot with endpoint and
+  flow-shape context.
 references:
   - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
   - https://github.com/salesforce/ja3
@@ -29,13 +28,14 @@ detection:
 falsepositives:
   - Internal Go clients talking to Go TLS 1.3 services with the same generic crypto/tls fingerprint pair
   - Authorized Sliver red-team infrastructure and malware-analysis labs
-fp_likelihood: medium
-recommended_role: alert
+fp_likelihood: high
+recommended_role: hunt
 precision_notes: >-
   This Zeek rule is not testable on the EVTX corpus. It matched all 15 Linux
   HTTPS flows and the one Linux mTLS session, as well as the prior Windows mTLS
-  beacon. The pair can identify non-Sliver Go TLS peers and is pinned to this
-  Sliver/Go profile. For HTTPS, correlate by endpoint pair with five matches in
-  75 seconds and 9-14 second gaps; for mTLS session mode, correlate the long-lived
-  flow with unusual Linux execution instead.
-level: high
+  beacon. Ordinary Go clients and TLS 1.3 servers can match continuously. The
+  five-in-75-seconds and 9-14-second cadence is calibrated only to this lab's
+  configured 10+0-3 second beacon and must be parameterized for a production
+  interval. Correlate a long-lived match with unusual endpoint execution for
+  session mode. Go version changes can also invalidate the hash.
+level: medium
