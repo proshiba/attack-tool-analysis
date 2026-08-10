@@ -35,11 +35,11 @@ falsepositives:
 fp_likelihood: low
 recommended_role: alert
 precision_notes: >-
-  The broadened rule is measured after removing the lab-shaped -split and
-  parent constraints. The earlier 0 of 23695 result described an overfit rule
-  and was not evidence of production precision; the clean corpus also has no
-  certutil control activity. Legitimate PKI, enrollment, deployment, and
-  troubleshooting retrievals can match. Prioritize an unusual destination or
-  a newly written executable/script, and especially execution of the written
-  path.
+  The broadened rule produced 0 matches among 23695 process starts and hit the
+  attack corpus. That clean result is only a floor: the corpus has no benign
+  certutil control activity. The earlier 0 of 23695 measurement described an
+  overfit -split plus shell-parent rule and was not evidence of production
+  precision. Legitimate PKI, enrollment, deployment, and troubleshooting
+  retrievals can match. Prioritize an unusual destination or a newly written
+  executable/script, especially execution of the written path.
 level: medium
