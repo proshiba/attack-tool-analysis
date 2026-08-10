@@ -86,6 +86,7 @@ def main() -> None:
     verdicts: dict[str, int] = {}
     for rule in rules:
         verdicts[rule["verdict"]] = verdicts.get(rule["verdict"], 0) + 1
+    blocking = sum(1 for rule in rules if rule.get("blocking"))
 
     suite = {
         "schema_version": 1,
@@ -94,6 +95,7 @@ def main() -> None:
         "verification_count": len(runs),
         "rule_count": len(rules),
         "verdict_counts": verdicts,
+        "blocking_count": blocking,
         "seconds": round(time.time() - started, 1),
         "runs": runs,
         "rules": rules,
@@ -109,6 +111,11 @@ def main() -> None:
         f"{len(rules)} rules across {len(runs)} verifications. "
         f"Verdicts: " + ", ".join(f"**{k}** {v}" for k, v in sorted(verdicts.items())),
         "",
+        f"**{blocking} of {len(rules)} rules are blocking** (`needs-work`, `void`, `fail`). "
+        "`no-corpus-coverage` and `not-testable-on-evtx` describe what the corpus cannot "
+        "exercise, not a defect in the rule: they never block a merge and are judged "
+        "qualitatively.",
+        "",
         "FP share is a percentage of the events in the rule's OWN logsource category, "
         "measured on a clean corpus. `floor` is the lowest defensible `fp_likelihood`: "
         "an auditor may raise it, never lower it.",
@@ -116,7 +123,8 @@ def main() -> None:
         "| Verification | Rule | Category | FP hits | FP share % | floor | declared | role | level | detection | verdict |",
         "|---|---|---|---|---:|---|---|---|---|---|---|",
     ]
-    order = {"fail": 0, "void": 1, "needs-work": 2, "not-testable-on-evtx": 3, "pass": 4}
+    order = {"fail": 0, "void": 1, "needs-work": 2, "not-testable-on-evtx": 3,
+             "no-corpus-coverage": 4, "pass": 5}
     for rule in sorted(rules, key=lambda r: (order.get(r["verdict"], 9), -(r["fp_share_of_category_percent"] or 0))):
         detection = "-" if rule["detection_hit"] is None else ("hit" if rule["detection_hit"] else "no-hit")
         lines.append(
@@ -136,6 +144,7 @@ def main() -> None:
     (outdir / "scorecard.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     print(json.dumps({"verdict_counts": verdicts, "rule_count": len(rules),
+                      "blocking_count": blocking,
                       "outdir": str(outdir), "seconds": suite["seconds"]}, indent=2))
 
 
