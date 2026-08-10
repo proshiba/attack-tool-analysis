@@ -1,0 +1,47 @@
+{
+  "schema_version": 2,
+  "evtx_baseline": {
+    "path": "/data/datasets/evtx-baseline",
+    "source": "https://github.com/NextronSystems/evtx-baseline",
+    "release": "v0.8.4",
+    "evtx_file_count": 2239,
+    "event_count": 6611183,
+    "count_method": "hayabusa 4.0.0 eid-metrics run PER FILE and summed (audit/lib/baseline_metrics.py)",
+    "per_category_counts": "audit/catalog/baseline-category-metrics.json",
+    "corrects": {
+      "previous_event_count": 6923967,
+      "previous_count_method": "Hayabusa log-metrics CSV sum plus Chainsaw --skip-errors correction",
+      "why_it_was_wrong": "The +312,784 'correction' for Logs_Win11_2023/Security.evtx double-counted records Hayabusa had already included. Scanning that file alone yields 312,783 records and 2,592 EventID 4688; the corpus-wide EventID 4688 total is 8,603 either way. The old figure overstated the corpus by 4.7% and inflated every fp_per_million denominator."
+    }
+  },
+  "EVTX_ATTACK_SAMPLES": {
+    "path": "/data/datasets/EVTX-ATTACK-SAMPLES",
+    "source": "https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES",
+    "commit": "4ceed2f4706daf601c212a8f91c113dd85349a2c",
+    "evtx_file_count": 278,
+    "event_count": 7840,
+    "process_creation_events": 880,
+    "count_method": "Hayabusa log-metrics CSV sum",
+    "known_limits": "Contains no mimikatz command line: SigmaHQ's own mimikatz rule also scores no-hit here. Treat a detection miss as a corpus limit until a control rule proves otherwise."
+  },
+  "regression_data": {
+    "path": "/data/datasets/regression_data",
+    "source": "tests/regression_data in https://github.com/SigmaHQ/sigma",
+    "evtx_file_count": 202,
+    "event_count": 238,
+    "count_method": "Hayabusa log-metrics CSV sum"
+  },
+  "sigma": {
+    "path": "/data/datasets/sigma",
+    "source": "https://github.com/SigmaHQ/sigma",
+    "commit": "8eaafff1f2845a696050e05e72ba1140ee190698",
+    "role": "tests/thor.yml log-source mapping; upstream rules used as control rules"
+  },
+  "tech_memo": {
+    "path": "/data/tech-memo",
+    "source": "https://github.com/proshiba/tech-memo",
+    "commit": "a26e0feb958002424dfd09a674ba18cea2ccbbc7",
+    "article_count_at_audit": 954,
+    "role": "daily-news grounding for scenario realism; every judgement cites a source_url"
+  }
+}
