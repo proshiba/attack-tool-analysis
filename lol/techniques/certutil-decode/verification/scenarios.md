@@ -96,18 +96,25 @@ The output is hashed but never executed.
 
 ## Coverage and future scenarios
 
-The four current flows cover all five grounded local-decode use cases identified
+The four current flows cover five of six grounded local-decode use cases identified
 by the audit: ordinary `-decode`, `-decodehex`, `-f` with a high-confidence
-output extension, standard-user execution, and `/decode`. The forced-DLL and
+output extension, standard-user execution, and `/decode`. The sixth use case is
+decode followed by execution. The forced-DLL and
 standard-user flows both exercise ordinary base64 decode, while the former also
 covers `-f` and the extension tier. All four completed successfully, so current
-scenario coverage is 5/5 (100%). The unprovable historical run is not counted.
+scenario coverage is 5/6 (83%), above the 60% gate floor. The unprovable
+historical run is not counted.
 
 The next future scenario is **decode then execute**: decode inert-but-executable
 content and launch the produced file to observe the process chain. It is
 explicitly out of scope here because executing decoded content changes the
 safety profile and requires its own bounded scenario, pre-run scope gate,
 post-run lab-scope proof, and target rollback.
+
+Additional future hardening scenarios are a renamed copy of certutil to exercise
+the `OriginalFileName` identity branch, and a realistic `cmd.exe /c certutil`
+chain writing to a user-writable staging path. Neither is counted as current
+coverage.
 
 Encoding (`-encode` or `-encodehex`), URL-cache download, and transfer followed
 by decode are distinct behaviors and remain outside this verification.

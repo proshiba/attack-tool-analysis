@@ -4,7 +4,8 @@ This verification covers **Deobfuscate/Decode Files or Information (T1140)**
 with the Microsoft-signed `certutil.exe`. Four new, scope-checked runs replaced
 the unprovable historical flow: `-decodehex`, `-f -decode` to an inert DLL-named
 file, a non-admin standard-user decode, and `/decode`. Together they cover five
-grounded use cases because the latter three include ordinary base64 decode. Every run began from a
+of six grounded use cases because the latter three include ordinary base64
+decode. Decode-then-execute remains a separately scoped future scenario. Every run began from a
 fresh `win_verify_baseline` rollback, decoded only the same 42-byte inert marker,
 and never loaded or executed its output.
 
@@ -28,8 +29,8 @@ of the three `311.60.3.x` leaf keys or their `Name` values.
 | Tier | Logsource | Role | Rule |
 |---|---|---|---|
 | 1 | `windows/process_creation` | alert | `win_process_creation_certutil_decode.yml` |
-| 1 | `windows/sysmon/file_event` | hunt, executable/script tier | `win_file_event_certutil_suspicious_output.yml` |
-| 1 | `windows/sysmon/file_event` | hunt, ambient data/text tier | `win_file_event_certutil_data_output.yml` |
+| 1 | `windows/file_event` | medium-level hunt, executable/script tier | `win_file_event_certutil_suspicious_output.yml` |
+| 1 | `windows/file_event` | low-level hunt, ambient data/text tier | `win_file_event_certutil_data_output.yml` |
 
 The process rule uses `windash` and trailing-space-only decode verbs, so the
 verified slash form is covered. The file rule is split: `.exe .dll .ps1 .bat
@@ -40,8 +41,10 @@ high-confidence rule merely because the original lab fixture used that suffix.
 The clean-corpus zeroes are null results: controls found no certutil process
 start or certutil file write anywhere in the relevant clean categories. The
 process rule's low FP judgement therefore rests on the documented decode abuse
-verbs, while both file tiers remain high-FP, low-level hunts requiring process,
-path, signer, size, or follow-on-execution context.
+verbs. The executable/script tier has one attack-corpus positive and uses a
+medium-FP, medium-level hunt posture; the ambient data/text tier remains a
+high-FP, low-level hunt. Both require process, path, signer, size, or follow-on-
+execution context.
 
 ## Safety and cleanup
 

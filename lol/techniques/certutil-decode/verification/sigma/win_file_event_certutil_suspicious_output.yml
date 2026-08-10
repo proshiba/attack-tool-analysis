@@ -14,7 +14,6 @@ tags:
 logsource:
   category: file_event
   product: windows
-  service: sysmon
 detection:
   selection:
     Image|endswith: '\certutil.exe'
@@ -31,14 +30,14 @@ detection:
 falsepositives:
   - Software deployment systems using certutil to reconstruct benign scripts or binaries
   - Administrators intentionally decoding approved executable or script content during troubleshooting
-fp_likelihood: high
+fp_likelihood: medium
 recommended_role: hunt
 precision_notes: >-
   The clean corpus produced 0 matches among 542441 file events, but a control
   matching any certutil file write also produced 0: certutil file output is
   absent, so 0.0% is a null result. The eight-extension tier has its first lab
-  positive at C:\lab\decoded-marker.dll, but approved deployment can still
-  reconstruct scripts or binaries. Correlate the same ProcessGuid with the
-  certutil decode process rule and enrich signer, path, size, and follow-on
-  execution before actioning.
-level: low
+  positive at C:\lab\decoded-marker.dll and one attack-corpus EID 11 positive
+  for AllTheThings.dll. Approved deployment can still reconstruct scripts or
+  binaries, so correlate the same ProcessGuid with the certutil decode process
+  rule and enrich signer, path, size, and follow-on execution before actioning.
+level: medium

@@ -2,7 +2,7 @@
   "scenario": {
     "id": "certutil-local-decode-variants",
     "name": "Local inert certutil decode variants",
-    "description": "Four new scope-checked runs cover five grounded local-decode use cases: ordinary base64 decode, hexadecimal decode, forced DLL-named output with -f, standard-user context, and slash-form syntax. The unprovable historical run is not current evidence.",
+    "description": "Four new scope-checked runs cover five of six grounded local-decode use cases: ordinary base64 decode, hexadecimal decode, forced DLL-named output with -f, standard-user context, and slash-form syntax. Decode followed by execution remains future work. The unprovable historical run is not current evidence.",
     "design": "scenarios.md",
     "attack_mapping": [
       "T1140"
@@ -10,9 +10,9 @@
     "coverage": {
       "grounding": "Independent audit at c23e800 plus the four routed, newly executed scenarios",
       "covered_use_cases": 5,
-      "in_scope_use_cases": 5,
-      "ratio": 1.0,
-      "assessment": "The four new runs close every in-scope gap routed by the auditor. Decode-then-execute remains a separately scoped future scenario because it changes the safety profile."
+      "in_scope_use_cases": 6,
+      "ratio": 0.833333,
+      "assessment": "The four new runs close every explicitly routed execution requirement and bring grounded coverage above the 60% gate floor. Decode-then-execute remains a separately scoped future scenario because it changes the safety profile."
     }
   },
   "environment": {
@@ -398,8 +398,8 @@
         "measured_fp_likelihood_floor": "low",
         "detection_hit": true,
         "corpus": "evtx-baseline v0.8.4 and EVTX-ATTACK-SAMPLES/regression_data",
-        "repo_commit": "c23e800",
-        "provenance": "audit gate precision/precision-input.json plus the auditor's any-certutil-start control",
+        "repo_commit": "e28f990",
+        "provenance": "audit iteration 2 precision/precision-input.json plus the auditor's any-certutil-start control",
         "interpretation": "The control also had zero clean hits, so the result is null rather than evidence that certutil decode is absent in production."
       },
       "lab_detection": {
@@ -413,22 +413,22 @@
       "path": "sigma/win_file_event_certutil_suspicious_output.yml",
       "tier": 1,
       "role": "supporting executable/script tier",
-      "logsource": "windows/sysmon/file_event",
+      "logsource": "windows/file_event",
       "status": "experimental",
-      "fp_likelihood": "high",
+      "fp_likelihood": "medium",
       "recommended_role": "hunt",
-      "level": "low",
+      "level": "medium",
       "precision_measurement": {
         "measured": true,
         "fp_count": 0,
         "fp_share_of_category_percent": 0.0,
         "category_denominator": 542441,
         "measured_fp_likelihood_floor": "low",
-        "detection_hit": false,
+        "detection_hit": true,
         "corpus": "evtx-baseline v0.8.4 and EVTX-ATTACK-SAMPLES/regression_data",
-        "repo_commit": "c23e800",
-        "provenance": "independent auditor's exact eight-extension narrow-tier control in precision/precision-input.json",
-        "interpretation": "The corpus contains no certutil-attributed file write at all, so 0.0% is a null result; qualitative production evidence raises fp_likelihood to high."
+        "repo_commit": "e28f990",
+        "provenance": "audit iteration 2 A/B of the exact eight-extension rule with the dead service constraint removed",
+        "interpretation": "The corrected rule has zero clean hits and one attack-corpus EID 11 hit for AllTheThings.dll. Deployment tooling can still reconstruct benign binaries, so the reconciled posture is medium FP likelihood, hunt, level medium."
       },
       "lab_detection": {
         "force_decode_dll": true,
@@ -439,7 +439,7 @@
       "path": "sigma/win_file_event_certutil_data_output.yml",
       "tier": 1,
       "role": "supporting ambient data/text tier",
-      "logsource": "windows/sysmon/file_event",
+      "logsource": "windows/file_event",
       "status": "experimental",
       "fp_likelihood": "high",
       "recommended_role": "hunt",
@@ -452,8 +452,8 @@
         "measured_fp_likelihood_floor": "low",
         "detection_hit": false,
         "corpus": "evtx-baseline v0.8.4 and EVTX-ATTACK-SAMPLES/regression_data",
-        "repo_commit": "c23e800",
-        "provenance": "independent auditor's zero-match control for any certutil-attributed file write; this new four-extension rule is a strict subset",
+        "repo_commit": "e28f990",
+        "provenance": "audit iteration 2 A/B of the exact four-extension rule with the dead service constraint removed, plus the any-certutil-file-write control",
         "interpretation": "The zero is a null result. Legitimate certutil TXT, DAT, BIN, and ZIP output makes high FP likelihood the production judgement."
       },
       "lab_detection": {

@@ -14,7 +14,6 @@ tags:
 logsource:
   category: file_event
   product: windows
-  service: sysmon
 detection:
   selection:
     Image|endswith: '\certutil.exe'
