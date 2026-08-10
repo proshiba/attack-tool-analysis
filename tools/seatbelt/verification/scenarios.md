@@ -1,5 +1,25 @@
 # Seatbelt verification scenarios
 
+## Scope
+
+- **VM 104 — `WIN10-ANALYSIS` — `192.168.1.52` — build host, target, and
+  local staging host.** The exact upstream source was built here, and the
+  recorded run executed `C:\lab\Seatbelt.exe` here as `NT AUTHORITY\SYSTEM`.
+  No attacker or NSM VM is named in this verification.
+- **Destinations.** Seatbelt made one TCP connection to `127.0.0.1:135` and
+  queried `localhost`, which resolved only to loopback addresses on VM 104.
+  Loopback never left the target; there was no remote network destination.
+  The target's lab address is inside `192.168.1.0/24`, every remote scenario
+  destination was therefore confined to that lab subnet, and nothing outside
+  the lab was contacted.
+- **Hosting and references.** The source and resulting executable were hosted
+  locally on VM 104 for the build and run; no payload delivery service,
+  stager, or C2 was used. The GhostPack GitHub repository URL is an upstream
+  source citation, not a destination contacted by the scenario run. The
+  record says the source archive reached the guest through the QEMU
+  guest-agent channel, but it does not name or address the host that
+  originated that transfer.
+
 ## Attack use-cases considered
 
 Seatbelt is a post-compromise situational-awareness tool. Its checks help an

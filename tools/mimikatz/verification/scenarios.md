@@ -1,5 +1,20 @@
 # Verification scenarios
 
+## Scope
+
+- **VM 104 — `WIN10-ANALYSIS` — `192.168.1.52` — target and local
+  executable host.** The recorded run executed `C:\lab\mimikatz.exe` here as
+  `NT AUTHORITY\SYSTEM`. No attacker or NSM VM is named in this verification.
+- **Destinations.** The evidence records no Sysmon network-connection or DNS
+  events in the run window, so this local-only run contacted no network
+  destination. Its only scenario host was `192.168.1.52`, inside
+  `192.168.1.0/24`; nothing outside the lab was contacted.
+- **Hosting and references.** The executable was staged and run locally on VM
+  104; no stager or C2 was used. The GitHub release and release-asset URLs in
+  `verification.json` record upstream provenance and are not destinations the
+  scenario run contacted. The record does not state which host acquired or
+  transferred the executable before it appeared at `C:\lab\mimikatz.exe`.
+
 ## Verified: post-compromise LSASS credential theft
 
 An operator with local administrator/SYSTEM rights runs mimikatz

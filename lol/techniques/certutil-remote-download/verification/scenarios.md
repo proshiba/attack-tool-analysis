@@ -1,5 +1,27 @@
 # Certutil remote-download scenarios
 
+## Scope
+
+- **VM 100 — `kalivm` — `192.168.1.50` — attacker and HTTP payload host.**
+  Its Python HTTP server hosted the inert `benign-stage.bin` fixture on TCP
+  18080 and was bound only to the lab interface.
+- **VM 104 — `WIN10-ANALYSIS` — `192.168.1.52` — target.** It ran
+  `certutil.exe` as `NT AUTHORITY\SYSTEM` and wrote the downloaded fixture
+  locally.
+- **VM 106 — `nsm` — `10.9.0.20` (the only address recorded) — offline NSM.**
+  It analyzed the captured traffic with Zeek and Suricata; it was not a run
+  traffic destination.
+- **Destinations.** The target contacted only
+  `192.168.1.50:18080` on VM 100. The run used an IP literal and made no DNS
+  query. Every run destination was inside `192.168.1.0/24`, nothing outside
+  the lab was contacted, and VM 106's recorded `10.9.0.20` address was used
+  for neither payload hosting nor run traffic.
+- **Hosting and references.** VM 100 hosted the only staged content, a
+  non-executable lab fixture; no stager or C2 was used. The LOLBAS and ATT&CK
+  URLs are citations used to describe the technique, not destinations the run
+  contacted. The record does not state the account that ran the Kali HTTP
+  service or the account used for offline NSM analysis.
+
 `certutil.exe` is a Microsoft-signed Windows certificate utility. Its presence
 and signature make it an attractive living-off-the-land binary when an
 operator wants to transfer a payload without first introducing a dedicated
