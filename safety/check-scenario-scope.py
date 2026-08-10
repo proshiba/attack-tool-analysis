@@ -38,6 +38,14 @@ IPV4 = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
 URL = re.compile(r"\bhttps?://([A-Za-z0-9.\-]+\.[A-Za-z]{2,})(?::\d+)?(/[^\s)\"'>]*)?")
 SCOPE_HEADING = re.compile(r"^#{1,6}\s*(scope|scope declaration|lab scope)\b", re.IGNORECASE | re.MULTILINE)
 
+# `file version 1.0.0.0` and `mimikatz 2.2.0.0` are version quads, not destinations, and a
+# verification is REQUIRED to record the binary version it ran. The window is deliberately
+# small - the word must sit on the same line, within a few characters before the number -
+# and a match downgrades the finding rather than dropping it.
+VERSION_LOOKBEHIND = 28
+VERSION_CONTEXT = re.compile(
+    r"(version|assembly|build|revision|release|schema)\b[\s:=\"'`\[(]*$", re.IGNORECASE)
+
 # Citing a write-up is fine; contacting it during a run is not. These are the hosts a
 # scenario is expected to cite, so they are reported at `info` instead of `high`.
 CITATION_HOSTS = re.compile(
@@ -95,6 +103,16 @@ def main() -> None:
             if LAB_IPV4.match(address):
                 continue
             line = text.count("\n", 0, match.start()) + 1
+            preceding = text[max(0, match.start() - VERSION_LOOKBEHIND):match.start()].rsplit("\n", 1)[-1]
+            if VERSION_CONTEXT.search(preceding):
+                findings.append({
+                    "severity": "high", "check": "ipv4-like-version", "file": name, "line": line,
+                    "detail": f"{address} reads as a version quad, not an address",
+                    "why": "a recorded binary version is not a destination - but confirm the run "
+                           "never contacts it as one.",
+                    "evidence": text.splitlines()[line - 1].strip()[:200],
+                })
+                continue
             findings.append({
                 "severity": "critical", "check": "non-lab-ipv4", "file": name, "line": line,
                 "detail": f"scenario names the non-lab address {address}",
