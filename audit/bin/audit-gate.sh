@@ -54,6 +54,15 @@ STAMP="$(date -u +%Y%m%d-%H%M)"
 OUTDIR="${OUTDIR:-${AUDIT_HOME}/results/gate-${SLUG}-${STAMP}}"
 mkdir -p "${OUTDIR}"/{harness,scenario-reference,safety,auditor,precision}
 
+# An outdir this user cannot write produces a run with missing inputs, which reads downstream as
+# "the auditor found nothing" rather than "nothing was measured". Fail here instead.
+if ! touch "${OUTDIR}/.writable" 2>/dev/null; then
+  echo "FATAL: ${OUTDIR} is not writable by $(id -un) - a gate run that cannot write its inputs" >&2
+  echo "       would report absent evidence as absent findings." >&2
+  exit 2
+fi
+rm -f "${OUTDIR}/.writable"
+
 log() { echo "[gate $(date -u +%H:%M:%S)] $*" >&2; }
 
 # --- 1. the repo at the ref under audit ---------------------------------------------

@@ -51,6 +51,11 @@ your prose, so put the decision in the fields:
   counting future scenarios"`). The gate reads the FIRST fraction only — coverage that counts work
   not yet run is not coverage — and a `coverage_ratio` it cannot parse blocks rather than passes.
   Say in the prose which reference use-cases you counted.
+- **A use-case this lab cannot physically run leaves the denominator.** `__REPO__/playbooks/lab-capabilities.md`
+  lists what the lab has no hardware for (no macOS host, no domain controller, one Windows host, …).
+  Report each one in `missing_use_cases` prefixed `LAB-CAPABILITY:` so it stays visible, exclude it from
+  `coverage_ratio`, and never let it alone drive a `redo` — no author can close it. A use-case the lab
+  CAN run and the author skipped is an ordinary scenario gap and is scored as one.
 - Everything else you report is recorded but does not hold the merge.
 
 Blocking is a real cost - it sends the author back for another lab run - and so is waving through a
