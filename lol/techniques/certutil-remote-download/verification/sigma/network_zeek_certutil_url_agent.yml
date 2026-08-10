@@ -1,0 +1,33 @@
+title: Certutil URL Agent in Zeek HTTP Traffic
+id: 6c00b48c-230a-48aa-9edf-316a103fd9f2
+status: experimental
+description: >-
+  Detects HTTP GET requests carrying the CertUtil URL Agent User-Agent used
+  by certutil URL-cache retrievals. This is more specific to certutil than
+  the generic Microsoft-CryptoAPI User-Agent.
+references:
+  - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+  - https://attack.mitre.org/techniques/T1105/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1105
+logsource:
+  category: http
+  product: zeek
+detection:
+  selection:
+    method: 'GET'
+    user_agent: 'CertUtil URL Agent'
+  condition: selection
+falsepositives:
+  - Legitimate certutil URL-cache retrievals used by administrators, deployment tooling, or troubleshooting workflows
+fp_likelihood: medium
+recommended_role: alert
+precision_notes: >-
+  This Zeek rule is not testable on the EVTX baseline. The exact User-Agent
+  appeared on the second GET in three independent lab runs and LOLBAS names
+  it as a certutil IOC, making it substantially more specific than Microsoft-
+  CryptoAPI/. Benign certutil downloads still match, so destination context
+  and endpoint certutil process/cache telemetry remain useful qualifiers.
+level: medium

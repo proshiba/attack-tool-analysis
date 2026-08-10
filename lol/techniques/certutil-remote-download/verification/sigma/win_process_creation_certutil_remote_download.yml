@@ -8,6 +8,10 @@ description: >-
 references:
   - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
   - https://attack.mitre.org/techniques/T1105/
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_certutil_download.yml
+related:
+  - id: 19b08b1c-861d-4e75-a1ef-ea0c1baf202b
+    type: similar
 author: Codex lab orchestrator
 date: '2026-08-09'
 tags:
@@ -32,7 +36,7 @@ detection:
 falsepositives:
   - PKI administrators fetching certificates, CRLs, CTLs, or trust material with certutil
   - Software deployment or troubleshooting workflows invoking documented certutil URL retrieval verbs
-fp_likelihood: low
+fp_likelihood: medium
 recommended_role: alert
 precision_notes: >-
   The broadened rule produced 0 matches among 23695 process starts and hit the
@@ -41,5 +45,7 @@ precision_notes: >-
   overfit -split plus shell-parent rule and was not evidence of production
   precision. Legitimate PKI, enrollment, deployment, and troubleshooting
   retrievals can match. Prioritize an unusual destination or a newly written
-  executable/script, especially execution of the written path.
+  executable/script, especially execution of the written path. The SigmaHQ
+  direct-IP and file-sharing-domain certutil rules are narrower, higher-
+  precision alert tiers above this broad behavior rule.
 level: medium

@@ -124,12 +124,15 @@ image. It does not model malware behavior or persistence.
 
 ## Coverage and future work
 
-These five runs cover the grounded URL-cache-without-split, verifyctl,
+The audit gate counted 5 of 7 grounded reference use-cases (71%, above its
+60% floor). These runs cover URL-cache download, verifyctl cache retrieval,
 service-parent, HTTP/HTTPS, text/PE, and download-followed-by-execution shapes.
-The Sigma process rule also covers the documented `-URL` verb, but a dedicated
-`-URL` execution remains future work because its cache-only semantics merit a
-separate destination-file assessment. Alternate-data-stream destinations and
-certificate-store manipulation remain separate future scenarios.
+The two counted gaps are a dedicated `-URL` run and an alternate-data-stream
+destination. Additional sub-gaps are the `-verifyctl` explicit-output-file
+branch with a parser-accepted fixture and a standard-user run that produces
+the per-user LocalLow cache path. The process rule includes `-URL`, but that
+verb remains inference rather than live lab coverage. Certificate-store
+manipulation is a separate future scenario.
 
 References: [LOLBAS Certutil](https://lolbas-project.github.io/lolbas/Binaries/Certutil/),
 [ATT&CK T1105](https://attack.mitre.org/techniques/T1105/),

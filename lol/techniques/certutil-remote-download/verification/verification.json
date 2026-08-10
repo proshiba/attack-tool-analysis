@@ -7,7 +7,8 @@
     "coverage": {
       "accepted_new_runs": 5,
       "covered_shapes": ["urlcache without split", "verifyctl retrieval", "service-context parent", "HTTP and HTTPS delivery", "text and PE content", "download followed by execution"],
-      "future": ["dedicated cache-only -URL run", "alternate data stream destination"]
+      "reference_grounded_use_cases": {"covered": 5, "total": 7, "ratio": 0.7142857143, "gate_commit": "237791daa991cd9129d83c58a3f18a1bb41638e1", "gate_iteration": 1},
+      "future": ["dedicated cache-only -URL run", "alternate data stream destination", "standard-user per-user cache path", "verifyctl explicit-file branch with a parser-accepted fixture"]
     }
   },
   "environment": {
@@ -38,7 +39,7 @@
         "process_identity": {"status": "observed", "event_id_1": 1, "assessment": "Certutil identity, -urlcache -f, HTTP URL, destination, hashes, and SYSTEM integrity."},
         "parent_child": {"status": "observed", "parent": "powershell.exe", "assessment": "Controlled collection wrapper parent."}
       },
-      "rule_results": {"sigma/win_process_creation_certutil_remote_download.yml": "fired", "sigma/win_file_event_certutil_urlcache_content.yml": "did not fire: no Cryptnet content create event was emitted", "sigma/network_zeek_certutil_cryptoapi_user_agent.yml": "fired"},
+      "rule_results": {"sigma/win_process_creation_certutil_remote_download.yml": "fired", "sigma/win_file_event_certutil_urlcache_content.yml": "did not fire: no Cryptnet content create event was emitted", "sigma/network_zeek_certutil_cryptoapi_user_agent.yml": "fired", "sigma/network_zeek_certutil_url_agent.yml": "fired"},
       "evidence": ["evidence/endpoint-signals.json#urlcache-no-split", "evidence/network-signals.json#urlcache-no-split", "evidence/safety/lab-scope.json"],
       "capture": {"pcapng_size_bytes": 13928, "pcapng_sha256": "02BF741E7B5BD537C09E6BC2A54CB644E25E6B98DEB53EA7E23BD4808350CB97", "packets_analyzed": 106},
       "verified_at": "2026-08-10T14:31:42.4141359Z"
@@ -54,7 +55,7 @@
         "process_identity": {"status": "observed", "event_id_1": 1, "assessment": "Certutil identity, -verifyctl -f, HTTP URL, existing certificate directory, and SYSTEM integrity."},
         "parent_child": {"status": "observed", "parent": "powershell.exe", "assessment": "Controlled collection wrapper parent."}
       },
-      "rule_results": {"sigma/win_process_creation_certutil_remote_download.yml": "fired", "sigma/win_file_event_certutil_urlcache_content.yml": "fired", "sigma/network_zeek_certutil_cryptoapi_user_agent.yml": "fired"},
+      "rule_results": {"sigma/win_process_creation_certutil_remote_download.yml": "fired", "sigma/win_file_event_certutil_urlcache_content.yml": "fired", "sigma/network_zeek_certutil_cryptoapi_user_agent.yml": "fired", "sigma/network_zeek_certutil_url_agent.yml": "did not fire: User-Agent not observed"},
       "evidence": ["evidence/endpoint-signals.json#verifyctl", "evidence/network-signals.json#verifyctl", "evidence/safety/lab-scope.json"],
       "capture": {"pcapng_size_bytes": 7768, "pcapng_sha256": "82CCA723BFBDD6D635EBEECE6A79C61C3339D97B39355FFACF3E16E18FCD70BD", "packets_analyzed": 60},
       "verified_at": "2026-08-10T14:34:14.3572434Z"
@@ -70,7 +71,7 @@
         "process_identity": {"status": "observed", "event_id_1": 1, "assessment": "Certutil identity and canonical download command under SYSTEM."},
         "parent_child": {"status": "observed", "parent": "C:\\Windows\\System32\\services.exe", "assessment": "Direct evidence that a shell/script-host parent constraint causes a false negative."}
       },
-      "rule_results": {"sigma/win_process_creation_certutil_remote_download.yml": "fired after selection_parent removal; old shipped rule would not fire", "sigma/win_file_event_certutil_urlcache_content.yml": "fired", "sigma/network_zeek_certutil_cryptoapi_user_agent.yml": "fired"},
+      "rule_results": {"sigma/win_process_creation_certutil_remote_download.yml": "fired after selection_parent removal; old shipped rule would not fire", "sigma/win_file_event_certutil_urlcache_content.yml": "fired", "sigma/network_zeek_certutil_cryptoapi_user_agent.yml": "fired", "sigma/network_zeek_certutil_url_agent.yml": "fired"},
       "evidence": ["evidence/endpoint-signals.json#service-parent", "evidence/network-signals.json#service-parent", "evidence/safety/lab-scope.json"],
       "capture": {"pcapng_size_bytes": 14752, "pcapng_sha256": "E3C6068670C45EEC084AB679BE0CEA1758C05B7DEB3835064CE8C34EECC12533", "packets_analyzed": 116},
       "verified_at": "2026-08-10T14:36:27.5519126Z"
@@ -86,7 +87,7 @@
         "process_identity": {"status": "observed", "event_id_1": 1, "assessment": "Certutil identity, HTTPS URL, internal name, and destination."},
         "parent_child": {"status": "observed", "parent": "powershell.exe", "assessment": "Controlled collection wrapper parent."}
       },
-      "rule_results": {"sigma/win_process_creation_certutil_remote_download.yml": "fired", "sigma/win_file_event_certutil_urlcache_content.yml": "fired", "sigma/network_zeek_certutil_cryptoapi_user_agent.yml": "did not fire: User-Agent is encrypted under TLS"},
+      "rule_results": {"sigma/win_process_creation_certutil_remote_download.yml": "fired", "sigma/win_file_event_certutil_urlcache_content.yml": "fired", "sigma/network_zeek_certutil_cryptoapi_user_agent.yml": "did not fire: User-Agent is encrypted under TLS", "sigma/network_zeek_certutil_url_agent.yml": "did not fire: User-Agent is encrypted under TLS"},
       "evidence": ["evidence/endpoint-signals.json#https", "evidence/network-signals.json#https", "evidence/safety/lab-scope.json"],
       "capture": {"pcapng_size_bytes": 36192, "pcapng_sha256": "3345C61A6E2F5747496094395FE428F5BBE5910DB7D0C8D6764E54324DD530A1", "packets_analyzed": 178},
       "verified_at": "2026-08-10T14:38:38.6471950Z"
@@ -102,18 +103,19 @@
         "process_identity": {"status": "observed", "certutil_event_id_1": 1, "pe_event_id_1": 1, "pe_image": "C:\\lab\\inert-marker.exe", "pe_sha256": "4C42BCE005BCF18EBFE85229774D7A5221C5C8C30ACE4BFC031B23A47A7357A2"},
         "parent_child": {"status": "observed", "assessment": "Certutil and the PE are ordered sibling children of the controlled PowerShell wrapper; no direct certutil child and no PE child process were observed."}
       },
-      "rule_results": {"sigma/win_process_creation_certutil_remote_download.yml": "fired", "sigma/win_file_event_certutil_urlcache_content.yml": "fired", "sigma/network_zeek_certutil_cryptoapi_user_agent.yml": "fired", "download_to_execute_correlation": "telemetry present: certutil destination path equals later Image and SHA-256; documented for backend field-to-field sequence joins"},
+      "rule_results": {"sigma/win_process_creation_certutil_remote_download.yml": "fired", "sigma/win_file_event_certutil_urlcache_content.yml": "fired", "sigma/network_zeek_certutil_cryptoapi_user_agent.yml": "fired", "sigma/network_zeek_certutil_url_agent.yml": "fired", "download_to_execute_correlation": "telemetry present: certutil destination path equals later Image and SHA-256; documented for backend field-to-field sequence joins"},
       "evidence": ["evidence/endpoint-signals.json#download-execute", "evidence/network-signals.json#download-execute", "fixtures/inert-marker.c", "evidence/safety/lab-scope.json"],
       "capture": {"pcapng_size_bytes": 144592, "pcapng_sha256": "0C491CAF7DE95643DC34949C96E076EAD982D988E9C1721889DFAF09A2A6993D", "packets_analyzed": 202},
       "verified_at": "2026-08-10T14:42:42.2616743Z"
     }
   ],
   "sigma": [
-    {"path": "sigma/win_process_creation_certutil_remote_download.yml", "tier": 1, "role": "primary", "logsource": "windows/process_creation", "status": "experimental", "fp_likelihood": "low", "recommended_role": "alert", "level": "medium", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4", "repo_commit": "bfff9f93be347284ea453f6db5a199c306ae71eb"}},
+    {"path": "sigma/win_process_creation_certutil_remote_download.yml", "tier": 1, "role": "primary", "logsource": "windows/process_creation", "status": "experimental", "fp_likelihood": "medium", "recommended_role": "alert", "level": "medium", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4", "repo_commit": "237791daa991cd9129d83c58a3f18a1bb41638e1", "auditor_adjustment": "medium because the baseline contains zero benign certutil executions; legitimate PKI and CTL retrievals are a recurring production population"}},
     {"path": "sigma/network_zeek_certutil_cryptoapi_user_agent.yml", "tier": 1, "role": "network hunt", "logsource": "zeek/http", "status": "experimental", "fp_likelihood": "high", "recommended_role": "hunt", "level": "low", "precision_measurement": {"measured": false, "reason": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "verdict": "not-testable-on-evtx", "corpus": "evtx-baseline v0.8.4", "repo_commit": "bfff9f93be347284ea453f6db5a199c306ae71eb"}},
+    {"path": "sigma/network_zeek_certutil_url_agent.yml", "tier": 1, "role": "network alert", "logsource": "zeek/http", "status": "experimental", "fp_likelihood": "medium", "recommended_role": "alert", "level": "medium", "precision_measurement": {"measured": false, "reason": "not-testable-on-evtx; exact User-Agent observed in three lab pcaps", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "verdict": "not-testable-on-evtx", "corpus": "evtx-baseline v0.8.4", "repo_commit": null}},
     {"path": "sigma/win_file_event_certutil_urlcache_content.yml", "tier": 1, "role": "supporting hunt", "logsource": "windows/sysmon/file_event", "status": "experimental", "fp_likelihood": "medium", "recommended_role": "hunt", "level": "low", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 542441, "measured_fp_likelihood_floor": "low", "detection_hit": false, "verdict": "no-corpus-coverage", "verdict_reason": "no positive file-event sample exists in the corpus", "corpus": "evtx-baseline v0.8.4", "repo_commit": "bfff9f93be347284ea453f6db5a199c306ae71eb"}}
   ],
-  "new_rule_assessment": {"authored": [], "reason": "The expanded process rule covers verifyctl. The HTTPS JA3/certificate values are lab-server specific. A portable download-to-execute Sigma correlation cannot bind a parsed certutil destination token to a later Image value; a generic writable-path PE execution rule would be a broad hunt unrelated to certutil."},
+  "new_rule_assessment": {"authored": ["sigma/network_zeek_certutil_url_agent.yml"], "reason": "The exact CertUtil URL Agent value appeared in three runs and is certutil-specific enough for an alert-tier network rule. The expanded process rule already covers verifyctl. HTTPS JA3/certificate values are lab-server specific. A portable download-to-execute Sigma correlation cannot bind a parsed certutil destination token to a later Image value; a generic writable-path PE execution rule would be a broad hunt unrelated to certutil."},
   "safety": {"design_scope": "evidence/safety/scenario-scope.json", "post_run_scope": "evidence/safety/lab-scope.json", "post_run_verdict": "PASS", "zeek_connection_records": 9, "sysmon_event_id_3_records": 8, "accepted_destinations": ["192.168.1.50"], "excluded_attempts": [{"reason": "Longer timing probe captured Windows OS background DNS/HTTPS to public services; scope gate failed, work stopped, VM rolled back, evidence excluded."}, {"reason": "Pre-existing OS TCP sessions produced responder-only public packets in a short capture; scope gate failed, work stopped, VM rolled back, evidence excluded."}]},
   "sanitization": {"raw_pcap_committed": false, "raw_evtx_committed": false, "raw_event_export_committed": false, "raw_nsm_logs_committed": false, "certificate_or_key_committed": false, "notes": "Only selected telemetry fields, hashes, fixture source, aggregate counts, lab topology, a sanitized Zeek conn log, and safety reports are committed."},
   "cleanup_confirmation": {"kali": {"http_service": "inactive", "https_service": "inactive", "served_directory_present": false}, "target": {"snapshot": "win_verify_baseline", "rollback_task_exit": "OK", "sysmon": "Running", "sysmon_config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71", "defender_real_time_protection_enabled": false, "default_route_restored": true, "temporary_service_present": false, "downloaded_files_present": false, "hosts_entry_present": false, "pcap_present": false, "telemetry_directory_present": false}},

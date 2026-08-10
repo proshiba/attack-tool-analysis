@@ -47,12 +47,19 @@ The process rule now requires certutil identity plus any one of `urlcache`,
 `-split`, `-f`, or any parent. The old 0/23,695 measurement belonged to an
 overfit shell-launched, all-three-switch rule and was not evidence of real
 precision. The broadened rule is remeasured on this branch and its provenance
-is recorded in `verification.json`.
+is recorded in `verification.json`. It matched 0 of 23,695 baseline process
+events and the attack sample, but the baseline contains no benign certutil
+process at all. Its FP likelihood is therefore `medium`, reflecting recurring
+legitimate PKI, CTL, enrollment, deployment, and troubleshooting retrievals
+rather than treating an empty certutil denominator as proof of low noise.
 
 The Cryptnet cache-content rule remains a low-level hunt: legitimate certutil
 CRL, CTL, certificate-chain, enrollment, and troubleshooting retrievals can
 all match. The `Microsoft-CryptoAPI/` Zeek rule remains a high-FP, low-level
-hunt because that User-Agent is normal Windows certificate-chain traffic.
+hunt because that User-Agent is normal Windows certificate-chain traffic. A
+new alert-tier Zeek rule covers the exact `CertUtil URL Agent` value observed
+in the URL-cache, service-parent, and PE runs; it is more certutil-specific,
+although benign administrative certutil retrievals can still match.
 
 ## Safety and excluded attempts
 

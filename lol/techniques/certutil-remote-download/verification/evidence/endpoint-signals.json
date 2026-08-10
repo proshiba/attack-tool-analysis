@@ -72,7 +72,7 @@
       },
       "service_setup": {"name": "CertutilLabDownload", "startup": "demand", "start_result": "SCM reported that certutil is not service-aware after the child exited", "delete_exit_code": 0},
       "network": {"event_id_3": 1, "event_id_22": 0, "destination": "192.168.1.50:18081", "zeek_connections": 2},
-      "files": {"certutil_event_id_11": 4, "certutil_event_id_23": 1, "destination": "C:\\lab\\service-parent.txt", "destination_sha256": "5B5EF4960B4580947F8FFC78316EE9238CFAB2D6C4A4311F8DD0EA171A201B44"},
+      "files": {"certutil_event_id_11": 4, "certutil_event_id_23": 1, "creates": ["C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\MetaData\\A2F0C1B3447BB948C2FB74E562C40407", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\Content\\A2F0C1B3447BB948C2FB74E562C40407", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\benign-stage[1].txt", "C:\\lab\\service-parent.txt"], "destination": "C:\\lab\\service-parent.txt", "destination_sha256": "5B5EF4960B4580947F8FFC78316EE9238CFAB2D6C4A4311F8DD0EA171A201B44"},
       "registry": {"certutil_event_id_12": 13, "certutil_event_id_13": 14, "certutil_event_id_14": 0, "service_registry_observed": true, "assessment": "The temporary service ImagePath and service values were observed in addition to certutil API state; snapshot rollback removed them."}
     },
     {
@@ -84,7 +84,7 @@
       "raw_sysmon_evtx_sha256": "D2325530E2E3E8DC4D32B640F3194BACAE1ED48AE259BD64580F59B5A808610B",
       "process": {"event_id_1": 1, "process_id": 4144, "process_guid": "{d6daef74-e26e-6a79-a900-000000000b00}", "command_line": "\"C:\\Windows\\System32\\certutil.exe\" -urlcache -f https://certutil.lab:18443/benign-stage.txt C:\\lab\\https-stage.txt", "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"},
       "network": {"event_id_3": 2, "event_id_22": 0, "destination": "certutil.lab (192.168.1.50):18443"},
-      "files": {"certutil_event_id_11": 4, "certutil_event_id_23": 1, "destination": "C:\\lab\\https-stage.txt", "destination_sha256": "5B5EF4960B4580947F8FFC78316EE9238CFAB2D6C4A4311F8DD0EA171A201B44"},
+      "files": {"certutil_event_id_11": 4, "certutil_event_id_23": 1, "creates": ["C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\MetaData\\C524166E05BEAD0423567CBB6B6281A0", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\Content\\C524166E05BEAD0423567CBB6B6281A0", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\benign-stage[1].txt", "C:\\lab\\https-stage.txt"], "destination": "C:\\lab\\https-stage.txt", "destination_sha256": "5B5EF4960B4580947F8FFC78316EE9238CFAB2D6C4A4311F8DD0EA171A201B44"},
       "registry": {"certutil_event_id_12": 145, "certutil_event_id_13": 14, "certutil_event_id_14": 0, "assessment": "High-volume trust/Internet Settings initialization plus disposable certificate trust preparation; not a standalone rule."}
     },
     {
@@ -108,7 +108,7 @@
         "parent_assessment": "Certutil and the PE are sibling children of the controlled PowerShell wrapper; correlation is temporal plus destination-path/image equality, not a direct certutil child."
       },
       "network": {"event_id_3": 2, "event_id_22": 0, "destination": "192.168.1.50:18081"},
-      "files": {"certutil_event_id_11": 4, "certutil_event_id_23": 1, "pe_size_bytes": 15360, "pe_sha256": "4C42BCE005BCF18EBFE85229774D7A5221C5C8C30ACE4BFC031B23A47A7357A2", "pe_is_executable": true, "marker_event_id_11": 1, "marker_path": "C:\\lab\\download-execute-marker.txt", "marker_size_bytes": 38, "marker_sha256": "8C9A46C85DC7DAEE170476FECF17186D4D5AA5D39C8176A805ED2F07CE16D0CE"},
+      "files": {"certutil_event_id_11": 4, "certutil_event_id_23": 1, "certutil_creates": ["C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\MetaData\\A8CA329B1DEDF9F5AE573DF0F5C4528A", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\Content\\A8CA329B1DEDF9F5AE573DF0F5C4528A", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\inert-marker[1].exe", "C:\\lab\\inert-marker.exe"], "pe_size_bytes": 15360, "pe_sha256": "4C42BCE005BCF18EBFE85229774D7A5221C5C8C30ACE4BFC031B23A47A7357A2", "pe_is_executable": true, "marker_event_id_11": 1, "marker_path": "C:\\lab\\download-execute-marker.txt", "marker_size_bytes": 38, "marker_sha256": "8C9A46C85DC7DAEE170476FECF17186D4D5AA5D39C8176A805ED2F07CE16D0CE"},
       "registry": {"certutil_event_id_12": 14, "certutil_event_id_13": 14, "certutil_event_id_14": 0, "assessment": "Normal certutil API initialization; the inert PE made no registry changes."}
     }
   ]
