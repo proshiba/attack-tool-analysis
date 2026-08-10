@@ -222,23 +222,22 @@
       "tier": 1,
       "role": "primary",
       "logsource": "windows/process_creation",
-      "status": "experimental"
-    },
-    {
-      "path": "sigma/win_file_event_seatbelt_survey_output.yml",
-      "tier": 1,
-      "role": "supporting",
-      "logsource": "windows/sysmon/file_event",
-      "status": "experimental"
+      "status": "experimental",
+      "description": "Primary portable, name-agnostic detection for -group= syntax or multiple distinctive Seatbelt check names in one command line."
     },
     {
       "path": "sigma/win_sysmon_managed_dotnet_lsass_vm_read.yml",
       "tier": 2,
       "role": "complement",
       "logsource": "windows/sysmon/process_access",
-      "status": "experimental"
+      "status": "experimental",
+      "description": "Deep Sysmon-native, name-agnostic detection for managed .NET access to LSASS with VM-read rights."
     }
   ],
+  "validation": {
+    "pysigma": "Both remaining Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",
+    "json": "verification.json passed Python JSON validation on 2026-08-10."
+  },
   "sanitization": {
     "seatbelt_output_committed": false,
     "raw_log_export_committed": false,

@@ -1,12 +1,11 @@
-title: Mimikatz Credential Module Command Line from an Operator Process
+title: Mimikatz Module Command Syntax in a Process Command Line
 id: 09b3358d-4a11-43d2-a8d4-f8c6a4202bf8
 status: experimental
 description: >-
-  Detects a process with the original mimikatz filename or characteristic
-  mimikatz double-colon credential-module commands when launched from common
-  interactive, remote-management, service, or task parents. The verified
-  invocation used privilege::debug and sekurlsa::logonpasswords from
-  PowerShell.
+  Detects characteristic mimikatz module::command syntax in any process command
+  line. These tokens survive executable renaming. Parent process context can
+  refine triage but is deliberately not required. The verified invocation used
+  privilege::debug and sekurlsa::logonpasswords from PowerShell.
 references:
   - https://github.com/gentilkiwi/mimikatz
 author: Codex lab orchestrator
@@ -18,28 +17,18 @@ logsource:
   category: process_creation
   product: windows
 detection:
-  selection_identity:
-    OriginalFileName: mimikatz.exe
   selection_command:
     CommandLine|contains:
-      - 'sekurlsa::logonpasswords'
-      - 'privilege::debug'
       - 'sekurlsa::'
       - 'lsadump::'
-  selection_parent:
-    ParentImage|endswith:
-      - '\cmd.exe'
-      - '\powershell.exe'
-      - '\pwsh.exe'
-      - '\wmiprvse.exe'
-      - '\wsmprovhost.exe'
-      - '\winrs.exe'
-      - '\services.exe'
-      - '\psexesvc.exe'
-      - '\taskeng.exe'
-      - '\taskhostw.exe'
-      - '\explorer.exe'
-  condition: (selection_identity or selection_command) and selection_parent
+      - 'privilege::debug'
+      - 'kerberos::'
+      - 'crypto::'
+      - 'token::'
+      - 'vault::'
+      - 'sekurlsa::logonpasswords'
+      - 'lsadump::dcsync'
+  condition: selection_command
 falsepositives:
   - Authorized penetration tests, red-team exercises, and malware-analysis labs
   - Administrator scripts that reuse mimikatz-style module tokens as test data

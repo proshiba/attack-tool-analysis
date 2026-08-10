@@ -82,10 +82,25 @@ so it is a complement, not the primary.
 - **Tier 2 (complement / fallback):** Sysmon-native depth — `process_access` (EID 10, e.g. LSASS
   GrantedAccess masks), `image_load` (EID 7), named pipes, WMI.
 
+**Choose name-reliance by the tool's provenance × the attacker's motive to rename:**
+- **Brought-in / attacker-supplied tools** (mimikatz, Seatbelt, Sliver, most offensive binaries) are
+  trivially renamed and there is a strong motive to rename them → **do NOT key on the exe name**
+  (`Image|endswith: '\tool.exe'` or `OriginalFileName: tool.exe`); a name rule is a false-negative on
+  rename, and a name-stripped generic rule ("an exe writes a .txt") is FP-noise. Key on the
+  **invariant behavior**: command-line technique syntax, parent-child, network fingerprints (JA3/JA3S,
+  HTTP User-Agent), access masks / named pipes. If there is no rename-resilient behavioral signal,
+  say so honestly and drop the weak rule.
+- **LOLBINs / legitimate binaries already on the host** (certutil, regsvr32, mshta, rundll32, wmic…)
+  are abused precisely BECAUSE they are the trusted, signed, present binary — renaming forfeits that,
+  so attackers keep the name → **matching the LOLBIN name is fine and appropriate**, paired with the
+  abuse behavior (e.g. certutil download flags + `Microsoft-CryptoAPI` UA) to keep FPs low.
+- **Name IS the technique** (e.g. a **sideloaded DLL** impersonating a specific system-DLL name) →
+  matching that exact name is correct.
+
 Each rule: valid Sigma schema; **behavior-based** (avoid brittle hashes/paths unless the path/hash
 IS the signal); `status: experimental`; correct `logsource`; `tags` = ATT&CK technique IDs;
 realistic `falsepositives`; a `level`. Store all rules under `tools/<id>/verification/sigma/`.
-Cross-check against metadata `detection`.
+Cross-check against metadata `detection`. Validate with pySigma.
 
 ## 6. Record `verification.json`
 `tools/<id>/verification/verification.json`, one entry per run:
