@@ -80,6 +80,17 @@ You do NOT edit or commit the repo; you produce recommendations only (the author
      assessment; a rule declaring itself more precise than it measures is a finding.
    - Flag any blocking defect (does not compile, silently dead on the intended log format, matches a
      field that does not exist in the shipping format).
+   - **Upstream comparison — required for every rule.** Compare against what SigmaHQ ships at `master`
+     **today**, not the version a LOLBAS entry links to (280 of 295 of those links are commit-pinned,
+     75% to June 2023; 2 of 6 sampled pins no longer compile on sigma-cli 3.1.0). State: does an
+     upstream rule already cover this behaviour, and what does ours add — form coverage proven by lab
+     evidence, a corrected logsource, measured precision, or a dimension upstream lacks? A rule that
+     merely restates upstream is a finding, and so is an upstream rule covering a form OURS misses
+     (upstream `proc_creation_win_regsvr32_susp_exec_path_1.yml` already matches regsvr32 running from
+     `\AppData\Local\Temp\`, `\Users\Public\` and `\ProgramData\` — the dominant real-world form).
+     `playbooks/adopt-and-measure.md` sets the bar. Public rules lack measured precision uniformly —
+     four of six sampled carry `falsepositives: Unknown` — so precision metadata is a legitimate
+     contribution where the logic is not.
 
 4. **SCENARIO audit** — for each `scenarios.md`, using the reference bundle:
    - Coverage: which realistic use-cases (ATT&CK procedures + LOLBAS/GTFOBins + the daily-news real
