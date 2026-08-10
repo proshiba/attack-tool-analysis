@@ -137,6 +137,18 @@
       "tier": 1,
       "logsource": "windows/process_creation",
       "status": "experimental",
+      "fp_likelihood": "low",
+      "recommended_role": "alert",
+      "level": "high",
+      "precision_measurement": {
+        "measured": true,
+        "fp_count": 0,
+        "fp_share_of_category_percent": 0.0,
+        "category_denominator": 23695,
+        "detection_hit": false,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      },
       "description": "Primary portable, name-agnostic detection for characteristic mimikatz module::command syntax; parent context is optional enrichment rather than required identity."
     },
     {
@@ -144,6 +156,18 @@
       "tier": 2,
       "logsource": "windows/sysmon/process_access",
       "status": "experimental",
+      "fp_likelihood": "high",
+      "recommended_role": "hunt",
+      "level": "low",
+      "precision_measurement": {
+        "measured": true,
+        "fp_count": 0,
+        "fp_share_of_category_percent": 0.0,
+        "category_denominator": 1619360,
+        "detection_hit": false,
+        "corpus": "evtx-baseline v0.8.4",
+        "repo_commit": "7a20965"
+      },
       "description": "Deep Sysmon-native, name-agnostic detection for memory-read-capable LSASS access masks."
     }
   ],

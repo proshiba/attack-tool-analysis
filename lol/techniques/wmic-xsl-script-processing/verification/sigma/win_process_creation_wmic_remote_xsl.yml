@@ -31,5 +31,13 @@ detection:
       - '.xslt'
   condition: 1 of selection_identity_* and selection_format and selection_url and selection_xsl
 falsepositives:
-  - Legacy administrative reporting that intentionally applies an approved remote XSL stylesheet
+  - Legacy administrative inventory or reporting that intentionally applies an approved remote XSL or XSLT stylesheet
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The clean corpus produced 0 matches among 23695 process starts and the rule
+  hit the verified attack sample. Approved legacy inventory or reporting can
+  intentionally use remote /format stylesheets, but the combined command is
+  otherwise highly specific. Correlate with XSL network/cache evidence, a shell
+  child, or JScript-start registry telemetry.
 level: high

@@ -26,5 +26,13 @@ detection:
   condition: selection_image and selection_cache_content
 falsepositives:
   - Legitimate certutil retrieval of certificates, certificate trust lists, or certificate revocation lists
-  - Authorized certificate troubleshooting that refreshes the Cryptnet URL cache
+  - PKI enrollment or troubleshooting that refreshes the Cryptnet URL cache with certutil
+fp_likelihood: medium
+recommended_role: hunt
+precision_notes: >-
+  The clean corpus produced 0 matches among 542441 file events. The certutil
+  image constraint excludes routine CryptSvc writes, but legitimate certutil
+  CRL, CTL, certificate-chain, enrollment, and troubleshooting retrievals still
+  match. Correlate with the remote-download process rule, an unusual external
+  destination, or a newly written executable or script.
 level: medium

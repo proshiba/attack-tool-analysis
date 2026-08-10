@@ -22,6 +22,14 @@ detection:
     user_agent|startswith: 'Microsoft-CryptoAPI/'
   condition: selection
 falsepositives:
-  - Legitimate Windows certificate-chain, CRL, trust-list, or application retrieval through CryptoAPI
-  - Enterprise certificate enrollment and trust-maintenance traffic sent over HTTP
-level: medium
+  - Routine Windows CRL, OCSP, CTL, certificate-chain, and trust-list retrieval through CryptoAPI
+  - Enterprise certificate enrollment and trust-maintenance traffic sent over HTTP from every Windows host
+fp_likelihood: high
+recommended_role: hunt
+precision_notes: >-
+  This Zeek rule is not testable on the EVTX corpus. Microsoft-CryptoAPI/ is
+  used continuously for benign Windows CRL, OCSP, CTL, and certificate-chain
+  traffic on every host, so a GET alone is a high-volume pivot. Act on it only
+  with an unusual external destination plus certutil download process or cache
+  telemetry, or a newly written unsigned payload.
+level: low

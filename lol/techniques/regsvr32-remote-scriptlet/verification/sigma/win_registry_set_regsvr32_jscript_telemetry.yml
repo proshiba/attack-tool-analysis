@@ -20,5 +20,13 @@ detection:
     TargetObject|endswith: '\Microsoft\Windows Script\Settings\Telemetry\regsvr32.exe\JScriptSetScriptStateStarted'
   condition: selection
 falsepositives:
-  - Legitimate regsvr32 workflows that execute JScript-based scriptlets
+  - Authorized deployment, compatibility testing, or registration workflows that execute JScript-based scriptlets through regsvr32
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The clean corpus produced 0 matches among 1151508 registry-set events.
+  Authorized regsvr32 JScript deployment or compatibility testing can create
+  the value, but it records actual script-engine initialization rather than a
+  command-line token. Correlate with a remote /i command, SCT retrieval, cache
+  creation, or a shell child.
 level: high

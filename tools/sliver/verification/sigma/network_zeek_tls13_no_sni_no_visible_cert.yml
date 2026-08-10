@@ -30,4 +30,12 @@ falsepositives:
   - Legitimate non-browser mTLS and service-to-service TLS without SNI
   - TLS 1.3 sessions for which certificate telemetry is unavailable to Zeek
   - Network devices and embedded software using literal-IP TLS endpoints
+fp_likelihood: high
+recommended_role: hunt
+precision_notes: >-
+  This Zeek rule is not testable on the EVTX corpus. Legitimate service-to-service
+  mTLS, appliance literal-IP TLS, and any TLS 1.3 session whose certificate is
+  not visible to the sensor can match, making it a broad hunt pivot. Require
+  repeated beacon-like timing plus the Sliver JA3 pair or an unsigned unusual
+  endpoint process before escalation.
 level: low

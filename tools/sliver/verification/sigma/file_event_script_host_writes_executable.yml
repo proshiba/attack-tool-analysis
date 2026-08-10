@@ -35,7 +35,15 @@ detection:
       - '.cpl'
   condition: selection_writer and selection_payload
 falsepositives:
-  - Software deployment and packaging scripts
-  - Administrator bootstrap scripts that write approved binaries
+  - PowerShell module and assembly deployment that writes DLL or EXE files
+  - Package managers, software deployment, bootstrap scripts, and installer extraction
   - Authorized penetration tests and malware-analysis labs
-level: medium
+fp_likelihood: high
+recommended_role: hunt
+precision_notes: >-
+  The clean corpus produced 64 matches, 0.011799% of 542441 file events; all 64
+  were powershell.exe writing a DLL or EXE during benign module, assembly, or
+  software deployment. Package managers, bootstrap scripts, and installers
+  produce the same broad behavior. Act only with an unusual destination or
+  unsigned image plus execution and an external beacon or matching JA3 pair.
+level: low

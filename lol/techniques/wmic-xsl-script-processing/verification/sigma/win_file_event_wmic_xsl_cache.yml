@@ -25,5 +25,13 @@ detection:
       - '.xslt'
   condition: selection_image and selection_cache and selection_xsl
 falsepositives:
-  - Approved WMIC reporting workflows that intentionally retrieve remote XSL stylesheets
+  - Approved legacy WMIC reporting workflows that retrieve remote XSL or XSLT stylesheets into Internet cache
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The clean corpus produced 0 matches among 542441 file events. Approved legacy
+  WMIC reporting that retrieves remote stylesheets can create the same cache
+  artifact, though routine benign analogues are scarce. Correlate with a WMIC
+  /format command, the matching XSL HTTP request, a shell child, or JScript
+  registry telemetry.
 level: high

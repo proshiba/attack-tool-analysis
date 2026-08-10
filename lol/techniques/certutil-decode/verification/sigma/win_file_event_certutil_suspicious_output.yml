@@ -33,6 +33,14 @@ detection:
       - '.txt'
   condition: selection
 falsepositives:
-  - Authorized decoding or certificate troubleshooting that writes one of the selected extensions
-  - Software deployment systems using certutil to reconstruct benign content
+  - Legitimate certificate export, CRL handling, or troubleshooting that writes TXT, DAT, BIN, or ZIP output
+  - Software deployment systems using certutil to reconstruct benign scripts or binaries
+fp_likelihood: medium
+recommended_role: hunt
+precision_notes: >-
+  The clean corpus produced 0 matches among 542441 file events, but the broad
+  extension set also covers routine certutil certificate export, CRL handling,
+  troubleshooting, and deployment output. Make this actionable by correlating
+  the same ProcessGuid with the certutil -decode process rule and an unsigned
+  executable or script output.
 level: low

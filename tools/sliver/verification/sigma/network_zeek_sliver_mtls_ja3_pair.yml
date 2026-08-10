@@ -24,6 +24,14 @@ detection:
     ja3s: f4febc55ea12b31ae17cfb7e614afda8
   condition: selection_fingerprint
 falsepositives:
-  - Other Go applications built with the same TLS stack and cipher profile
+  - Internal Go clients talking to Go TLS 1.3 services with the same generic crypto/tls fingerprint pair
   - Authorized Sliver red-team infrastructure and malware-analysis labs
+fp_likelihood: medium
+recommended_role: alert
+precision_notes: >-
+  This Zeek rule is not testable on the EVTX corpus. The JA3 and JA3S pair is
+  precise but can identify non-Sliver Go clients talking to Go TLS 1.3 servers,
+  and it is pinned to the observed Sliver v1.7.3 and Go profile. Correlate
+  repeated endpoint pairs with beacon timing and an unsigned unversioned process
+  or suspicious parent-child activity.
 level: high

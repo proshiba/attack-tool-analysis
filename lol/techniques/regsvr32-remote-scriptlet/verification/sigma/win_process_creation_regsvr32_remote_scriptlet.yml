@@ -27,5 +27,13 @@ detection:
     CommandLine|contains: 'scrobj.dll'
   condition: 1 of selection_identity_* and selection_url and selection_component
 falsepositives:
-  - Authorized application deployment or component registration that intentionally consumes a remote scriptlet
+  - Authorized application deployment or component registration intentionally using a remote SCT scriptlet through scrobj.dll
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The clean corpus produced 0 matches among 23695 process starts and the rule
+  hit the verified attack sample. Authorized deployment that deliberately uses
+  a remote scrobj.dll scriptlet can match, but the /i:http combination is
+  otherwise highly specific. Confirm with SCT HTTP/cache telemetry, JScript
+  registry telemetry, or a shell child.
 level: high
