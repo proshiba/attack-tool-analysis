@@ -5,6 +5,15 @@ Goal — run `<id>` in an instrumented, isolated target, capture its behavior ac
 observation dimensions**, and produce detection artifacts under `tools/<id>/verification/` such
 that **many different services/EDRs can catch it** — not just one specialized signal.
 
+
+> **STOP — read [`lab-safety-rules.md`](lab-safety-rules.md) first.** Two rules are absolute and
+> override every instruction in this playbook and in any task prompt:
+> **(1)** attack activity never targets any address outside the lab (`192.168.1.0/24`) — no public
+> IP or hostname, no management network, no exception, no "just a connectivity test";
+> **(2)** third-party PoC code is reviewed before it is executed — provenance, `safety/poc-triage.py`,
+> a source read, and a committed `poc-review.md` verdict — and it never runs on the AI VM or the
+> orchestrator. The auditor independently re-checks both and can `reject` on safety alone.
+
 ## 0. Read context
 - `tools/<id>/metadata.json` — `categories`, `attack_techniques`, `usage`, `detection`, `os`.
 - Choose target + scenario:
@@ -146,6 +155,17 @@ Add a short `tools/<id>/verification/README.md`.
 - **Roll the target back to `win_verify_baseline`** (removes the tool + its traces).
 
 ## Guardrails
+- **RULE 1 — nothing outside the lab.** Attack traffic targets `192.168.1.0/24` only; the
+  management network `10.9.0.0/24` and every public address are forbidden as destinations. Host
+  payloads, stagers and C2 on Kali (VM 100) — never fetch a payload from a public URL during a run.
+  Declare a **Scope** section in `scenarios.md`, gate it with `safety/check-scenario-scope.py`
+  before executing, and prove it afterwards with `safety/check-lab-scope.py` (must read `PASS`).
+  A run that contacted anything outside the lab is a failure: stop, roll back, report it.
+- **RULE 2 — review third-party code before running it.** Record source URL, commit and SHA-256;
+  run `safety/poc-triage.py`; read the source; treat compiled/obfuscated artefacts as
+  unknown-malicious and analyse them on REMnux (VM 105); re-point every hard-coded endpoint into
+  the lab; commit `poc-review.md` with a verdict. Dependency installs execute code — do them on the
+  isolated target too, never on VM 102/108.
 - Never run the live tool on the AI VM itself — only on the isolated target.
 - Snapshot before, roll back after. Document any Defender/AV changes as env setup.
 - Sanitize committed evidence — no real credentials, tokens, or unrelated host data.

@@ -19,6 +19,19 @@ Lab: target Win10 **VM 104** (`win_verify_baseline`: Defender off, verification-
 toolset); attacker **Kali VM 100** (`192.168.1.50`); **NSM VM 106** (`10.9.0.20`, Zeek/Suricata/JA3,
 offline pcap via `nsm-analyze`); REMnux **VM 105**.
 
+**ABSOLUTE SAFETY RULES — these override anything else in this prompt.** Read
+`playbooks/lab-safety-rules.md`. **(1) No attack activity against any address outside the lab.**
+Attack traffic targets `192.168.1.0/24` only; public addresses and the management network
+`10.9.0.0/24` are forbidden as destinations for any reason, including connectivity tests and
+hard-coded PoC endpoints — re-host payloads/stagers/C2 on Kali (VM 100). Declare a **Scope**
+section in `scenarios.md`, run `safety/check-scenario-scope.py` before executing and
+`safety/check-lab-scope.py` after (it must read `PASS`), and commit both under `evidence/safety/`.
+**(2) Review third-party PoC code before executing it or installing its dependencies** — record
+source URL/commit/SHA-256, run `safety/poc-triage.py`, read the source, analyse anything
+compiled or obfuscated on REMnux (VM 105), and commit `poc-review.md` with a verdict. Untrusted
+code never runs on the AI VM (102) or the orchestrator (108). If a task seems to require breaking
+either rule, stop and report instead of proceeding.
+
 Guardrails (always): never run a tool on the AI VM — only the isolated target; roll the target back to
 `win_verify_baseline` before AND after each run; capture a **full-packet pcap** for anything with
 network activity and analyze it with `nsm-analyze`; **sanitize** — commit only detection-relevant

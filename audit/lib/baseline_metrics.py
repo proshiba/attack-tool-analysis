@@ -5,8 +5,8 @@ Why this exists
 ---------------
 `fp_per_million` was computed against every event in the corpus (6,923,967 on
 evtx-baseline v0.8.4), but a `process_creation` rule can only ever match the
-process-creation events - about 26k of them. Scoring a process rule against the
-6.9M denominator understates its noise by roughly 260-340x. Every rule must be
+process-creation events - 23,695 of them. Scoring a process rule against the
+whole-corpus denominator understates its noise by roughly 279x. Every rule must be
 measured against the number of events its own logsource category can match.
 
 Method (fully scripted - nothing is counted by hand)
