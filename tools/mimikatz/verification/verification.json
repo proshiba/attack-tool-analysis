@@ -137,23 +137,20 @@
       "tier": 1,
       "logsource": "windows/process_creation",
       "status": "experimental",
-      "description": "Primary portable detection for mimikatz OriginalFileName or characteristic double-colon credential-module command lines with parent context."
-    },
-    {
-      "path": "sigma/file_event_mimikatz_prefetch.yml",
-      "tier": 1,
-      "logsource": "windows/file_event",
-      "status": "experimental",
-      "description": "Supplemental portable file-event detection for the name-dependent Prefetch artifact observed in the run."
+      "description": "Primary portable, name-agnostic detection for characteristic mimikatz module::command syntax; parent context is optional enrichment rather than required identity."
     },
     {
       "path": "sigma/process_access_lsass_read.yml",
       "tier": 2,
       "logsource": "windows/sysmon/process_access",
       "status": "experimental",
-      "description": "Deep Sysmon-native detection for memory-read-capable LSASS access masks independent of mimikatz identity."
+      "description": "Deep Sysmon-native, name-agnostic detection for memory-read-capable LSASS access masks."
     }
   ],
+  "validation": {
+    "pysigma": "Both remaining Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",
+    "json": "verification.json passed Python JSON validation on 2026-08-10."
+  },
   "sanitization": {
     "credential_output_committed": false,
     "raw_event_export_committed": false,

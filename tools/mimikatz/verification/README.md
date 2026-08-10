@@ -42,19 +42,23 @@ Separately, the Tier 2 sensor recorded Sysmon EID 10 when mimikatz opened
 
 Tier 1 favors fields normalized by many endpoint products:
 
-- `proc_creation_mimikatz_cmdline.yml` is the primary rule. It uses the PE
-  original filename and characteristic double-colon credential-module tokens,
-  with parent-process context.
-- `file_event_mimikatz_prefetch.yml` is a supplemental, name-dependent rule for
-  the real Prefetch artifact observed in this run.
+- `proc_creation_mimikatz_cmdline.yml` is the primary rule. It detects
+  characteristic `module::command` tokens such as `sekurlsa::`, `lsadump::`,
+  and `privilege::debug` in any process command line. It does not use the image
+  or original filename, so executable renaming does not bypass it. Parent
+  process context remains useful triage enrichment but is not required.
 
 Tier 2 complements those portable rules with the deeper Sysmon-native
 `process_access_lsass_read.yml`, which detects memory-read-capable access to
 LSASS without depending on a mimikatz name, path, or hash.
 
-No registry or network rule was authored because the canonical run produced no
-mimikatz-attributed signal in those dimensions. This avoids rules based on
-unobserved behavior.
+The former Prefetch rule was removed because the `MIMIKATZ.EXE-*.pf` artifact
+changes when the attacker renames the executable and is therefore not a robust
+detection signal.
+
+No registry, file, or network rule is retained because the canonical run did
+not produce a rename-resilient, distinctive signal in those dimensions. This
+avoids rules based on unobserved behavior or attacker-controlled filenames.
 
 ## Evidence and sanitization
 

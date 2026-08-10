@@ -47,10 +47,18 @@ loopback connection and DNS query.
 
 ## Sigma detections
 
-- Tier 1 / `process_creation`: Seatbelt PE identity plus group or focused
-  enumeration arguments and shell parent context.
-- Tier 1 supporting / `file_event`: Seatbelt writing a JSON or text survey file.
-- Tier 2 / Sysmon `process_access`: managed .NET access to LSASS with `0x1410`.
+- Tier 1 / `process_creation`: the invariant `-group=` syntax or at least two
+  distinctive Seatbelt check names in one command line. The rule has no image
+  or original-filename dependency and survives executable renaming. A renamed
+  run with only one innocuous check is intentionally not covered because a
+  single check-name match would be too noisy.
+- Tier 2 / Sysmon `process_access`: managed .NET access to LSASS with `0x1410`,
+  independent of the source executable name.
+
+The former survey-output file rule was removed. Once the Seatbelt filename is
+removed, an arbitrary executable writing JSON or text has no useful detection
+specificity; retaining the name would instead make the rule trivial to evade by
+renaming the brought-in tool.
 
 No registry or network rule was authored: those dimensions produced real
 events, but the observed targets and loopback RPC behavior were not distinctive
