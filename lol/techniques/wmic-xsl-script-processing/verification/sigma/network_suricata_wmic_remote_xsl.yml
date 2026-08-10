@@ -1,0 +1,32 @@
+title: XSL Retrieval With Legacy MSIE Profile in Suricata
+id: 7168c3d7-1330-4970-9c28-9bbc92f49487
+status: experimental
+description: >-
+  Detects Suricata EVE HTTP events for XSL retrieval with the legacy MSIE and
+  Trident User-Agent emitted during WMIC remote stylesheet processing.
+references:
+  - https://docs.suricata.io/en/latest/output/eve/eve-json-format.html
+  - https://attack.mitre.org/techniques/T1220/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1220
+logsource:
+  category: http
+  product: suricata
+detection:
+  selection_method:
+    event_type: 'http'
+    http.http_method: 'GET'
+  selection_xsl:
+    http.url|contains:
+      - '.xsl'
+      - '.xslt'
+  selection_user_agent:
+    http.http_user_agent|contains|all:
+      - 'MSIE 7.0'
+      - 'Trident/7.0'
+  condition: selection_method and selection_xsl and selection_user_agent
+falsepositives:
+  - Legacy enterprise reporting applications retrieving approved XSL resources through the Windows URL-moniker stack
+level: high

@@ -1,0 +1,29 @@
+title: WMIC Writes XSL Content Into Internet Cache
+id: e329114d-ed5e-45bc-a4ae-85f4f8394159
+status: experimental
+description: >-
+  Detects WMIC writing an XSL or XSLT file beneath the Windows Internet cache,
+  a supporting endpoint signal for remote /format stylesheet processing.
+references:
+  - https://attack.mitre.org/techniques/T1220/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1220
+logsource:
+  category: file_event
+  product: windows
+  service: sysmon
+detection:
+  selection_image:
+    Image|endswith: '\wmic.exe'
+  selection_cache:
+    TargetFilename|contains: '\INetCache\'
+  selection_xsl:
+    TargetFilename|endswith:
+      - '.xsl'
+      - '.xslt'
+  condition: selection_image and selection_cache and selection_xsl
+falsepositives:
+  - Approved WMIC reporting workflows that intentionally retrieve remote XSL stylesheets
+level: high

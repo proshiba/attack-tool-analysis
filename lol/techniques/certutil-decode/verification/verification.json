@@ -1,0 +1,165 @@
+{
+  "scenario": {
+    "id": "certutil-local-base64-decode",
+    "name": "Local benign base64 decode with certutil",
+    "description": "The signed certutil utility decoded a PEM-style base64 fixture into inert text and the output hash matched the expected bytes.",
+    "design": "scenarios.md",
+    "attack_mapping": [
+      "T1140"
+    ]
+  },
+  "environment": {
+    "target": {
+      "vmid": 104,
+      "name": "WIN10-ANALYSIS",
+      "address": "192.168.1.52",
+      "os": "Microsoft Windows 10 Enterprise LTSC Evaluation",
+      "version": "10.0.19044",
+      "architecture": "64-bit",
+      "baseline_snapshot": "win_verify_baseline"
+    },
+    "proxmox_node": "analysis-proxmox",
+    "sensors": [
+      {
+        "name": "Sysmon",
+        "version": "15.21",
+        "service_status": "Running",
+        "config_path": "C:\\Tools\\sysmon-verification.xml",
+        "config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
+        "config_notes": "Verification-grade unfiltered process, network, DNS, file, and registry coverage; LSASS ProcessAccess EID 10 enabled."
+      }
+    ],
+    "defender": {
+      "real_time_protection_enabled": false,
+      "tamper_protection_enabled": false
+    },
+    "collector": {
+      "path": "C:\\Tools\\collect-run.ps1",
+      "window_start": "2026-08-10T01:42:10.643Z",
+      "window_end": "2026-08-10T01:42:15.675Z",
+      "event_count": 258
+    },
+    "network_capture": {
+      "required": false,
+      "reason": "The scenario decoded a local fixture and produced no Sysmon EID 3 or EID 22 events."
+    }
+  },
+  "tool": {
+    "name": "certutil.exe",
+    "type": "Microsoft-signed Windows living-off-the-land binary",
+    "source": "Built into the target operating system",
+    "binary": {
+      "path": "C:\\Windows\\System32\\certutil.exe",
+      "size_bytes": 1679872,
+      "sysmon_file_version": "10.0.19041.5794 (WinBuild.160101.0800)",
+      "original_filename": "CertUtil.exe",
+      "sha256": "FD1670B43E2D9188B12B233780BF043C5A90A67A2C6E3FCDC564A5C246531BC2",
+      "signature_status": "Valid",
+      "signer": "Microsoft Windows"
+    },
+    "input_file": {
+      "path": "C:\\lab\\benign-marker.b64",
+      "content": "PEM-style base64 of an inert UTF-8 marker string",
+      "size_bytes": 114,
+      "sha256": "7CE922075A02088655CEEB4A3C74793CCEF999D82ED343A054B8AAF46432C2A3"
+    },
+    "output_file": {
+      "path": "C:\\lab\\decoded-marker.txt",
+      "content": "benign-certutil-decode-marker-2026-08-10 followed by CRLF",
+      "size_bytes": 42,
+      "sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1",
+      "expected_hash_match": true
+    },
+    "commands": [
+      {
+        "working_directory": "C:\\Windows\\System32",
+        "invocation": "C:\\Windows\\System32\\certutil.exe -decode C:\\lab\\benign-marker.b64 C:\\lab\\decoded-marker.txt",
+        "account": "NT AUTHORITY\\SYSTEM",
+        "privilege": "System integrity",
+        "process_id": 5600,
+        "process_guid": "{d6daef74-2c73-6a79-9500-000000000b00}",
+        "started_at": "2026-08-10T01:42:11.656Z",
+        "ended_at": "2026-08-10T01:42:11.706Z",
+        "time_source": "Sysmon EID 1 and EID 5",
+        "exit_code": null,
+        "completion_output": "CertUtil: -decode command completed successfully.",
+        "completion_assessment": "The reporting wrapper did not retain the numeric exit property, so success is recorded from certutil's explicit completion output and the matching output hash rather than inventing an exit code."
+      }
+    ]
+  },
+  "observed_techniques": [
+    {
+      "id": "T1140",
+      "name": "Deobfuscate/Decode Files or Information",
+      "observation": "Certutil decoded the local base64 fixture and wrote bytes whose SHA-256 matched the expected benign plaintext."
+    }
+  ],
+  "observed_signals": {
+    "network": {
+      "status": "none",
+      "event_id_3": 0,
+      "event_id_22": 0,
+      "assessment": "No network activity was part of the local flow and none was observed; no packet capture was required."
+    },
+    "files": {
+      "status": "observed",
+      "event_id_11_relevant": 1,
+      "assessment": "Sysmon attributed creation of the 42-byte decoded output directly to certutil.exe."
+    },
+    "registry": {
+      "status": "observed",
+      "event_id_12_relevant": 3,
+      "event_id_13_relevant": 3,
+      "event_id_14_relevant": 0,
+      "assessment": "Certutil initialized three cryptography OID entries. They are legitimate API state and not specific enough for a standalone decode rule."
+    },
+    "process_identity": {
+      "status": "observed",
+      "event_id_1": 1,
+      "assessment": "Sysmon captured certutil identity, the -decode switch, input and output paths, hashes, SYSTEM user, and System integrity."
+    },
+    "parent_child": {
+      "status": "observed",
+      "assessment": "The controlled PowerShell wrapper launched certutil. Certutil created only conhost.exe; decoded content was not executed."
+    }
+  },
+  "evidence": [
+    {
+      "path": "evidence/endpoint-signals.json",
+      "event_ids": [1, 5, 11, 12, 13],
+      "description": "Sanitized process lifetime, ancestry, file, registry, and explicit no-network findings."
+    }
+  ],
+  "sigma": [
+    {"path": "sigma/win_process_creation_certutil_decode.yml", "tier": 1, "role": "primary", "logsource": "windows/process_creation", "status": "experimental"},
+    {"path": "sigma/win_file_event_certutil_suspicious_output.yml", "tier": 1, "role": "supporting", "logsource": "windows/sysmon/file_event", "status": "experimental"}
+  ],
+  "validation": {
+    "pysigma": "Both Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",
+    "json": "verification.json and the sanitized evidence JSON file passed JSON validation on 2026-08-10."
+  },
+  "sanitization": {
+    "raw_pcap_committed": false,
+    "raw_evtx_committed": false,
+    "raw_event_export_committed": false,
+    "raw_nsm_logs_committed": false,
+    "host_data_committed": false,
+    "notes": "Only selected telemetry fields, hashes, timestamps, aggregate counts, lab topology values, and benign fixture content are committed."
+  },
+  "cleanup_confirmation": {
+    "target": {
+      "snapshot": "win_verify_baseline",
+      "rollback_task_exit": "OK",
+      "rollback_confirmed_at": "2026-08-10T01:43:38.4810986Z",
+      "final_batch_baseline_confirmed_at": "2026-08-10T01:59:57.9788856Z",
+      "sysmon_service": "Running",
+      "sysmon_config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
+      "defender_real_time_protection_enabled": false,
+      "input_present": false,
+      "output_present": false,
+      "telemetry_directory_present": false
+    }
+  },
+  "verified_at": "2026-08-10T01:42:11.706Z",
+  "verifier": "Codex lab orchestrator"
+}

@@ -1,0 +1,24 @@
+title: WMIC Initializes JScript Engine Telemetry
+id: 59a1805f-300b-458f-b23b-b8406a047e33
+status: experimental
+description: >-
+  Detects WMIC setting the Windows Script JScript-start telemetry value. This
+  deep Sysmon registry signal was observed during scripted XSL processing.
+references:
+  - https://attack.mitre.org/techniques/T1220/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1220
+logsource:
+  category: registry_set
+  product: windows
+  service: sysmon
+detection:
+  selection:
+    Image|endswith: '\wmic.exe'
+    TargetObject|endswith: '\Microsoft\Windows Script\Settings\Telemetry\wmic.exe\JScriptSetScriptStateStarted'
+  condition: selection
+falsepositives:
+  - Legitimate WMIC workflows that apply XSL containing JScript
+level: high

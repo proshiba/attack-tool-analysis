@@ -1,0 +1,31 @@
+title: Regsvr32 Remote Scriptlet Execution Through Scrobj
+id: da793870-7ae5-491b-b11e-b1df8b0ab4d4
+status: experimental
+description: >-
+  Detects regsvr32 invoking scrobj.dll with a remote /i URL, a characteristic
+  signed-binary proxy execution pattern for remote SCT scriptlets.
+references:
+  - https://lolbas-project.github.io/lolbas/Binaries/Regsvr32/
+  - https://attack.mitre.org/techniques/T1218/010/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1218.010
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_identity_image:
+    Image|endswith: '\regsvr32.exe'
+  selection_identity_original:
+    OriginalFileName: 'REGSVR32.EXE'
+  selection_url:
+    CommandLine|contains:
+      - '/i:http://'
+      - '/i:https://'
+  selection_component:
+    CommandLine|contains: 'scrobj.dll'
+  condition: 1 of selection_identity_* and selection_url and selection_component
+falsepositives:
+  - Authorized application deployment or component registration that intentionally consumes a remote scriptlet
+level: high

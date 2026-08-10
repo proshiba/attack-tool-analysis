@@ -1,0 +1,25 @@
+title: Regsvr32 Writes an SCT Into Internet Cache
+id: c3ad1833-cc84-4874-ad3f-a615863e0bfd
+status: experimental
+description: >-
+  Detects regsvr32 writing an SCT file beneath the Windows Internet cache, a
+  supporting endpoint signal for remote scriptlet retrieval.
+references:
+  - https://attack.mitre.org/techniques/T1218/010/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1218.010
+logsource:
+  category: file_event
+  product: windows
+  service: sysmon
+detection:
+  selection:
+    Image|endswith: '\regsvr32.exe'
+    TargetFilename|contains: '\INetCache\'
+    TargetFilename|endswith: '.sct'
+  condition: selection
+falsepositives:
+  - Authorized testing or legacy registration workflows that intentionally use SCT files
+level: high

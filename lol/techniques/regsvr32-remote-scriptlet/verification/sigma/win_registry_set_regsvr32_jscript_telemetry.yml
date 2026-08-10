@@ -1,0 +1,24 @@
+title: Regsvr32 Initializes JScript Engine Telemetry
+id: b4c58a20-4ee8-419b-9ba1-8f7a6468db0e
+status: experimental
+description: >-
+  Detects regsvr32 setting the Windows Script JScript-start telemetry value.
+  This deep Sysmon registry signal was observed during remote SCT execution.
+references:
+  - https://attack.mitre.org/techniques/T1218/010/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1218.010
+logsource:
+  category: registry_set
+  product: windows
+  service: sysmon
+detection:
+  selection:
+    Image|endswith: '\regsvr32.exe'
+    TargetObject|endswith: '\Microsoft\Windows Script\Settings\Telemetry\regsvr32.exe\JScriptSetScriptStateStarted'
+  condition: selection
+falsepositives:
+  - Legitimate regsvr32 workflows that execute JScript-based scriptlets
+level: high

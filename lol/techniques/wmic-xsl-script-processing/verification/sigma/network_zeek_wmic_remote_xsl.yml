@@ -1,0 +1,30 @@
+title: XSL Retrieval With Legacy MSIE Trident User-Agent
+id: 09524123-3892-4af2-b9c4-56dc6304ae58
+status: experimental
+description: >-
+  Detects HTTP retrieval of an XSL or XSLT resource with the legacy MSIE 7.0
+  and Trident User-Agent profile observed during WMIC /format processing.
+references:
+  - https://attack.mitre.org/techniques/T1220/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1220
+logsource:
+  category: http
+  product: zeek
+detection:
+  selection_method:
+    method: 'GET'
+  selection_xsl:
+    uri|contains:
+      - '.xsl'
+      - '.xslt'
+  selection_user_agent:
+    user_agent|contains|all:
+      - 'MSIE 7.0'
+      - 'Trident/7.0'
+  condition: selection_method and selection_xsl and selection_user_agent
+falsepositives:
+  - Legacy enterprise reporting applications retrieving approved XSL resources through the Windows URL-moniker stack
+level: high
