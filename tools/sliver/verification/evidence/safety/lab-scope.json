@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 1 - attack traffic never leaves the isolated lab",
+  "allowed_networks": [
+    "192.168.1.0/24"
+  ],
+  "management_networks": [
+    "10.9.0.0/24"
+  ],
+  "inputs": {
+    "zeek_dir": "/tmp/sliver-scope-combined",
+    "sysmon_json": "/tmp/sliver-scope-combined/network.json",
+    "sysmon_attribution_available": true,
+    "composition": "conn.log and network.json combined the HTTP, HTTPS, and mTLS flow outputs before this check"
+  },
+  "process_attribution": {
+    "source": "collect-run auditd:lab_connect correlation applied to Sysmon EID 3",
+    "raw_sysmon_image_not_used_as_sole_owner": true,
+    "attributed_connections": [
+      {
+        "role": "delivery downloader",
+        "owning_process_image": "/usr/bin/curl",
+        "destination_port": 18080,
+        "count": 3
+      },
+      {
+        "role": "renamed HTTP implant",
+        "owning_process_image": "/tmp/.cache-update-6f32",
+        "destination_port": 8080,
+        "count": 11
+      },
+      {
+        "role": "renamed HTTPS implant",
+        "owning_process_image": "/var/tmp/.lib-cache-93a1",
+        "destination_port": 8443,
+        "count": 15
+      },
+      {
+        "role": "renamed mTLS implant",
+        "owning_process_image": "/dev/shm/.dbus-helper-417",
+        "destination_port": 31337,
+        "count": 1
+      }
+    ]
+  },
+  "violation_count": 0,
+  "violations": [],
+  "os_background_destinations": [],
+  "verdict": "PASS"
+}

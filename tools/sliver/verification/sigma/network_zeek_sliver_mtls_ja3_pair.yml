@@ -1,19 +1,22 @@
-title: Sliver mTLS JA3 and JA3S Pair in Zeek TLS Logs
+title: Sliver TLS JA3 and JA3S Pair in Zeek TLS Logs
 id: b0787147-05b5-425d-a623-17a94c107e03
 status: experimental
 description: >-
   Detects the client/server TLS fingerprint pair observed for the official
-  Sliver v1.7.3 Windows amd64 mTLS beacon. It does not key on an address, port,
+  Sliver v1.7.3 Windows mTLS and Linux HTTPS/mTLS implants. The Linux HTTPS and
+  mTLS transports produced the same pair, so this rule intentionally does not
+  claim transport discrimination. It does not key on an address, port,
   hostname, SNI, implant name, or certificate. Fingerprints can change with
-  Sliver or Go TLS versions; correlate repeated matches by origin and responder
-  over a rolling window to identify beacon periodicity.
+  Sliver or Go TLS versions; correlate at least five repeated matches by origin
+  and responder in 75 seconds to identify the observed HTTPS beacon cadence.
 references:
   - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
   - https://github.com/salesforce/ja3
 author: Codex lab orchestrator
 date: '2026-08-09'
+modified: '2026-08-10'
 tags:
-  - attack.command_and_control
+  - attack.command-and-control
   - attack.t1573.002
 logsource:
   category: tls
@@ -29,9 +32,10 @@ falsepositives:
 fp_likelihood: medium
 recommended_role: alert
 precision_notes: >-
-  This Zeek rule is not testable on the EVTX corpus. The JA3 and JA3S pair is
-  precise but can identify non-Sliver Go clients talking to Go TLS 1.3 servers,
-  and it is pinned to the observed Sliver v1.7.3 and Go profile. Correlate
-  repeated endpoint pairs with beacon timing and an unsigned unversioned process
-  or suspicious parent-child activity.
+  This Zeek rule is not testable on the EVTX corpus. It matched all 15 Linux
+  HTTPS flows and the one Linux mTLS session, as well as the prior Windows mTLS
+  beacon. The pair can identify non-Sliver Go TLS peers and is pinned to this
+  Sliver/Go profile. For HTTPS, correlate by endpoint pair with five matches in
+  75 seconds and 9-14 second gaps; for mTLS session mode, correlate the long-lived
+  flow with unusual Linux execution instead.
 level: high

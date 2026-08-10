@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 2 - third-party PoC code is reviewed before it is executed",
+  "target": "/tmp/sliver-review.NVGjzk/sliver-server_linux-amd64",
+  "source_url": "https://github.com/BishopFox/sliver/releases/tag/v1.7.3",
+  "file_count": 1,
+  "severity_counts": {
+    "critical": 1,
+    "high": 2,
+    "medium": 2
+  },
+  "findings": [
+    {
+      "id": "credential-theft",
+      "severity": "critical",
+      "line": 122106,
+      "why": "reads credentials or secrets belonging to the machine that runs it",
+      "evidence": "ףI��N�$",
+      "file": "sliver-server_linux-amd64"
+    },
+    {
+      "id": "persistence",
+      "severity": "high",
+      "line": 122150,
+      "why": "installs persistence on the machine that runs it",
+      "evidence": "L�\u0005��E\u000fJ�",
+      "file": "sliver-server_linux-amd64"
+    },
+    {
+      "id": "anti-analysis",
+      "severity": "medium",
+      "line": 123047,
+      "why": "changes behaviour when it detects analysis - what you observe may not be what a victim gets",
+      "evidence": "i�)\u0003H�\bE1�1�H��1�H�\u0005x��",
+      "file": "sliver-server_linux-amd64"
+    },
+    {
+      "id": "obfuscation",
+      "severity": "medium",
+      "line": 122061,
+      "why": "large encoded or escaped blob - review its decoded content before running",
+      "evidence": "\u0000\u0000\u0000H��莚e��\t\u0000\u0000\u0000H��聚e��\b\u0000\u0000\u0000H���t�e��\u0007\u0000\u0000\u0000H���g�e��\u0006\u0000\u0000\u0000H���Z�e��\u0005\u0000\u0000\u0000H���M�e��\u0004\u0000\u0000\u0000�C�e�\u000f\u001f\u0000�;�e�H�ٺ\u001a\u0000\u0000\u0000�n�e��H�D$\bH�\\$\u0010H�L$\u0018H�|$ �\u0014ye�H�D$\bH�\\$\u0010H�L$\u0018H�|$ �[������������������������������I;f\u0010\u000f��\u0000\u0000\u0000UH��H��\u0018�P",
+      "file": "sliver-server_linux-amd64"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "0.gQ, 0.rU, 0.su, 1.1.1.1, 1.1.1.11, 1.10.14.1, 1.15.8.1, 1.2.1.1, 1.2.2.1, 1.2.3.4, 1.21.0.0, 1.3.1.1",
+      "file": "sliver-server_linux-amd64"
+    }
+  ],
+  "files": [
+    {
+      "file": "sliver-server_linux-amd64",
+      "bytes": 267460792,
+      "sha256": "e3216ecd12f6e7e97cb4588bb6d85c70eca3bdfad8b0818ffd53ccb2e357ccc8",
+      "findings": [
+        {
+          "id": "credential-theft",
+          "severity": "critical",
+          "line": 122106,
+          "why": "reads credentials or secrets belonging to the machine that runs it",
+          "evidence": "ףI��N�$"
+        },
+        {
+          "id": "persistence",
+          "severity": "high",
+          "line": 122150,
+          "why": "installs persistence on the machine that runs it",
+          "evidence": "L�\u0005��E\u000fJ�"
+        },
+        {
+          "id": "anti-analysis",
+          "severity": "medium",
+          "line": 123047,
+          "why": "changes behaviour when it detects analysis - what you observe may not be what a victim gets",
+          "evidence": "i�)\u0003H�\bE1�1�H��1�H�\u0005x��"
+        },
+        {
+          "id": "obfuscation",
+          "severity": "medium",
+          "line": 122061,
+          "why": "large encoded or escaped blob - review its decoded content before running",
+          "evidence": "\u0000\u0000\u0000H��莚e��\t\u0000\u0000\u0000H��聚e��\b\u0000\u0000\u0000H���t�e��\u0007\u0000\u0000\u0000H���g�e��\u0006\u0000\u0000\u0000H���Z�e��\u0005\u0000\u0000\u0000H���M�e��\u0004\u0000\u0000\u0000�C�e�\u000f\u001f\u0000�;�e�H�ٺ\u001a\u0000\u0000\u0000�n�e��H�D$\bH�\\$\u0010H�L$\u0018H�|$ �\u0014ye�H�D$\bH�\\$\u0010H�L$\u0018H�|$ �[������������������������������I;f\u0010\u000f��\u0000\u0000\u0000UH��H��\u0018�P"
+        },
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "0.gQ, 0.rU, 0.su, 1.1.1.1, 1.1.1.11, 1.10.14.1, 1.15.8.1, 1.2.1.1, 1.2.2.1, 1.2.3.4, 1.21.0.0, 1.3.1.1"
+        }
+      ]
+    }
+  ],
+  "mechanical_verdict": "NEEDS-HUMAN-REVIEW",
+  "disclaimer": "A mechanical scan never clears code. Read the source. Treat compiled or obfuscated artefacts as unknown-malicious and analyse them on REMnux (VM 105). Execution happens only on the isolated target, snapshot before and roll back after."
+}

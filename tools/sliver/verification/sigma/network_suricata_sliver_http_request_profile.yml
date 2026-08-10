@@ -1,0 +1,49 @@
+title: Sliver Default Linux HTTP Request Profile in Suricata Events
+id: 9c737771-96b8-445f-ad33-983484f69764
+status: experimental
+description: >-
+  Detects the combined User-Agent, POST response, query, and randomized
+  script-like URI vocabulary observed from a Sliver v1.7.3 Linux HTTP beacon
+  in Suricata EVE HTTP events. It does not key on a C2 address, port, hostname,
+  or implant filename. A periodic beacon analytic should require at least five
+  matching flows for an endpoint pair in 75 seconds with starts 9-14 seconds apart.
+references:
+  - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
+  - https://docs.suricata.io/en/latest/output/eve/eve-json-format.html
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.command-and-control
+  - attack.t1071.001
+logsource:
+  category: http
+  product: suricata
+detection:
+  selection_protocol:
+    http.http_method: POST
+    http.protocol: HTTP/1.1
+    http.status:
+      - 200
+      - 202
+    http.http_user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.2817.843 Safari/537.36'
+  selection_query:
+    http.url|contains: '?'
+  selection_vocabulary:
+    http.url|contains:
+      - '/script/'
+      - '/scripts/'
+      - '/bundles/'
+      - '/javascripts/'
+  condition: selection_protocol and selection_query and selection_vocabulary
+falsepositives:
+  - A web client deliberately configured with the same obsolete Chrome User-Agent and URI vocabulary
+  - Authorized Sliver red-team infrastructure and malware-analysis labs
+fp_likelihood: medium
+recommended_role: alert
+precision_notes: >-
+  Suricata HTTP events are not testable on the EVTX corpus. The rule matched
+  all 12 Sliver POST events in this trace and no staging request. The User-Agent
+  and web profile are operator-configurable. Aggregate by endpoint pair to test
+  the measured 10.061-12.907 second cadence; single-event Sigma cannot itself
+  assert periodicity.
+level: medium

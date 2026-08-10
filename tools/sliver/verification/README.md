@@ -1,4 +1,39 @@
-# Sliver mTLS verification with NSM
+# Sliver cross-platform verification with NSM
+
+The 2026-08-10 extension adds a renamed Linux amd64 implant on Ubuntu VM 103
+across clear HTTP beacon, HTTPS beacon, and raw mTLS session transports. Each
+implant was fetched realistically from the contained Kali HTTP staging server,
+then hashed, chmodded, and executed while Sysmon for Linux, auditd, and tcpdump
+collected separate flow windows. VM 103 was restored to
+`linux_verify_baseline` before and after the run.
+
+The network result is deliberately transport-aware. Clear HTTP exposed a
+stable Linux Chrome-like User-Agent, randomized script-like paths, one-letter
+nonce queries, POST/GET pairs, and a measured 10.061-12.907 second steady-state
+cadence. HTTPS exposed the same cadence but encrypted its HTTP fields. HTTPS
+and raw mTLS unexpectedly shared JA3
+`2196848d251b217de8b2c037e356c11d`, JA3S
+`f4febc55ea12b31ae17cfb7e614afda8`, and all-zero JARM; their discriminating
+shape was repeated short HTTPS connections versus one 60.057947-second mTLS
+session flow.
+
+Linux endpoint additions are rename-resilient and deliberately narrow:
+
+- auditd file-event coverage for curl writing a hidden object in a transient
+  directory, filling the upstream wget-only file-event form;
+- hidden `/var/tmp` execution, filling a form left by upstream's existing
+  `/tmp` and `/dev/shm` rules; and
+- Zeek and Suricata HTTP request-profile rules with a documented rolling-window
+  periodicity requirement.
+
+The combined `check-lab-scope.py` evidence is `PASS`. Process ownership was
+proved with `collect-run.sh`'s auditd-correlated network attribution because
+raw Sysmon EID 3 can carry a stale pre-exec image. macOS remains a
+lab-capability gap because the lab has no macOS host; it is not recorded as a
+scenario gap. The detailed Linux record is in `verification.json`,
+`scenarios.md`, and the two `evidence/linux-*-signals.json` files.
+
+## Prior Windows mTLS verification
 
 Official Sliver v1.7.3 was verified end to end in the contained vmbr1 lab.
 Kali VM 100 (`192.168.1.50`) hosted a raw mTLS listener; Windows 10 VM 104
