@@ -15,7 +15,7 @@ believing the verified flow is the whole technique.
 | VM | Role | Verifiable |
 |---|---|---|
 | 100 `kali` | attacker, payload/C2 host (`192.168.1.50`) | Linux attacker tooling, staged payloads, lab-hosted C2 |
-| 103 `ubuntu` | Linux target | Linux implants, GTFOBins, Linux post-exploitation |
+| 103 `ubuntu` | Linux target (`linux_verify_baseline`: Sysmon + auditd + tcpdump) | Linux implants, GTFOBins, Linux post-exploitation |
 | 104 `win10` | Windows target (Win10 LTSC, `win_verify_baseline`) | Windows endpoint techniques, LOLBAS, Sysmon telemetry |
 | 105 `remnux` | malware RE | static/dynamic analysis of artefacts |
 | 106 `nsm` | Zeek/Suricata | network dimension, JA3/JARM, beacon periodicity |

@@ -1,0 +1,24 @@
+## Identity supplement for the Sysmon-based verification baseline.
+## Sysmon remains the primary process/network/file source used by Sigma.
+-b 8192
+-f 1
+
+## Record real/effective/saved/fs UIDs for every executed image.
+-a always,exit -F arch=b64 -S execve,execveat -k lab_exec
+-a always,exit -F arch=b32 -S execve,execveat -k lab_exec
+
+## Supplement Sysmon EID 3 with syscall identity and raw sockaddr data.
+-a always,exit -F arch=b64 -S connect -k lab_connect
+-a always,exit -F arch=b32 -S connect -k lab_connect
+
+## Verification paths where Linux payloads commonly stage or write files.
+-w /tmp/ -p wa -k lab_file
+-w /var/tmp/ -p wa -k lab_file
+-w /dev/shm/ -p wa -k lab_file
+-w /opt/ -p wa -k lab_file
+-w /home/ -p wa -k lab_file
+-w /root/ -p wa -k lab_file
+-w /etc/ -p wa -k lab_file
+-w /usr/local/ -p wa -k lab_file
+-w /var/lib/ -p wa -k lab_file
+-w /var/log/ -p wa -k lab_file
