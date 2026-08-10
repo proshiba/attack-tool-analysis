@@ -1,12 +1,19 @@
 {
   "scenario": {
-    "id": "certutil-local-base64-decode",
-    "name": "Local benign base64 decode with certutil",
-    "description": "The signed certutil utility decoded a PEM-style base64 fixture into inert text and the output hash matched the expected bytes.",
+    "id": "certutil-local-decode-variants",
+    "name": "Local inert certutil decode variants",
+    "description": "Four new scope-checked runs cover five of six grounded local-decode use cases: ordinary base64 decode, hexadecimal decode, forced DLL-named output with -f, standard-user context, and slash-form syntax. Decode followed by execution remains future work. The unprovable historical run is not current evidence.",
     "design": "scenarios.md",
     "attack_mapping": [
       "T1140"
-    ]
+    ],
+    "coverage": {
+      "grounding": "Independent audit at c23e800 plus the four routed, newly executed scenarios",
+      "covered_use_cases": 5,
+      "in_scope_use_cases": 6,
+      "ratio": 0.833333,
+      "assessment": "The four new runs close every explicitly routed execution requirement and bring grounded coverage above the 60% gate floor. Decode-then-execute remains a separately scoped future scenario because it changes the safety profile."
+    }
   },
   "environment": {
     "target": {
@@ -19,6 +26,7 @@
       "baseline_snapshot": "win_verify_baseline"
     },
     "proxmox_node": "analysis-proxmox",
+    "isolation": "Each valid scenario began from a separate rollback to win_verify_baseline. All commands were local file-to-file transforms with no network destination.",
     "sensors": [
       {
         "name": "Sysmon",
@@ -33,16 +41,7 @@
       "real_time_protection_enabled": false,
       "tamper_protection_enabled": false
     },
-    "collector": {
-      "path": "C:\\Tools\\collect-run.ps1",
-      "window_start": "2026-08-10T01:42:10.643Z",
-      "window_end": "2026-08-10T01:42:15.675Z",
-      "event_count": 258
-    },
-    "network_capture": {
-      "required": false,
-      "reason": "The scenario decoded a local fixture and produced no Sysmon EID 3 or EID 22 events."
-    }
+    "collector": "C:\\Tools\\collect-run.ps1"
   },
   "tool": {
     "name": "certutil.exe",
@@ -57,77 +56,328 @@
       "signature_status": "Valid",
       "signer": "Microsoft Windows"
     },
-    "input_file": {
-      "path": "C:\\lab\\benign-marker.b64",
-      "content": "PEM-style base64 of an inert UTF-8 marker string",
-      "size_bytes": 114,
-      "sha256": "7CE922075A02088655CEEB4A3C74793CCEF999D82ED343A054B8AAF46432C2A3"
-    },
-    "output_file": {
-      "path": "C:\\lab\\decoded-marker.txt",
+    "fixtures": [
+      {
+        "path": "C:\\lab\\benign-marker.b64",
+        "format": "plain base64 plus CRLF",
+        "size_bytes": 58,
+        "sha256": "C27E9DA8581E00AAAE56A77EA8255D1A6AA673B29AAF14C2CDE7FB5E46AB870D"
+      },
+      {
+        "path": "C:\\lab\\benign-marker.hex",
+        "format": "space-separated hexadecimal bytes",
+        "size_bytes": 129,
+        "sha256": "9E17EF1991CA8F8B1948230D22BEEEF3253C4FE8BE9F9F8DB6B35D424EAE650B"
+      }
+    ],
+    "decoded_bytes": {
       "content": "benign-certutil-decode-marker-2026-08-10 followed by CRLF",
       "size_bytes": 42,
       "sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1",
-      "expected_hash_match": true
-    },
-    "commands": [
-      {
-        "working_directory": "C:\\Windows\\System32",
-        "invocation": "C:\\Windows\\System32\\certutil.exe -decode C:\\lab\\benign-marker.b64 C:\\lab\\decoded-marker.txt",
-        "account": "NT AUTHORITY\\SYSTEM",
-        "privilege": "System integrity",
-        "process_id": 5600,
-        "process_guid": "{d6daef74-2c73-6a79-9500-000000000b00}",
-        "started_at": "2026-08-10T01:42:11.656Z",
-        "ended_at": "2026-08-10T01:42:11.706Z",
-        "time_source": "Sysmon EID 1 and EID 5",
-        "exit_code": null,
-        "completion_output": "CertUtil: -decode command completed successfully.",
-        "completion_assessment": "The reporting wrapper did not retain the numeric exit property, so success is recorded from certutil's explicit completion output and the matching output hash rather than inventing an exit code."
-      }
-    ]
+      "executed_or_loaded": false
+    }
   },
   "observed_techniques": [
     {
       "id": "T1140",
       "name": "Deobfuscate/Decode Files or Information",
-      "observation": "Certutil decoded the local base64 fixture and wrote bytes whose SHA-256 matched the expected benign plaintext."
+      "observation": "Certutil decoded inert base64 and hexadecimal fixtures with dash and slash syntax, under SYSTEM and a standard user, and every output hash matched the expected marker bytes."
     }
   ],
-  "observed_signals": {
-    "network": {
-      "status": "none",
-      "event_id_3": 0,
-      "event_id_22": 0,
-      "assessment": "No network activity was part of the local flow and none was observed; no packet capture was required."
-    },
-    "files": {
-      "status": "observed",
-      "event_id_11_relevant": 1,
-      "assessment": "Sysmon attributed creation of the 42-byte decoded output directly to certutil.exe."
-    },
-    "registry": {
-      "status": "observed",
-      "event_id_12_relevant": 3,
-      "event_id_13_relevant": 3,
-      "event_id_14_relevant": 0,
-      "assessment": "Certutil initialized three cryptography OID entries. They are legitimate API state and not specific enough for a standalone decode rule."
-    },
-    "process_identity": {
-      "status": "observed",
-      "event_id_1": 1,
-      "assessment": "Sysmon captured certutil identity, the -decode switch, input and output paths, hashes, SYSTEM user, and System integrity."
-    },
-    "parent_child": {
-      "status": "observed",
-      "assessment": "The controlled PowerShell wrapper launched certutil. Certutil created only conhost.exe; decoded content was not executed."
-    }
-  },
-  "evidence": [
+  "runs": [
     {
-      "path": "evidence/endpoint-signals.json",
-      "event_ids": [1, 5, 11, 12, 13],
-      "description": "Sanitized process lifetime, ancestry, file, registry, and explicit no-network findings."
+      "scenario": {
+        "id": "certutil-decodehex-system",
+        "name": "Hexadecimal decode under SYSTEM",
+        "design_section": "Verified flow 1: hexadecimal decode"
+      },
+      "environment": {
+        "account": "NT AUTHORITY\\SYSTEM",
+        "integrity_level": "System",
+        "baseline_snapshot": "win_verify_baseline",
+        "collector_window_start": "2026-08-10T12:38:59.029Z",
+        "collector_window_end": "2026-08-10T12:39:01.810Z",
+        "collector_event_count": 562
+      },
+      "command": {
+        "working_directory": "C:\\Windows\\System32",
+        "invocation": "C:\\Windows\\System32\\certutil.exe -decodehex C:\\lab\\benign-marker.hex C:\\lab\\decoded-marker.bin",
+        "process_id": 5864,
+        "process_guid": "{d6daef74-c663-6a79-ad00-000000000b00}",
+        "started_at": "2026-08-10T12:38:59.787Z",
+        "ended_at": "2026-08-10T12:38:59.810Z",
+        "exit_code": 0,
+        "completion_output": "CertUtil: -decodehex command completed successfully."
+      },
+      "observed_techniques": [
+        "T1140"
+      ],
+      "observed_signals": {
+        "network": {
+          "status": "none observed",
+          "event_id_3": 0,
+          "event_id_22": 0
+        },
+        "files": {
+          "status": "observed",
+          "event_id_11": 1,
+          "output": "C:\\lab\\decoded-marker.bin",
+          "output_sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1"
+        },
+        "registry": {
+          "status": "observed",
+          "event_id_12": 3,
+          "event_id_13": 3,
+          "event_id_14": 0,
+          "assessment": "Three CryptDllFindOIDInfo OID leaf keys and their Name values were initialized; this is legitimate context-sensitive API state, not a decode rule."
+        },
+        "process_identity": {
+          "status": "observed",
+          "event_id_1": 1,
+          "assessment": "Sysmon captured certutil identity, -decodehex, paths, hashes, SYSTEM user, and System integrity."
+        },
+        "parent_child": {
+          "status": "observed",
+          "parent": "controlled PowerShell wrapper",
+          "direct_children": [],
+          "assessment": "No decoded output execution or direct child was observed."
+        }
+      },
+      "rule_results": {
+        "sigma/win_process_creation_certutil_decode.yml": "fired",
+        "sigma/win_file_event_certutil_suspicious_output.yml": "did not fire: .bin is outside the executable/script tier",
+        "sigma/win_file_event_certutil_data_output.yml": "fired"
+      },
+      "evidence": [
+        "evidence/endpoint-signals.json#certutil-decodehex-system",
+        "evidence/safety/sysmon-eid3-attribution.json",
+        "evidence/safety/lab-scope.json"
+      ],
+      "verified_at": "2026-08-10T12:38:59.810Z",
+      "verifier": "Codex lab orchestrator"
+    },
+    {
+      "scenario": {
+        "id": "certutil-force-decode-dll-system",
+        "name": "Forced base64 decode to a DLL-named inert output",
+        "design_section": "Verified flow 2: forced decode to a payload extension"
+      },
+      "environment": {
+        "account": "NT AUTHORITY\\SYSTEM",
+        "integrity_level": "System",
+        "baseline_snapshot": "win_verify_baseline",
+        "collector_window_start": "2026-08-10T12:41:22.974Z",
+        "collector_window_end": "2026-08-10T12:41:25.756Z",
+        "collector_event_count": 410
+      },
+      "command": {
+        "working_directory": "C:\\Windows\\System32",
+        "invocation": "C:\\Windows\\System32\\certutil.exe -f -decode C:\\lab\\benign-marker.b64 C:\\lab\\decoded-marker.dll",
+        "process_id": 1220,
+        "process_guid": "{d6daef74-c6f3-6a79-0501-000000000b00}",
+        "started_at": "2026-08-10T12:41:23.733Z",
+        "ended_at": "2026-08-10T12:41:23.756Z",
+        "exit_code": 0,
+        "completion_output": "CertUtil: -decode command completed successfully."
+      },
+      "observed_techniques": [
+        "T1140"
+      ],
+      "observed_signals": {
+        "network": {
+          "status": "none observed",
+          "event_id_3": 0,
+          "event_id_22": 0
+        },
+        "files": {
+          "status": "observed",
+          "event_id_11": 1,
+          "output": "C:\\lab\\decoded-marker.dll",
+          "output_sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1",
+          "executed_or_loaded": false
+        },
+        "registry": {
+          "status": "observed",
+          "event_id_12": 3,
+          "event_id_13": 3,
+          "event_id_14": 0,
+          "assessment": "Same three SYSTEM-context OID leaf keys and Name values."
+        },
+        "process_identity": {
+          "status": "observed",
+          "event_id_1": 1,
+          "assessment": "Sysmon captured -f -decode and the DLL-named output path."
+        },
+        "parent_child": {
+          "status": "observed",
+          "parent": "controlled PowerShell wrapper",
+          "direct_children": [],
+          "assessment": "The inert DLL-named output was neither loaded nor executed."
+        }
+      },
+      "rule_results": {
+        "sigma/win_process_creation_certutil_decode.yml": "fired",
+        "sigma/win_file_event_certutil_suspicious_output.yml": "fired: first lab positive for the executable/script tier",
+        "sigma/win_file_event_certutil_data_output.yml": "did not fire"
+      },
+      "evidence": [
+        "evidence/endpoint-signals.json#certutil-force-decode-dll-system",
+        "evidence/safety/sysmon-eid3-attribution.json",
+        "evidence/safety/lab-scope.json"
+      ],
+      "verified_at": "2026-08-10T12:41:23.756Z",
+      "verifier": "Codex lab orchestrator"
+    },
+    {
+      "scenario": {
+        "id": "certutil-decode-standard-user",
+        "name": "Base64 decode under a local standard user",
+        "design_section": "Verified flow 3: standard-user base64 decode"
+      },
+      "environment": {
+        "account": "WIN10-ANALYSIS\\certlab",
+        "account_context": "Temporary local Users-group member; not in Administrators; Medium integrity. Log on as a batch job was granted for this run and removed by snapshot rollback.",
+        "baseline_snapshot": "win_verify_baseline",
+        "collector_window_start": "2026-08-10T12:51:50.000Z",
+        "collector_window_end": "2026-08-10T12:51:55.000Z",
+        "collector_event_count": 421,
+        "collection_note": "The wrapper's initial combined export stopped partway. The unchanged event channels were re-exported for the exact five-second run window; the committed evidence records the recovered export hashes."
+      },
+      "command": {
+        "working_directory": "C:\\Windows\\System32",
+        "invocation": "C:\\Windows\\System32\\certutil.exe -decode C:\\lab\\benign-marker.b64 C:\\Users\\certlab\\decoded-marker-user.txt",
+        "process_id": 5332,
+        "process_guid": "{d6daef74-c968-6a79-a600-000000000b00}",
+        "started_at": "2026-08-10T12:51:52.376Z",
+        "ended_at": "2026-08-10T12:51:52.428Z",
+        "exit_code": 0,
+        "completion_assessment": "Task Scheduler LastTaskResult was 0 and the output hash matched the expected inert bytes."
+      },
+      "observed_techniques": [
+        "T1140"
+      ],
+      "observed_signals": {
+        "network": {
+          "status": "none observed",
+          "event_id_3": 0,
+          "event_id_22": 0
+        },
+        "files": {
+          "status": "observed",
+          "event_id_11": 1,
+          "output": "C:\\Users\\certlab\\decoded-marker-user.txt",
+          "output_sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1"
+        },
+        "registry": {
+          "status": "observed",
+          "event_id_12_total": 20,
+          "event_id_13_total": 8,
+          "event_id_14_total": 0,
+          "system_oid_leaf_create_count": 0,
+          "system_oid_leaf_name_set_count": 0,
+          "assessment": "The three SYSTEM OID leaf creations and three Name writes were absent. The user process produced nine OID ancestor EID 12 events and per-user MuiCache initialization instead."
+        },
+        "process_identity": {
+          "status": "observed",
+          "event_id_1": 1,
+          "assessment": "Sysmon captured WIN10-ANALYSIS\\certlab at Medium integrity with the complete -decode command."
+        },
+        "parent_child": {
+          "status": "observed",
+          "parent": "Task Scheduler svchost.exe",
+          "direct_children": [
+            "conhost.exe"
+          ],
+          "assessment": "Certutil launched only its console host; decoded output was not executed."
+        }
+      },
+      "context_diff_against_system": {
+        "output_path": "SYSTEM outputs were under C:\\lab; the user output was under C:\\Users\\certlab.",
+        "registry": "SYSTEM produced 3 OID leaf CreateKey plus 3 Name SetValue events; the standard user produced zero of those six leaf events."
+      },
+      "rule_results": {
+        "sigma/win_process_creation_certutil_decode.yml": "fired",
+        "sigma/win_file_event_certutil_suspicious_output.yml": "did not fire: .txt is outside the executable/script tier",
+        "sigma/win_file_event_certutil_data_output.yml": "fired"
+      },
+      "evidence": [
+        "evidence/endpoint-signals.json#certutil-decode-standard-user",
+        "evidence/safety/sysmon-eid3-attribution.json",
+        "evidence/safety/lab-scope.json"
+      ],
+      "verified_at": "2026-08-10T12:51:52.428Z",
+      "verifier": "Codex lab orchestrator"
+    },
+    {
+      "scenario": {
+        "id": "certutil-slash-decode-system",
+        "name": "Slash-form base64 decode under SYSTEM",
+        "design_section": "Verified flow 4: slash-form base64 decode"
+      },
+      "environment": {
+        "account": "NT AUTHORITY\\SYSTEM",
+        "integrity_level": "System",
+        "baseline_snapshot": "win_verify_baseline",
+        "collector_window_start": "2026-08-10T12:54:07.138Z",
+        "collector_window_end": "2026-08-10T12:54:09.935Z",
+        "collector_event_count": 202
+      },
+      "command": {
+        "working_directory": "C:\\Windows\\System32",
+        "invocation": "C:\\Windows\\System32\\certutil.exe /decode C:\\lab\\benign-marker.b64 C:\\lab\\decoded-marker-slash.bin",
+        "process_id": 5660,
+        "process_guid": "{d6daef74-c9ef-6a79-9b00-000000000b00}",
+        "started_at": "2026-08-10T12:54:07.895Z",
+        "ended_at": "2026-08-10T12:54:07.919Z",
+        "exit_code": 0,
+        "completion_output": "CertUtil: -decode command completed successfully."
+      },
+      "observed_techniques": [
+        "T1140"
+      ],
+      "observed_signals": {
+        "network": {
+          "status": "none observed",
+          "event_id_3": 0,
+          "event_id_22": 0
+        },
+        "files": {
+          "status": "observed",
+          "event_id_11": 1,
+          "output": "C:\\lab\\decoded-marker-slash.bin",
+          "output_sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1"
+        },
+        "registry": {
+          "status": "observed",
+          "event_id_12": 3,
+          "event_id_13": 3,
+          "event_id_14": 0,
+          "assessment": "Same three SYSTEM-context OID leaf keys and Name values."
+        },
+        "process_identity": {
+          "status": "observed",
+          "event_id_1": 1,
+          "assessment": "This Windows build accepted /decode. The old plain-contains selector missed it; the windash selector matches it."
+        },
+        "parent_child": {
+          "status": "observed",
+          "parent": "controlled PowerShell wrapper",
+          "direct_children": [],
+          "assessment": "No decoded output execution or direct child was observed."
+        }
+      },
+      "rule_results": {
+        "sigma/win_process_creation_certutil_decode.yml": "fired after windash fix; predecessor rule did not fire",
+        "sigma/win_file_event_certutil_suspicious_output.yml": "did not fire: .bin is outside the executable/script tier",
+        "sigma/win_file_event_certutil_data_output.yml": "fired"
+      },
+      "evidence": [
+        "evidence/endpoint-signals.json#certutil-slash-decode-system",
+        "evidence/safety/sysmon-eid3-attribution.json",
+        "evidence/safety/lab-scope.json"
+      ],
+      "verified_at": "2026-08-10T12:54:07.919Z",
+      "verifier": "Codex lab orchestrator"
     }
   ],
   "sigma": [
@@ -145,18 +395,53 @@
         "fp_count": 0,
         "fp_share_of_category_percent": 0.0,
         "category_denominator": 23695,
+        "measured_fp_likelihood_floor": "low",
         "detection_hit": true,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
+        "corpus": "evtx-baseline v0.8.4 and EVTX-ATTACK-SAMPLES/regression_data",
+        "repo_commit": "e78ed8b",
+        "provenance": "audit iteration 3 precision/precision-input.json plus the auditor's any-certutil-start control",
+        "interpretation": "The control also had zero clean hits, so the result is null rather than evidence that certutil decode is absent in production."
+      },
+      "lab_detection": {
+        "decodehex": true,
+        "force_decode_dll": true,
+        "standard_user_decode": true,
+        "slash_decode": true
       }
     },
     {
       "path": "sigma/win_file_event_certutil_suspicious_output.yml",
       "tier": 1,
-      "role": "supporting",
-      "logsource": "windows/sysmon/file_event",
+      "role": "supporting executable/script tier",
+      "logsource": "windows/file_event",
       "status": "experimental",
       "fp_likelihood": "medium",
+      "recommended_role": "hunt",
+      "level": "medium",
+      "precision_measurement": {
+        "measured": true,
+        "fp_count": 0,
+        "fp_share_of_category_percent": 0.0,
+        "category_denominator": 542441,
+        "measured_fp_likelihood_floor": "low",
+        "detection_hit": true,
+        "corpus": "evtx-baseline v0.8.4 and EVTX-ATTACK-SAMPLES/regression_data",
+        "repo_commit": "e78ed8b",
+        "provenance": "audit iteration 3 exact harness measurement of the corrected eight-extension rule",
+        "interpretation": "The corrected rule has zero clean hits and one attack-corpus EID 11 hit for AllTheThings.dll. Deployment tooling can still reconstruct benign binaries, so the reconciled posture is medium FP likelihood, hunt, level medium."
+      },
+      "lab_detection": {
+        "force_decode_dll": true,
+        "other_runs": false
+      }
+    },
+    {
+      "path": "sigma/win_file_event_certutil_data_output.yml",
+      "tier": 1,
+      "role": "supporting ambient data/text tier",
+      "logsource": "windows/file_event",
+      "status": "experimental",
+      "fp_likelihood": "high",
       "recommended_role": "hunt",
       "level": "low",
       "precision_measurement": {
@@ -164,38 +449,80 @@
         "fp_count": 0,
         "fp_share_of_category_percent": 0.0,
         "category_denominator": 542441,
+        "measured_fp_likelihood_floor": "low",
         "detection_hit": false,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
+        "corpus": "evtx-baseline v0.8.4 and EVTX-ATTACK-SAMPLES/regression_data",
+        "repo_commit": "e78ed8b",
+        "provenance": "audit iteration 3 exact harness measurement of the corrected four-extension rule, plus the any-certutil-file-write control",
+        "interpretation": "The zero is a null result. Legitimate certutil TXT, DAT, BIN, and ZIP output makes high FP likelihood the production judgement."
+      },
+      "lab_detection": {
+        "decodehex_bin": true,
+        "standard_user_txt": true,
+        "slash_decode_bin": true,
+        "force_decode_dll": false
       }
     }
   ],
+  "safety_validation": {
+    "scenario_scope": "safety/check-scenario-scope.py returned PASS with no findings after the scenario edits.",
+    "post_run_scope": {
+      "path": "evidence/safety/lab-scope.json",
+      "verdict": "PASS",
+      "sysmon_eid3_attribution_supplied": true,
+      "violation_count": 0
+    },
+    "third_party_code": "none; only the OS-builtin Microsoft-signed certutil and lab-authored inert fixture/runner scripts were used"
+  },
+  "audit_gate": {
+    "iteration": 3,
+    "measured_commit": "e78ed8b",
+    "decision": "PASS",
+    "blockers": 0,
+    "harness": {
+      "rule_count": 3,
+      "blocking_count": 0,
+      "pass": 2,
+      "no_corpus_coverage": 1
+    },
+    "auditor_safety": "safe",
+    "scenario_verdict": "expand",
+    "scenario_coverage": "5/6 grounded local-decode use cases (83%, above the 0.6 floor)",
+    "non_blocking_findings": [
+      "Decode followed by execution or loading remains a separately scoped future scenario.",
+      "The ambient data/text file-event rule has no positive corpus sample; its recall is supported by lab evidence, not the EVTX corpus."
+    ]
+  },
   "validation": {
-    "pysigma": "Both Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",
-    "json": "verification.json and the sanitized evidence JSON file passed JSON validation on 2026-08-10."
+    "pysigma": "All three Sigma rules passed sigma-cli 3.1.0 / pySigma model validation on audit VM 107 with 0 errors, 0 condition errors, and 0 issues on 2026-08-10.",
+    "json": "verification.json and all committed evidence JSON files passed JSON validation on 2026-08-10."
   },
   "sanitization": {
     "raw_pcap_committed": false,
     "raw_evtx_committed": false,
     "raw_event_export_committed": false,
     "raw_nsm_logs_committed": false,
+    "credentials_committed": false,
     "host_data_committed": false,
-    "notes": "Only selected telemetry fields, hashes, timestamps, aggregate counts, lab topology values, and benign fixture content are committed."
+    "notes": "Only selected telemetry fields, hashes, timestamps, aggregate counts, lab topology, and inert fixture content are committed. Raw exports remain outside the repository."
   },
   "cleanup_confirmation": {
     "target": {
       "snapshot": "win_verify_baseline",
-      "rollback_task_exit": "OK",
-      "rollback_confirmed_at": "2026-08-10T01:43:38.4810986Z",
-      "final_batch_baseline_confirmed_at": "2026-08-10T01:59:57.9788856Z",
+      "final_rollback_task_exit": "OK",
+      "rollback_confirmed_at": "2026-08-10T12:55:02.0567073Z",
       "sysmon_service": "Running",
       "sysmon_config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
       "defender_real_time_protection_enabled": false,
-      "input_present": false,
-      "output_present": false,
-      "telemetry_directory_present": false
+      "temporary_user_present": false,
+      "temporary_task_present": false,
+      "residual_fixture_output_or_telemetry_paths": []
     }
   },
-  "verified_at": "2026-08-10T01:42:11.706Z",
+  "historical_context": {
+    "original_run_verified_at": "2026-08-10T01:42:11.706Z",
+    "note": "The original SYSTEM base64-to-TXT run had no retained raw export and cannot be given retrospective scope proof. The new standard-user base64 run independently covers ordinary -decode with a retained, scope-checked export."
+  },
+  "verified_at": "2026-08-10T12:54:07.919Z",
   "verifier": "Codex lab orchestrator"
 }

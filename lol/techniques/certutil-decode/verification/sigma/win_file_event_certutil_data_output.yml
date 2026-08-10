@@ -1,0 +1,40 @@
+title: Certutil Writes an Archive, Data, or Text Output File
+id: b8620c32-6436-4cda-935b-440462e78184
+status: experimental
+description: >-
+  Detects certutil creating archive, binary-data, data, or text output. These
+  extensions are common in legitimate PKI and troubleshooting activity, so the
+  signal is hunt-only and should be correlated with a certutil decode process.
+references:
+  - https://attack.mitre.org/techniques/T1140/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1140
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\certutil.exe'
+    TargetFilename|endswith:
+      - '.zip'
+      - '.bin'
+      - '.dat'
+      - '.txt'
+  condition: selection
+falsepositives:
+  - PKI enrollment, CRL or CTL handling, certificate export, and routine troubleshooting
+  - Software deployment systems using certutil to reconstruct benign archive, data, or text content
+fp_likelihood: high
+recommended_role: hunt
+precision_notes: >-
+  The clean corpus produced 0 matches among 542441 file events, but a control
+  matching any certutil file write also produced 0: certutil output is absent,
+  so 0.0% is a null result. Production certutil legitimately writes TXT, DAT,
+  BIN, and ZIP files, and this rule has no path, signer, or size constraint to
+  exclude that ambient activity. TXT was present in the original flat list
+  largely because the first lab fixture used a .txt output, a lab artefact that
+  must not drive the high-confidence tier. Use only as a correlation lead for
+  the certutil decode process rule.
+level: low

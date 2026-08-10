@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "description": "Sanitized aggregate of the complete Sysmon EID 3 exports for the four audit-expansion run windows.",
+  "runs": [
+    {
+      "id": "certutil-decodehex-system",
+      "window_start": "2026-08-10T12:38:59.029Z",
+      "window_end": "2026-08-10T12:39:01.810Z",
+      "raw_events_json_sha256": "C26CBFF7761BE7A84402570D57BF50885E3946CAEDEF9F5D93AE06FDA9B8FD44",
+      "event_id_3_count": 0
+    },
+    {
+      "id": "certutil-force-decode-dll-system",
+      "window_start": "2026-08-10T12:41:22.974Z",
+      "window_end": "2026-08-10T12:41:25.756Z",
+      "raw_events_json_sha256": "02FB32B5A77F3CA40F9756B2EEC73B8412E282526D5239E967BF725CFD03FBE1",
+      "event_id_3_count": 0
+    },
+    {
+      "id": "certutil-decode-standard-user",
+      "window_start": "2026-08-10T12:51:50.000Z",
+      "window_end": "2026-08-10T12:51:55.000Z",
+      "raw_events_json_sha256": "0C1F3D949C98A311A2E2C6E18C8F1B215FDF4E6331EB557C45C19B8032FBD4C3",
+      "event_id_3_count": 0
+    },
+    {
+      "id": "certutil-slash-decode-system",
+      "window_start": "2026-08-10T12:54:07.138Z",
+      "window_end": "2026-08-10T12:54:09.935Z",
+      "raw_events_json_sha256": "A5B9D4E06C6723D72126984525382014A26AB44F229AB1E5189298C3ED361B31",
+      "event_id_3_count": 0
+    }
+  ],
+  "events": []
+}

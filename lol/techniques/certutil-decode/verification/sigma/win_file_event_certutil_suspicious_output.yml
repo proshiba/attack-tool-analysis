@@ -1,10 +1,10 @@
-title: Certutil Writes a Decoded-Like Output File
+title: Certutil Writes an Executable or Script Output File
 id: bb6be043-7b51-43ab-b3ce-ab4c483639cd
 status: experimental
 description: >-
-  Detects certutil creating common payload, script, archive, data, or text
-  output extensions. This is a supporting file signal and should be correlated
-  with a certutil -decode process event because file telemetry lacks the switch.
+  Detects certutil creating an executable or script output extension. This is a
+  supporting high-confidence file tier and should be correlated with a certutil
+  decode process event because file telemetry lacks the command switch.
 references:
   - https://attack.mitre.org/techniques/T1140/
 author: Codex lab orchestrator
@@ -14,7 +14,6 @@ tags:
 logsource:
   category: file_event
   product: windows
-  service: sysmon
 detection:
   selection:
     Image|endswith: '\certutil.exe'
@@ -27,20 +26,18 @@ detection:
       - '.vbs'
       - '.js'
       - '.hta'
-      - '.zip'
-      - '.bin'
-      - '.dat'
-      - '.txt'
   condition: selection
 falsepositives:
-  - Legitimate certificate export, CRL handling, or troubleshooting that writes TXT, DAT, BIN, or ZIP output
   - Software deployment systems using certutil to reconstruct benign scripts or binaries
+  - Administrators intentionally decoding approved executable or script content during troubleshooting
 fp_likelihood: medium
 recommended_role: hunt
 precision_notes: >-
-  The clean corpus produced 0 matches among 542441 file events, but the broad
-  extension set also covers routine certutil certificate export, CRL handling,
-  troubleshooting, and deployment output. Make this actionable by correlating
-  the same ProcessGuid with the certutil -decode process rule and an unsigned
-  executable or script output.
-level: low
+  The clean corpus produced 0 matches among 542441 file events, but a control
+  matching any certutil file write also produced 0: certutil file output is
+  absent, so 0.0% is a null result. The eight-extension tier has its first lab
+  positive at C:\lab\decoded-marker.dll and one attack-corpus EID 11 positive
+  for AllTheThings.dll. Approved deployment can still reconstruct scripts or
+  binaries, so correlate the same ProcessGuid with the certutil decode process
+  rule and enrich signer, path, size, and follow-on execution before actioning.
+level: medium
