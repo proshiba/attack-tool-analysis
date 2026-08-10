@@ -23,8 +23,8 @@ You do NOT edit or commit the repo; you produce recommendations only (the author
 ## How to read the numbers (this is where audits go wrong)
 
 - **Use `share_of_category_percent`, not the per-million-of-everything rate.** The corpus holds
-  6,611,183 events but only ~26,287 `process_creation`. A process rule scored against the corpus
-  total looks ~250x quieter than it is.
+  6,611,183 events but only 23,695 `process_creation`. A process rule scored against the corpus
+  total looks ~279x quieter than it is.
 - **`0` means measured-and-zero; `null` with `measured: false` means NOT measured.** Never read the
   second as clean. A rule that could not be measured has verdict `void`, and a rule that does not
   compile has verdict `fail` — both need the defect fixed before any precision claim is possible.

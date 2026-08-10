@@ -14,7 +14,7 @@ What changed in schema_version 2 (2026-08-10), and why
    anything that could not be measured reports `null` with `measured: false` and
    verdict `void` - never `0.0`.
 3. CATEGORY-NORMALISED FP RATE. `fp_per_million` against all 6.9M baseline events
-   understated process-rule noise by ~260-340x (only ~26k events are
+   understated process-rule noise by ~279x (only 23,695 events are
    process_creation). Every rule is now also scored as a share of the events its
    own logsource category can match, from the measured catalog built by
    baseline_metrics.py.

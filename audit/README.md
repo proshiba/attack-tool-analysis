@@ -58,8 +58,8 @@ reports `measured: false` with `null` counts and `verdict: void` for anything it
 measure. `0` means measured-and-zero. `null` means not measured.
 
 **3. FP rates are normalised to the rule's own logsource category.** `fp_per_million` computed
-over all 6,611,183 baseline events understates process-rule noise by ~260x — only ~26k of those
-events are `process_creation`. Each scorecard now carries
+over all 6,611,183 baseline events understates process-rule noise by ~279x — only 23,695 of those
+events are `process_creation` (Sysmon EID 1: 15,092 + Security 4688: 8,603). Each scorecard now carries
 `share_of_category_percent` alongside the corpus-wide rate. The Sliver rule
 `proc_creation_untrusted_parent_spawns_shell` reads 46 FP per million *events* but **1.2% of
 every process start** in a clean corpus; only the second number is decision-grade.
