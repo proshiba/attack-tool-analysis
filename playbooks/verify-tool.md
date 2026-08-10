@@ -150,9 +150,70 @@ invent zero matches or treat the missing measurement as clean.
 Add a short `tools/<id>/verification/README.md`.
 
 ## 7. Commit + PR + roll back
-- Commit `tools/<id>/verification/**` on branch `feat/verify-<id>`; open a PR to `main` (use
+- Commit `tools/<id>/verification/**` on branch `feat/verify-<id>` and **push it** — the audit gate
+  reads the branch from GitHub, so an unpushed branch cannot be audited. Open a PR to `main` (use
   `~/bin/pr-create.py <owner/repo> <title> <head> main <body-file>`).
 - **Roll the target back to `win_verify_baseline`** (removes the tool + its traces).
+
+## 8. Audit gate — REQUIRED before merge
+No verification merges unaudited. The author does not grade the author: the gate runs on the audit
+VM (107) where the harness, the corpora and an auditor that is a **different model** live, and it
+returns a verdict the author cannot overrule. How the gate is built and what each knob does:
+`audit/README.md`.
+
+Run one iteration (from the orchestrator, detached — it takes tens of minutes):
+
+```bash
+ssh audit "setsid bash -c '/opt/audit/audit-gate.sh tools/<id> --ref feat/verify-<id> \
+  --iteration 1 > ~/gate-<id>.log 2>&1' </dev/null &"
+pgrep -f '[a]udit-gate.sh'          # poll until gone, then read the result
+```
+
+It measures the rules (`audit_suite.py`), grounds the scenarios (`scenario_reference.py`), re-runs
+`safety/check-scenario-scope.py` deterministically, has the auditor judge safety + precision +
+coverage, and then decides in `audit/lib/gate_decide.py` — which imports `BLOCKING_VERDICTS` from
+the engine rather than restating it, so the gate cannot drift from the verdicts it consumes.
+Results land in `/opt/audit/results/gate-<id>-<UTC>/`; the exit code IS the verdict:
+
+| Exit | Decision | What it means | Next |
+|---|---|---|---|
+| 0 | **PASS** | no blocking defect | record precision + coverage, then merge |
+| 1 | **BLOCKED** | see `route-to-author.md` | fix, push, re-run the gate |
+| 2 | **GATE ERROR** | an input was never produced | re-run; **never merge on a 2** |
+
+**What blocks:** a safety verdict of `reject`/`needs-change` (above everything else, never traded
+against detection quality) · any rule whose harness verdict is in `BLOCKING_VERDICTS`
+(`needs-work`, `void`, `fail`) · a rule the auditor marks `blocking_defect` (dead on the shipping
+log format, or claiming a precision its evidence contradicts) · a scenario verdict of `redo`, or
+`expand` below `SCENARIO_COVERAGE_MIN` (0.6) of the grounded reference use-cases.
+
+**What does NOT block**, and must be reported rather than "fixed": `no-corpus-coverage` and
+`not-testable-on-evtx`. Those state what the corpus cannot exercise — no rule edit can clear them,
+only a new positive sample or a non-EVTX test can. Do not route them back to the author.
+
+### On BLOCKED — route it back, split by weight
+`route-to-author.md` separates the work, because the two kinds are not the same task:
+- **light** — rule text edits only. Apply the reconciled values from `precision/precision-input.md`
+  (`fp_likelihood = max(measured floor, auditor judgement)`; a rule may never declare itself more
+  precise than it measured). Dispatch to the author as a text fix; no lab run.
+- **heavy** — scenario coverage/realism gaps needing a NEW verification run. Roll 104 back to
+  `win_verify_baseline` first, and before running decide explicitly which gaps are verified **now**
+  and which are recorded as **future scenarios** in `scenarios.md`. State that split in the PR.
+- **safety** — fix the scenario itself (re-host the destination inside `192.168.1.0/24`, add the
+  missing `poc-review.md`, supply the `check-lab-scope.py` evidence) and re-run. Never edit a
+  safety finding away.
+
+Re-run the gate with `--iteration N+1` after each fix. **Cap: 3 iterations** — if it is still
+BLOCKED, stop and escalate to the user with the routing note; do not keep re-dispatching.
+
+### On PASS — record what was measured
+Before merging, write the gate's numbers into `tools/<id>/verification/verification.json` from
+`precision/precision-input.json`: per rule the measured `fp_likelihood` floor, FP count and share of
+its own category with the category denominator, the reconciled `recommended_role`/`level`, detection
+hit, corpus version and measured commit; per scenario the coverage ratio and the auditor's realism
+verdict, cited to the grounding source. Attach `gate-result.md` + `audit-report.md` to the PR. A PASS
+means no blocking defect was found — **not** that every rule was exercised; carry the non-blocking
+findings into the PR so the gap is visible.
 
 ## Guardrails
 - **RULE 1 — nothing outside the lab.** Attack traffic targets `192.168.1.0/24` only; the
