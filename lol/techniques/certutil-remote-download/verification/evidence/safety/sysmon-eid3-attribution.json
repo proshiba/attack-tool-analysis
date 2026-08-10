@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "description": "Sanitized complete Sysmon EID 3 attribution for the five accepted certutil remote-download runs.",
+  "runs": [
+    {
+      "id": "urlcache-no-split",
+      "window_start": "2026-08-10T14:31:42.3829140Z",
+      "window_end": "2026-08-10T14:31:43.4142159Z",
+      "event_id_3_count": 2
+    },
+    {
+      "id": "verifyctl",
+      "window_start": "2026-08-10T14:34:14.3103918Z",
+      "window_end": "2026-08-10T14:34:15.3572781Z",
+      "event_id_3_count": 1
+    },
+    {
+      "id": "service-parent",
+      "window_start": "2026-08-10T14:36:27.3488020Z",
+      "window_end": "2026-08-10T14:36:28.5519317Z",
+      "event_id_3_count": 1
+    },
+    {
+      "id": "https",
+      "window_start": "2026-08-10T14:38:38.5847510Z",
+      "window_end": "2026-08-10T14:38:39.6472085Z",
+      "event_id_3_count": 2
+    },
+    {
+      "id": "download-execute",
+      "window_start": "2026-08-10T14:42:42.1523017Z",
+      "window_end": "2026-08-10T14:42:43.2616794Z",
+      "event_id_3_count": 2
+    }
+  ],
+  "events": [
+    {
+      "EventId": 3,
+      "UtcTime": "2026-08-10 14:31:42.409",
+      "ProcessGuid": "{d6daef74-e0ce-6a79-bf00-000000000b00}",
+      "ProcessId": 4584,
+      "Image": "C:\\Windows\\System32\\certutil.exe",
+      "User": "NT AUTHORITY\\SYSTEM",
+      "Protocol": "tcp",
+      "Initiated": "true",
+      "SourceIp": "192.168.1.52",
+      "SourcePort": 49678,
+      "DestinationIp": "192.168.1.50",
+      "DestinationHostname": "kalivm",
+      "DestinationPort": 18081
+    },
+    {
+      "EventId": 3,
+      "UtcTime": "2026-08-10 14:31:42.400",
+      "ProcessGuid": "{d6daef74-e0ce-6a79-bf00-000000000b00}",
+      "ProcessId": 4584,
+      "Image": "C:\\Windows\\System32\\certutil.exe",
+      "User": "NT AUTHORITY\\SYSTEM",
+      "Protocol": "tcp",
+      "Initiated": "true",
+      "SourceIp": "192.168.1.52",
+      "SourcePort": 49677,
+      "DestinationIp": "192.168.1.50",
+      "DestinationHostname": "kalivm",
+      "DestinationPort": 18081
+    },
+    {
+      "EventId": 3,
+      "UtcTime": "2026-08-10 14:34:14.336",
+      "ProcessGuid": "{d6daef74-e166-6a79-a600-000000000b00}",
+      "ProcessId": 5464,
+      "Image": "C:\\Windows\\System32\\certutil.exe",
+      "User": "NT AUTHORITY\\SYSTEM",
+      "Protocol": "tcp",
+      "Initiated": "true",
+      "SourceIp": "192.168.1.52",
+      "SourcePort": 49674,
+      "DestinationIp": "192.168.1.50",
+      "DestinationHostname": "-",
+      "DestinationPort": 18081
+    },
+    {
+      "EventId": 3,
+      "UtcTime": "2026-08-10 14:36:27.529",
+      "ProcessGuid": "{d6daef74-e1eb-6a79-a700-000000000b00}",
+      "ProcessId": 5932,
+      "Image": "C:\\Windows\\System32\\certutil.exe",
+      "User": "NT AUTHORITY\\SYSTEM",
+      "Protocol": "tcp",
+      "Initiated": "true",
+      "SourceIp": "192.168.1.52",
+      "SourcePort": 49677,
+      "DestinationIp": "192.168.1.50",
+      "DestinationHostname": "-",
+      "DestinationPort": 18081
+    },
+    {
+      "EventId": 3,
+      "UtcTime": "2026-08-10 14:38:38.646",
+      "ProcessGuid": "{d6daef74-e26e-6a79-a900-000000000b00}",
+      "ProcessId": 4144,
+      "Image": "C:\\Windows\\System32\\certutil.exe",
+      "User": "NT AUTHORITY\\SYSTEM",
+      "Protocol": "tcp",
+      "Initiated": "true",
+      "SourceIp": "192.168.1.52",
+      "SourcePort": 49678,
+      "DestinationIp": "192.168.1.50",
+      "DestinationHostname": "certutil.lab",
+      "DestinationPort": 18443
+    },
+    {
+      "EventId": 3,
+      "UtcTime": "2026-08-10 14:38:38.621",
+      "ProcessGuid": "{d6daef74-e26e-6a79-a900-000000000b00}",
+      "ProcessId": 4144,
+      "Image": "C:\\Windows\\System32\\certutil.exe",
+      "User": "NT AUTHORITY\\SYSTEM",
+      "Protocol": "tcp",
+      "Initiated": "true",
+      "SourceIp": "192.168.1.52",
+      "SourcePort": 49677,
+      "DestinationIp": "192.168.1.50",
+      "DestinationHostname": "certutil.lab",
+      "DestinationPort": 18443
+    },
+    {
+      "EventId": 3,
+      "UtcTime": "2026-08-10 14:42:42.194",
+      "ProcessGuid": "{d6daef74-e362-6a79-d300-000000000b00}",
+      "ProcessId": 4044,
+      "Image": "C:\\Windows\\System32\\certutil.exe",
+      "User": "NT AUTHORITY\\SYSTEM",
+      "Protocol": "tcp",
+      "Initiated": "true",
+      "SourceIp": "192.168.1.52",
+      "SourcePort": 49679,
+      "DestinationIp": "192.168.1.50",
+      "DestinationHostname": "-",
+      "DestinationPort": 18081
+    },
+    {
+      "EventId": 3,
+      "UtcTime": "2026-08-10 14:42:42.182",
+      "ProcessGuid": "{d6daef74-e362-6a79-d300-000000000b00}",
+      "ProcessId": 4044,
+      "Image": "C:\\Windows\\System32\\certutil.exe",
+      "User": "NT AUTHORITY\\SYSTEM",
+      "Protocol": "tcp",
+      "Initiated": "true",
+      "SourceIp": "192.168.1.52",
+      "SourcePort": 49678,
+      "DestinationIp": "192.168.1.50",
+      "DestinationHostname": "-",
+      "DestinationPort": 18081
+    }
+  ]
+}

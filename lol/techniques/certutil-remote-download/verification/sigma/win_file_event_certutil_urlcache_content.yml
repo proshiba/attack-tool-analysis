@@ -11,9 +11,7 @@ references:
 author: Codex lab orchestrator
 date: '2026-08-09'
 tags:
-  - attack.command_and_control
   - attack.t1105
-  - attack.defense_evasion
 logsource:
   category: file_event
   product: windows
@@ -31,8 +29,10 @@ fp_likelihood: medium
 recommended_role: hunt
 precision_notes: >-
   The clean corpus produced 0 matches among 542441 file events. The certutil
-  image constraint excludes routine CryptSvc writes, but legitimate certutil
-  CRL, CTL, certificate-chain, enrollment, and troubleshooting retrievals still
-  match. Correlate with the remote-download process rule, an unusual external
-  destination, or a newly written executable or script.
-level: medium
+  image constraint excludes routine CryptSvc writes, but every legitimate
+  certutil URL retrieval can still write here, including CRL, CTL,
+  certificate-chain, enrollment, and PKI troubleshooting activity. Treat this
+  as corroborating hunt telemetry, not a standalone alert; correlate it with
+  the remote-download process rule, destination context, or a newly written
+  executable or script.
+level: low

