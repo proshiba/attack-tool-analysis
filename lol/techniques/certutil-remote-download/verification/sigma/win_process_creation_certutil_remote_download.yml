@@ -1,19 +1,21 @@
-title: Certutil Remote File Download From a Command or Script Interpreter
+title: Certutil Remote File Download
 id: 6aaceadd-7bb2-4a77-a434-e2d42c55d210
 status: experimental
 description: >-
-  Detects the Microsoft certutil binary launched by a command or script
-  interpreter with URL-cache download switches and an HTTP or HTTPS URL. This
-  behavior can transfer a staged payload with a signed Windows utility.
+  Detects the Microsoft certutil binary with a documented remote-download
+  verb and an HTTP or HTTPS indicator. This behavior can transfer a staged
+  payload with a signed Windows utility.
 references:
   - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
   - https://attack.mitre.org/techniques/T1105/
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_certutil_download.yml
+related:
+  - id: 19b08b1c-861d-4e75-a1ef-ea0c1baf202b
+    type: similar
 author: Codex lab orchestrator
 date: '2026-08-09'
 tags:
-  - attack.command_and_control
   - attack.t1105
-  - attack.defense_evasion
 logsource:
   category: process_creation
   product: windows
@@ -22,34 +24,28 @@ detection:
     Image|endswith: '\certutil.exe'
   selection_identity_original:
     OriginalFileName: 'CertUtil.exe'
-  selection_flags:
-    CommandLine|contains|all:
-      - ' -urlcache '
-      - ' -split '
-      - ' -f '
-  selection_url:
-    CommandLine|contains:
-      - 'http://'
-      - 'https://'
-  selection_parent:
-    ParentImage|endswith:
-      - '\cmd.exe'
-      - '\powershell.exe'
-      - '\pwsh.exe'
-      - '\wscript.exe'
-      - '\cscript.exe'
-      - '\mshta.exe'
+  selection_download_verb:
+    CommandLine|contains|windash:
+      - '-urlcache '
+      - '-verifyctl '
+      - '-URL '
+  selection_http:
+    CommandLine|contains: 'http'
   condition: >-
-    1 of selection_identity_* and selection_flags and selection_url and selection_parent
+    1 of selection_identity_* and selection_download_verb and selection_http
 falsepositives:
-  - PKI administrators fetching certificate, CRL, CTL, or trust material with certutil from a shell
-  - Software deployment or troubleshooting workflows invoking certutil with urlcache, split, and force switches
-fp_likelihood: low
+  - PKI administrators fetching certificates, CRLs, CTLs, or trust material with certutil
+  - Software deployment or troubleshooting workflows invoking documented certutil URL retrieval verbs
+fp_likelihood: medium
 recommended_role: alert
 precision_notes: >-
-  The clean corpus produced 0 matches among 23695 process starts and the rule
-  matched a known certutil URL-cache download in the attack corpus. Legitimate
-  PKI or deployment retrieval with this exact shell-launched switch set can
-  match; raise priority when the URL is external and the download is followed
-  by an unsigned image write, execution, or beacon.
-level: high
+  The broadened rule produced 0 matches among 23695 process starts and hit the
+  attack corpus. That clean result is only a floor: the corpus has no benign
+  certutil control activity. The earlier 0 of 23695 measurement described an
+  overfit -split plus shell-parent rule and was not evidence of production
+  precision. Legitimate PKI, enrollment, deployment, and troubleshooting
+  retrievals can match. Prioritize an unusual destination or a newly written
+  executable/script, especially execution of the written path. The SigmaHQ
+  direct-IP and file-sharing-domain certutil rules are narrower, higher-
+  precision alert tiers above this broad behavior rule.
+level: medium

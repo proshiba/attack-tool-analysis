@@ -1,0 +1,2 @@
+certutil remote-download lab fixture
+This file is inert text and is hosted only on Kali VM 100.

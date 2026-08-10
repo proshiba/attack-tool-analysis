@@ -1,64 +1,13 @@
 {
-  "capture": {
-    "source": "Windows pktmon",
-    "command": "pktmon.exe start --capture --pkt-size 0 -f C:\\lab\\certutil-remote-download.etl",
-    "full_packet": true,
-    "started_at": "2026-08-09T23:07:11.4823786Z",
-    "ended_at": "2026-08-09T23:07:13.7948783Z",
-    "pcapng_size_bytes": 45664,
-    "pcapng_sha256": "477FCA043736EB77D3B08D37E93F65FCA63F39BA132EB1426C822E149C462A89",
-    "packets_analyzed": 132,
-    "capture_loss_percent": 0.0
-  },
-  "nsm": {
-    "vmid": 106,
-    "zeek_version": "8.2.1",
-    "suricata_version": "7.0.10",
-    "analyzed_at": "2026-08-09T23:08:05Z"
-  },
-  "zeek_http": [
-    {
-      "timestamp": "2026-08-09T23:07:12.339237Z",
-      "uid": "CjgjpN39Z4LeFGFaHd",
-      "source_ip": "192.168.1.52",
-      "source_port": 49681,
-      "destination_ip": "192.168.1.50",
-      "destination_port": 18080,
-      "method": "GET",
-      "host": "192.168.1.50:18080",
-      "uri": "/benign-stage.bin",
-      "http_version": "1.0",
-      "user_agent": "Microsoft-CryptoAPI/10.0",
-      "status_code": 200,
-      "response_body_len": 3768,
-      "response_mime_type": "text/plain"
-    },
-    {
-      "timestamp": "2026-08-09T23:07:12.351502Z",
-      "uid": "CXK65g4GixZYBITjY7",
-      "source_ip": "192.168.1.52",
-      "source_port": 49682,
-      "destination_ip": "192.168.1.50",
-      "destination_port": 18080,
-      "method": "GET",
-      "host": "192.168.1.50:18080",
-      "uri": "/benign-stage.bin",
-      "http_version": "1.0",
-      "user_agent": "CertUtil URL Agent",
-      "status_code": 200,
-      "response_body_len": 3768,
-      "response_mime_type": "text/plain"
-    }
+  "schema_version": 2,
+  "nsm": {"helper": "~/bin/nsm-analyze", "vmid": 106, "zeek_version": "8.2.1", "suricata_version": "7.0.10"},
+  "runs": [
+    {"id": "urlcache-no-split", "pcapng_size_bytes": 13928, "pcapng_sha256": "02BF741E7B5BD537C09E6BC2A54CB644E25E6B98DEB53EA7E23BD4808350CB97", "packets_analyzed": 106, "connections": 2, "http": [{"method": "GET", "uri": "/benign-stage.txt", "user_agent": "Microsoft-CryptoAPI/10.0", "status": 200, "response_bytes": 96}, {"method": "GET", "uri": "/benign-stage.txt", "user_agent": "CertUtil URL Agent", "status": 200, "response_bytes": 96}], "rule_results": {"network_zeek_certutil_cryptoapi_user_agent.yml": "fired", "network_zeek_certutil_url_agent.yml": "fired"}},
+    {"id": "verifyctl", "pcapng_size_bytes": 7768, "pcapng_sha256": "82CCA723BFBDD6D635EBEECE6A79C61C3339D97B39355FFACF3E16E18FCD70BD", "packets_analyzed": 60, "connections": 1, "http": [{"method": "GET", "uri": "/benign-stage.txt", "user_agent": "Microsoft-CryptoAPI/10.0", "status": 200, "response_bytes": 96}], "rule_results": {"network_zeek_certutil_cryptoapi_user_agent.yml": "fired", "network_zeek_certutil_url_agent.yml": "did not fire: User-Agent not observed"}},
+    {"id": "service-parent", "pcapng_size_bytes": 14752, "pcapng_sha256": "E3C6068670C45EEC084AB679BE0CEA1758C05B7DEB3835064CE8C34EECC12533", "packets_analyzed": 116, "connections": 2, "http": [{"method": "GET", "uri": "/benign-stage.txt", "user_agent": "Microsoft-CryptoAPI/10.0", "status": 200, "response_bytes": 96}, {"method": "GET", "uri": "/benign-stage.txt", "user_agent": "CertUtil URL Agent", "status": 200, "response_bytes": 96}], "rule_results": {"network_zeek_certutil_cryptoapi_user_agent.yml": "fired", "network_zeek_certutil_url_agent.yml": "fired"}},
+    {"id": "https", "pcapng_size_bytes": 36192, "pcapng_sha256": "3345C61A6E2F5747496094395FE428F5BBE5910DB7D0C8D6764E54324DD530A1", "packets_analyzed": 178, "connections": 2, "tls": {"version": "TLSv12", "server_name": "certutil.lab", "cipher": "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384", "client_ja3": ["28a2c9bd18a11de089ef85a160da29e4", "a0e9f5d64349fb13191bc781f81f42e1"], "server_ja3s": "ec74a5c51106f0419184d0dd08fb05bc", "certificate_subject": "CN=certutil.lab", "certificate_issuer": "CN=certutil.lab", "certificate_san_dns": "certutil.lab", "certificate_key_bits": 2048, "validation_status": "self signed certificate"}, "http_visibility": "none observed because the transfer is encrypted", "rule_results": {"network_zeek_certutil_cryptoapi_user_agent.yml": "did not fire: HTTP User-Agent is encrypted", "network_zeek_certutil_url_agent.yml": "did not fire: HTTP User-Agent is encrypted"}},
+    {"id": "download-execute", "pcapng_size_bytes": 144592, "pcapng_sha256": "0C491CAF7DE95643DC34949C96E076EAD982D988E9C1721889DFAF09A2A6993D", "packets_analyzed": 202, "connections": 2, "http": [{"method": "GET", "uri": "/inert-marker.exe", "user_agent": "Microsoft-CryptoAPI/10.0", "status": 200, "response_bytes": 15360}, {"method": "GET", "uri": "/inert-marker.exe", "user_agent": "CertUtil URL Agent", "status": 200, "response_bytes": 15360}], "transferred_sha256": "4C42BCE005BCF18EBFE85229774D7A5221C5C8C30ACE4BFC031B23A47A7357A2", "rule_results": {"network_zeek_certutil_cryptoapi_user_agent.yml": "fired", "network_zeek_certutil_url_agent.yml": "fired"}}
   ],
-  "zeek_files": {
-    "records": 2,
-    "source": "HTTP",
-    "seen_bytes_each": 3768,
-    "missing_bytes_each": 0,
-    "sha256_each": "92EE1BBE6EE3B6CC7CD6ED720B594C6C3394D362838DB8C02C6CA6732E94F86A"
-  },
-  "suricata": {
-    "http_records": 2,
-    "assessment": "Suricata independently decoded both HTTP GETs and both User-Agent values. Alerts were limited to the expected Python SimpleHTTP banner and pktmon checksum/retransmission artifacts; no high-confidence technique alert fired."
-  }
+  "scope_proof": {"zeek_connection_records": 9, "sysmon_event_id_3_records": 8, "destinations": ["192.168.1.50"], "verdict": "PASS", "path": "evidence/safety/lab-scope.json"},
+  "out_of_scope": "Public-domain reputation, public-hosting history, internet rarity, and real-public-CA signals were not tested because all delivery was required to remain on Kali inside the lab."
 }
