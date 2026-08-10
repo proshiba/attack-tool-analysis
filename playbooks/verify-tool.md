@@ -14,6 +14,23 @@ that **many different services/EDRs can catch it** — not just one specialized 
 > a source read, and a committed `poc-review.md` verdict — and it never runs on the AI VM or the
 > orchestrator. The auditor independently re-checks both and can `reject` on safety alone.
 
+## 0a. Pick the mode first — full verification, or adopt-and-measure?
+
+For a **LOLBIN** (certutil, regsvr32, mshta, rundll32, wmic, …), SigmaHQ has almost certainly already
+written the rule, and measurement says those rules are decent: a sample graded on the clean corpus
+scored 5 `pass` / 1 `no-corpus-coverage`, 0 FP — one of them already covering a real-world form this
+repo did not. What they lack, uniformly, is **measured precision** (`falsepositives: Unknown`, no
+`fp_likelihood`). So for a LOLBIN the deliverable is to **grade and enrich the public rule**, not to
+write a parallel one: follow [`adopt-and-measure.md`](adopt-and-measure.md) and come back here only for
+the parts it points at.
+
+Use this playbook in full for **brought-in attacker tooling** (mimikatz, Seatbelt, Sliver, C2
+frameworks), where the exe name is unreliable, public coverage is thin, and the network dimension
+carries the signal.
+
+Either way the baseline is **SigmaHQ `master`, never the LOLBAS link** — 280 of 295 LOLBAS Sigma links
+are pinned to a commit, 75% of them to June 2023, and 2 of 6 sampled pins no longer compile.
+
 ## 0. Read context
 - `tools/<id>/metadata.json` — `categories`, `attack_techniques`, `usage`, `detection`, `os`.
 - Choose target + scenario:

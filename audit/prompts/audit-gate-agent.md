@@ -51,6 +51,15 @@ your prose, so put the decision in the fields:
   counting future scenarios"`). The gate reads the FIRST fraction only — coverage that counts work
   not yet run is not coverage — and a `coverage_ratio` it cannot parse blocks rather than passes.
   Say in the prose which reference use-cases you counted.
+- **Ask what the public rulesets already cover — this is a required question, not an optional one.**
+  For every rule under audit, compare against what SigmaHQ ships at **`master` today** (not the version
+  a LOLBAS entry links to: 280 of 295 of those links are commit-pinned, 75% to June 2023, and 2 of 6
+  sampled pins no longer compile on sigma-cli 3.1.0). Report per rule: does an upstream rule already
+  cover this behaviour, and if so what does ours add — form coverage proven by lab evidence, a fixed
+  logsource, measured precision, or a dimension upstream lacks? A verification whose rule merely
+  restates an upstream rule is a finding: say so, and name the upstream rule. Conversely, if upstream
+  covers a form OUR rules miss, that is a coverage gap worth reporting even though our rules measured
+  clean. `playbooks/adopt-and-measure.md` sets the bar this question is scored against.
 - **A use-case this lab cannot physically run leaves the denominator.** `__REPO__/playbooks/lab-capabilities.md`
   lists what the lab has no hardware for (no macOS host, no domain controller, one Windows host, …).
   Report each one in `missing_use_cases` prefixed `LAB-CAPABILITY:` so it stays visible, exclude it from
