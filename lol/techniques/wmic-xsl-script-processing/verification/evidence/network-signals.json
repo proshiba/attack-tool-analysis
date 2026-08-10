@@ -1,0 +1,45 @@
+{
+  "capture": {
+    "source": "Windows pktmon",
+    "command": "pktmon.exe start --capture --pkt-size 0 -f C:\\lab\\wmic-xsl-script-processing.etl",
+    "full_packet": true,
+    "started_at": "2026-08-10T01:46:10.3002656Z",
+    "ended_at": "2026-08-10T01:46:13.3784369Z",
+    "pcapng_size_bytes": 41928,
+    "pcapng_sha256": "25774880406F4E72DFF6155AE9E4DBAEB911C5BA39416888A9A6954D37CB8FC2",
+    "packets_analyzed": 346,
+    "capture_loss_percent": 0.0
+  },
+  "nsm": {
+    "vmid": 106,
+    "zeek_version": "8.2.1",
+    "suricata_version": "7.0.10",
+    "analyzed_at": "2026-08-10T01:46:52Z"
+  },
+  "zeek_http": {
+    "timestamp": "2026-08-10T01:46:10.435152Z",
+    "method": "GET",
+    "host": "192.168.1.50:18082",
+    "uri": "/benign.xsl",
+    "http_version": "1.0",
+    "user_agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; Win64; x64; Trident/7.0; .NET4.0C; .NET4.0E)",
+    "status_code": 200,
+    "response_body_len": 571,
+    "response_mime_type": "application/xml"
+  },
+  "zeek_file": {
+    "source": "HTTP",
+    "seen_bytes": 571,
+    "missing_bytes": 0,
+    "sha256": "B0390CCFDBC5D4DB943EC83B0FBD8240D959EB4248507D79B3594368414BD970"
+  },
+  "suricata": {
+    "http_records": 1,
+    "method": "GET",
+    "url": "/benign.xsl",
+    "status": 200,
+    "response_length": 571,
+    "content_type": "application/xslt+xml",
+    "assessment": "Suricata independently decoded the XSL request and legacy MSIE/Trident User-Agent. Alerts were limited to the Python test server banner and pktmon checksum artifacts."
+  }
+}

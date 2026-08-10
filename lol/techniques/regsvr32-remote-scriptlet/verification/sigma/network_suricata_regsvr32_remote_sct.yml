@@ -1,0 +1,28 @@
+title: Remote SCT Retrieval With Legacy MSIE Profile in Suricata
+id: b6ec9144-7c65-4fdd-88bf-f9b061eecf3d
+status: experimental
+description: >-
+  Detects Suricata EVE HTTP events for SCT retrieval with the legacy MSIE and
+  Trident User-Agent emitted by the Windows URL-moniker path used by regsvr32.
+references:
+  - https://docs.suricata.io/en/latest/output/eve/eve-json-format.html
+  - https://attack.mitre.org/techniques/T1218/010/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1218.010
+logsource:
+  category: http
+  product: suricata
+detection:
+  selection:
+    event_type: 'http'
+    http.http_method: 'GET'
+    http.url|contains: '.sct'
+    http.http_user_agent|contains|all:
+      - 'MSIE 7.0'
+      - 'Trident/7.0'
+  condition: selection
+falsepositives:
+  - Legacy enterprise applications retrieving legitimate SCT resources through the Windows URL-moniker stack
+level: high

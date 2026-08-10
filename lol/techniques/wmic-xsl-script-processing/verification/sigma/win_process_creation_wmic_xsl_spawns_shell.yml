@@ -1,0 +1,34 @@
+title: WMIC Remote XSL Spawns a Command or Script Interpreter
+id: ac2c0a8c-7e39-45b5-96a0-fc8481856380
+status: experimental
+description: >-
+  Detects a command or script interpreter launched directly by WMIC when the
+  WMIC parent command line uses /format with an XSL resource.
+references:
+  - https://attack.mitre.org/techniques/T1220/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1220
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith: '\wmic.exe'
+    ParentCommandLine|contains|all:
+      - '/format:'
+      - '.xsl'
+  selection_child:
+    Image|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+      - '\pwsh.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+      - '\mshta.exe'
+      - '\rundll32.exe'
+  condition: selection_parent and selection_child
+falsepositives:
+  - Custom legacy XSL reporting templates that intentionally launch a helper interpreter
+level: high

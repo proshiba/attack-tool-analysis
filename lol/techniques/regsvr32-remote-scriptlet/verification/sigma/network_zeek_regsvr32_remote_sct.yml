@@ -1,0 +1,26 @@
+title: Remote SCT Retrieval With Legacy MSIE Trident User-Agent
+id: da94f194-da35-4ca4-b6df-dc95c14f3d09
+status: experimental
+description: >-
+  Detects HTTP retrieval of an SCT file with the legacy MSIE 7.0 and Trident
+  User-Agent profile observed when regsvr32 loaded a remote scriptlet.
+references:
+  - https://attack.mitre.org/techniques/T1218/010/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1218.010
+logsource:
+  category: http
+  product: zeek
+detection:
+  selection:
+    method: 'GET'
+    uri|contains: '.sct'
+    user_agent|contains|all:
+      - 'MSIE 7.0'
+      - 'Trident/7.0'
+  condition: selection
+falsepositives:
+  - Legacy enterprise applications retrieving legitimate SCT resources through the Windows URL-moniker stack
+level: high

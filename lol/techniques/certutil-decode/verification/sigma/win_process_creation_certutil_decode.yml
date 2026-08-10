@@ -1,0 +1,30 @@
+title: Certutil Decodes a Local File
+id: 11004c37-0af5-4c84-bff7-0f2da36d94e2
+status: experimental
+description: >-
+  Detects the Microsoft certutil utility invoked with base64 or hexadecimal
+  decode switches. The command transforms encoded content into an output file.
+references:
+  - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+  - https://attack.mitre.org/techniques/T1140/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1140
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_identity_image:
+    Image|endswith: '\certutil.exe'
+  selection_identity_original:
+    OriginalFileName: 'CertUtil.exe'
+  selection_decode:
+    CommandLine|contains:
+      - ' -decode '
+      - ' -decodehex '
+  condition: 1 of selection_identity_* and selection_decode
+falsepositives:
+  - Administrators or certificate-management scripts legitimately decoding certificate, request, or troubleshooting data
+  - Software deployment workflows that use certutil as a general base64 decoder
+level: medium

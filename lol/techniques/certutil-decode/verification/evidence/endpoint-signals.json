@@ -1,0 +1,65 @@
+{
+  "source": {
+    "collector": "C:\\Tools\\collect-run.ps1",
+    "window_start": "2026-08-10T01:42:10.643Z",
+    "window_end": "2026-08-10T01:42:15.675Z",
+    "event_count_all_channels": 258,
+    "sysmon_event_count": 211,
+    "raw_events_json_sha256": "C0B02F3F28DBCB79BF3F841CBAF1FFD4A40B13BB7F2D9E5818ECA051563B5178",
+    "raw_sysmon_evtx_sha256": "0F9731BC2F75445076EBF12F5B23977D6652943E7D6A199CBB48A0101FFFAB21"
+  },
+  "process": {
+    "event_id": 1,
+    "started_at": "2026-08-10T01:42:11.656Z",
+    "ended_at": "2026-08-10T01:42:11.706Z",
+    "end_source": "Sysmon EID 5",
+    "process_guid": "{d6daef74-2c73-6a79-9500-000000000b00}",
+    "process_id": 5600,
+    "image": "C:\\Windows\\System32\\certutil.exe",
+    "original_file_name": "CertUtil.exe",
+    "file_version": "10.0.19041.5794 (WinBuild.160101.0800)",
+    "company": "Microsoft Corporation",
+    "command_line": "\"C:\\Windows\\System32\\certutil.exe\" -decode C:\\lab\\benign-marker.b64 C:\\lab\\decoded-marker.txt",
+    "user": "NT AUTHORITY\\SYSTEM",
+    "integrity_level": "System",
+    "sha256": "FD1670B43E2D9188B12B233780BF043C5A90A67A2C6E3FCDC564A5C246531BC2",
+    "completion_output": "CertUtil: -decode command completed successfully."
+  },
+  "parent_child": {
+    "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "child_image": "C:\\Windows\\System32\\certutil.exe",
+    "direct_children": [
+      "C:\\Windows\\System32\\conhost.exe"
+    ],
+    "assessment": "PowerShell launched certutil through the controlled lab wrapper. Certutil created only its normal console-host child; no decoded content was executed."
+  },
+  "network": {
+    "event_id_3_count": 0,
+    "event_id_22_count": 0,
+    "assessment": "No network activity was part of the local decode flow and none was observed."
+  },
+  "files": {
+    "input": {
+      "path": "C:\\lab\\benign-marker.b64",
+      "size_bytes": 114,
+      "sha256": "7CE922075A02088655CEEB4A3C74793CCEF999D82ED343A054B8AAF46432C2A3"
+    },
+    "output": {
+      "event_id": 11,
+      "utc_time": "2026-08-10T01:42:11.690Z",
+      "image": "C:\\Windows\\System32\\certutil.exe",
+      "path": "C:\\lab\\decoded-marker.txt",
+      "size_bytes": 42,
+      "sha256": "86A73E8A9B12F966B4D79FE8FF62D62034E0BCB97C4D06613AF18E08DCEA74F1",
+      "base64": "YmVuaWduLWNlcnR1dGlsLWRlY29kZS1tYXJrZXItMjAyNi0wOC0xMA0K",
+      "expected_hash_match": true
+    }
+  },
+  "registry": {
+    "event_id_12_relevant_count": 3,
+    "event_id_13_relevant_count": 3,
+    "event_id_14_relevant_count": 0,
+    "representative_target": "HKLM\\SOFTWARE\\Microsoft\\Cryptography\\OID\\EncodingType 0\\CryptDllFindOIDInfo",
+    "assessment": "Certutil initialized three cryptography OID entries. They are legitimate API state and are not distinctive enough for a standalone decode rule."
+  }
+}

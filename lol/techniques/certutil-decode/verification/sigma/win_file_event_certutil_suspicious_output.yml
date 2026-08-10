@@ -1,0 +1,38 @@
+title: Certutil Writes a Decoded-Like Output File
+id: bb6be043-7b51-43ab-b3ce-ab4c483639cd
+status: experimental
+description: >-
+  Detects certutil creating common payload, script, archive, data, or text
+  output extensions. This is a supporting file signal and should be correlated
+  with a certutil -decode process event because file telemetry lacks the switch.
+references:
+  - https://attack.mitre.org/techniques/T1140/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1140
+logsource:
+  category: file_event
+  product: windows
+  service: sysmon
+detection:
+  selection:
+    Image|endswith: '\certutil.exe'
+    TargetFilename|endswith:
+      - '.exe'
+      - '.dll'
+      - '.ps1'
+      - '.bat'
+      - '.cmd'
+      - '.vbs'
+      - '.js'
+      - '.hta'
+      - '.zip'
+      - '.bin'
+      - '.dat'
+      - '.txt'
+  condition: selection
+falsepositives:
+  - Authorized decoding or certificate troubleshooting that writes one of the selected extensions
+  - Software deployment systems using certutil to reconstruct benign content
+level: low

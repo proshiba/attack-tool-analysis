@@ -1,0 +1,45 @@
+{
+  "capture": {
+    "source": "Windows pktmon",
+    "command": "pktmon.exe start --capture --pkt-size 0 -f C:\\lab\\regsvr32-remote-scriptlet.etl",
+    "full_packet": true,
+    "started_at": "2026-08-10T01:39:28.9015338Z",
+    "ended_at": "2026-08-10T01:39:31.9953082Z",
+    "pcapng_size_bytes": 14712,
+    "pcapng_sha256": "EF4ED89FA2C6B9A6C5787EC8FA37AC3D2C9D17CBDCD1564367407E673E256C3F",
+    "packets_analyzed": 102,
+    "capture_loss_percent": 0.0
+  },
+  "nsm": {
+    "vmid": 106,
+    "zeek_version": "8.2.1",
+    "suricata_version": "7.0.10",
+    "analyzed_at": "2026-08-10T01:40:19Z"
+  },
+  "zeek_http": {
+    "timestamp": "2026-08-10T01:39:29.016289Z",
+    "method": "GET",
+    "host": "192.168.1.50:18081",
+    "uri": "/benign.sct",
+    "http_version": "1.0",
+    "user_agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; Win64; x64; Trident/7.0; .NET4.0C; .NET4.0E)",
+    "status_code": 200,
+    "response_body_len": 412,
+    "response_mime_type": "text/plain"
+  },
+  "zeek_file": {
+    "source": "HTTP",
+    "seen_bytes": 412,
+    "missing_bytes": 0,
+    "sha256": "D26EA6CBF6889670300D8E220054F4000A825E974FF263B4A360865D92094848"
+  },
+  "suricata": {
+    "http_records": 1,
+    "method": "GET",
+    "url": "/benign.sct",
+    "status": 200,
+    "response_length": 412,
+    "content_type": "application/octet-stream",
+    "assessment": "Suricata independently decoded the SCT request and legacy MSIE/Trident User-Agent. Alerts were limited to the Python test server banner and pktmon checksum artifacts."
+  }
+}

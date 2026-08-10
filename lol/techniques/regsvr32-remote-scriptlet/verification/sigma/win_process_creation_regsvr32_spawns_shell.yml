@@ -1,0 +1,31 @@
+title: Regsvr32 Spawns a Command or Script Interpreter
+id: e72170bd-62ac-4864-8130-fbda87705a19
+status: experimental
+description: >-
+  Detects a command or script interpreter launched by regsvr32. The verified
+  remote SCT created cmd.exe as a direct child of regsvr32.exe.
+references:
+  - https://attack.mitre.org/techniques/T1218/010/
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.t1218.010
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith: '\regsvr32.exe'
+  selection_child:
+    Image|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+      - '\pwsh.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+      - '\mshta.exe'
+      - '\rundll32.exe'
+  condition: selection_parent and selection_child
+falsepositives:
+  - Unusual but legitimate COM registration packages that start a helper interpreter
+level: high
