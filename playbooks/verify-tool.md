@@ -36,6 +36,10 @@ verify along a realistic operator flow so the resulting detections are practical
   flow you verified here, the ATT&CK techniques each covers, and further scenarios a reader could
   verify next. This makes the catalog a springboard for future verification, not a one-shot run.
 - Keep the verified flow bounded and reproducible; document the rest as future scenarios.
+- Some real-world forms of a technique **cannot be run here at all** (no macOS host, no domain
+  controller, one Windows host — see [`lab-capabilities.md`](lab-capabilities.md)). Write those into
+  `scenarios.md` with the reason rather than omitting them: they leave the auditor's coverage
+  denominator as lab-capability gaps, but only if they are stated.
 
 ## 1. Provision (clean, richly-instrumented baseline)
 - Windows: **roll back to `win_verify_baseline`** first so the run starts clean (Defender off,
@@ -206,7 +210,7 @@ only a new positive sample or a non-EVTX test can. Do not route them back to the
 Re-run the gate with `--iteration N+1` after each fix. **Cap: 3 iterations** — if it is still
 BLOCKED, stop and escalate to the user with the routing note; do not keep re-dispatching.
 
-### On PASS — record what was measured
+### On PASS — record what was measured, and change nothing else
 Before merging, write the gate's numbers into `tools/<id>/verification/verification.json` from
 `precision/precision-input.json`: per rule the measured `fp_likelihood` floor, FP count and share of
 its own category with the category denominator, the reconciled `recommended_role`/`level`, detection
@@ -214,6 +218,18 @@ hit, corpus version and measured commit; per scenario the coverage ratio and the
 verdict, cited to the grounding source. Attach `gate-result.md` + `audit-report.md` to the PR. A PASS
 means no blocking defect was found — **not** that every rule was exercised; carry the non-blocking
 findings into the PR so the gap is visible.
+
+**The recording commit is the only commit allowed after a PASS.** Writing the verdict into the
+verification changes the tree the verdict was measured on, so that commit can never itself be gated —
+re-running the gate to cover it would only produce another ungated recording commit. The rule that
+closes the regress instead:
+
+- record the gated commit as `audit_gate.measured_commit` in `verification.json`;
+- before merging, confirm `git diff --stat <measured_commit>..HEAD` touches **only** `verification.json`
+  and `README.md`. Any change under `sigma/`, `scenarios.md` or `evidence/` after a PASS voids it —
+  re-run the gate.
+
+A PASS is a statement about one tree. A PASS quoted next to a different tree is not evidence.
 
 ## Guardrails
 - **RULE 1 — nothing outside the lab.** Attack traffic targets `192.168.1.0/24` only; the
