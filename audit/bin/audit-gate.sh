@@ -62,9 +62,21 @@ if [[ ! -d "${GATE_REPO}/.git" ]]; then
   git clone --quiet "${REPO_URL}" "${GATE_REPO}"
 fi
 git -C "${GATE_REPO}" fetch --quiet --prune origin '+refs/heads/*:refs/remotes/origin/*'
-if ! git -C "${GATE_REPO}" checkout --quiet --detach "origin/${REF}" 2>/dev/null; then
-  git -C "${GATE_REPO}" checkout --quiet --detach "${REF}"   # a raw commit sha also works
+# This clone is scratch, not a workspace. Anything left in it from an earlier run - a stale
+# local branch, an edited file - would otherwise be audited in place of the ref that was asked
+# for, and the gate would report a verdict for code nobody requested.
+git -C "${GATE_REPO}" reset --quiet --hard
+git -C "${GATE_REPO}" clean -qfd
+TARGET="$(git -C "${GATE_REPO}" rev-parse --verify --quiet "origin/${REF}^{commit}" \
+          || git -C "${GATE_REPO}" rev-parse --verify --quiet "${REF}^{commit}" \
+          || true)"
+if [[ -z "${TARGET}" ]]; then
+  echo "FATAL: ref '${REF}' resolves to nothing on origin - has the branch been pushed?" >&2
+  printf '{"decision":"gate-error","verification":"%s","errors":["ref %s does not exist on origin"]}\n' \
+    "${VERIFICATION}" "${REF}" > "${OUTDIR}/gate-result.json"
+  exit 2
 fi
+git -C "${GATE_REPO}" checkout --quiet --detach "${TARGET}"
 COMMIT="$(git -C "${GATE_REPO}" rev-parse --short HEAD)"
 log "auditing ${VERIFICATION} at ${REF} (${COMMIT})"
 
