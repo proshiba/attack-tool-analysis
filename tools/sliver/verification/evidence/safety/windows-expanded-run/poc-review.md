@@ -84,6 +84,7 @@ reviewed source authored in this repository, not third-party PoC code.
 - Raw mTLS C2: `192.168.1.50:31337`.
 - Client-side SOCKS5: Kali loopback `127.0.0.1:1081`.
 - Pivoted fixed marker service: `192.168.1.50:18084`.
+- Reviewed artifact staging: `192.168.1.50:18085`.
 - Lab DNS: `192.168.1.50:53`, authoritative/local-only for
   `c2.sliver.lab`; no forwarding.
 - Named HTTPS C2: `c2.sliver.lab` resolving only to

@@ -7,8 +7,9 @@
 - **VM 100 — `kalivm` — `192.168.1.50` — the only C2, DNS, pivot-service,
   build, and operator host.** Sliver server/client control is loopback-only.
   The target-facing services are raw mTLS on TCP 31337, the lab DNS service on
-  UDP/TCP 53, a fixed inert HTTP pivot destination on TCP 18084, and named
-  HTTPS C2 on TCP 18443. The client-side SOCKS5 listener binds only to
+  UDP/TCP 53, a fixed inert HTTP pivot destination on TCP 18084, reviewed
+  artifact staging on TCP 18085, and named HTTPS C2 on TCP 18443. The
+  client-side SOCKS5 listener binds only to
   `127.0.0.1:1081`. No listener binds a public or management-plane address.
 - **VM 104 — `WIN10-ANALYSIS` — `192.168.1.52` — the only execution
   target.** It starts from and returns to `win_verify_baseline`. Before capture,
@@ -50,11 +51,11 @@ The five flow entries in the single baseline visit are:
 
 | Flow | Exact bounded action | ATT&CK | Expected evidence decision |
 | --- | --- | --- | --- |
-| Windows mTLS foothold re-grounding | Launch a renamed reviewed session from PowerShell, run `getuid`, `info`, `ls C:\\lab`, one fixed `cmd.exe` marker command, and transfer only that marker. | T1573.002, T1033, T1082, T1083, T1059.003, T1041 | Re-ground the three existing Windows file/process rules and mechanically account for every responder with Zeek plus Sysmon EID 3. |
+| Windows mTLS foothold re-grounding | Use PowerShell to fetch the reviewed session from Kali TCP 18085 under an unrelated filename, verify its SHA-256, launch it, run `getuid`, `info`, `ls C:\\lab`, one fixed `cmd.exe` marker command, and transfer only that marker. | T1105, T1573.002, T1033, T1082, T1083, T1059.003, T1041 | Re-ground the three existing Windows file/process rules and mechanically account for every responder with Zeek plus Sysmon EID 3. |
 | SOCKS5 pivot | Start Sliver SOCKS5 on Kali loopback and request one fixed marker from Kali `192.168.1.50:18084` through the implant; stop the proxy immediately afterward. | T1572 | Measure the extra implant-attributed target-to-service flow and tunnel shape; no second victim or public destination exists. |
 | In-memory execute-assembly | Execute a lab-authored assembly that only prints `SLIVER_IN_MEMORY_INERT_MARKER`, using newly created `C:\\Windows\\System32\\notepad.exe` as the sacrificial process and without AMSI/ETW bypass flags. | T1055 | Measure sacrificial-process creation, cross-process access/injection telemetry, and the absence of assembly-on-disk or network behavior. |
 | Inert DLL sideload | Copy the baseline Microsoft-signed `WerFault.exe` into `C:\\lab\\sliver-sideload`, place lab-authored `faultrep.dll` beside it, execute `WerFault.exe -?`, and verify its fixed marker. | T1574.001, T1036.005 | Reuse the established inert signed-host pattern; expect file/process evidence and no network or registry behavior. |
-| Named HTTPS C2 | Resolve `c2.sliver.lab` only through Kali DNS, then run a renamed HTTPS beacon to TCP 18443 with the Windows WinINet driver and a Kali-served lab root/intermediate/leaf chain; task only `getuid` and `ls C:\\lab`. | T1071.001, T1573.002, T1033, T1083 | Produce DNS, SNI, passive x509-chain, and TLS fingerprint evidence absent from literal-IP flows; compare JA3/JA3S/JARM before deciding whether any TLS rule is justified. |
+| Named HTTPS C2 | Use PowerShell to fetch the reviewed beacon from Kali TCP 18085 under an unrelated filename, resolve `c2.sliver.lab` only through Kali DNS, then run it to TCP 18443 with the Windows WinINet driver and a Kali-served lab root/intermediate/leaf chain; task only `getuid` and `ls C:\\lab`. | T1105, T1071.001, T1573.002, T1033, T1083 | Produce DNS, SNI, passive x509-chain, and TLS fingerprint evidence absent from literal-IP flows; compare JA3/JA3S/JARM before deciding whether any TLS rule is justified. |
 
 One continuous full-packet pktmon capture and one endpoint collection window
 cover all five flows, with UTC action boundaries retained so each flow can be
