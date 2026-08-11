@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "target": {"vmid": 104, "hostname": "WIN10-ANALYSIS", "ip": "192.168.1.52", "os": "Windows 10 x64", "user": "NT AUTHORITY\\SYSTEM"},
+  "telemetry": {"source": "collect-run.ps1 plus Sysmon 15.21", "sysmon_config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71", "raw_events_committed": false},
+  "http_flow": {
+    "window_utc": ["2026-08-11T03:14:34.4285350Z", "2026-08-11T03:16:07.2410302Z"],
+    "event_count": 1288,
+    "events_json_sha256": "e4767ed293bb8be2432be1071b3d9d971d698eb8a645925c2303b217919a86bb",
+    "agent_sha256": "d8ee6fe9e5eb9e497024ffee7a41620e02d2334501382bb599cd4aed5fc9be38",
+    "operator_actions": ["download from Kali staging with Windows curl.exe", "verify SHA-256", "execute as SYSTEM", "getuid", "pwd", "ls C:\\lab", "ps list", "download C:\\lab\\adaptix-fixed-marker.txt", "terminate agent"],
+    "task_results": {"getuid": "NT AUTHORITY\\SYSTEM, elevated", "pwd": "C:\\Windows\\System32", "ls": "completed", "ps_list": "completed", "marker_download": "completed and hash-matched"},
+    "marker": {"bytes": 21, "sha256": "e9f9b0f6fba6263d4af33b49f778a47b7730d50d485c73923ac16bfca4def12e"},
+    "dimensions": {
+      "process": {"signal": true, "details": "curl.exe and the renamed agent were children of powershell.exe; the agent had Company, Product, and OriginalFileName all '-' and spawned no child for the in-process tasks."},
+      "network": {"signal": true, "attribution": "Sysmon EID 3", "details": ["curl.exe -> 192.168.1.50:18080", "renamed agent -> 192.168.1.50:18081"]},
+      "file": {"signal": true, "details": "Sysmon EID 11 recorded curl.exe writing the renamed PE, the fixed-marker creation, and prefetch artifacts; the C2 download returned the identical marker to Kali."},
+      "registry": {"signal": true, "details": "The agent touched generic WinINet cache-prefix values and TenantRestrictions policy keys. These are not treated as AdaptixC2-specific or persistence signals."},
+      "deep": {"signal": false, "details": "No image-load EID 7, process injection, remote thread, LSASS access, or other Tier-2 tool-attributed signal was observed."}
+    }
+  },
+  "https_flow": {
+    "window_utc": ["2026-08-11T03:22:03.9097364Z", "2026-08-11T03:26:13.5503591Z"],
+    "event_count": 2279,
+    "events_json_sha256": "410d5be8f61b37d53a4b3b4e096a3762b785146f60de65eb3dfd30f8cc44da9a",
+    "agent_sha256": "4e39b0f0c83675943e87543214937a5c4061e1ecb929d93205a1b927be6899a5",
+    "operator_actions": ["download from Kali staging with Windows curl.exe", "verify SHA-256", "execute as SYSTEM", "getuid", "ls C:\\lab", "terminate agent"],
+    "task_results": {"getuid": "NT AUTHORITY\\SYSTEM, elevated", "ls": "completed"},
+    "dimensions": {
+      "process": {"signal": true, "details": "curl.exe and the renamed unversioned agent were children of powershell.exe; no task child process was created."},
+      "network": {"signal": true, "attribution": "Sysmon EID 3", "details": "The renamed agent opened 25 TLS connections to 192.168.1.50:18443; curl delivery used 192.168.1.50:18080."},
+      "file": {"signal": true, "details": "Sysmon EID 11 recorded curl.exe writing the renamed PE and the subsequent prefetch file."},
+      "registry": {"signal": true, "details": "WinINet/SChannel certificate-store and cache-related reads/creates were visible but are generic Windows TLS-client behavior and are not used as signatures."},
+      "deep": {"signal": false, "details": "No image-load EID 7, process injection, remote thread, LSASS access, or other Tier-2 tool-attributed signal was observed."}
+    }
+  },
+  "sanitization": "No agent identifier, heartbeat value, session key, command response containing unrelated host data, raw EVTX, or raw events JSON is committed. Generated filenames are evidence labels only and do not appear in detection conditions."
+}

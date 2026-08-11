@@ -76,6 +76,10 @@
     {
       "title": "Seqrite: Operation Dragon Weave / AZUREVEIL",
       "url": "https://www.seqrite.com/blog/operation-dragon-weave-uncovering-a-china-linked-campaign-targeting-czech-republic-and-taiwan-using-azure-cloud-c2/"
+    },
+    {
+      "title": "JFrog: TeamPCP AI-API-looking C2 paths",
+      "url": "https://research.jfrog.com/post/shai-hulud-here-we-go-again/"
     }
   ],
   "status": "active",

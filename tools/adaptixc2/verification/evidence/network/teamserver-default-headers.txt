@@ -1,0 +1,7 @@
+HTTP/1.1 404 Not Found
+Adaptix-Version: v1.2
+Content-Type: text/html; charset=UTF-8
+Server: AdaptixC2
+Date: Tue, 11 Aug 2026 03:07:53 GMT
+Content-Length: 1133
+

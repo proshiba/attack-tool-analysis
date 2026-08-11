@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "flow_window_utc": ["2026-08-11T03:32:32.1597361Z", "2026-08-11T03:32:46.6759248Z"],
+  "operator_actions": [
+    "compile the reviewed lab-authored inert faultrep.dll on Kali with x86_64-w64-mingw32-gcc",
+    "copy baseline C:\\Windows\\System32\\WerFault.exe to the lab flow directory",
+    "place faultrep.dll beside the signed host via the guest agent",
+    "execute the copied WerFault.exe with -?",
+    "verify Authenticode status, hashes, fixed marker, telemetry, and zero-network capture"
+  ],
+  "host": {"original_name": "WerFault.exe", "sha256": "7f83ba8198a06f99843b120f36c6465dfe03ebe941eb129d6153c02382362e76", "authenticode": "Valid", "signer": "CN=Microsoft Windows, O=Microsoft Corporation, L=Redmond, S=Washington, C=US", "exit_code": 1},
+  "dll": {"name": "faultrep.dll", "sha256": "d08a1741bb0a2d71fe2acef5f7f7d027e12e3fb02c1ef9cc38fb30d05bb910e6", "authenticode": "NotSigned", "exports": ["WerpInitiateCrashReporting"], "behavior": "DllMain writes one fixed marker; imported crash-report function returns E_NOTIMPL; no networking, persistence, injection, command execution, or payload loading"},
+  "marker": {"text": "ADAPTIX_SIDELOAD_INERT_MARKER\\r\\n", "sha256": "9f819cd25391667fc8cb5e4151688f15f8e8a00c5ffb34f3b41d624ec1b7bd7f", "writer_image": "copied WerFault.exe"},
+  "events": {"total": 917, "events_json_sha256": "046a5e2f2b61767ce0846dd4d1bd3b8b32aff3bdc37b024508f1838349d7dec7", "sysmon_eid_11_copied_host": 1, "sysmon_eid_11_faultrep_dll": 1, "sysmon_eid_1_host_execution": 1, "sysmon_eid_11_marker_by_host": 1, "sysmon_eid_7": 0},
+  "dimensions": {
+    "process": {"signal": true, "details": "Sysmon EID 1 recorded Microsoft-signed WerFault.exe executing from a non-system directory under powershell.exe."},
+    "network": {"signal": false, "details": "Pktmon captured zero packets; this inert DLL has no network behavior."},
+    "file": {"signal": true, "details": "Sysmon EID 11 recorded the copied host, faultrep.dll, and the fixed marker written by WerFault.exe."},
+    "registry": {"signal": false, "details": "No sideload-specific registry modification was observed."},
+    "deep": {"signal": false, "details": "The baseline disables high-volume Sysmon image-load telemetry, so no EID 7 directly recorded faultrep.dll. Marker attribution to the host plus import/export inspection and same-directory placement prove the bounded load."}
+  },
+  "source_files": ["sideload/inert-faultrep-dll.c", "sideload/faultrep.def"],
+  "not_adaptix_payload": true
+}

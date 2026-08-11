@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 1 - attack traffic never leaves the isolated lab",
+  "allowed_networks": ["192.168.1.0/24"],
+  "management_networks": ["10.9.0.0/24"],
+  "verdict": "PASS",
+  "violation_count": 0,
+  "inputs": {
+    "method": "check-lab-scope.py was run separately against the target-to-Kali subset of every network-producing full pcap; HTTP and HTTPS runs also supplied normalized Sysmon EID 3 ownership records",
+    "full_capture_retained_outside_repository": true,
+    "raw_packets_committed": false
+  },
+  "flow_results": [
+    {"flow": "teamserver_default_404", "verdict": "PASS", "violations": 0, "attribution": "target-to-Kali pcap; no endpoint event export for this two-second probe"},
+    {"flow": "listener_default_404", "verdict": "PASS", "violations": 0, "attribution": "target-to-Kali pcap; no endpoint event export for this two-second probe"},
+    {"flow": "listener_modified_404", "verdict": "PASS", "violations": 0, "attribution": "target-to-Kali pcap; no endpoint event export for this two-second probe"},
+    {"flow": "default_http_beacon", "verdict": "PASS", "violations": 0, "attribution": "Sysmon EID 3 attributed delivery to curl.exe and C2 to the renamed agent; both destinations were 192.168.1.50"},
+    {"flow": "default_https_beacon", "verdict": "PASS", "violations": 0, "attribution": "Sysmon EID 3 attributed TLS C2 to the renamed agent; every agent destination was 192.168.1.50:18443"},
+    {"flow": "inert_dll_sideload", "verdict": "PASS", "violations": 0, "attribution": "zero packets captured; the inert source contains no networking"}
+  ],
+  "process_attribution": {
+    "source": "Windows Sysmon Event ID 3 plus ProcessGuid/PID correlation in collect-run.ps1 output",
+    "http": [
+      {"role": "delivery", "image": "C:\\Windows\\System32\\curl.exe", "destination": "192.168.1.50:18080"},
+      {"role": "renamed HTTP agent", "destination": "192.168.1.50:18081"}
+    ],
+    "https": [
+      {"role": "delivery", "image": "C:\\Windows\\System32\\curl.exe", "destination": "192.168.1.50:18080", "note": "the earliest delivery EID 3 had an unknown image in this export, but its PID matched the captured curl process start and staging flow"},
+      {"role": "renamed HTTPS agent", "destination": "192.168.1.50:18443", "connections": 25}
+    ]
+  },
+  "full_capture_accounting": {
+    "unrelated_os_background": [
+      {"flow": "default_http_beacon", "image": "C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\4.18.26070.9-0\\MpDefenderCoreService.exe", "destination": "52.123.129.14:443", "classification": "pre-existing Windows Defender service traffic; not an AdaptixC2 process or child, excluded from the tool-attributed target-to-Kali safety input"}
+    ],
+    "adaptix_process_off_lab_connections": 0,
+    "management_plane_connections": 0,
+    "external_dns_queries_by_tool": 0
+  },
+  "execution_guard": {
+    "kali_ipv4": "temporary OUTPUT chain allowed loopback and 192.168.1.0/24, rejected all other destinations",
+    "kali_ipv6": "temporary OUTPUT chain allowed loopback/::1 and rejected all other destinations",
+    "removed_after_run": true
+  }
+}

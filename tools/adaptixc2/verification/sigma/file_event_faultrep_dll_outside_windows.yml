@@ -1,0 +1,43 @@
+title: Faultrep DLL Written Outside Windows Directories
+id: a2b6bc74-03b9-4e52-8807-1906448166d7
+status: experimental
+description: >-
+  Detects creation of faultrep.dll outside normal Windows directories. The
+  verified inert sideload used this technique-specific name beside a valid
+  Microsoft-signed copy of WerFault.exe.
+references:
+  - https://www.group-ib.com/blog/jadeprox-china-nexus-triback-loader/
+  - https://www.seqrite.com/blog/operation-dragon-weave-uncovering-a-china-linked-campaign-targeting-czech-republic-and-taiwan-using-azure-cloud-c2/
+author: Codex lab orchestrator
+date: '2026-08-11'
+tags:
+  - attack.execution
+  - attack.persistence
+  - attack.privilege-escalation
+  - attack.t1574.001
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection_name:
+    TargetFilename|endswith: '\faultrep.dll'
+  filter_main_windows:
+    TargetFilename|startswith:
+      - 'C:\Windows\System32\'
+      - 'C:\Windows\SysWOW64\'
+      - 'C:\Windows\WinSxS\'
+      - 'C:\Windows\SoftwareDistribution\'
+  condition: selection_name and not filter_main_windows
+falsepositives:
+  - Legacy crash-reporting software packaging faultrep.dll outside Windows directories
+  - Software installers or forensic collections that copy the system DLL by name
+  - Authorized DLL sideload testing and malware-analysis labs
+fp_likelihood: medium
+recommended_role: hunt
+precision_notes: >-
+  The verification produced one matching Sysmon file event before the signed
+  host ran. Correlate with WerFault.exe executing from the same non-system
+  directory, an unsigned DLL signature, and file creation by a downloader or
+  script host. The technique-specific DLL name is intentionally used here; no
+  AdaptixC2 agent filename, hash, lab path, or callback address is present.
+level: medium

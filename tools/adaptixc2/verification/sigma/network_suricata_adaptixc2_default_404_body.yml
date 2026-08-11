@@ -1,0 +1,38 @@
+title: AdaptixC2 Default HTTP Listener 404 Body in Suricata Events
+id: 2c7b2b2b-8aa5-47cb-8bf6-92b4f38c4efe
+status: experimental
+description: >-
+  Detects the distinctive default 404 response body served by an AdaptixC2
+  BeaconHTTP listener. The condition intentionally ignores response headers:
+  the lab rule continued to match after the listener headers were changed.
+references:
+  - https://censys.com/blog/adaptixc2-open-source-c2-framework/
+  - https://github.com/Adaptix-Framework/AdaptixC2
+author: Codex lab orchestrator
+date: '2026-08-11'
+tags:
+  - attack.command-and-control
+  - attack.t1071.001
+logsource:
+  category: http
+  product: suricata
+detection:
+  selection_response:
+    http.status: 404
+    http.response_body|contains|all:
+      - 'ERROR 404 - Nothing Found'
+      - 'ERROR 404 - PAGE NOT FOUND'
+  condition: selection_response
+falsepositives:
+  - An unrelated HTTP service that copied the complete AdaptixC2 default error template
+  - Authorized AdaptixC2 adversary-emulation or malware-analysis infrastructure
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  Suricata HTTP evidence is not testable on the EVTX corpus. A native Suricata
+  7.0.10 response-body rule matched once in the default-listener pcap and once
+  after the Server and X-Lab-Profile headers were changed; it did not depend on
+  a lab address, port, hostname, or agent filename. Default EVE HTTP output does
+  not retain response bodies, so deployments must enable body extraction or
+  express this condition as a native Suricata content rule.
+level: high
