@@ -42,37 +42,50 @@ Consequences that follow from the rule:
 | When | Command | Blocks on |
 |---|---|---|
 | Scenario written, before any execution | `safety/check-scenario-scope.py <verification-dir>` | any non-lab IP in the scenario; missing Scope declaration |
-| After the run, before evidence is sanitised | `safety/check-lab-scope.py --zeek-dir <nsm-analyze out> --sysmon-json <events>` | any connection or DNS query leaving the lab |
+| After the run, before evidence is sanitised | `safety/check-lab-scope.py --zeek-dir <nsm out> --sysmon-json <events> --tool-image <planted binary> [...] --operator-log <C2 log/transcript> [...]` | **attack activity** reaching an off-lab host |
 
 Both reports are attached to the verification (`evidence/safety/`), and the second one must read
-`PASS`. Sysmon EventID 3 is what attributes a destination to the *process*, which is how tool
-traffic is separated from the target OS's own telemetry — always supply it, in the format
-`collect-run.ps1` produces.
+`PASS`.
 
-**`check-lab-scope.py` has three verdicts, and the middle one exists on purpose:**
+### What the post-run gate judges — and what it deliberately does not
+
+The rule has always been that **what we run** must not reach anything we do not own. The gate used
+to approximate that by failing on *any* packet to an off-lab address, which is unachievable on a
+real operating system: Windows talks to Microsoft whether or not we are running a tool. That
+approximation did real damage — ordinary Defender and telemetry traffic was reported as a tool
+breach, and the way to make a run pass became to pre-filter the capture to lab-only traffic first.
+That is a tautology, and three verifications carried a `PASS` computed that way.
+
+So the gate judges the **attack**, from two kinds of evidence:
+
+1. **The operator record** (`--operator-log`) — the C2 framework's own logs and config, listener
+   definitions, operator command transcripts. A listener whose callback address is lab-internal is
+   stronger evidence than any capture: the implant could not have been aimed outside by design.
+   An off-lab address or host named in these files is a violation.
+   *`bash_history` is a weak source here — non-interactive `ssh`/`lab-exec` commands never reach it.
+   Rely on the C2 server logs and the command transcripts the run already produces.*
+2. **Traffic attributed to the tools we planted** (`--tool-image`) — every binary the scenario
+   installed, **the names it was renamed to**, and **every process it injected into**. Declare all
+   three: a renamed implant is still ours, and an injected `notepad.exe` is the case a name-based
+   check would otherwise miss.
+
+Everything else off-lab — OS telemetry, Defender, updates, notifications, packets from sessions
+that predate the capture — is **recorded in the manifest and not judged**. Recorded, not deleted:
+filtering it out of the input is what hid the problem before. An allowlist of benign process names
+was tried and does not hold — Windows ships new ones (`MpDefenderCoreService.exe` broke it).
 
 | Verdict | Exit | Meaning |
 |---|---|---|
-| `PASS` | 0 | every off-lab destination is accounted for: attributed to an OS background process, or not target-originated at all |
-| `INCONCLUSIVE` | 2 | the target **did** send to an off-lab destination that no Sysmon record attributes. Neither cleared nor blamed — **not mergeable**; fix the attribution input and re-check |
-| `VIOLATION` | 1 | something we ran reached off-lab, or a query went to an off-lab resolver |
+| `PASS` | 0 | no traffic attributable to the declared attack reached an off-lab host |
+| `INCONCLUSIVE` | 2 | off-lab traffic exists and **nothing can say whose it was** — the check could not be performed. Not a breach, not a clean bill of health, not mergeable |
+| `VIOLATION` | 1 | the attack reached off-lab, or the operator record names an off-lab destination |
 
-Two distinctions the checker makes, because collapsing them makes verification impossible on a real
-operating system:
+**State the claim accurately.** A passing run does not show that nothing left the lab — that was
+never true. It shows: *no traffic attributable to the declared attack left the lab, and everything
+else that did is in the manifest.* Write it that way in `verification.json` and the PR.
 
-- **A target OS talks to its vendor whether or not we run anything.** Windows telemetry, WNS and
-  update traffic are a property of running Windows, not evidence of a breach. Attributed OS
-  background traffic is *reported*, never failed. Only traffic attributed to a non-OS process is a
-  rule-1 breach.
-- **Asking the in-lab resolver about an external name sends nothing outside**, and a flow where the
-  target sent **0 packets and 0 bytes** (Zeek `conn_state` `RSTRH`/`SHR`/`OTH` — the originator's
-  SYN was never seen) is not egress: it is packets arriving at the target. Both are recorded as
-  indicators; neither fails a run.
-
-**Never pre-filter the capture to lab-only traffic before checking it.** Proving that the in-lab
-subset is in-lab is a tautology, and it is how three verifications came to carry a `PASS` that
-proved nothing. The report records `capture_scale` so a filtered input is visible: `0` off-lab
-destinations means the input may simply not have contained any.
+**Never pre-filter the capture.** The report records `capture_scale` so a filtered input is visible:
+`0` off-lab destinations may simply mean the input contained none.
 
 Every `scenarios.md` carries a **Scope** section naming the VMs involved and stating explicitly
 that every destination is lab-internal. Without it the scenario cannot be audited and is rejected.
