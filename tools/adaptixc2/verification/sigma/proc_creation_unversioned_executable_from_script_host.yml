@@ -1,0 +1,49 @@
+title: Unversioned Executable Launched by a Script Host
+id: 2ae231a5-b5ec-444f-ae6e-8a1ac281bf59
+status: experimental
+description: >-
+  Detects an executable with absent PE identity metadata launched by a script
+  or command host. Both renamed AdaptixC2 agents in this run produced this
+  filename-independent delivery and execution pattern.
+references:
+  - https://www.group-ib.com/blog/jadeprox-china-nexus-triback-loader/
+  - https://github.com/Adaptix-Framework/AdaptixC2
+author: Codex lab orchestrator
+date: '2026-08-11'
+tags:
+  - attack.command-and-control
+  - attack.t1105
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_executable:
+    Image|endswith: '.exe'
+    Company: '-'
+    Product: '-'
+    OriginalFileName: '-'
+  selection_parent:
+    ParentImage|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+      - '\pwsh.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+      - '\mshta.exe'
+  condition: selection_executable and selection_parent
+falsepositives:
+  - Internally built Go, Rust, or C/C++ utilities without version resources
+  - Software deployment, package-management, and administrator scripts launching unversioned tools
+  - Authorized adversary-emulation and malware-analysis labs
+fp_likelihood: high
+recommended_role: hunt
+precision_notes: >-
+  The clean corpus produced 3 matches, 0.012661% of 23,695 process starts:
+  thor-util.exe, winget.exe, and pip.exe launched from command or PowerShell
+  hosts. Production developer and build systems add many similar internal,
+  Go, Rust, Python, and package-management utilities. Company, Product, and
+  OriginalFileName are Sysmon EID 1 fields and are not present in Security
+  EID 4688. Use only as a hunt and correlate with an unusual path, a preceding
+  executable write, and the HTTP profile or repeated TLS flow. The rule contains
+  no generated agent filename or callback value.
+level: low

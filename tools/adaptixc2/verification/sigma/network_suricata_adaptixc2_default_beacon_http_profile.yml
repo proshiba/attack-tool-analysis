@@ -1,0 +1,40 @@
+title: AdaptixC2 Default BeaconHTTP Request Profile in Suricata Events
+id: 6dd482d4-9f77-4bf4-bd76-e599a6cda88d
+status: experimental
+description: >-
+  Detects the combined POST method, legacy Firefox User-Agent, and default URI
+  vocabulary observed from an AdaptixC2 v1.2 Windows BeaconHTTP agent. It does
+  not use the generated agent name, a callback address, or a listener port.
+references:
+  - https://censys.com/blog/adaptixc2-open-source-c2-framework/
+  - https://github.com/Adaptix-Framework/AdaptixC2
+author: Codex lab orchestrator
+date: '2026-08-11'
+tags:
+  - attack.command-and-control
+  - attack.t1071.001
+logsource:
+  category: http
+  product: suricata
+detection:
+  selection_request:
+    http.http_method: POST
+    http.http_user_agent: 'Mozilla/5.0 (Windows NT 6.2; rv:20.0) Gecko/20121202 Firefox/20.0'
+    http.url:
+      - '/api/v1/status'
+      - '/updates/check.php'
+      - '/content.html'
+  condition: selection_request
+falsepositives:
+  - A legacy or deliberately profiled client using the same obsolete Firefox User-Agent and one of the three generic paths
+  - Authorized AdaptixC2 adversary-emulation or malware-analysis traffic
+fp_likelihood: medium
+recommended_role: alert
+precision_notes: >-
+  Suricata HTTP events are not testable on the EVTX corpus. This combined
+  request profile matched all 11 Beacon POSTs and excluded the staging GET and
+  both 404 probes in the retained run. The HTTP profile is operator-editable.
+  Aggregate by endpoint pair for the measured approximately 10-second cadence;
+  single-event Sigma cannot assert periodicity, and the configured 20 percent
+  jitter did not manifest in this run.
+level: medium

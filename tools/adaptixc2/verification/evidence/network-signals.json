@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-11T03:34:00Z",
+  "scope": {
+    "c2_and_staging": "Kali VM 100, 192.168.1.50",
+    "target": "Windows VM 104, 192.168.1.52",
+    "nsm": "VM 106 for offline analysis and lab-scoped active JARM",
+    "public_indicators_used_as_destinations": false
+  },
+  "nsm": {
+    "zeek": "8.2.1",
+    "suricata": "7.0.10 RELEASE",
+    "et_open_alert_rules": 52234
+  },
+  "captures": [
+    {
+      "flow": "teamserver_default_404",
+      "window_utc": ["2026-08-11T03:07:52.0223319Z", "2026-08-11T03:07:54.7254356Z"],
+      "bytes": 22696,
+      "pcap_sha256": "7df66783d22377818ea20e315ffd8a853a64ebe9b3501546dd0827b23360d883",
+      "content_visibility": "TLS encrypted in pcap; exact response captured by curl on VM 104"
+    },
+    {
+      "flow": "listener_default_404",
+      "window_utc": ["2026-08-11T03:09:29.6472808Z", "2026-08-11T03:09:32.2410284Z"],
+      "bytes": 6216,
+      "pcap_sha256": "75d25a1ddd0451a4d8c74add18f1e9b901f82636378dd9ddde6a2d82bfe1ff07",
+      "zeek_http": {"method": "GET", "status": 404, "response_body_len": 180}
+    },
+    {
+      "flow": "listener_modified_404",
+      "window_utc": ["2026-08-11T03:10:31.6160320Z", "2026-08-11T03:10:34.1629078Z"],
+      "bytes": 6376,
+      "pcap_sha256": "1f6339ec5c0eb84d46961a330d023628ee643f0ae9f6a4ecaa9423de13915036",
+      "zeek_http": {"method": "GET", "status": 404, "response_body_len": 180}
+    },
+    {
+      "flow": "default_http_beacon",
+      "window_utc": ["2026-08-11T03:14:34.4285350Z", "2026-08-11T03:16:07.2410302Z"],
+      "bytes": 564896,
+      "pcap_sha256": "e40c9bb779db5aec27ffe790717f109ded7f3565acacb89391782a791955b3ba",
+      "pktmon_packets_lost": 0
+    },
+    {
+      "flow": "default_https_beacon",
+      "window_utc": ["2026-08-11T03:22:03.9097364Z", "2026-08-11T03:26:13.5503591Z"],
+      "bytes": 826328,
+      "pcap_sha256": "511f1fb80021e138e6504ad63c8fa811a95cf051fc6b5cbb574fd3f4d85f418f",
+      "pktmon_packets_lost": 0
+    },
+    {
+      "flow": "inert_dll_sideload",
+      "window_utc": ["2026-08-11T03:32:32.1597361Z", "2026-08-11T03:32:46.6759248Z"],
+      "bytes": 200,
+      "pcap_sha256": "8ad10c08179bbd4b2c8f817983a19c1c96872548a8ed3861c57d40e752fe54ae",
+      "packet_count": 0,
+      "nsm_result": "nsm-analyze attempted; Suricata reported no first packet timestamp and Zeek produced no conn.log"
+    }
+  ],
+  "server_fingerprint": {
+    "teamserver": {
+      "status": "HTTP/1.1 404 Not Found",
+      "headers_sha256": "4657d2e737cf46b245f840716d06544d59bb031472f4a929c423cdbc633f6d3a",
+      "body_bytes": 1133,
+      "body_sha256": "af98111ef3078ab381b276c64d8c1bcd9e6a9bd1534ea10c57b716763fe86941",
+      "exact_headers_file": "network/teamserver-default-headers.txt",
+      "exact_body_file": "network/teamserver-default-404.html"
+    },
+    "beacon_http_listener": {
+      "default_headers_file": "network/listener-default-headers.txt",
+      "modified_headers_file": "network/listener-modified-headers.txt",
+      "body_bytes": 180,
+      "raw_body_has_final_newline": false,
+      "body_sha256": "464816fd640d5bdd848e7c4340f378f873c406c641d9d6c1477c4d83ddbdacf2",
+      "body_text_file": "network/listener-default-404.html",
+      "body_text_file_note": "Repository text representation adds one final newline; the raw 180-byte response did not have one.",
+      "modified_headers": ["Server: nginx", "X-Lab-Profile: modified"],
+      "body_unchanged_after_header_modification": true,
+      "native_suricata_body_rule_matches": {"default_pcap": 1, "modified_header_pcap": 1},
+      "claim_result": "confirmed for AdaptixC2 v1.2"
+    }
+  },
+  "http_beacon": {
+    "agent_sha256": "d8ee6fe9e5eb9e497024ffee7a41620e02d2334501382bb599cd4aed5fc9be38",
+    "configured_sleep_seconds": 10,
+    "configured_jitter_percent": 20,
+    "post_events": 11,
+    "uris": {"/api/v1/status": 4, "/updates/check.php": 4, "/content.html": 3},
+    "user_agent": "Mozilla/5.0 (Windows NT 6.2; rv:20.0) Gecko/20121202 Firefox/20.0",
+    "heartbeat_header_name": "X-Beacon-Id",
+    "heartbeat_value_retained": false,
+    "steady_gaps_seconds": {"count": 9, "min": 9.992320, "max": 10.015900, "mean": 10.003228, "median": 10.000000},
+    "task_immediate_gap_seconds": 0.010302,
+    "jitter_observation": "No configured jitter was measurable; steady gaps clustered around exactly 10 seconds.",
+    "suricata_content_alerts": ["ET INFO Python SimpleHTTP ServerBanner on staging"],
+    "adaptix_specific_et_alerts": 0
+  },
+  "https_beacon": {
+    "agent_sha256": "4e39b0f0c83675943e87543214937a5c4061e1ecb929d93205a1b927be6899a5",
+    "tls_version": "TLS 1.2",
+    "cipher": "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+    "curve": "x25519 on the first full handshake",
+    "sni": null,
+    "ja3": "72a589da586844d7f0818ce684948eea",
+    "ja3_string": "771,49196-49195-49200-49199-49188-49187-49192-49191-49162-49161-49172-49171-157-156-61-60-53-47-10,5-10-11-13-35-23-65281,29-23-24,0",
+    "ja3s": "326de7c6719a77bb7ef65f6cac962193",
+    "ja3s_string": "771,49199,35-65281-23-11",
+    "stock_go_1_24_plus_ja3": "771,49195-49199-49196-49200-52393-52392-49161-49171-49162-49172-4865-4866-4867,11-65281-23-18-5-10-13-50-43-51,4588-29-23-24-25,0",
+    "matches_stock_go_1_24_plus": false,
+    "interpretation": "The generated Beacon is C++ and used Windows WinINet/SChannel. Its JA3 lacks group 4588 and differs from the supplied stock-Go fingerprint. The Go server's JA3S is a routine TLS 1.2 ServerHello profile, not an AdaptixC2 signature.",
+    "jarm": "00000000000000000000000000000000000000000000000000000000000000",
+    "jarm_interpretation": "All-zero active result; not a usable server fingerprint and not used in Sigma.",
+    "jarm_tool": {"source": "https://github.com/salesforce/jarm", "commit": "2c0cf5ce8418c7a1d03edb219acea3c18e068289", "sha256": "8b44d084d8fa49307d401a9be5ec4cd2e6fde6705ee913684d08c301f14524a1"},
+    "steady_gaps_seconds": {"count": 23, "min": 9.999420, "max": 10.016400, "mean": 10.006582, "median": 10.000200},
+    "suricata_adaptix_specific_alerts": 0,
+    "tls_rule_shipped": false
+  }
+}

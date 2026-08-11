@@ -1,0 +1,95 @@
+{
+  "id": "adaptixc2",
+  "name": "AdaptixC2",
+  "categories": [
+    "command-and-control",
+    "post-exploitation"
+  ],
+  "summary": "GPL-3.0 modular command-and-control framework with a Go teamserver, C++/Qt client, and extensible Windows, Linux, and macOS agents and listeners.",
+  "description": "AdaptixC2 is an extensible adversary-emulation and post-exploitation framework. Its current extenders provide Beacon and Gopher agents and HTTP/S, DNS/DoH, SMB, TCP, and TCP/mTLS listeners. Threat reporting in 2026 documented its use behind HTTP infrastructure fingerprints, signed-binary DLL sideloading, and a cloud dead-drop channel.",
+  "authors": [
+    "Adaptix-Framework"
+  ],
+  "language": "Go, C++, C",
+  "license": "GPL-3.0",
+  "os": [
+    "windows",
+    "linux",
+    "macos"
+  ],
+  "type": "c2-framework",
+  "repository": "https://github.com/Adaptix-Framework/AdaptixC2",
+  "homepage": "https://adaptix-framework.gitbook.io/adaptix-framework",
+  "mitre_software_id": null,
+  "attack_techniques": [
+    {
+      "id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols"
+    },
+    {
+      "id": "T1573",
+      "name": "Encrypted Channel"
+    },
+    {
+      "id": "T1105",
+      "name": "Ingress Tool Transfer"
+    },
+    {
+      "id": "T1082",
+      "name": "System Information Discovery"
+    },
+    {
+      "id": "T1083",
+      "name": "File and Directory Discovery"
+    },
+    {
+      "id": "T1574.001",
+      "name": "Hijack Execution Flow: DLL"
+    }
+  ],
+  "usage": [
+    "adaptixserver -profile profile.yaml",
+    "Create a BeaconHTTP listener with a literal lab callback address.",
+    "Generate a Windows x64 Beacon with a bounded sleep and jitter.",
+    "Task identity, host/directory survey, and one fixed-marker download."
+  ],
+  "detection": [
+    "Default teamserver HTTP response headers and its distinctive 404 response body.",
+    "Default BeaconHTTP URI, header, User-Agent, response-template, and periodic callback profile.",
+    "Server-side TLS fingerprinting such as JARM, qualified by measured specificity.",
+    "Signed executable loading a technique-specific DLL from its application directory.",
+    "Process ancestry and file/execute patterns associated with delivery and task execution; never rely on a generated agent filename."
+  ],
+  "references": [
+    {
+      "title": "Official repository",
+      "url": "https://github.com/Adaptix-Framework/AdaptixC2"
+    },
+    {
+      "title": "Censys: AdaptixC2 fingerprinting",
+      "url": "https://censys.com/blog/adaptixc2-open-source-c2-framework/"
+    },
+    {
+      "title": "Group-IB: JadeProx / TriBack Loader",
+      "url": "https://www.group-ib.com/blog/jadeprox-china-nexus-triback-loader/"
+    },
+    {
+      "title": "Seqrite: Operation Dragon Weave / AZUREVEIL",
+      "url": "https://www.seqrite.com/blog/operation-dragon-weave-uncovering-a-china-linked-campaign-targeting-czech-republic-and-taiwan-using-azure-cloud-c2/"
+    },
+    {
+      "title": "JFrog: TeamPCP AI-API-looking C2 paths",
+      "url": "https://research.jfrog.com/post/shai-hulud-here-we-go-again/"
+    }
+  ],
+  "status": "active",
+  "first_seen": "2024",
+  "last_reviewed": "2026-08-11",
+  "release_history": [
+    {
+      "version": "v1.2",
+      "commit": "a4b80bf370f704d6843e69433bfb5c06274f57df",
+      "released": "2026-03-04"
+    }
+  ]
+}

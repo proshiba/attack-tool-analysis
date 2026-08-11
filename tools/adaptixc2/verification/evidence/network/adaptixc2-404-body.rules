@@ -1,0 +1,4 @@
+# Lab validation rule for the default AdaptixC2 HTTP listener 404 body.
+# It intentionally ignores response headers so the modified-header claim can
+# be tested against the same content condition.
+alert http any any -> any any (msg:"LAB AdaptixC2 default listener 404 body"; flow:established,to_client; http.response_body; content:"ERROR 404 - PAGE NOT FOUND"; nocase; sid:9900101; rev:1;)

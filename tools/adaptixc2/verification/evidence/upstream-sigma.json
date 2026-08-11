@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/SigmaHQ/sigma",
+  "branch": "master",
+  "commit": "8eaafff1f2845a696050e05e72ba1140ee190698",
+  "commit_time": "2026-08-05T10:52:16+02:00",
+  "checked_at": "2026-08-11",
+  "adaptix_rule_mentions": 0,
+  "adaptix_statement": "SigmaHQ master ships no rule mentioning Adaptix or AdaptixC2 at the checked commit.",
+  "generic_rule_results": [
+    {
+      "id": "28a452f3-786c-4fd8-b8f2-bddbe9d616d1",
+      "title": "Creation of WerFault.exe/Wer.dll in Unusual Folder",
+      "category": "file_event",
+      "captured_matches": 1,
+      "result": "fired",
+      "why": "Sysmon EID 11 recorded the copied WerFault.exe outside all of the rule's known Windows directory filters."
+    },
+    {
+      "id": "d5866ddf-ce8f-4aea-b28e-d96485a20d3d",
+      "title": "Files With System Process Name In Unsuspected Locations",
+      "category": "file_event",
+      "captured_matches": 1,
+      "result": "fired",
+      "why": "The same WerFault.exe file-create event matched the generic system-process-name selection and no filter."
+    },
+    {
+      "id": "e4a6b256-3e47-40fc-89d2-7a477edd6915",
+      "title": "System File Execution Location Anomaly",
+      "category": "process_creation",
+      "captured_matches": 1,
+      "result": "fired",
+      "why": "Sysmon EID 1 recorded WerFault.exe executing from the lab directory, outside all system-location filters."
+    },
+    {
+      "id": "4fc0deee-0057-4998-ab31-d24e46e0aba4",
+      "title": "Potential System DLL Sideloading From Non System Locations",
+      "category": "image_load",
+      "captured_matches": 0,
+      "result": "not observable on this run",
+      "why": "The rule includes faultrep.dll and would match its non-system load, but the baseline intentionally disables high-volume Sysmon EID 7. No image-load event existed to evaluate."
+    },
+    {
+      "id": "4b89abaa-99fe-4232-afdd-8f9aa4d20382",
+      "title": "Potentially Suspicious Malware Callback Communication",
+      "category": "network_connection",
+      "captured_matches": 0,
+      "result": "did not fire",
+      "why": "Ports 18081 and 18443 are absent from its port list, and the rule filters RFC1918 destinations in any event."
+    },
+    {
+      "id": "d26ce60c-2151-403c-9a42-49420d87b5e4",
+      "title": "HackTool Service Registration or Execution",
+      "category": "system service events",
+      "captured_matches": 0,
+      "result": "did not fire",
+      "why": "No service was installed or executed and none of its named service patterns appeared."
+    },
+    {
+      "id": "1d61f71d-59d2-479e-9562-4ff5f4ead16b",
+      "title": "Suspicious Service Installation",
+      "category": "system service events",
+      "captured_matches": 0,
+      "result": "did not fire",
+      "why": "Persistence was explicitly deferred; no EID 4697, 7045, or 7036 appeared in any captured run window."
+    }
+  ],
+  "hacktool_name_patterns": {
+    "adaptix_matches": 0,
+    "result": "No filename or service-name hacktool pattern in upstream identified either renamed agent."
+  },
+  "coverage_conclusion": "Generic upstream coverage detected the signed-host location anomaly but not AdaptixC2's server body, default BeaconHTTP profile, periodicity, or TLS server identity. The new NSM rules target those gaps; the local faultrep file rule supplies file-event coverage where image-load telemetry is unavailable."
+}
