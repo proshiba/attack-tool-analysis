@@ -1,0 +1,41 @@
+title: Hidden Executable Starts from the Linux Var Tmp Directory
+id: fdbab61f-9ce9-45d4-a8d6-6ac3b60431dd
+status: experimental
+description: >-
+  Detects execution of a hidden object directly beneath /var/tmp. The verified
+  renamed Sliver HTTPS implant matched this behavior. SigmaHQ master already
+  covers generic /tmp and /dev/shm execution, so those paths are deliberately
+  excluded rather than duplicated. The rule contains no generated payload
+  name, hash, lab path, C2 address, or port.
+references:
+  - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/linux/process_creation/proc_creation_lnx_susp_execution_tmp_folder.yml
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/linux/process_creation/proc_creation_lnx_susp_exec_from_dev_shm.yml
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.execution
+  - attack.t1204.002
+  - attack.command-and-control
+  - attack.t1105
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection_image:
+    Image|startswith: '/var/tmp/.'
+  condition: selection_image
+falsepositives:
+  - Installers, self-updaters, and build systems executing hidden temporary helpers
+  - Administrative scripts that intentionally launch transient hidden binaries
+  - Authorized penetration tests and malware-analysis labs
+fp_likelihood: high
+recommended_role: hunt
+precision_notes: >-
+  Linux process telemetry is not testable on the Windows EVTX corpus. The rule
+  matched the renamed HTTPS implant once in this verification and did not match
+  the /tmp HTTP or /dev/shm mTLS implants, which are already covered by two
+  SigmaHQ master rules. Hidden /var/tmp execution is not Sliver-specific;
+  correlate with a preceding file write, repeated callbacks, or the observed
+  JA3/JA3S pair.
+level: low

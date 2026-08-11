@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "capture_policy": {
+    "sensor": "tcpdump on VM 103 eth0",
+    "snaplen": 0,
+    "full_packet": true,
+    "raw_pcap_committed": false,
+    "raw_zeek_or_suricata_committed": false,
+    "analysis": {
+      "helper": "~/bin/nsm-analyze",
+      "zeek_version": "8.2.1",
+      "suricata_version": "7.0.10 RELEASE",
+      "et_open_alert_rules": 52234
+    }
+  },
+  "flows": [
+    {
+      "id": "linux-http-beacon",
+      "capture_window_utc": {
+        "start": "2026-08-10T19:30:34Z",
+        "end": "2026-08-10T19:32:21Z"
+      },
+      "pcap": {
+        "bytes": 33793907,
+        "sha256": "90f8338bba69e57311a82b774e4a9a655923f0b95ed6c37a646ab3429143c774",
+        "zeek_packets_read": 953,
+        "zeek_bytes_read": 33778635,
+        "capture_loss_note": "One early Zeek interval reported 1 missing packet of 163 (0.613497%); TCP checksum-offload artifacts account for Suricata invalid-checksum decoder alerts."
+      },
+      "delivery": {
+        "method": "GET",
+        "uri": "/cdn-update",
+        "user_agent": "curl/8.5.0",
+        "http_version": "1.0",
+        "response_bytes": 34033812,
+        "response_mime": "application/x-executable"
+      },
+      "c2": {
+        "transport": "HTTP",
+        "zeek_connections": 12,
+        "zeek_http_events": 22,
+        "ja3": null,
+        "ja3s": null,
+        "jarm": {
+          "status": "not_applicable",
+          "reason": "cleartext HTTP has no TLS listener fingerprint"
+        },
+        "profile": {
+          "http_version": "1.1",
+          "methods": ["POST", "GET"],
+          "post_statuses": [200, 202],
+          "get_statuses": [200, 204],
+          "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.2817.843 Safari/537.36",
+          "uri_components": ["script", "scripts", "bundles", "javascripts", "app", "app.min", "route", "array"],
+          "uri_extensions": ["js", "php", "none"],
+          "query_shape": "one lower-case key and a digit-heavy value containing zero to two lower-case letters",
+          "response_mime_types": ["text/plain", "image/png", "application/x-gzip"],
+          "sigma_profile_matches": 12
+        },
+        "periodicity": {
+          "configured_interval_seconds": 10,
+          "configured_jitter_seconds": 3,
+          "startup_connections_excluded": 3,
+          "steady_state_connections": 9,
+          "gap_count": 8,
+          "min_seconds": 10.060682,
+          "max_seconds": 12.906521,
+          "mean_seconds": 11.067974,
+          "median_seconds": 10.939236,
+          "population_stdev_seconds": 0.846348,
+          "analytic": "at least five profile matches by endpoint pair in 75 seconds with successive connection starts 9-14 seconds apart"
+        }
+      },
+      "suricata": {
+        "http_events": 23,
+        "profile_matches": 12,
+        "sliver_alerts": 0,
+        "other_alerts": ["ET INFO Python SimpleHTTP ServerBanner on the staging flow", "SURICATA TCPv4 invalid checksum from checksum offload"]
+      }
+    },
+    {
+      "id": "linux-https-beacon",
+      "capture_window_utc": {
+        "start": "2026-08-10T19:36:16Z",
+        "end": "2026-08-10T19:38:50Z"
+      },
+      "pcap": {
+        "bytes": 34267699,
+        "sha256": "27530bb69d4b01708994c3dfbcbcdbcc4934fcc065959f949af931cf206e64ac",
+        "zeek_packets_read": 1104,
+        "zeek_bytes_read": 34250011,
+        "capture_loss_note": "Zeek reported no missing packets; Suricata invalid-checksum decoder alerts were checksum-offload artifacts."
+      },
+      "c2": {
+        "transport": "HTTPS beacon",
+        "connections": 15,
+        "tls_version": "TLSv13",
+        "cipher": "TLS_AES_128_GCM_SHA256",
+        "curve": "X25519MLKEM768",
+        "sni": "none",
+        "passively_visible_certificate_chain": false,
+        "ja3": "2196848d251b217de8b2c037e356c11d",
+        "ja3s": "f4febc55ea12b31ae17cfb7e614afda8",
+        "jarm": "00000000000000000000000000000000000000000000000000000000000000",
+        "zeek_ascii_tsv_no_sni_no_visible_cert_matches": 15,
+        "http_request_profile": {
+          "status": "not_observed",
+          "reason": "encrypted on the wire; Zeek and Suricata exposed TLS metadata, not C2 URI or headers"
+        },
+        "periodicity": {
+          "configured_interval_seconds": 10,
+          "configured_jitter_seconds": 3,
+          "startup_connections_excluded": 3,
+          "steady_state_connections": 12,
+          "gap_count": 11,
+          "min_seconds": 10.517056,
+          "max_seconds": 12.954395,
+          "mean_seconds": 11.809799,
+          "median_seconds": 11.750658,
+          "population_stdev_seconds": 0.740845,
+          "analytic": "at least five JA3/JA3S matches by endpoint pair in 75 seconds with successive connection starts 9-14 seconds apart"
+        }
+      },
+      "suricata": {
+        "tls_events": 15,
+        "ja3_pair_matches": 15,
+        "sliver_alerts": 0,
+        "other_alerts": ["ET INFO Python SimpleHTTP ServerBanner on the staging flow", "SURICATA TCPv4 invalid checksum from checksum offload"]
+      }
+    },
+    {
+      "id": "linux-mtls-session",
+      "capture_window_utc": {
+        "start": "2026-08-10T19:42:39Z",
+        "end": "2026-08-10T19:43:47Z"
+      },
+      "pcap": {
+        "bytes": 31448106,
+        "sha256": "fa57312b7de6f46f63703fbab5d36c762b0b5fe418ff1960825c4d98d9d05d72",
+        "zeek_packets_read": 833,
+        "zeek_bytes_read": 31434754,
+        "capture_loss_note": "Two packets were missing in one Zeek interval; the C2 TLS flow remained parsed. Suricata invalid-checksum decoder alerts were checksum-offload artifacts."
+      },
+      "c2": {
+        "transport": "raw mTLS session",
+        "connections": 1,
+        "flow_duration_seconds": 60.057947,
+        "originator_payload_bytes": 4079,
+        "responder_payload_bytes": 3134,
+        "zeek_state": "S1",
+        "tls_version": "TLSv13",
+        "cipher": "TLS_AES_128_GCM_SHA256",
+        "curve": "X25519MLKEM768",
+        "sni": "none",
+        "passively_visible_certificate_chain": false,
+        "ja3": "2196848d251b217de8b2c037e356c11d",
+        "ja3s": "f4febc55ea12b31ae17cfb7e614afda8",
+        "jarm": "00000000000000000000000000000000000000000000000000000000000000",
+        "zeek_ascii_tsv_no_sni_no_visible_cert_matches": 1,
+        "http_request_profile": {
+          "status": "not_applicable",
+          "reason": "raw mTLS is not HTTP"
+        },
+        "periodicity": {
+          "status": "not_observed",
+          "reason": "session mode maintained one long-lived connection; it did not create periodic beacon flows"
+        }
+      },
+      "suricata": {
+        "tls_events": 1,
+        "ja3_pair_matches": 1,
+        "sliver_alerts": 0,
+        "other_alerts": ["ET INFO Python SimpleHTTP ServerBanner on the staging flow", "SURICATA TCPv4 invalid checksum from checksum offload"]
+      }
+    },
+    {
+      "id": "linux-dns-beacon",
+      "capture_window_utc": {
+        "start": "2026-08-10T20:43:56Z",
+        "end": "2026-08-10T20:46:42Z"
+      },
+      "pcap": {
+        "bytes": 27939667,
+        "sha256": "f62779183c726ee9210f2a73917ad2f92760334d5f48b0b1f6a44a6d2bd171d1",
+        "zeek_packets_read": 926,
+        "zeek_bytes_read": 27924827,
+        "offlab_ipv4_packets": 0,
+        "offlab_ipv6_packets": 0,
+        "capture_loss_note": "Full-packet tcpdump on VM 103; Zeek and Suricata parsed the DNS C2 and the HTTP staging transfer."
+      },
+      "delivery": {
+        "method": "GET",
+        "uri": "/dns-beacon",
+        "user_agent": "curl/8.5.0",
+        "destination_port": 18080,
+        "response_bytes": 32407700,
+        "response_mime": "application/x-executable"
+      },
+      "c2": {
+        "transport": "DNS beacon through the target's local systemd-resolved stub",
+        "parent_domain": "c2.sliver.lab.",
+        "resolver": "192.168.1.50:53",
+        "queries": 73,
+        "query_types": {
+          "A": 39,
+          "TXT": 34
+        },
+        "rcode": "NOERROR for all 73 C2 queries",
+        "qname_length": {
+          "min": 30,
+          "max": 251,
+          "mean": 93.09589,
+          "median": 42
+        },
+        "encoded_alphabet": "0123456789abcdefghjkmnpqrtuvwxyz",
+        "long_encoded_profile": {
+          "shape": "two 63-character labels followed by an 18-63-character label, using the restricted lower-case alphanumeric alphabet",
+          "zeek_matches": 23,
+          "suricata_matches": 23,
+          "shannon_entropy_bits_per_character": {
+            "min": 4.769419,
+            "max": 4.918446,
+            "mean": 4.85888,
+            "median": 4.864212
+          }
+        },
+        "periodicity": {
+          "configured_interval_seconds": 10,
+          "configured_jitter_seconds": 3,
+          "bursts": 15,
+          "queries_per_burst_min": 4,
+          "queries_per_burst_max": 13,
+          "burst_start_gap_count": 14,
+          "min_seconds": 10.212432,
+          "max_seconds": 13.520596,
+          "mean_seconds": 11.435653,
+          "median_seconds": 11.301192,
+          "population_stdev_seconds": 0.881865,
+          "analytic": "at least five long encoded-profile queries by source and terminal parent domain in 75 seconds with successive burst starts 9-14 seconds apart"
+        },
+        "ja3": null,
+        "ja3s": null,
+        "jarm": {
+          "status": "not_applicable",
+          "reason": "the selected DNS C2 listener used UDP DNS rather than TLS or a TCP TLS service"
+        },
+        "http_request_profile": {
+          "status": "not_applicable",
+          "reason": "the C2 transport was DNS; HTTP appeared only in the separate staging flow"
+        }
+      },
+      "attribution": {
+        "implant_auditd_connects_to_local_stub": 72,
+        "local_stub": "127.0.0.53:53",
+        "source": "collect-run auditd:lab_connect SYSCALL and SOCKADDR pairs",
+        "resolver_leg": "pcap showed the encoded queries only from 192.168.1.51 to Kali 192.168.1.50:53",
+        "raw_sysmon_eid3_used_as_sole_owner": false
+      },
+      "suricata": {
+        "dns_c2_query_events": 73,
+        "encoded_profile_matches": 23,
+        "sliver_alerts": 0,
+        "other_alerts": ["ET INFO Python SimpleHTTP ServerBanner on the staging flow", "SURICATA TCPv4 invalid checksum from checksum offload"]
+      }
+    }
+  ],
+  "transport_comparison": {
+    "result": "HTTPS and mTLS were not distinguishable by JA3, JA3S, or JARM in this Sliver v1.7.3 run; HTTP and DNS had no TLS fingerprints and were distinguished by their application profiles and regularity",
+    "shared_ja3": "2196848d251b217de8b2c037e356c11d",
+    "shared_ja3s": "f4febc55ea12b31ae17cfb7e614afda8",
+    "shared_jarm": "00000000000000000000000000000000000000000000000000000000000000",
+    "distinguishing_flow_shape": "HTTP and HTTPS beacons opened repeated request/connection flows on a 10+0-3 second cadence; DNS produced encoded A/TXT query bursts on the same schedule; mTLS session mode held one connection for the bounded session.",
+    "jarm_tool": {
+      "source": "https://github.com/salesforce/jarm",
+      "commit": "2c0cf5ce8418c7a1d03edb219acea3c18e068289",
+      "jarm_py_sha256": "8b44d084d8fa49307d401a9be5ec4cd2e6fde6705ee913684d08c301f14524a1",
+      "scope": "active probes from VM 106 targeted only the two listeners on Kali VM 100"
+    }
+  }
+}

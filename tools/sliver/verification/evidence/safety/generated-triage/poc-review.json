@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 2 - third-party PoC code is reviewed before it is executed",
+  "target": "/tmp/sliver-generated-static",
+  "source_url": "https://github.com/BishopFox/sliver/releases/tag/v1.7.3",
+  "file_count": 3,
+  "severity_counts": {
+    "medium": 3,
+    "high": 3
+  },
+  "findings": [
+    {
+      "id": "obfuscation",
+      "severity": "medium",
+      "line": 41583,
+      "why": "large encoded or escaped blob - review its decoded content before running",
+      "evidence": "\u0000\u0000\u0000��H�\bH�¸!\u0000\u0000\u0000��H�\b�\\$\\���H����H�\bH�¸������H�\b�\\$l�ë��H����H�\b��$�\u0000\u0000\u0000�Ö��H����H�\bH�¸B\u0000\u0000\u0000��H�\b�\\$`��H����H�\b��$�\u0000\u0000\u0000��(��H����H�\b�\\$d��H����H�",
+      "file": "http-beacon"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "4.32.5.4, 5.4.62.5, 5.4.92.5, 72.5.4.82",
+      "file": "http-beacon"
+    },
+    {
+      "id": "obfuscation",
+      "severity": "medium",
+      "line": 43570,
+      "why": "large encoded or escaped blob - review its decoded content before running",
+      "evidence": "�c�\u00011�H��\b\u0003\u0000\u0000]�H�",
+      "file": "https-beacon"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "4.32.5.4, 5.4.62.5, 5.4.92.5, 72.5.4.82",
+      "file": "https-beacon"
+    },
+    {
+      "id": "obfuscation",
+      "severity": "medium",
+      "line": 39216,
+      "why": "large encoded or escaped blob - review its decoded content before running",
+      "evidence": "\u0001�L���H��$�\u0000\u0000\u0000\u000f��$�\u0000\u0000\u0000D��$�\u0000\u0000\u0000D\u000f��$�\u0000\u0000\u0000D\u000f��$�\u0000\u0000\u0000L�l$pI��I��H�L$hH��$�\u0000\u0000\u0000D�L$KF�",
+      "file": "mtls-session"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "2.ML, 4.32.5.4, 5.4.62.5, 5.4.92.5, 72.5.4.82, C.Cf",
+      "file": "mtls-session"
+    }
+  ],
+  "files": [
+    {
+      "file": "http-beacon",
+      "bytes": 34033812,
+      "sha256": "a90a57fffa75d6135cbb503e9dbedc1f906405df4b11d93b9b5e14bb5e1d7147",
+      "findings": [
+        {
+          "id": "obfuscation",
+          "severity": "medium",
+          "line": 41583,
+          "why": "large encoded or escaped blob - review its decoded content before running",
+          "evidence": "\u0000\u0000\u0000��H�\bH�¸!\u0000\u0000\u0000��H�\b�\\$\\���H����H�\bH�¸������H�\b�\\$l�ë��H����H�\b��$�\u0000\u0000\u0000�Ö��H����H�\bH�¸B\u0000\u0000\u0000��H�\b�\\$`��H����H�\b��$�\u0000\u0000\u0000��(��H����H�\b�\\$d��H����H�"
+        },
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "4.32.5.4, 5.4.62.5, 5.4.92.5, 72.5.4.82"
+        }
+      ]
+    },
+    {
+      "file": "https-beacon",
+      "bytes": 34087060,
+      "sha256": "ecc0d43260637bdd58fa03ee045b3c021a63f538962936d5adff533c105e6f06",
+      "findings": [
+        {
+          "id": "obfuscation",
+          "severity": "medium",
+          "line": 43570,
+          "why": "large encoded or escaped blob - review its decoded content before running",
+          "evidence": "�c�\u00011�H��\b\u0003\u0000\u0000]�H�"
+        },
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "4.32.5.4, 5.4.62.5, 5.4.92.5, 72.5.4.82"
+        }
+      ]
+    },
+    {
+      "file": "mtls-session",
+      "bytes": 31617172,
+      "sha256": "9486029ad1c276cbea9c827878c252c182b1a948c77b965b0e097900c70c6ade",
+      "findings": [
+        {
+          "id": "obfuscation",
+          "severity": "medium",
+          "line": 39216,
+          "why": "large encoded or escaped blob - review its decoded content before running",
+          "evidence": "\u0001�L���H��$�\u0000\u0000\u0000\u000f��$�\u0000\u0000\u0000D��$�\u0000\u0000\u0000D\u000f��$�\u0000\u0000\u0000D\u000f��$�\u0000\u0000\u0000L�l$pI��I��H�L$hH��$�\u0000\u0000\u0000D�L$KF�"
+        },
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "2.ML, 4.32.5.4, 5.4.62.5, 5.4.92.5, 72.5.4.82, C.Cf"
+        }
+      ]
+    }
+  ],
+  "mechanical_verdict": "NEEDS-HUMAN-REVIEW",
+  "disclaimer": "A mechanical scan never clears code. Read the source. Treat compiled or obfuscated artefacts as unknown-malicious and analyse them on REMnux (VM 105). Execution happens only on the isolated target, snapshot before and roll back after."
+}

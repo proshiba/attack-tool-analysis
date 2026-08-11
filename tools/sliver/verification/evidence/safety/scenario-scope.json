@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 1 at design time - no scenario targets anything outside the lab",
+  "target": "tools/sliver/verification",
+  "files_checked": [
+    "/home/operator/lab-workspace/attack-tool-analysis/tools/sliver/verification/scenarios.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/tools/sliver/verification/README.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/tools/sliver/verification/verification.json"
+  ],
+  "scope_declaration_present": true,
+  "severity_counts": {
+    "info": 4
+  },
+  "findings": [
+    {
+      "severity": "info",
+      "check": "citation-host",
+      "file": "verification.json",
+      "line": 35,
+      "detail": "cited host github.com",
+      "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
+      "evidence": "\"ja3_source\": \"https://github.com/salesforce/ja3\","
+    },
+    {
+      "severity": "info",
+      "check": "citation-host",
+      "file": "verification.json",
+      "line": 75,
+      "detail": "cited host github.com",
+      "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
+      "evidence": "\"source\": \"https://github.com/BishopFox/sliver/releases/tag/v1.7.3\","
+    },
+    {
+      "severity": "info",
+      "check": "citation-host",
+      "file": "verification.json",
+      "line": 564,
+      "detail": "cited host github.com",
+      "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
+      "evidence": "\"source_repository\": \"https://github.com/BishopFox/sliver\","
+    },
+    {
+      "severity": "info",
+      "check": "citation-host",
+      "file": "verification.json",
+      "line": 565,
+      "detail": "cited host github.com",
+      "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
+      "evidence": "\"release_url\": \"https://github.com/BishopFox/sliver/releases/tag/v1.7.3\","
+    }
+  ],
+  "verdict": "PASS"
+}

@@ -1,0 +1,47 @@
+title: Sliver DNS C2 Encoded Multi-Label Query Profile in Suricata
+id: 8e9589ee-b31e-484d-9d80-662b6f00aabf
+status: experimental
+description: >-
+  Detects the restricted lower-case alphanumeric alphabet and multiple
+  maximum-length labels observed in Sliver v1.7.3 DNS C2 query events. The
+  rule does not key on a parent domain, resolver address, port, or implant
+  name. For periodic beaconing, aggregate by source and terminal parent
+  domain: this run produced at least five matching queries in 75 seconds with
+  successive burst starts 10.212-13.521 seconds apart. Production deployments
+  must parameterize timing for their expected beacon interval.
+references:
+  - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
+  - https://docs.suricata.io/en/latest/output/eve/eve-json-format.html
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.command-and-control
+  - attack.t1071.004
+  - attack.t1572
+logsource:
+  category: dns
+  product: suricata
+detection:
+  selection_type:
+    dns.type: query
+    dns.rrtype:
+      - A
+      - TXT
+  selection_encoded_labels:
+    dns.rrname|re: '^(?:[0-9a-hjkmnp-rt-z]{63}\.){2}[0-9a-hjkmnp-rt-z]{18,63}\.'
+  condition: selection_type and selection_encoded_labels
+falsepositives:
+  - Legitimate DNS tunneling, DNS-based data transfer, or security test tools using a similar base32-like encoding
+  - Authorized Sliver red-team infrastructure and malware-analysis labs
+fp_likelihood: medium
+recommended_role: alert
+precision_notes: >-
+  Suricata DNS EVE events are not testable on the EVTX corpus. The rule
+  matched 23 of 73 Sliver C2 query events in this trace and none of the 48
+  Ubuntu NTP lookups or the HTTP staging flow. The 23 matches included one
+  long encoded query in every steady beacon burst; 15 total bursts occurred
+  over 160.099 seconds after the first burst. Single-event Sigma cannot assert
+  regular spacing, so the timing condition must be implemented as backend
+  correlation. Other DNS tunnels can share this structure, and changing
+  Sliver's DNS encoder can invalidate the expression.
+level: medium

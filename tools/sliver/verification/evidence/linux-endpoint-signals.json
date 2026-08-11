@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "target": {
+    "vmid": 103,
+    "os": "Ubuntu 24.04.4 LTS",
+    "kernel": "6.8.0-137-generic",
+    "sensors": ["Sysmon for Linux 1.5.2", "auditd 3.1.2", "tcpdump"],
+    "collector": "/opt/lab/collect-run.sh"
+  },
+  "attribution": {
+    "network_owner_source": "Sysmon EID 3 correlated with auditd:lab_connect by PID, destination, and time",
+    "raw_sysmon_eid3_used_as_sole_owner": false,
+    "reason": "Sysmon for Linux 1.5.2 can retain a stale pre-exec Image across a rapid exec"
+  },
+  "flows": [
+    {
+      "id": "linux-http-beacon",
+      "collection_window_utc": {"start": "2026-08-10T19:30:34Z", "end": "2026-08-10T19:32:21Z"},
+      "counts": {"process": 21, "network": 12, "file": 24, "parent_child": 21, "registry": 0},
+      "dimensions": {
+        "network_and_dns": {"status": "observed", "details": "auditd-correlated ownership attributed 11 TCP/8080 callbacks to the renamed implant and one TCP/18080 delivery to curl; no implant DNS was observed"},
+        "files": {"status": "observed", "details": "auditd and Sysmon recorded curl creating the hidden staged object, chmod changing it, and creation of the fixed lab marker"},
+        "registry": {"status": "not_applicable", "details": "Linux has no Windows Registry analogue"},
+        "process_identity_and_command": {"status": "observed", "details": "Sysmon EID 1 plus auditd identity recorded curl, chmod, nohup, and execution of the renamed ELF as root"},
+        "parent_child": {"status": "observed delivery ancestry; none observed from implant tasking", "details": "the shell parented curl, chmod, nohup, and the renamed implant; getuid, info, ls, and download were handled in-process and produced no implant child process"}
+      },
+      "rule_matches": {"linux_curl_hidden_file": 1, "upstream_tmp_execution": 1, "linux_hidden_var_tmp_execution": 0}
+    },
+    {
+      "id": "linux-https-beacon",
+      "collection_window_utc": {"start": "2026-08-10T19:36:16Z", "end": "2026-08-10T19:38:50Z"},
+      "counts": {"process": 20, "network": 16, "file": 21, "parent_child": 20, "registry": 0},
+      "dimensions": {
+        "network_and_dns": {"status": "observed", "details": "auditd-correlated ownership attributed 15 TCP/8443 callbacks to the renamed implant and one TCP/18080 delivery to curl; no implant DNS was observed"},
+        "files": {"status": "observed", "details": "auditd and Sysmon recorded curl creating the hidden staged object and chmod changing it"},
+        "registry": {"status": "not_applicable", "details": "Linux has no Windows Registry analogue"},
+        "process_identity_and_command": {"status": "observed", "details": "Sysmon EID 1 plus auditd identity recorded curl, chmod, nohup, and execution of the renamed ELF as root"},
+        "parent_child": {"status": "observed delivery ancestry; none observed from implant tasking", "details": "the shell parented curl, chmod, nohup, and the renamed implant; getuid, info, and ls were handled in-process and produced no implant child process"}
+      },
+      "rule_matches": {"linux_curl_hidden_file": 1, "upstream_tmp_execution": 0, "linux_hidden_var_tmp_execution": 1}
+    },
+    {
+      "id": "linux-mtls-session",
+      "collection_window_utc": {"start": "2026-08-10T19:42:39Z", "end": "2026-08-10T19:43:47Z"},
+      "counts": {"process": 20, "network": 2, "file": 21, "parent_child": 20, "registry": 0},
+      "dimensions": {
+        "network_and_dns": {"status": "observed", "details": "auditd-correlated ownership attributed one TCP/31337 connection to the renamed implant and one TCP/18080 delivery to curl; no implant DNS was observed"},
+        "files": {"status": "observed", "details": "auditd and Sysmon recorded curl creating the hidden staged object and chmod changing it; the existing fixed marker was downloaded over C2 without changing it"},
+        "registry": {"status": "not_applicable", "details": "Linux has no Windows Registry analogue"},
+        "process_identity_and_command": {"status": "observed", "details": "Sysmon EID 1 plus auditd identity recorded curl, chmod, nohup, and execution of the renamed ELF as root"},
+        "parent_child": {"status": "observed delivery ancestry; none observed from implant tasking", "details": "the shell parented curl, chmod, nohup, and the renamed implant; getuid, info, ls, and download were handled in-process and produced no implant child process"}
+      },
+      "rule_matches": {"linux_curl_hidden_file": 1, "upstream_dev_shm_execution": 1, "linux_hidden_var_tmp_execution": 0}
+    },
+    {
+      "id": "linux-dns-beacon",
+      "collection_window_utc": {"start": "2026-08-10T20:43:56Z", "end": "2026-08-10T20:46:42Z"},
+      "counts": {"process": 23, "network": 1, "file": 28, "parent_child": 23, "registry": 0},
+      "dimensions": {
+        "network_and_dns": {"status": "observed", "details": "auditd attributed 72 successful connects from the renamed implant to the local 127.0.0.53:53 resolver stub; the exclusive link resolver and pcap showed 73 encoded C2 queries only to Kali 192.168.1.50:53; the one collector network event attributed TCP/18080 delivery to curl"},
+        "files": {"status": "observed", "details": "auditd and Sysmon recorded curl creating the hidden staged object and chmod changing it; /etc/hostname was read and returned by the in-process download task without a target-side file write"},
+        "registry": {"status": "not_applicable", "details": "Linux has no Windows Registry analogue"},
+        "process_identity_and_command": {"status": "observed", "details": "Sysmon EID 1 plus auditd identity recorded curl, sha256sum, chmod, nohup, and execution of the renamed ELF as root"},
+        "parent_child": {"status": "observed delivery ancestry; none observed from implant tasking", "details": "the shell parented curl, chmod, nohup, and the renamed implant; getuid, info, ls, and download were handled in-process and produced no implant child process"}
+      },
+      "attribution_caveat": "Sysmon EID 3 did not provide implant ownership for the UDP stub traffic. The retained attribution uses collect-run's auditd lab_connect SYSCALL/SOCKADDR records for the implant-to-stub leg and the exclusive resolver configuration plus pcap for the stub-to-Kali leg.",
+      "rule_matches": {"linux_curl_hidden_file": 1, "linux_hidden_var_tmp_execution": 1, "zeek_dns_encoded_profile": 23, "suricata_dns_encoded_profile": 23, "upstream_proc_creation_lnx_curl_usage": 1}
+    }
+  ],
+  "marker": {
+    "description": "fixed non-host-data lab marker",
+    "bytes": 24,
+    "sha256": "988b00de131ef40ad08dc58ddc6971e861fafb3a47e5bd23b46a45f6e05bf538"
+  },
+  "sanitization": {
+    "raw_journal_committed": false,
+    "raw_audit_log_committed": false,
+    "raw_pcap_committed": false,
+    "host_file_contents_committed": false,
+    "notes": "Only detection-relevant fields, counts, attribution source, timestamps, and cryptographic hashes are retained."
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 2 - third-party PoC code is reviewed before it is executed",
+  "target": "/tmp/sliver-dns-static/dns-beacon",
+  "source_url": "https://github.com/BishopFox/sliver/releases/tag/v1.7.3",
+  "file_count": 1,
+  "severity_counts": {
+    "medium": 1,
+    "high": 1
+  },
+  "findings": [
+    {
+      "id": "obfuscation",
+      "severity": "medium",
+      "line": 40215,
+      "why": "large encoded or escaped blob - review its decoded content before running",
+      "evidence": "compiled ELF bytes",
+      "file": "dns-beacon"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "4.32.5.4, 5.4.62.5, 5.4.92.5, 72.5.4.82",
+      "file": "dns-beacon"
+    }
+  ],
+  "files": [
+    {
+      "file": "dns-beacon",
+      "bytes": 32407700,
+      "sha256": "2d8c61ff160c7f7e371c85a51958d5dc55ce5ee179df8d3588d64354df20a523",
+      "findings": [
+        {
+          "id": "obfuscation",
+          "severity": "medium",
+          "line": 40215,
+          "why": "large encoded or escaped blob - review its decoded content before running",
+          "evidence": "compiled ELF bytes"
+        },
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "4.32.5.4, 5.4.62.5, 5.4.92.5, 72.5.4.82"
+        }
+      ]
+    }
+  ],
+  "mechanical_verdict": "NEEDS-HUMAN-REVIEW",
+  "disclaimer": "A mechanical scan never clears code. Read the source. Treat compiled or obfuscated artefacts as unknown-malicious and analyse them on REMnux (VM 105). Execution happens only on the isolated target, snapshot before and roll back after."
+}

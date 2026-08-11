@@ -1,0 +1,52 @@
+title: Sliver Default Linux HTTP Request Profile in Zeek Logs
+id: e4c71a67-cfae-49db-8b7d-ee011670d34f
+status: experimental
+description: >-
+  Detects the combined User-Agent, POST response, query, and randomized
+  script-like URI vocabulary observed from a Sliver v1.7.3 Linux HTTP beacon.
+  It does not key on a C2 address, port, hostname, or implant filename. A
+  periodic beacon analytic calibrated to this run can require at least five
+  matching connections for an endpoint pair in 75 seconds with successive
+  starts 9-14 seconds apart; production deployments must parameterize these
+  values to their expected beacon interval.
+references:
+  - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
+  - https://docs.zeek.org/en/current/logs/http.html
+author: Codex lab orchestrator
+date: '2026-08-10'
+tags:
+  - attack.command-and-control
+  - attack.t1071.001
+logsource:
+  category: http
+  product: zeek
+detection:
+  selection_protocol:
+    method: POST
+    version: '1.1'
+    status_code:
+      - 200
+      - 202
+    user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.2817.843 Safari/537.36'
+  selection_query:
+    uri|contains: '?'
+  selection_vocabulary:
+    uri|contains:
+      - '/script/'
+      - '/scripts/'
+      - '/bundles/'
+      - '/javascripts/'
+  condition: selection_protocol and selection_query and selection_vocabulary
+falsepositives:
+  - A web client deliberately configured with the same obsolete Chrome User-Agent and URI vocabulary
+  - Authorized Sliver red-team infrastructure and malware-analysis labs
+fp_likelihood: medium
+recommended_role: alert
+precision_notes: >-
+  Zeek HTTP logs are not testable on the EVTX corpus. The rule matched all 12
+  Sliver POST events in this trace, including startup, and no staging request.
+  The User-Agent and web profile are operator-configurable. Aggregating the
+  rule by endpoint pair exposes the measured 10.061-12.907 second beacon gaps.
+  That window is a lab-fast configuration, not a general Sliver interval;
+  single-event Sigma cannot itself assert periodicity.
+level: medium
