@@ -74,4 +74,11 @@ values, session keys, certificates, and unrelated host data are not committed.
 Sanitized evidence, hashes, exact HTTP responses, source/agent reviews, safety
 results, and rule measurements are retained here.
 
-Audit gate: pending.
+Audit gate: **PASS on iteration 2** at measured commit `f4020a0`, with zero
+blocking rule defects. The harness measured four rules: one Windows process
+rule passed with 3 clean-corpus matches (0.012661% of 23,695 events), the
+Windows file rule had 0 matches in 542,441 events but no positive corpus
+sample, and both Suricata rules were correctly classified as not testable on
+EVTX. The independent scenario review rated coverage `expand` at 5/8 (62.5%),
+above the 60% merge floor; Linux, service-persistence, and DNS/DoH coverage
+remain non-blocking future work.
