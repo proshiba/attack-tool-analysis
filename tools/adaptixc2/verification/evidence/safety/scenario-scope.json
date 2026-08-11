@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 1 at design time - no scenario targets anything outside the lab",
+  "target": "tools/adaptixc2/verification",
+  "files_checked": [
+    "/home/operator/lab-workspace/attack-tool-analysis/tools/adaptixc2/verification/scenarios.md"
+  ],
+  "scope_declaration_present": true,
+  "severity_counts": {
+    "high": 6
+  },
+  "findings": [
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "scenarios.md",
+      "line": 15,
+      "detail": "external host censys.com",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "[Censys, “AdaptixC2: fingerprinting an open-source C2 framework at scale”](https://censys.com/blog/adaptixc2-open-source-c2-framework/) reports that the default response headers and default 404 body i"
+    },
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "scenarios.md",
+      "line": 17,
+      "detail": "external host www.group-ib.com",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "[Group-IB, “JadeProx: Tracing a China-nexus Operation Through an OPSEC Mistake”](https://www.group-ib.com/blog/jadeprox-china-nexus-triback-loader/) documents signed-host DLL sideloading, rotating Win"
+    },
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "scenarios.md",
+      "line": 17,
+      "detail": "external host www.seqrite.com",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "[Group-IB, “JadeProx: Tracing a China-nexus Operation Through an OPSEC Mistake”](https://www.group-ib.com/blog/jadeprox-china-nexus-triback-loader/) documents signed-host DLL sideloading, rotating Win"
+    },
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "scenarios.md",
+      "line": 19,
+      "detail": "external host labs.cloudsecurityalliance.org",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "[Cloud Security Alliance, “TeamPCP: Cascading Supply Chain Attack on AI/ML Tooling”](https://labs.cloudsecurityalliance.org/research/csa-research-note-teampcp-supply-chain-ai-tooling-20260330-c/) is r"
+    },
+    {
+      "severity": "high",
+      "check": "risky-wording",
+      "file": "scenarios.md",
+      "line": 15,
+      "detail": "Censys",
+      "why": "implies scanning hosts on the public internet",
+      "evidence": "[Censys, “AdaptixC2: fingerprinting an open-source C2 framework at scale”](https://censys.com/blog/adaptixc2-open-source-c2-framework/) reports that the default response headers and default 404 body i"
+    },
+    {
+      "severity": "high",
+      "check": "risky-wording",
+      "file": "scenarios.md",
+      "line": 15,
+      "detail": "censys",
+      "why": "implies scanning hosts on the public internet",
+      "evidence": "[Censys, “AdaptixC2: fingerprinting an open-source C2 framework at scale”](https://censys.com/blog/adaptixc2-open-source-c2-framework/) reports that the default response headers and default 404 body i"
+    }
+  ],
+  "verdict": "REVIEW"
+}
