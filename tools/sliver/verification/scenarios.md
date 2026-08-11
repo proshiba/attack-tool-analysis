@@ -16,8 +16,8 @@
   its only DNS resolver is Kali `192.168.1.50`. The lab-only name
   `c2.sliver.lab` resolves exclusively to `192.168.1.50` with no forwarding or
   fallback resolver.
-- **VM 110 — `remnux-malware` — static analysis only.** Reviewed generated
-  binaries may be transferred to it out of band for hashing, PE metadata,
+- **VM 110 — `remnux-malware` — static analysis only.** Generated binaries
+  may be transferred to it from Kali solely for hashing, PE metadata,
   strings, imports, and disassembly. No sample or Sliver component is executed
   there. VM 110 is never a payload, beacon, pivot, DNS, or C2 destination.
 - **VM 109 — `malware-analyst` — not used.** Nothing executes there and it is
