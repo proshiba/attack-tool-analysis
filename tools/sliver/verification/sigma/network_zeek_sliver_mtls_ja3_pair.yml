@@ -31,11 +31,13 @@ falsepositives:
 fp_likelihood: high
 recommended_role: hunt
 precision_notes: >-
-  This Zeek rule is not testable on the EVTX corpus. It matched all 15 Linux
-  HTTPS flows and the one Linux mTLS session, as well as the prior Windows mTLS
+  This Zeek rule is not testable on the EVTX corpus. The JA3/JA3S pair is a
+  Go-runtime fingerprint rather than a Sliver artefact. Treat this rule as a
+  correlation lead, not a standalone alert. It matched all 15 Linux HTTPS
+  flows and the one Linux mTLS session, as well as the prior Windows mTLS
   beacon. Ordinary Go clients and TLS 1.3 servers can match continuously. The
   five-in-75-seconds and 9-14-second cadence is calibrated only to this lab's
   configured 10+0-3 second beacon and must be parameterized for a production
   interval. Correlate a long-lived match with unusual endpoint execution for
   session mode. Go version changes can also invalidate the hash.
-level: medium
+level: low
