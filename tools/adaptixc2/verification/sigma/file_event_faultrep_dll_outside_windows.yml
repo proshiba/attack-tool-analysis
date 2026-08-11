@@ -6,8 +6,8 @@ description: >-
   verified inert sideload used this technique-specific name beside a valid
   Microsoft-signed copy of WerFault.exe.
 references:
-  - https://www.group-ib.com/blog/jadeprox-china-nexus-triback-loader/
-  - https://www.seqrite.com/blog/operation-dragon-weave-uncovering-a-china-linked-campaign-targeting-czech-republic-and-taiwan-using-azure-cloud-c2/
+  - https://hijacklibs.net/
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/image_load/image_load_side_load_from_non_system_location.yml
 author: Codex lab orchestrator
 date: '2026-08-11'
 tags:
@@ -27,7 +27,12 @@ detection:
       - 'C:\Windows\SysWOW64\'
       - 'C:\Windows\WinSxS\'
       - 'C:\Windows\SoftwareDistribution\'
-  condition: selection_name and not filter_main_windows
+      - 'C:\Windows\UUS\'
+      - 'C:\Windows\servicing\'
+      - 'C:\$WINDOWS.~BT\'
+  filter_main_windows_update:
+    Image|endswith: '\wuaucltcore.exe'
+  condition: selection_name and not 1 of filter_main_*
 falsepositives:
   - Legacy crash-reporting software packaging faultrep.dll outside Windows directories
   - Software installers or forensic collections that copy the system DLL by name
@@ -40,4 +45,9 @@ precision_notes: >-
   directory, an unsigned DLL signature, and file creation by a downloader or
   script host. The technique-specific DLL name is intentionally used here; no
   AdaptixC2 agent filename, hash, lab path, or callback address is present.
+  Where Sysmon EID 7 is enabled, upstream rule 4fc0deee already detects a
+  non-system faultrep.dll image load and is the stronger control; this file-event
+  rule is the fallback for EID-7-disabled environments. Faultrep.dll was the
+  lab-chosen signed-host pair, not a DLL name attributed to JadeProx or Dragon
+  Weave.
 level: medium

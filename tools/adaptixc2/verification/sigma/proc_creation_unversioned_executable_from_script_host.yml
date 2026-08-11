@@ -1,4 +1,4 @@
-title: Unversioned Executable Launched by a Script Host Before Web Beaconing
+title: Unversioned Executable Launched by a Script Host
 id: 2ae231a5-b5ec-444f-ae6e-8a1ac281bf59
 status: experimental
 description: >-
@@ -35,12 +35,15 @@ falsepositives:
   - Internally built Go, Rust, or C/C++ utilities without version resources
   - Software deployment, package-management, and administrator scripts launching unversioned tools
   - Authorized adversary-emulation and malware-analysis labs
-fp_likelihood: medium
+fp_likelihood: high
 recommended_role: hunt
 precision_notes: >-
-  The clean-corpus floor will be recorded by the audit gate. This generic
-  pattern previously matched ordinary software-management commands in the
-  repository corpus, so it remains a hunt. Correlate with a user-writable or
-  unusual path, a preceding executable write, and the HTTP profile or repeated
-  TLS flow. The rule contains no generated agent filename or callback value.
-level: medium
+  The clean corpus produced 3 matches, 0.012661% of 23,695 process starts:
+  thor-util.exe, winget.exe, and pip.exe launched from command or PowerShell
+  hosts. Production developer and build systems add many similar internal,
+  Go, Rust, Python, and package-management utilities. Company, Product, and
+  OriginalFileName are Sysmon EID 1 fields and are not present in Security
+  EID 4688. Use only as a hunt and correlate with an unusual path, a preceding
+  executable write, and the HTTP profile or repeated TLS flow. The rule contains
+  no generated agent filename or callback value.
+level: low

@@ -3,11 +3,14 @@
   "rule": "SAFETY RULE 1 at design time - no scenario targets anything outside the lab",
   "target": "tools/adaptixc2/verification",
   "files_checked": [
-    "/home/operator/lab-workspace/attack-tool-analysis/tools/adaptixc2/verification/scenarios.md"
+    "/home/operator/lab-workspace/attack-tool-analysis/tools/adaptixc2/verification/scenarios.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/tools/adaptixc2/verification/README.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/tools/adaptixc2/verification/verification.json"
   ],
   "scope_declaration_present": true,
   "severity_counts": {
-    "high": 6
+    "high": 7,
+    "info": 2
   },
   "findings": [
     {
@@ -42,9 +45,9 @@
       "check": "external-host",
       "file": "scenarios.md",
       "line": 19,
-      "detail": "external host labs.cloudsecurityalliance.org",
+      "detail": "external host research.jfrog.com",
       "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
-      "evidence": "[Cloud Security Alliance, “TeamPCP: Cascading Supply Chain Attack on AI/ML Tooling”](https://labs.cloudsecurityalliance.org/research/csa-research-note-teampcp-supply-chain-ai-tooling-20260330-c/) is r"
+      "evidence": "[JFrog Security Research, “Shai-Hulud: Here We Go Again — Worm by TeamPCP Hits NPM and PyPI”](https://research.jfrog.com/post/shai-hulud-here-we-go-again/) documents TeamPCP use of AI-API-looking path"
     },
     {
       "severity": "high",
@@ -63,6 +66,33 @@
       "detail": "censys",
       "why": "implies scanning hosts on the public internet",
       "evidence": "[Censys, “AdaptixC2: fingerprinting an open-source C2 framework at scale”](https://censys.com/blog/adaptixc2-open-source-c2-framework/) reports that the default response headers and default 404 body i"
+    },
+    {
+      "severity": "high",
+      "check": "risky-wording",
+      "file": "README.md",
+      "line": 32,
+      "detail": "Censys",
+      "why": "implies scanning hosts on the public internet",
+      "evidence": "Suricata response-body rule fired once on each pcap, confirming the Censys"
+    },
+    {
+      "severity": "info",
+      "check": "citation-host",
+      "file": "verification.json",
+      "line": 16,
+      "detail": "cited host github.com",
+      "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
+      "evidence": "\"source\": \"https://github.com/Adaptix-Framework/AdaptixC2\","
+    },
+    {
+      "severity": "info",
+      "check": "citation-host",
+      "file": "verification.json",
+      "line": 18,
+      "detail": "cited host github.com",
+      "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
+      "evidence": "\"source_archive\": \"https://github.com/Adaptix-Framework/AdaptixC2/archive/refs/tags/v1.2.tar.gz\","
     }
   ],
   "verdict": "REVIEW"
