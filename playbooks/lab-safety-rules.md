@@ -46,7 +46,33 @@ Consequences that follow from the rule:
 
 Both reports are attached to the verification (`evidence/safety/`), and the second one must read
 `PASS`. Sysmon EventID 3 is what attributes a destination to the *process*, which is how tool
-traffic is separated from the target OS's own telemetry — always supply it.
+traffic is separated from the target OS's own telemetry — always supply it, in the format
+`collect-run.ps1` produces.
+
+**`check-lab-scope.py` has three verdicts, and the middle one exists on purpose:**
+
+| Verdict | Exit | Meaning |
+|---|---|---|
+| `PASS` | 0 | every off-lab destination is accounted for: attributed to an OS background process, or not target-originated at all |
+| `INCONCLUSIVE` | 2 | the target **did** send to an off-lab destination that no Sysmon record attributes. Neither cleared nor blamed — **not mergeable**; fix the attribution input and re-check |
+| `VIOLATION` | 1 | something we ran reached off-lab, or a query went to an off-lab resolver |
+
+Two distinctions the checker makes, because collapsing them makes verification impossible on a real
+operating system:
+
+- **A target OS talks to its vendor whether or not we run anything.** Windows telemetry, WNS and
+  update traffic are a property of running Windows, not evidence of a breach. Attributed OS
+  background traffic is *reported*, never failed. Only traffic attributed to a non-OS process is a
+  rule-1 breach.
+- **Asking the in-lab resolver about an external name sends nothing outside**, and a flow where the
+  target sent **0 packets and 0 bytes** (Zeek `conn_state` `RSTRH`/`SHR`/`OTH` — the originator's
+  SYN was never seen) is not egress: it is packets arriving at the target. Both are recorded as
+  indicators; neither fails a run.
+
+**Never pre-filter the capture to lab-only traffic before checking it.** Proving that the in-lab
+subset is in-lab is a tautology, and it is how three verifications came to carry a `PASS` that
+proved nothing. The report records `capture_scale` so a filtered input is visible: `0` off-lab
+destinations means the input may simply not have contained any.
 
 Every `scenarios.md` carries a **Scope** section naming the VMs involved and stating explicitly
 that every destination is lab-internal. Without it the scenario cannot be audited and is rejected.
