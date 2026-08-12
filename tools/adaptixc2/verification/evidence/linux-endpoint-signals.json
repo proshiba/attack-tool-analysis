@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "target": {
+    "vmid": 103,
+    "address": "192.168.1.51",
+    "os": "Ubuntu 24.04.4 LTS",
+    "kernel": "6.8.0-137-generic",
+    "baseline_snapshot": "linux_verify_baseline",
+    "sensors": {
+      "sysmon_for_linux": "1.5.2",
+      "auditd": "3.1.2",
+      "tcpdump": "4.99.4"
+    }
+  },
+  "collection": {
+    "collector": "/opt/lab/collect-run.sh",
+    "identity_source": "auditd:lab_exec",
+    "network_owner_source": "auditd:lab_connect SOCKADDR/SYSCALL correlated by PID and time",
+    "caveat": "Raw Sysmon EID 3 Image is not used as the Linux owner because it can survive a rapid exec. Where Sysmon emitted no EID 3 during the sensor re-home, the retained auditd connect and SOCKADDR records are the owner evidence."
+  },
+  "flows": [
+    {
+      "name": "generated Linux Gopher agent over mTLS",
+      "window": {
+        "start_utc": "2026-08-12T15:07:36Z",
+        "end_utc": "2026-08-12T15:08:38Z"
+      },
+      "operator_actions": [
+        "Fetch the reviewed ELF from Kali HTTP as /opt/lab/run/.cache/telemetry-helper and verify SHA-256.",
+        "Execute the renamed ELF directly and confirm its Kali-only Gopher mTLS session.",
+        "Task pwd, ls /opt/lab/run, ps, and download of the fixed 30-byte marker, then task exit."
+      ],
+      "dimensions": {
+        "process": {
+          "status": "observed",
+          "events": 22,
+          "signal": {
+            "Image": "/opt/lab/run/.cache/telemetry-helper",
+            "CommandLine": "/opt/lab/run/.cache/telemetry-helper",
+            "ParentImage": "/usr/bin/bash",
+            "User": "root",
+            "uid": "0",
+            "euid": "0",
+            "auid": "4294967295",
+            "identity_source": "auditd:lab_exec",
+            "sha256": "42dcfa4ade2d29146126455d00fe1e3de3c8cb1886c414b3123aad64d72ce16e"
+          }
+        },
+        "network": {
+          "status": "observed",
+          "events": 3,
+          "signals": [
+            "curl delivery to 192.168.1.50:18080",
+            "renamed agent TCP connect to 192.168.1.50:19443"
+          ],
+          "agent_owner": {
+            "OwningProcessImage": "/opt/lab/run/.cache/telemetry-helper",
+            "DestinationIp": "192.168.1.50",
+            "DestinationPort": "19443",
+            "attribution_source": "Sysmon EID 3 correlated with auditd:lab_connect",
+            "uid": "0",
+            "euid": "0"
+          }
+        },
+        "file": {
+          "status": "observed",
+          "events": 31,
+          "signals": [
+            "curl created the renamed ELF",
+            "curl created the fixed marker",
+            "chmod changed the ELF mode before execution"
+          ]
+        },
+        "registry": {
+          "status": "not_applicable",
+          "events": [],
+          "reason": "Linux has no Windows Registry analogue."
+        },
+        "deep": {
+          "status": "none_observed",
+          "events": [],
+          "reason": "The permitted Gopher built-ins executed in-process; no shell child, process access, injection, named pipe, or kernel-module signal was produced."
+        }
+      },
+      "task_results": {
+        "pwd": "/",
+        "ls": "completed",
+        "ps": "completed",
+        "download": "File download complete",
+        "marker_size_bytes": 30,
+        "marker_sha256": "9d0e1ddb4d30c62082d90379d90fd8d21d66b56091c7e454e4d602764c4b8e86"
+      },
+      "schedule": {
+        "reported_sleep_seconds": 0,
+        "reported_jitter_seconds": 0,
+        "reconnect_delay_seconds": 10,
+        "interpretation": "Gopher holds a continuous task connection; no Beacon callback periodicity exists to measure."
+      }
+    },
+    {
+      "name": "masquerading sysmon.service persistence",
+      "primary_window": {
+        "start_utc": "2026-08-12T15:09:14Z",
+        "end_utc": "2026-08-12T15:09:45Z"
+      },
+      "guarded_safety_rerun_window": {
+        "start_utc": "2026-08-12T15:14:57Z",
+        "end_utc": "2026-08-12T15:15:25Z"
+      },
+      "operator_actions": [
+        "Re-home the genuine sensor as lab-sysmon-sensor.service so telemetry remains available.",
+        "Replace sysmon.service, daemon-reload, enable it, and start it.",
+        "Verify both the sensor unit and masquerading unit, the latter's PID, hashes, and absent dpkg ownership.",
+        "Repeat under the verified lab-only IPv4/IPv6 guard after the first safety check was inconclusive on unattributed Ubuntu background traffic."
+      ],
+      "unit": {
+        "path": "/etc/systemd/system/sysmon.service",
+        "Description": "Sysmon event logger",
+        "Type": "simple",
+        "User": "root",
+        "WorkingDirectory": "/opt/lab/run/.cache",
+        "ExecStart": "/opt/lab/run/.cache/telemetry-helper",
+        "Restart": "on-failure",
+        "sha256": "d07558a5943d64b342de6cd1c7cce57d8bd3788abb46ce846f63a352be7b5c0c",
+        "package_ownership": "none for unit or ExecStart target"
+      },
+      "baseline_unit": {
+        "Description": "Sysmon event logger",
+        "Type": "forking",
+        "WorkingDirectory": "/opt/sysmon",
+        "ExecStart": "/opt/sysmon/sysmon -i /opt/sysmon/config.xml -service",
+        "binary_sha256": "3e25a035b044918e17221560a55ccb66ea87f8653a64ddad3aec09ca9fe19931"
+      },
+      "dimensions": {
+        "process": {
+          "status": "observed",
+          "signal": "auditd serials 10428 and 11123 recorded PID 1 exec of the renamed ELF as root; ppid=1 is the stable ancestry field",
+          "note": "The guarded rerun's collected Sysmon process JSON was empty during the service transition, so auditd is the authoritative positive process source."
+        },
+        "network": {
+          "status": "observed",
+          "signal": "Zeek recorded the service agent connection to 192.168.1.50:19443; auditd lab_connect serials 10429 and 11124 attribute the corresponding SOCKADDR to the renamed ELF with uid/euid 0.",
+          "raw_sysmon_eid3_used_for_owner": false
+        },
+        "file": {
+          "status": "observed",
+          "primary_events": 71,
+          "guarded_events": 16,
+          "signals": [
+            "auditd PATH CREATE for /etc/systemd/system/sysmon.service",
+            "systemctl enable sysmon.service",
+            "systemctl start sysmon.service",
+            "retained unit content proves the Sysmon-name/ExecStart mismatch"
+          ]
+        },
+        "registry": {
+          "status": "not_applicable",
+          "events": [],
+          "reason": "Linux has no Windows Registry analogue."
+        },
+        "deep": {
+          "status": "observed",
+          "signal": "auditd tied systemd parentage, the hidden ExecStart target, and the Kali-only connect; no process injection, module load, or named-pipe activity occurred."
+        }
+      },
+      "upstream_systemd_rule_noise": {
+        "primary_matches": 2,
+        "matched_paths": [
+          "/etc/systemd/system/lab-sysmon-sensor.service",
+          "/etc/systemd/system/sysmon.service"
+        ],
+        "guarded_rerun_matches": 1,
+        "interpretation": "The upstream rule caught the masquerading unit but also the benign sensor re-home; it detects unit creation generally and cannot express the security-name/ExecStart mismatch."
+      }
+    },
+    {
+      "name": "DNS transport lab-only listener and source-faithful profile preflight",
+      "window": {
+        "start_utc": "2026-08-12T15:10:40Z",
+        "end_utc": "2026-08-12T15:11:57Z"
+      },
+      "source_faithful_profile_window": {
+        "start_utc": "2026-08-12T15:22:11Z",
+        "end_utc": "2026-08-12T15:22:43Z"
+      },
+      "operator_actions": [
+        "Set systemd-resolved exclusively to 192.168.1.50 with routing domain ~. and DNS-over-TLS disabled.",
+        "Install and verify IPv4 and IPv6 OUTPUT guards before starting the listener.",
+        "Start a non-forwarding BeaconDNS listener on Kali for adaptix.lab and issue bounded source-faithful heartbeat-shaped probes.",
+        "Stop the listener without generating or executing an agent."
+      ],
+      "dimensions": {
+        "process": {
+          "status": "none_observed",
+          "events": [],
+          "reason": "No Linux DNS-capable agent exists in the reviewed release and no agent was executed."
+        },
+        "network": {
+          "status": "observed",
+          "signal": "All DNS requests terminated at Kali 192.168.1.50:53; the source-faithful pcap contains 12 resolver-duplicated A query rows derived from five unique heartbeat sequence values.",
+          "guard": "IPv4 permitted only loopback and 192.168.1.50; IPv6 permitted loopback only; four background packets were rejected during the source-faithful capture."
+        },
+        "file": {
+          "status": "observed",
+          "signal": "auditd recorded the temporary systemd-resolved drop-in and run evidence files; no payload was written."
+        },
+        "registry": {
+          "status": "not_applicable",
+          "events": [],
+          "reason": "Linux has no Windows Registry analogue."
+        },
+        "deep": {
+          "status": "none_observed",
+          "events": [],
+          "reason": "Listener/profile validation generated no endpoint execution, persistence, child-process, or process-access signal."
+        }
+      },
+      "doh": {
+        "status": "lab_capability_gap",
+        "reason": "No lab-hosted DoH endpoint compatible with the reviewed Windows-only Beacon client was available; public defaults were forbidden and never contacted."
+      }
+    }
+  ]
+}

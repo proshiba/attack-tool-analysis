@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "baseline": "SigmaHQ master",
+  "commit": "8eaafff1f2845a696050e05e72ba1140ee190698",
+  "evaluated_at": "2026-08-12",
+  "relevant_rules": [
+    {
+      "path": "rules/linux/auditd/path/lnx_auditd_systemd_service_creation.yml",
+      "result": "fired",
+      "primary_matches": 2,
+      "guarded_rerun_matches": 1,
+      "details": "It matched the malicious sysmon.service creation and, in the primary window, the benign lab-sysmon-sensor.service creation used to preserve telemetry. It sees PATH CREATE under systemd directories but not unit content, ExecStart, package ownership, or the security-product mismatch.",
+      "precision": "Useful generic precursor with material administrative noise; correlate with parsed unit content and execution."
+    },
+    {
+      "path": "rules/linux/auditd/execve/lnx_auditd_masquerading_crond.yml",
+      "result": "did_not_fire",
+      "matches": 0,
+      "details": "The rule detects cp /bin/sh .../crond, not a security-named systemd unit. It is a useful masquerading precedent but does not cover sysmon.service."
+    },
+    {
+      "path": "rules/linux/process_creation/proc_creation_lnx_susp_hktl_execution.yml",
+      "result": "did_not_fire",
+      "matches": 0,
+      "details": "The rule keys on known operator/tool image names. Adaptix is absent and the generated agent ran renamed, so filename additions would remain evadable."
+    }
+  ],
+  "dns_linux_coverage": {
+    "conclusion": "SigmaHQ master has no Linux DNS-tunneling or DoH behavior rule relevant to this flow.",
+    "nearest_rules": [
+      "rules/windows/registry/registry_set/registry_set_dns_over_https_enabled.yml",
+      "rules/windows/process_creation/proc_creation_win_curl_insecure_proxy_or_doh.yml",
+      "rules/windows/powershell/powershell_script/posh_ps_invoke_dnsexfiltration.yml"
+    ],
+    "what_local_rules_add": "Zeek and Suricata coverage for the fixed session/operation/sequence/index/Base32 query structure, independent of implant name, resolver, port, and parent domain. The rules are explicitly source-plus-listener validated because a Linux DNS agent could not be generated."
+  },
+  "local_rules": [
+    {
+      "path": "sigma/file_event_lnx_sysmon_service_execstart_mismatch.yml",
+      "bar": "behavioral mismatch absent upstream",
+      "provenance": "auditd unit creation plus retained before/after unit content and package ownership",
+      "precision": "not-testable-on-evtx; low FP likelihood, alert, high"
+    },
+    {
+      "path": "sigma/lnx_auditd_systemd_exec_hidden_path.yml",
+      "bar": "process ancestry and execution invariant",
+      "provenance": "auditd PID 1 exec records in both persistence attempts",
+      "precision": "not-testable-on-evtx; high FP likelihood forces hunt and low"
+    },
+    {
+      "path": "sigma/network_zeek_adaptix_dns_query_structure.yml",
+      "bar": "Linux NSM DNS dimension absent upstream",
+      "provenance": "reviewed client source plus source-faithful lab listener capture",
+      "precision": "not-testable-on-evtx; medium FP likelihood, alert, medium"
+    },
+    {
+      "path": "sigma/network_suricata_adaptix_dns_query_structure.yml",
+      "bar": "Linux NSM DNS dimension absent upstream",
+      "provenance": "reviewed client source plus source-faithful lab listener capture",
+      "precision": "not-testable-on-evtx; medium FP likelihood, alert, medium"
+    }
+  ],
+  "upstream_recommendation": "A sysmon.service analogue belongs upstream only as a security-service identity versus parsed ExecStart mismatch, not as another exact malicious filename rule. The generic systemd creation rule should remain a precursor."
+}

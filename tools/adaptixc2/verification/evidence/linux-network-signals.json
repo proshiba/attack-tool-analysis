@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "analysis": {
+    "helper": "~/bin/nsm-analyze",
+    "nsm_vmid": 106,
+    "zeek": "8.2.1",
+    "suricata": "7.0.10 RELEASE",
+    "captures_unfiltered": true,
+    "raw_committed": false
+  },
+  "captures": [
+    {
+      "name": "linux-mtls",
+      "bytes": 6757944,
+      "packets": 255,
+      "kernel_drops": 0,
+      "sha256": "166ccae527393f0a01476cf6e19398136716ae70ba25cdbe463a0d415c807681",
+      "zeek_connections": 4,
+      "off_lab_destinations": 0
+    },
+    {
+      "name": "sysmon-masquerade-primary",
+      "bytes": 16470,
+      "packets": 54,
+      "kernel_drops": 0,
+      "sha256": "b8016e2116dfbf4aa20257d972f8ce297fbe25ad7632c59e0dd20554e8eb07d3",
+      "zeek_connections": 4,
+      "off_lab_destinations": 2,
+      "safety_result": "INCONCLUSIVE",
+      "background_manifest": "Ubuntu MOTD resolved through its pre-guard public resolver and opened HTTPS while Sysmon was being re-homed; no declared-tool attribution existed for those rows. The capture is retained in the safety manifest and was not filtered."
+    },
+    {
+      "name": "sysmon-masquerade-guarded-rerun",
+      "bytes": 7376,
+      "packets": 24,
+      "kernel_drops": 0,
+      "sha256": "66a86d0366e4143cae85026d48428f86a0645fa91478cb64339149e986891d84",
+      "zeek_connections": 1,
+      "off_lab_destinations": 0,
+      "safety_result": "PASS"
+    },
+    {
+      "name": "dns-listener-preflight",
+      "bytes": 4266,
+      "packets": 33,
+      "kernel_drops": 0,
+      "sha256": "38b13463f47413684bc6d9f14e0c423749e70ea35d427755cdc364faeaa42506",
+      "zeek_connections": 13,
+      "zeek_dns_rows": 14,
+      "off_lab_destinations": 0
+    },
+    {
+      "name": "dns-source-faithful-profile",
+      "bytes": 4526,
+      "packets": 28,
+      "kernel_drops": 0,
+      "sha256": "ea8e4d8ab830aee0fd2fe19fe8441e23b859c9d32e4c6d4605e1f1ee7ebf53db",
+      "zeek_connections": 10,
+      "zeek_dns_rows": 12,
+      "off_lab_destinations": 0,
+      "safety_result": "PASS"
+    }
+  ],
+  "linux_gopher_mtls": {
+    "http_delivery": {
+      "requests": 2,
+      "server": "192.168.1.50:18080",
+      "agent_uri": "/telemetry-helper",
+      "agent_response_bytes": 6717602,
+      "agent_mime": "application/x-executable",
+      "marker_uri": "/adaptix-linux-marker.txt",
+      "marker_response_bytes": 30
+    },
+    "c2": {
+      "destination": "192.168.1.50:19443",
+      "connections": 2,
+      "long_connection_duration_seconds": 57.605435,
+      "tls_version": "TLSv13",
+      "cipher": "TLS_AES_128_GCM_SHA256",
+      "curve": "X25519MLKEM768",
+      "sni": null,
+      "ja3": "2196848d251b217de8b2c037e356c11d",
+      "ja3s": "f4febc55ea12b31ae17cfb7e614afda8",
+      "interpretation": "The JA3/JA3S pair is identical to the Sliver Linux Go TLS pair already present in this repository and is therefore a cross-family Go crypto/tls characteristic, not an Adaptix signature. No duplicate rule was authored."
+    },
+    "periodicity": {
+      "status": "not_applicable",
+      "reason": "The official Linux Gopher agent reports sleep=0/jitter=0 and keeps a continuous task connection. Its configured 10 seconds is reconnect delay, not a Beacon interval."
+    }
+  },
+  "dns": {
+    "listener": {
+      "bind": "192.168.1.50:53",
+      "parent_domain": "adaptix.lab",
+      "forwarding": false,
+      "ttl_base": 5
+    },
+    "source_faithful_shape": "<8 hex sid>.<www|hi|cdn|put|api|get|hb>.<8 hex seq>.<8 hex index>.<20-63 Base32 label>[.<additional Base32 labels>].<parent>",
+    "source_faithful_probe": {
+      "unique_sequence_values": 5,
+      "zeek_query_rows": 12,
+      "suricata_query_events": 12,
+      "query_type": "A",
+      "answer": "0.0.0.0",
+      "unique_sequence_gap_seconds": {
+        "minimum": 2.020946,
+        "maximum": 2.023118
+      },
+      "cadence_interpretation": "This two-second operator probe schedule is not an agent cadence and is not promoted as one."
+    },
+    "rule_results": {
+      "network_zeek_adaptix_dns_query_structure.yml": "12 of 12 source-faithful query rows; 0 of 14 earlier control/permissive-parser rows",
+      "network_suricata_adaptix_dns_query_structure.yml": "12 of 12 source-faithful query events; 0 of 14 earlier control/permissive-parser query events",
+      "network_zeek_sliver_dns_encoded_query_profile.yml": "0 of 12",
+      "network_suricata_sliver_dns_encoded_query_profile.yml": "0 of 12"
+    },
+    "sliver_comparison": "Both frameworks use Base32-like multi-label DNS and benefit from source/domain-independent correlation. Sliver's observed v1.7.3 profile had two 63-character labels plus an 18-63-character label and steady 10.212-13.521-second burst gaps. The Adaptix listener validation had fixed hex metadata labels and a 20-character heartbeat data label. The current captures do not justify collapsing the two expressions; a broader cross-family rule needs genuine Adaptix agent traffic and additional benign DNS-tunnel comparison.",
+    "linux_agent_status": "not_runnable: reviewed v1.2/current source emits DNS only from the Windows Beacon builder",
+    "doh_status": "lab_capability_gap: no compatible lab-hosted DoH endpoint; public defaults never used"
+  }
+}

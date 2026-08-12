@@ -1,14 +1,15 @@
 {
   "schema_version": 1,
-  "scenario": "AdaptixC2 v1.2 Windows HTTP/S Beacon, server-side fingerprint, modified-header 404 claim, and inert signed-host DLL sideload verification",
-  "verified_at": "2026-08-11",
+  "scenario": "AdaptixC2 v1.2 cross-platform verification: Windows Beacon/fingerprints/sideload plus Linux Gopher agent, sysmon.service masquerade, and lab-only DNS profile preflight",
+  "verified_at": "2026-08-12",
   "verifier": "Codex malware-analysis lab orchestrator",
   "environment": {
     "kali": {"vmid": 100, "ip": "192.168.1.50", "role": "exclusive build, C2, listener, staging, and operator host"},
-    "target": {"vmid": 104, "ip": "192.168.1.52", "hostname": "WIN10-ANALYSIS", "os": "Windows 10 x64", "baseline_snapshot": "win_verify_baseline"},
+    "windows_target": {"vmid": 104, "ip": "192.168.1.52", "hostname": "WIN10-ANALYSIS", "os": "Windows 10 x64", "baseline_snapshot": "win_verify_baseline", "role": "historical verification only; untouched by Linux expansion"},
+    "linux_target": {"vmid": 103, "ip": "192.168.1.51", "hostname": "ubuntu", "os": "Ubuntu 24.04.4 LTS", "kernel": "6.8.0-137-generic", "baseline_snapshot": "linux_verify_baseline", "sensors": ["Sysmon for Linux 1.5.2", "auditd 3.1.2", "tcpdump 4.99.4"]},
     "remnux": {"vmid": 105, "role": "static review only; no execution"},
     "nsm": {"vmid": 106, "role": "offline pcap analysis and lab-only active JARM", "zeek": "8.2.1", "suricata": "7.0.10 RELEASE", "et_open_rules": 52234},
-    "unused": ["VM 103 Linux target", "VM 102 AI as an execution host", "VM 108 orchestrator as an execution host"]
+    "unused_execution_hosts": ["VM 102", "VM 108", "VM 109", "VM 110"]
   },
   "tool": {
     "name": "AdaptixC2",
@@ -17,12 +18,19 @@
     "tag_commit": "a4b80bf370f704d6843e69433bfb5c06274f57df",
     "source_archive": "https://github.com/Adaptix-Framework/AdaptixC2/archive/refs/tags/v1.2.tar.gz",
     "source_archive_sha256": "a96eb3fa9bb02c92449e6e9d365734dd7b322560cb7301f99d072854b314197d",
-    "server_sha256": "779a34241244742704f8e406adc600104e2ed376d3d6d1ef7dfa89cb27d07206",
+    "windows_server_sha256": "779a34241244742704f8e406adc600104e2ed376d3d6d1ef7dfa89cb27d07206",
+    "linux_expansion_server_sha256": "120a7cb6fc8959261c9de9b3cc6b9cf06db2dd9f843bca77346fc6278118d361",
+    "gopher_tcp_listener_sha256": "67e4028dfb1700517e389f5b8ae75816eb5180f15cc980eeb867cf8243a41455",
+    "gopher_agent_extender_sha256": "bba36c90194d68bbbc4f7997adead9f36675cfdbb47658ad2e5857a6b98de6c7",
+    "beacon_dns_listener_sha256": "95f014eb5ebc9adf718505d8531a439785224e13b72d79fa5e386273280639d1",
+    "linux_gopher_agent_sha256": "42dcfa4ade2d29146126455d00fe1e3de3c8cb1886c414b3123aad64d72ce16e",
+    "linux_gopher_agent_size_bytes": 6717602,
     "beacon_http_listener_sha256": "37ac2507f617ec1d2a42e8ec67fdd244f9aebb97052c5d179c7420884e74af50",
     "beacon_agent_extender_sha256": "c3f0d65e7c904afd0873531579bbca83032dbefbe751127bc787f587aa30d8f2",
     "http_agent_sha256": "d8ee6fe9e5eb9e497024ffee7a41620e02d2334501382bb599cd4aed5fc9be38",
     "https_agent_sha256": "4e39b0f0c83675943e87543214937a5c4061e1ecb929d93205a1b927be6899a5",
-    "build_and_execution_location": "Kali VM 100 only for server/extender build and server runtime; reviewed generated PEs ran only on Windows VM 104"
+    "linux_platform_finding": "beacon_agent is a Windows-only MinGW PE builder; gopher_agent is the only Linux ELF builder and accepts only Gopher TCP/mTLS profiles",
+    "build_and_execution_location": "Kali VM 100 only for server/extender build and server/listener runtime; reviewed generated PEs ran only on Windows VM 104 historically and the reviewed Gopher ELF ran only on Linux VM 103"
   },
   "flows": [
     {
@@ -56,6 +64,51 @@
       "operator_actions": ["compile inert faultrep.dll on Kali", "copy and validate signed WerFault.exe from the baseline", "place DLL beside host", "execute host with -?", "verify fixed marker, signatures, hashes, Sysmon, and pcap"],
       "observed_techniques": ["T1574.001", "T1036.005"],
       "observed_signals": {"process": "signed WerFault.exe executed from non-system directory", "network": "none observed; zero packets", "file": "host, faultrep.dll, and marker file events", "registry": "none observed", "deep": "no EID 7 because baseline image-load logging is disabled"}
+    },
+    {
+      "name": "generated Linux Gopher agent over mTLS",
+      "operator_actions": ["create Kali-only GopherTCP mTLS listener", "generate and separately triage Linux amd64 ELF", "serve it over Kali HTTP", "fetch and hash-check it as a renamed hidden-path executable", "execute as root", "task pwd, ls /opt/lab/run, ps, and fixed-marker download", "task exit and collect"],
+      "observed_techniques": ["T1105", "T1573", "T1083", "T1057", "T1041"],
+      "observed_signals": {
+        "process": {"status": "observed", "detail": "renamed static ELF under a shell parent; uid/euid 0 from auditd:lab_exec"},
+        "network": {"status": "observed", "detail": "Kali HTTP delivery plus two TLS 1.3 Gopher connections; auditd-correlated owner was the renamed ELF"},
+        "file": {"status": "observed", "detail": "curl wrote the ELF and fixed marker; chmod changed the ELF mode"},
+        "registry": {"status": "not_applicable", "detail": "Linux has no Windows Registry analogue"},
+        "deep": {"status": "none_observed", "detail": "bounded built-ins ran in-process; no shell child, process access, injection, or named pipe"}
+      },
+      "task_results": {"pwd": "completed", "ls": "completed", "ps": "completed", "download": "completed; 30-byte fixed marker"},
+      "schedule": {"sleep_seconds": 0, "jitter_seconds": 0, "reconnect_delay_seconds": 10, "periodicity": "not applicable to the continuous Gopher task connection"},
+      "requested_transport_disposition": "Linux HTTP/S Beacon cannot be generated by this upstream release; genuine Gopher mTLS used and explicitly labeled"
+    },
+    {
+      "name": "masquerading sysmon.service persistence",
+      "operator_actions": ["re-home the genuine Sysmon sensor temporarily", "replace sysmon.service with a Sysmon-described unit whose ExecStart is the reviewed renamed ELF", "daemon-reload", "enable and start", "verify active PID, hashes, package ownership, audit owner, and telemetry", "repeat under target egress guard after the primary safety check was inconclusive"],
+      "observed_techniques": ["T1543.002", "T1036"],
+      "observed_signals": {
+        "process": {"status": "observed", "detail": "auditd recorded PID 1 executing the hidden renamed ELF as root"},
+        "network": {"status": "observed", "detail": "Zeek saw the Kali-only mTLS connection; auditd lab_connect/SOCKADDR attributed it to the service ELF"},
+        "file": {"status": "observed", "detail": "auditd captured sysmon.service CREATE plus systemctl enable and start; retained content proved the ExecStart mismatch"},
+        "registry": {"status": "not_applicable", "detail": "Linux has no Windows Registry analogue"},
+        "deep": {"status": "observed", "detail": "PID 1 ancestry, hidden ExecStart, absent dpkg ownership, and connect owner correlated across auditd/unit/pcap evidence; no injection or module load"}
+      },
+      "unit_mismatch": {"claimed_identity": "Sysmon event logger", "baseline_execstart": "/opt/sysmon/sysmon -i /opt/sysmon/config.xml -service", "observed_execstart": "/opt/lab/run/.cache/telemetry-helper", "package_ownership": "none for replacement unit and target"},
+      "upstream_result": "SigmaHQ Systemd Service Creation fired on the masquerading unit; it also fired on the benign temporary sensor unit in the primary window, so it does not distinguish the mismatch",
+      "safety_rerun": "primary full capture retained as INCONCLUSIVE due unattributed Ubuntu MOTD traffic during sensor re-home; identical guarded rerun PASS"
+    },
+    {
+      "name": "DNS/DoH transport lab-only preflight",
+      "operator_actions": ["set VM 103 resolver exclusively to Kali", "install and verify IPv4/IPv6 OUTPUT guards before listener start", "start non-forwarding BeaconDNS listener for adaptix.lab", "send five source-faithful heartbeat-shaped probes", "stop listener and collect", "do not generate or execute an unavailable Linux DNS agent"],
+      "observed_techniques": ["T1071.004"],
+      "observed_signals": {
+        "process": {"status": "none_observed", "detail": "no Linux DNS agent exists in reviewed upstream and none was executed"},
+        "network": {"status": "observed", "detail": "12 resolver-duplicated source-faithful A query rows from five unique sequence values, all to Kali and answered 0.0.0.0"},
+        "file": {"status": "observed", "detail": "temporary resolver configuration and evidence files only; no payload write"},
+        "registry": {"status": "not_applicable", "detail": "Linux has no Windows Registry analogue"},
+        "deep": {"status": "none_observed", "detail": "listener/profile validation generated no endpoint execution or persistence signal"}
+      },
+      "profile": {"shape": "8hex session, operation, 8hex sequence, 8hex index, Base32 data labels, arbitrary parent domain", "unique_probe_gap_seconds": "2.020946-2.023118", "cadence_status": "operator probe schedule, not agent cadence"},
+      "doh": {"status": "lab_capability_gap", "reason": "no compatible lab-hosted DoH endpoint; public defaults prohibited and never contacted"},
+      "coverage_disposition": "source-plus-listener validated but not counted as a fully verified Linux agent transport"
     }
   ],
   "evidence": [
@@ -65,47 +118,81 @@
     {"path": "evidence/upstream-sigma.json", "description": "SigmaHQ master commit, zero Adaptix mentions, and generic-rule results against captured fields."},
     {"path": "evidence/safety/poc-review.md", "description": "Human source review, provenance, exclusions, and safe-after-modification verdict."},
     {"path": "evidence/safety/scenario-scope.json", "description": "Pre-execution scope gate; no critical findings."},
-    {"path": "evidence/safety/lab-scope.json", "description": "Post-execution PASS from every retained full-capture nsm/ input; all non-Adaptix off-lab flows are recorded in the manifest."}
+    {"path": "evidence/safety/lab-scope.json", "description": "Historical Windows post-execution PASS from every retained full-capture nsm/ input; all non-Adaptix off-lab flows are recorded in the manifest."},
+    {"path": "evidence/linux-endpoint-signals.json", "description": "Sanitized Linux process, network, file, registry-not-applicable, and deep signals for all three requested flows."},
+    {"path": "evidence/linux-network-signals.json", "description": "Sanitized unfiltered-capture hashes/counts, HTTP/TLS profile, DNS shape, cadence qualification, Sliver comparison, and DoH disposition."},
+    {"path": "evidence/upstream-sigma-linux.json", "description": "SigmaHQ master provenance and per-rule Linux results, noise assessment, DNS coverage gap, and local authorship bars."},
+    {"path": "evidence/safety/linux-source-triage/poc-review.json", "description": "Mechanical triage of the exact Linux/server source subset built on Kali."},
+    {"path": "evidence/safety/generated-linux-triage/poc-review.md", "description": "Pre-execution static and human review of the exact generated Gopher ELF."},
+    {"path": "evidence/safety/lab-scope-linux.json", "description": "Post-execution PASS summary for final full, unfiltered Linux captures; preserves the primary persistence INCONCLUSIVE result and background manifest."}
   ],
   "sigma": [
     {"path": "sigma/network_suricata_adaptixc2_default_404_body.yml", "source": "suricata", "tier": 1, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "native content rule matched default and modified pcaps", "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "low", "recommended_role": "alert", "recommended_level": "high"}},
     {"path": "sigma/network_suricata_adaptixc2_default_beacon_http_profile.yml", "source": "suricata", "tier": 1, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "11 of 11 Beacon POSTs", "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"}},
     {"path": "sigma/file_event_faultrep_dll_outside_windows.yml", "source": "windows", "tier": 1, "measured": true, "positive_evidence": "one captured Sysmon EID 11", "precision": {"harness_verdict": "no-corpus-coverage", "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 542441, "detection_hit": false, "fp_likelihood": "medium", "recommended_role": "hunt", "recommended_level": "medium"}},
-    {"path": "sigma/proc_creation_unversioned_executable_from_script_host.yml", "source": "windows", "tier": 1, "measured": true, "positive_evidence": "both renamed agents", "precision": {"harness_verdict": "pass", "fp_count": 3, "fp_share_of_category_percent": 0.012661, "category_denominator": 23695, "detection_hit": true, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"}}
+    {"path": "sigma/proc_creation_unversioned_executable_from_script_host.yml", "source": "windows", "tier": 1, "measured": true, "positive_evidence": "both renamed agents", "precision": {"harness_verdict": "pass", "fp_count": 3, "fp_share_of_category_percent": 0.012661, "category_denominator": 23695, "detection_hit": true, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"}},
+    {"path": "sigma/file_event_lnx_sysmon_service_execstart_mismatch.yml", "source": "linux", "tier": 1, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "one auditd unit create plus retained content/package correlation in each persistence attempt", "provenance": ["AdaptixC2 v1.2 source", "evidence/linux-endpoint-signals.json", "SigmaHQ master Systemd Service Creation comparison"], "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": 542441, "detection_hit": true, "fp_likelihood": "low", "recommended_role": "alert", "recommended_level": "high", "precision_notes": "Run-local cross-source evidence matched once per attempt; requires file-content enrichment and should also consult package ownership."}},
+    {"path": "sigma/lnx_auditd_systemd_exec_hidden_path.yml", "source": "linux", "tier": 2, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "one auditd PID 1 exec record in each persistence attempt; direct shell-parent execution excluded", "provenance": ["AdaptixC2 v1.2 source", "evidence/linux-endpoint-signals.json"], "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": 23695, "detection_hit": true, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low", "precision_notes": "Hidden service paths can be legitimate; require recent unit creation and ExecStart/package mismatch."}},
+    {"path": "sigma/network_zeek_adaptix_dns_query_structure.yml", "source": "zeek", "tier": 1, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "12 of 12 source-faithful listener-probe rows and 0 of 14 control/permissive-parser rows", "provenance": ["AdaptixC2 v1.2 DNS client source", "evidence/linux-network-signals.json"], "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": true, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium", "precision_notes": "Source-plus-listener validation only; no Linux DNS agent or agent cadence was observed."}},
+    {"path": "sigma/network_suricata_adaptix_dns_query_structure.yml", "source": "suricata", "tier": 1, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "12 of 12 source-faithful listener-probe query events and 0 of 14 control/permissive-parser query events", "provenance": ["AdaptixC2 v1.2 DNS client source", "evidence/linux-network-signals.json"], "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": true, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium", "precision_notes": "Source-plus-listener validation only; no Linux DNS agent or agent cadence was observed."}}
   ],
   "upstream": {
     "sigmahq_commit": "8eaafff1f2845a696050e05e72ba1140ee190698",
     "adaptix_rules": 0,
     "generic_fired": ["Creation of WerFault.exe/Wer.dll in Unusual Folder", "Files With System Process Name In Unsuspected Locations", "System File Execution Location Anomaly"],
     "generic_not_fired": ["Potentially Suspicious Malware Callback Communication", "HackTool Service Registration or Execution", "Suspicious Service Installation"],
-    "generic_not_observable": ["Potential System DLL Sideloading From Non System Locations because Sysmon EID 7 was disabled"]
+    "generic_not_observable": ["Potential System DLL Sideloading From Non System Locations because Sysmon EID 7 was disabled"],
+    "linux": {
+      "systemd_service_creation": {"result": "fired", "primary_matches": 2, "guarded_rerun_matches": 1, "precision": "caught the masquerading unit but also the benign temporary sensor unit; no ExecStart/content distinction"},
+      "masquerading_crond": {"result": "did_not_fire", "matches": 0, "reason": "specific cp /bin/sh .../crond form"},
+      "linux_hacktool_execution": {"result": "did_not_fire", "matches": 0, "reason": "Adaptix absent and generated agent renamed; filename coverage would remain evadable"},
+      "dns_tunneling": {"result": "no relevant Linux upstream rule", "nearest": ["Windows DNS-over-HTTPS registry setting", "Windows curl.exe insecure proxy/DoH", "Windows PowerShell DNS exfiltration"]},
+      "sliver_dns_comparison": {"zeek_matches": 0, "suricata_matches": 0, "conclusion": "both use Base32-like multi-label DNS but the captured structures differ; no ungrounded common rule authored"},
+      "upstream_candidate": "security-service unit identity versus parsed ExecStart mismatch, not a sysmon.service name-only or Adaptix filename rule"
+    }
   },
   "validation": {
     "poc_triage": "safe-after-modification after human review",
     "scenario_scope": "no critical findings",
-    "lab_scope": {"verdict": "PASS", "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest", "manifest_count": 5, "earlier_report_limitation": "The earlier report used target-to-Kali scope-nsm/ subsets and did not show the off-lab traffic present in the full captures."},
-    "generated_agent_static_analysis": "two separate mechanical triage plus REMnux file/PE/strings/Ghidra reviews completed before target execution",
-    "target_attribution": "Windows Sysmon EID 3",
-    "periodicity": "measured but recorded as a backend correlation requirement; not expressible in a single-event Sigma rule",
+    "lab_scope": {"verdict": "PASS", "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest", "linux_primary_persistence_attempt": "INCONCLUSIVE and preserved; ordinary Ubuntu MOTD traffic occurred during sensor re-home without owner telemetry", "linux_guarded_persistence_rerun": "PASS", "windows_manifest_count": 5, "linux_manifest_count": 2, "captures_filtered": false},
+    "generated_agent_static_analysis": "mechanical triage plus REMnux ELF/readelf/strings/Ghidra review completed and committed before target execution; capa timed out after 180 seconds and supplied no result",
+    "linux_target_attribution": "auditd-correlated owner from collect-run.sh; raw Sysmon EID 3 alone was not used",
+    "periodicity": "Windows Beacons measured historically; Linux Gopher periodicity not applicable; DNS two-second probe schedule is not represented as agent cadence",
     "jarm": "all zero; excluded from detection",
-    "persistence": "deferred by bounded-risk decision"
+    "persistence": "verified on Linux with content, package, execution, and auditd owner evidence",
+    "json": "verification and sanitized evidence parsed successfully before gate",
+    "linux_sigma": "all Linux endpoint rules declare product: linux; Linux/network rules are expected to be not-testable-on-evtx and precision is judged qualitatively against run-local evidence"
   },
   "detection_limitations": [
     "BeaconHTTP profiles and response headers are operator-configurable.",
     "The body rule requires response-body extraction or a native Suricata rule because default EVE HTTP output does not retain body content.",
     "The TLS JA3/JA3S pair is not AdaptixC2-specific and JARM returned all zeros.",
     "Sysmon EID 7 was disabled, so the upstream image-load sideload rule could not be exercised.",
-    "Single-event Sigma cannot assert periodicity; production intervals must be parameterized."
+    "Single-event Sigma cannot assert periodicity; production intervals must be parameterized.",
+    "The Sysmon service mismatch rule requires unit-content enrichment because raw auditd PATH creation does not expose ExecStart.",
+    "The DNS rules are source-plus-listener validated, not grounded in Linux implant traffic; the reviewed release cannot emit such traffic.",
+    "The Linux Go TLS JA3/JA3S pair is shared with Sliver and is not framework-specific."
   ],
-  "not_observed_techniques": ["credential access", "process injection", "remote thread", "lateral movement", "SMB/TCP pivoting", "DNS/DoH", "persistence"],
+  "not_observed_techniques": ["credential access", "process injection", "remote thread", "lateral movement", "SMB/TCP pivoting", "Linux DNS agent traffic", "DoH"],
   "lab_capability_gaps": [
     {"capability": "Azure Blob dead-drop C2", "reason": "requires a public cloud endpoint and is categorically forbidden by Safety Rule 1"},
-    {"capability": "macOS agent", "reason": "no macOS target exists"}
+    {"capability": "macOS agent", "reason": "no macOS target exists"},
+    {"capability": "DoH endpoint", "reason": "no compatible lab-hosted DoH endpoint exists; public resolver defaults are forbidden"}
+  ],
+  "upstream_platform_gaps": [
+    {"capability": "Linux Beacon over HTTP/S", "reason": "v1.2/current beacon_agent is a Windows-only MinGW PE builder"},
+    {"capability": "Linux Beacon over DNS/DoH", "reason": "DNS/DoH exists only in the Windows Beacon builder; Linux gopher_agent accepts only Gopher TCP/mTLS"}
   ],
   "cleanup": {
     "kali": "listeners and staging stopped; ports closed; reviewed source/build/runtime and generated artifacts removed; temporary IPv4 and IPv6 egress chains removed",
     "nsm": "temporary JARM and native-rule artifacts removed",
-    "target": "VM 104 rolled back to win_verify_baseline; Proxmox qmrollback exitstatus OK; no run path or marker remained; pktmon stopped; Sysmon64 15.21 running with installed config SHA-256 5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71; Defender real-time, behavior, and tamper protection remained off as defined by baseline"
+    "target": "VM 104 rolled back to win_verify_baseline; Proxmox qmrollback exitstatus OK; no run path or marker remained; pktmon stopped; Sysmon64 15.21 running with installed config SHA-256 5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71; Defender real-time, behavior, and tamper protection remained off as defined by baseline",
+    "linux_expansion_20260812": {
+      "status": "confirmed",
+      "kali": "Stopped the teamserver, Gopher listener, BeaconDNS listeners, and HTTP staging server; confirmed ports 14321, 18080, and 19443 closed; removed the Adaptix build/runtime and generated artifacts; removed the temporary Adaptix IPv4/IPv6 chains; restored the pre-existing Sliver OUTPUT hooks exactly.",
+      "target": "VM 103 rollback to linux_verify_baseline completed with Proxmox qmrollback exitstatus OK and qmstart exitstatus OK. /opt/lab/run, the resolver drop-in, and Adaptix guard chains were absent after boot.",
+      "baseline_health": "Ubuntu 24.04 on 192.168.1.51 with kernel 6.8.0-137-generic; Sysmon and auditd active/enabled; audit lost=0; genuine sysmon.service ExecStart restored; instrumentation hashes matched prepare-linux-target.md: Sysmon XML 8846f4d95596c90cde00386fbc802194e43b7c6227f8612c457ab9c0e10f6739, audit rules 06448045bae2225fdf4f4bdcd17ea10e17dc254d49592bc364397d04e9882618, collector f8fa789660af7dc33d996092a114459fc6990dbcd7f07893f52adf36b22a4bb3, self-test f96e06defd9811c4d46a1a148999383ec9f0d13ac0e321bc43d88924833845dc."
+    }
   },
   "audit_gate": {
     "status": "PASS",

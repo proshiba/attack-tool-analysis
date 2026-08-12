@@ -1,0 +1,47 @@
+title: Adaptix-Style DNS C2 Query Structure in Suricata
+id: 3d0a8773-c55a-4751-b915-4bf50519324d
+status: experimental
+description: >-
+  Detects the address- and parent-domain-independent DNS query structure used
+  by the reviewed Adaptix Beacon DNS client: an eight-hex session identifier,
+  operation label, two eight-hex fields, and one or more Base32 data labels.
+  Correlate at least five matches by source and terminal parent domain in a
+  deployment-specific rolling window to distinguish a C2 sequence from one
+  isolated query.
+references:
+  - https://github.com/Adaptix-Framework/AdaptixC2/tree/v1.2
+  - https://docs.suricata.io/en/latest/output/eve/eve-json-format.html
+author: Codex lab orchestrator
+date: '2026-08-12'
+tags:
+  - attack.command-and-control
+  - attack.t1071.004
+logsource:
+  category: dns
+  product: suricata
+detection:
+  selection_type:
+    dns.type: query
+    dns.rrtype:
+      - A
+      - AAAA
+      - TXT
+  selection_shape:
+    dns.rrname|re: '^[0-9a-f]{8}\.(?:www|hi|cdn|put|api|get|hb)\.[0-9a-f]{8}\.[0-9a-f]{8}\.(?:[a-z2-7]{20,63}\.)+'
+  condition: selection_type and selection_shape
+falsepositives:
+  - DNS tunneling or application protocols independently using the same session, operation, sequence, index, and Base32-label structure
+  - Authorized red-team and malware-analysis traffic
+fp_likelihood: medium
+recommended_role: alert
+precision_notes: >-
+  Suricata DNS EVE is not testable on the Windows EVTX corpus. The rule matched
+  all 12 resolver-duplicated query events from five source-faithful heartbeat
+  probes and none of the short control or earlier permissive-parser probes. No
+  Linux DNS agent exists in the reviewed release, so this is source-plus-
+  listener validation rather than observed implant traffic, and the two-second
+  spacing is not an agent cadence measurement. The Sliver Suricata rule matched
+  none of these events because it requires multiple maximum-length encoded
+  labels; a broader cross-family rule needs more genuine-family captures before
+  it can be justified.
+level: medium
