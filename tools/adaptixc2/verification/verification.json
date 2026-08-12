@@ -65,7 +65,7 @@
     {"path": "evidence/upstream-sigma.json", "description": "SigmaHQ master commit, zero Adaptix mentions, and generic-rule results against captured fields."},
     {"path": "evidence/safety/poc-review.md", "description": "Human source review, provenance, exclusions, and safe-after-modification verdict."},
     {"path": "evidence/safety/scenario-scope.json", "description": "Pre-execution scope gate; no critical findings."},
-    {"path": "evidence/safety/lab-scope.json", "description": "Post-execution PASS and Windows Sysmon EID 3 process attribution."}
+    {"path": "evidence/safety/lab-scope.json", "description": "Post-execution PASS from every retained full-capture nsm/ input; all non-Adaptix off-lab flows are recorded in the manifest."}
   ],
   "sigma": [
     {"path": "sigma/network_suricata_adaptixc2_default_404_body.yml", "source": "suricata", "tier": 1, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "native content rule matched default and modified pcaps", "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "low", "recommended_role": "alert", "recommended_level": "high"}},
@@ -83,7 +83,7 @@
   "validation": {
     "poc_triage": "safe-after-modification after human review",
     "scenario_scope": "no critical findings",
-    "lab_scope": "PASS",
+    "lab_scope": {"verdict": "PASS", "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest", "manifest_count": 5, "earlier_report_limitation": "The earlier report used target-to-Kali scope-nsm/ subsets and did not show the off-lab traffic present in the full captures."},
     "generated_agent_static_analysis": "two separate mechanical triage plus REMnux file/PE/strings/Ghidra reviews completed before target execution",
     "target_attribution": "Windows Sysmon EID 3",
     "periodicity": "measured but recorded as a backend correlation requirement; not expressible in a single-event Sigma rule",

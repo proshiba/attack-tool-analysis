@@ -63,11 +63,20 @@ without EID 7. The new rules focus on the verified listener body, default HTTP
 profile, `faultrep.dll` file creation, and a rename-resistant unversioned-agent
 execution hunt.
 
-`check-lab-scope.py` returned PASS for every target-to-Kali flow. Windows
-Sysmon EID 3 attributed delivery and C2 to the downloader and renamed agents.
-One full raw HTTP capture included unrelated Defender-service traffic to a
-Microsoft address; it was not an Adaptix process and is explicitly accounted
-for in the safety evidence. No Adaptix-attributed connection left the lab.
+`check-lab-scope.py` was re-run against every retained full `nsm/` input rather
+than the target-to-Kali `scope-nsm/` subsets used by the earlier report. The
+declared images include both generated Beacon names and the executed aliases
+`survey-host.exe` and `telemetry-check.exe`. Every flow returned `PASS`. The
+supported claim is: *no traffic attributable to the declared attack left the
+lab, and everything else that did is in the manifest.*
+
+The manifest now exposes what the filtered report hid. The HTTP capture records
+1,181 bytes to `52.123.129.14:443`, attributed by Sysmon EID 3 to
+`MpDefenderCoreService.exe`, plus an unattributed 2-byte `OTH` flow to
+`4.213.25.241:443`. The HTTPS capture also records that 2-byte flow and two
+responder-only, zero-byte `RSTRH` flows to `72.145.35.105:443` and
+`72.145.35.115:443`. None is attributed to a declared Adaptix image. No
+operator log or configuration was present in the retained flow directories.
 
 Raw pcaps, EVTX, endpoint JSON, generated agents, operator database, heartbeat
 values, session keys, certificates, and unrelated host data are not committed.

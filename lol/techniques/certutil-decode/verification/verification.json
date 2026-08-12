@@ -2,7 +2,7 @@
   "scenario": {
     "id": "certutil-local-decode-variants",
     "name": "Local inert certutil decode variants",
-    "description": "Four new scope-checked runs cover five of six grounded local-decode use cases: ordinary base64 decode, hexadecimal decode, forced DLL-named output with -f, standard-user context, and slash-form syntax. Decode followed by execution remains future work. The unprovable historical run is not current evidence.",
+    "description": "Four endpoint-observed runs cover five of six grounded local-decode use cases: ordinary base64 decode, hexadecimal decode, forced DLL-named output with -f, standard-user context, and slash-form syntax. Decode followed by execution remains future work. No packet capture was taken, so post-run network safety is not proven.",
     "design": "scenarios.md",
     "attack_mapping": [
       "T1140"
@@ -114,7 +114,7 @@
       ],
       "observed_signals": {
         "network": {
-          "status": "none observed",
+          "status": "asserted none in the hand-authored endpoint summary; no packet capture",
           "event_id_3": 0,
           "event_id_22": 0
         },
@@ -185,7 +185,7 @@
       ],
       "observed_signals": {
         "network": {
-          "status": "none observed",
+          "status": "asserted none in the hand-authored endpoint summary; no packet capture",
           "event_id_3": 0,
           "event_id_22": 0
         },
@@ -258,7 +258,7 @@
       ],
       "observed_signals": {
         "network": {
-          "status": "none observed",
+          "status": "asserted none in the hand-authored endpoint summary; no packet capture",
           "event_id_3": 0,
           "event_id_22": 0
         },
@@ -337,7 +337,7 @@
       ],
       "observed_signals": {
         "network": {
-          "status": "none observed",
+          "status": "asserted none in the hand-authored endpoint summary; no packet capture",
           "event_id_3": 0,
           "event_id_22": 0
         },
@@ -468,9 +468,14 @@
     "scenario_scope": "safety/check-scenario-scope.py returned PASS with no findings after the scenario edits.",
     "post_run_scope": {
       "path": "evidence/safety/lab-scope.json",
-      "verdict": "PASS",
-      "sysmon_eid3_attribution_supplied": true,
-      "violation_count": 0
+      "verdict": "NOT_PROVEN",
+      "claim": "Without a packet capture, this verification cannot establish that no traffic attributable to the declared attack left the lab, or record everything else that did in a manifest.",
+      "required_pass_claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+      "packet_capture_taken": false,
+      "zeek_logs_available": false,
+      "endpoint_summary": "evidence/endpoint-signals.json records zero EID 3 and zero EID 22 for each window, but that is a hand-authored assertion rather than mechanical proof.",
+      "previous_pass_valid": false,
+      "previous_pass_limitation": "It was computed against an empty NSM input containing README.md only."
     },
     "third_party_code": "none; only the OS-builtin Microsoft-signed certutil and lab-authored inert fixture/runner scripts were used"
   },
@@ -521,7 +526,7 @@
   },
   "historical_context": {
     "original_run_verified_at": "2026-08-10T01:42:11.706Z",
-    "note": "The original SYSTEM base64-to-TXT run had no retained raw export and cannot be given retrospective scope proof. The new standard-user base64 run independently covers ordinary -decode with a retained, scope-checked export."
+    "note": "The original SYSTEM base64-to-TXT run had no retained raw export and cannot be given retrospective scope proof. The later endpoint-observed runs independently cover ordinary -decode behavior, but none had a packet capture, so their post-run network safety is also not proven."
   },
   "verified_at": "2026-08-10T12:54:07.919Z",
   "verifier": "Codex lab orchestrator"
