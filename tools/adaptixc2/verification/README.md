@@ -41,7 +41,7 @@ Kali-only connect. The real Sysmon sensor remained running under a temporary
 SigmaHQ's generic `Systemd Service Creation` rule caught the masquerading
 unit. In the primary window it also caught the benign temporary sensor unit,
 demonstrating the noise cost of treating any systemd unit creation as the
-signal. The local high-confidence rule instead describes the invariant:
+signal. The local enrichment-dependent medium-level hunt instead describes the invariant:
 `sysmon.service` content whose `ExecStart` is not a known Sysmon binary. A
 second, deliberately low-level hunt covers PID 1 executing from a hidden path.
 The latter has `fp_likelihood: high`, `recommended_role: hunt`, and `level:
@@ -193,11 +193,13 @@ values, session keys, certificates, and unrelated host data are not committed.
 Sanitized evidence, hashes, exact HTTP responses, source/agent reviews, safety
 results, and rule measurements are retained here.
 
-Audit gate: **PASS on iteration 2** at measured commit `f4020a0`, with zero
-blocking rule defects. The harness measured four rules: one Windows process
+Audit gate: **PASS on iteration 2** at measured commit `be95493`, with zero
+blocking rule defects. The harness audited eight rules: one Windows process
 rule passed with 3 clean-corpus matches (0.012661% of 23,695 events), the
 Windows file rule had 0 matches in 542,441 events but no positive corpus
-sample, and both Suricata rules were correctly classified as not testable on
-EVTX. The independent scenario review rated coverage `expand` at 5/8 (62.5%),
-above the 60% merge floor; Linux, service-persistence, and DNS/DoH coverage
-remain non-blocking future work.
+sample, and six Linux/NSM rules were correctly classified as not testable on
+EVTX. The independent safety verdict was `safe`. Scenario coverage was
+`expand` at 7/8 (87.5%), above the 60% merge floor; genuine agent-driven DNS
+transport remains the one uncovered denominator item. The gate's precision
+reconciliation keeps both source-plus-listener DNS expressions as medium-level
+hunts until genuine implant traffic independently validates their shape.

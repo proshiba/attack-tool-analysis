@@ -32,7 +32,7 @@ falsepositives:
   - DNS tunneling or application protocols independently using the same session, operation, sequence, index, and Base32-label structure
   - Authorized red-team and malware-analysis traffic
 fp_likelihood: medium
-recommended_role: alert
+recommended_role: hunt
 precision_notes: >-
   Zeek DNS logs are not testable on the Windows EVTX corpus. The rule matched
   all 12 resolver-duplicated query rows from five source-faithful heartbeat
@@ -42,5 +42,8 @@ precision_notes: >-
   the two-second probe spacing is not an agent cadence measurement. The Sliver
   rule requires multiple maximum-length restricted-alphabet labels and matched
   none of these rows; both families use Base32-like multi-label DNS, but the
-  captured structures are not interchangeable.
+  captured structures are not interchangeable. Because the positive traffic
+  was generated from the same source reading that produced this expression,
+  retain it as a hunt until genuine implant traffic independently validates
+  the shape and the recommended five-query correlation.
 level: medium

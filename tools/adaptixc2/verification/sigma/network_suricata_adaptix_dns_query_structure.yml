@@ -33,7 +33,7 @@ falsepositives:
   - DNS tunneling or application protocols independently using the same session, operation, sequence, index, and Base32-label structure
   - Authorized red-team and malware-analysis traffic
 fp_likelihood: medium
-recommended_role: alert
+recommended_role: hunt
 precision_notes: >-
   Suricata DNS EVE is not testable on the Windows EVTX corpus. The rule matched
   all 12 resolver-duplicated query events from five source-faithful heartbeat
@@ -43,5 +43,8 @@ precision_notes: >-
   spacing is not an agent cadence measurement. The Sliver Suricata rule matched
   none of these events because it requires multiple maximum-length encoded
   labels; a broader cross-family rule needs more genuine-family captures before
-  it can be justified.
+  it can be justified. Because the positive traffic was generated from the
+  same source reading that produced this expression, retain it as a hunt until
+  genuine implant traffic independently validates the shape and the
+  recommended five-query correlation.
 level: medium

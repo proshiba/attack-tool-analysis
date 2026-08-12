@@ -133,8 +133,8 @@
     {"path": "sigma/proc_creation_unversioned_executable_from_script_host.yml", "source": "windows", "tier": 1, "measured": true, "positive_evidence": "both renamed agents", "precision": {"harness_verdict": "pass", "fp_count": 3, "fp_share_of_category_percent": 0.012661, "category_denominator": 23695, "detection_hit": true, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"}},
     {"path": "sigma/file_event_lnx_sysmon_service_execstart_mismatch.yml", "source": "linux", "tier": 1, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "one auditd unit create plus retained content/package correlation in each persistence attempt", "provenance": ["AdaptixC2 v1.2 source", "evidence/linux-endpoint-signals.json", "SigmaHQ master Systemd Service Creation comparison"], "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": 542441, "detection_hit": "not evaluated - manual cross-source correlation", "fp_likelihood": "low", "recommended_role": "hunt", "recommended_level": "medium", "precision_notes": "Run-local evidence was correlated manually; standard Sysmon for Linux FileCreate and auditd PATH records lack FileContent, so the rule requires the declared non-default unit-content enrichment and should also consult package ownership."}},
     {"path": "sigma/lnx_auditd_systemd_exec_hidden_path.yml", "source": "linux", "tier": 2, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "one auditd PID 1 exec record in each persistence attempt; direct shell-parent execution excluded", "provenance": ["AdaptixC2 v1.2 source", "evidence/linux-endpoint-signals.json"], "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": 23695, "detection_hit": true, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low", "precision_notes": "Hidden service paths can be legitimate; require recent unit creation and ExecStart/package mismatch."}},
-    {"path": "sigma/network_zeek_adaptix_dns_query_structure.yml", "source": "zeek", "tier": 1, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "12 of 12 source-faithful listener-probe rows and 0 of 14 control/permissive-parser rows", "provenance": ["AdaptixC2 v1.2 DNS client source", "evidence/linux-network-signals.json"], "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": true, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium", "precision_notes": "Source-plus-listener validation only; no Linux DNS agent or agent cadence was observed."}},
-    {"path": "sigma/network_suricata_adaptix_dns_query_structure.yml", "source": "suricata", "tier": 1, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "12 of 12 source-faithful listener-probe query events and 0 of 14 control/permissive-parser query events", "provenance": ["AdaptixC2 v1.2 DNS client source", "evidence/linux-network-signals.json"], "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": true, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium", "precision_notes": "Source-plus-listener validation only; no Linux DNS agent or agent cadence was observed."}}
+    {"path": "sigma/network_zeek_adaptix_dns_query_structure.yml", "source": "zeek", "tier": 1, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "12 of 12 source-faithful listener-probe rows and 0 of 14 control/permissive-parser rows", "provenance": ["AdaptixC2 v1.2 DNS client source", "evidence/linux-network-signals.json"], "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": true, "fp_likelihood": "medium", "recommended_role": "hunt", "recommended_level": "medium", "precision_notes": "Source-plus-listener validation only; no Linux DNS agent or agent cadence was observed. The positive probes and expression share the same source reading, so genuine implant validation and five-query correlation are required before alerting."}},
+    {"path": "sigma/network_suricata_adaptix_dns_query_structure.yml", "source": "suricata", "tier": 1, "measured": false, "reason": "not-testable-on-evtx", "positive_evidence": "12 of 12 source-faithful listener-probe query events and 0 of 14 control/permissive-parser query events", "provenance": ["AdaptixC2 v1.2 DNS client source", "evidence/linux-network-signals.json"], "precision": {"harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": true, "fp_likelihood": "medium", "recommended_role": "hunt", "recommended_level": "medium", "precision_notes": "Source-plus-listener validation only; no Linux DNS agent or agent cadence was observed. The positive probes and expression share the same source reading, so genuine implant validation and five-query correlation are required before alerting."}}
   ],
   "upstream": {
     "sigmahq_commit": "8eaafff1f2845a696050e05e72ba1140ee190698",
@@ -196,42 +196,44 @@
   },
   "audit_gate": {
     "status": "PASS",
-    "measured_commit": "f4020a0f7285ceafc098e126b99a51cb91269eb8",
+    "measured_commit": "be954937b150f3142402e726e6c1d33475da9e92",
     "iteration": 2,
     "iteration_count": 2,
     "exit_code": 0,
-    "output": "/opt/audit/results/gate-tools-adaptixc2-20260811-0408/gate-result.md",
+    "output": "/opt/audit/results/gate-tools-adaptixc2-20260812-1557/gate-result.md",
     "report_hashes": {
-      "gate_result_json_sha256": "992504c549638a133adcbd88bad66fcaf921aeb4d3d72671d5f0db1c4d144955",
-      "auditor_report_json_sha256": "a51ed20a73d1c079cc29ba710ecaf3cac0cb8ea3dc565798ecd666853d84c43b"
+      "gate_result_json_sha256": "92f85cd84953109b6af7fd3da2901587ecfc559bcd87eeabd184c811a055d02f",
+      "auditor_report_json_sha256": "9a70728dab31e99303b46e8ef8fd7a10d469bb14b148c1a66889a6100ca0fc4c",
+      "gate_result_md_sha256": "384c2229a7b82a2c18bcfebff8e08372890c5baa442de0032d3ed222ce841e8f",
+      "auditor_report_md_sha256": "e36822d7881d48616f58ecdcf6448b35194f001ab33c06206a2e8ea8134ea9b8"
     },
     "safety": "safe",
     "blockers": 0,
-    "non_blocking_findings": 4,
+    "non_blocking_findings": 8,
     "harness": {
-      "rule_count": 4,
+      "rule_count": 8,
       "blocking": 0,
       "pass": 1,
       "no_corpus_coverage": 1,
-      "not_testable_on_evtx": 2
+      "not_testable_on_evtx": 6
     },
     "precision_source": {
-      "path": "/opt/audit/results/gate-tools-adaptixc2-20260811-0408/precision/precision-input.json",
-      "repo_commit_measured": "f4020a0",
-      "auditor_report_commit": "f4020a0f7285ceafc098e126b99a51cb91269eb8",
+      "path": "/opt/audit/results/gate-tools-adaptixc2-20260812-1557/precision/precision-input.json",
+      "repo_commit_measured": "be95493",
+      "auditor_report_commit": "be954937b150f3142402e726e6c1d33475da9e92",
       "reconciliation_rule": "fp_likelihood = max(measured floor, auditor judgement); high fp_likelihood forces recommended_role=hunt and level no higher than low"
     },
     "scenario_coverage": {
-      "verified_grounded_use_cases": 5,
+      "verified_grounded_use_cases": 7,
       "grounded_denominator": 8,
-      "coverage_percent": 62.5,
+      "coverage_percent": 87.5,
       "floor_percent": 60,
       "verdict": "expand",
       "merge_effect": "above the floor; remaining additions are non-blocking future scenarios"
     },
     "history": [
-      {"iteration": 1, "measured_commit": "4396fe1", "decision": "BLOCKED", "blockers": 1},
-      {"iteration": 2, "measured_commit": "f4020a0f7285ceafc098e126b99a51cb91269eb8", "decision": "PASS", "blockers": 0}
+      {"iteration": 1, "measured_commit": "c3115056c746ffbc8e04f936c5279c5e2f8cbd80", "decision": "BLOCKED", "blockers": 1},
+      {"iteration": 2, "measured_commit": "be954937b150f3142402e726e6c1d33475da9e92", "decision": "PASS", "blockers": 0}
     ]
   }
 }
