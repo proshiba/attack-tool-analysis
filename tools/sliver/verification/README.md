@@ -1,5 +1,37 @@
 # Sliver cross-platform verification with NSM
 
+The 2026-08-11 Windows expansion re-grounded the mTLS foothold and added four
+bounded flows in one `win_verify_baseline` visit: SOCKS5 pivoting to one Kali
+marker service, inert execute-assembly in a newly created `notepad.exe`, an
+inert `faultrep.dll` sideload through a copied Microsoft-signed `WerFault.exe`,
+and named HTTPS C2 at `c2.sliver.lab` with a lab root/intermediate/leaf chain.
+The full 310,804,832-byte pktmon capture produced 65 Zeek connections and zero
+capture-loss gaps.
+
+The schema-v3 scope check is `PASS`: no traffic attributable to the declared
+attack left the lab, and everything else that did is in the manifest. Fifty-nine
+Zeek rows terminated at Kali services. Six rows covered three public responders
+but carried zero target-origin packets and no declared-tool attribution; the
+manifest also retains Windows telemetry names queried through the in-lab DNS
+resolver. The check consumed all renamed images, `notepad.exe`, server/listener
+records, and operator transcripts rather than a filtered capture.
+
+Named HTTPS exposed six DNS observations, SNI, a visible leaf/intermediate
+chain, JA3 `a0e9f5d64349fb13191bc781f81f42e1`, full-handshake JA3S
+`a3080493c64c675cef762b91f46aa81a`, resumed JA3S
+`326de7c6719a77bb7ef65f6cac962193`, and all-zero JARM. No new TLS rule was
+shipped: the client is generic WinINet/SChannel, the resumed JA3S also appeared
+in the AdaptixC2 run, and JARM supplied no discriminator. Raw mTLS re-fired the
+existing generic Go crypto/tls hunts and is still not claimed as a Sliver
+signature.
+
+Audit iteration 1 passed at commit `5498dff`: safety `safe`, zero blockers,
+three Windows rules passed the EVTX harness, and nine network/Linux rules were
+correctly `not-testable-on-evtx`. Grounded lab-runnable coverage is 8/13
+(61.5%), above the 60% floor. The in-memory and sideload cases use inert
+lab-authored proxies; execute-assembly emitted no related EID 10/EID 7, and the
+sideload reused the existing AdaptixC2 `faultrep.dll` file-event rule.
+
 The 2026-08-10 extension adds renamed Linux amd64 implants on Ubuntu VM 103
 across clear HTTP beacon, HTTPS beacon, DNS beacon, and raw mTLS session
 transports. Each

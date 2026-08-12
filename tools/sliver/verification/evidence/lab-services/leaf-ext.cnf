@@ -1,0 +1,6 @@
+basicConstraints=critical,CA:FALSE
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth
+subjectAltName=DNS:c2.sliver.lab
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer

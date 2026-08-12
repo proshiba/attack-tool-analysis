@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 2 - third-party PoC code is reviewed before it is executed",
+  "target": "/home/operator/sliver-run-20260811/jarm.py",
+  "source_url": "https://github.com/salesforce/jarm",
+  "file_count": 1,
+  "severity_counts": {
+    "medium": 1,
+    "high": 1
+  },
+  "findings": [
+    {
+      "id": "obfuscation",
+      "severity": "medium",
+      "line": 165,
+      "why": "large encoded or escaped blob - review its decoded content before running",
+      "evidence": "supported_groups = b\"\\x00\\x0a\\x00\\x0a\\x00\\x08\\x00\\x1d\\x00\\x17\\x00\\x18\\x00\\x19\"",
+      "file": "jarm.py"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "8.8.4.4, opensource.org",
+      "file": "jarm.py"
+    }
+  ],
+  "files": [
+    {
+      "file": "jarm.py",
+      "bytes": 25634,
+      "sha256": "8b44d084d8fa49307d401a9be5ec4cd2e6fde6705ee913684d08c301f14524a1",
+      "findings": [
+        {
+          "id": "obfuscation",
+          "severity": "medium",
+          "line": 165,
+          "why": "large encoded or escaped blob - review its decoded content before running",
+          "evidence": "supported_groups = b\"\\x00\\x0a\\x00\\x0a\\x00\\x08\\x00\\x1d\\x00\\x17\\x00\\x18\\x00\\x19\""
+        },
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "8.8.4.4, opensource.org"
+        }
+      ]
+    }
+  ],
+  "mechanical_verdict": "NEEDS-HUMAN-REVIEW",
+  "disclaimer": "A mechanical scan never clears code. Read the source. Treat compiled or obfuscated artefacts as unknown-malicious and analyse them on REMnux (VM 105). Execution happens only on the isolated target, snapshot before and roll back after."
+}

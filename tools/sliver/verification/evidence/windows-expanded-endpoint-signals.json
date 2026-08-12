@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "run_id": "sliver-windows-expanded-20260811",
+  "collection_window": {
+    "start_utc": "2026-08-11T05:19:08.065Z",
+    "end_utc": "2026-08-11T05:26:50.128Z",
+    "event_count": 10261,
+    "events_json_sha256": "9d08c86e2bafd8a0c0ea01acc2df28f816ba4bcae851a3f8073e2c9871b289eb",
+    "sysmon_evtx_sha256": "9d5e90652549a2bf3e7f473a18b9df9e0bd196ec6dd64fe1b8da13338d3fec44"
+  },
+  "flows": [
+    {
+      "id": "windows-mtls-foothold",
+      "network_dns": "Sysmon EID 3 attributed the session to 192.168.1.50:31337; no session-attributed EID 22 occurred.",
+      "file": "PowerShell EID 11 writes covered the renamed session and fixed 29-byte marker; marker transfer completed over C2.",
+      "registry": "none observed for the session ProcessGuid",
+      "process_identity_command": "EID 1 recorded the renamed, unversioned Go executable as SYSTEM and the fixed cmd.exe marker command.",
+      "parent_child": "EID 1 recorded PowerShell launching the session and the session directly spawning cmd.exe.",
+      "rules_fired": [
+        "file_event_script_host_writes_executable",
+        "proc_creation_untrusted_parent_spawns_shell",
+        "proc_creation_unversioned_executable_from_script_host"
+      ]
+    },
+    {
+      "id": "socks5-pivot",
+      "network_dns": "EID 3 attributed one additional system-audit.exe connection to 192.168.1.50:18084; the Kali service logged a 30-byte GET from 192.168.1.52 through the loopback-only SOCKS listener.",
+      "file": "none observed on the target; the response was returned to Kali curl and was not written by the implant",
+      "registry": "none observed",
+      "process_identity_command": "no new target process; the SOCKS tunnel ran inside the existing session",
+      "parent_child": "none observed",
+      "rules_fired": []
+    },
+    {
+      "id": "execute-assembly-notepad",
+      "network_dns": "none observed from notepad.exe; the only related network remained the parent session's contained mTLS flow",
+      "file": "none observed for the inert assembly or notepad.exe on the target",
+      "registry": "Windows CIT recorded CLR loading for notepad.exe; later inventory records were OS-generated rather than implant persistence.",
+      "process_identity_command": "EID 1 recorded Microsoft-signed notepad.exe PID 4224 as SYSTEM with system-audit.exe as parent; the operator received SLIVER_IN_MEMORY_INERT_MARKER.",
+      "parent_child": "system-audit.exe spawned the sacrificial notepad.exe, which exited about one second later; no related EID 10 or EID 7 was emitted by this Sysmon configuration.",
+      "rules_fired": []
+    },
+    {
+      "id": "inert-dll-sideload",
+      "network_dns": "none observed from the copied WerFault.exe or faultrep.dll",
+      "file": "EID 11 recorded PowerShell writing faultrep.dll and copying WerFault.exe; copied WerFault.exe wrote the fixed sideload-marker.txt.",
+      "registry": "only OS application-inventory records followed execution; no persistence registry behavior was observed",
+      "process_identity_command": "EID 1 recorded Microsoft-signed WerFault.exe from C:\\lab\\sliver-sideload with -? as SYSTEM.",
+      "parent_child": "PowerShell launched the copied signed host; the inert DLL created the marker and the host exited without children.",
+      "rules_fired": [
+        "adaptixc2/file_event_faultrep_dll_outside_windows"
+      ]
+    },
+    {
+      "id": "named-https-c2",
+      "network_dns": "EID 22 attributed c2.sliver.lab -> 192.168.1.50 to telemetry-service.exe; EID 3 attributed 40 TLS connections to 192.168.1.50:18443.",
+      "file": "PowerShell EID 11 recorded the renamed HTTPS beacon write; no task-created file was observed",
+      "registry": "none observed for the beacon ProcessGuid",
+      "process_identity_command": "EID 1 recorded the renamed, unversioned Go beacon as SYSTEM; getuid and ls C:\\lab completed without shell execution.",
+      "parent_child": "PowerShell launched the beacon; no beacon child process was observed",
+      "rules_fired": [
+        "file_event_script_host_writes_executable",
+        "proc_creation_unversioned_executable_from_script_host"
+      ]
+    }
+  ],
+  "negative_evidence": {
+    "in_memory_eid10": 0,
+    "in_memory_eid7": 0,
+    "sideload_network_connections": 0,
+    "named_https_child_processes": 0
+  },
+  "sanitization": "Raw EVTX and event export are retained outside the repository; this file contains only detection-relevant fields and aggregate negatives."
+}

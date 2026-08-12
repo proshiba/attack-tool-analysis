@@ -33,8 +33,9 @@ problem last time. An allowlist of benign process names was tried and does not h
 Windows ships new ones (`MpDefenderCoreService.exe` was the one that broke it).
 
 What we can therefore claim is not "nothing left the lab" - that was never true - but
-"no traffic attributable to the attack left the lab, and here is everything else that
-did". The first is unprovable on a real OS. The second is true and checkable.
+"no traffic attributable to the declared attack left the lab, and everything else that
+did is in the manifest." The broader claim is unprovable on a real OS; the narrower
+attribution claim is true and checkable.
 
 A violation exits non-zero: stop the run, preserve the evidence, roll the target back,
 and disclose it. Concealing one is a worse failure than the breach.
@@ -196,7 +197,7 @@ def matches_tool(image: str, tools: list[str]) -> bool:
     return False
 
 
-def scan_operator_record(path: Path, allow, ignored) -> list[dict]:
+def scan_operator_record(path: Path, allow, ignored, allowed_domains: list[str]) -> list[dict]:
     """Read what the operator actually configured and ran.
 
     A C2 listener definition carries its own callback address; if that address is
@@ -222,6 +223,10 @@ def scan_operator_record(path: Path, allow, ignored) -> list[dict]:
         for match in URL_HOST.finditer(line):
             host = match.group(1)
             if CITATION_HOSTS.search(host):
+                continue
+            normalized_host = host.lower().rstrip(".")
+            if any(normalized_host == suffix or normalized_host.endswith(f".{suffix}")
+                   for suffix in allowed_domains):
                 continue
             findings.append({
                 "check": "operator-record", "severity": "critical", "file": path.name,
@@ -250,6 +255,8 @@ def main() -> None:
     management = networks(MANAGEMENT)
     ignored = networks(IGNORED)
     tools = [t for t in args.tool_image if t.strip()]
+    allowed_domains = [domain.lower().lstrip(".").rstrip(".")
+                       for domain in args.allow_domain if domain.strip(".")]
 
     violations: list[dict] = []
     manifest: list[dict] = []
@@ -257,7 +264,7 @@ def main() -> None:
     # 1. What the operator configured and ran. Checked first: it decides whether the attack
     #    could ever have been aimed outside, independently of what any capture caught.
     for path in args.operator_log:
-        for finding in scan_operator_record(path, allow, ignored):
+        for finding in scan_operator_record(path, allow, ignored, allowed_domains):
             (violations if finding["severity"] == "critical" else manifest).append(finding)
 
     # 2. Attribution: which process opened which destination, and which process asked for
@@ -324,7 +331,7 @@ def main() -> None:
     for image, query in dns_by_image:
         if not query or query.endswith((".local", ".lab", ".arpa")):
             continue
-        if any(query.endswith(suffix.lower().lstrip(".")) for suffix in args.allow_domain):
+        if any(query == suffix or query.endswith(f".{suffix}") for suffix in allowed_domains):
             continue
         if matches_tool(image, tools):
             violations.append({"check": "sysmon-eid22", "severity": "critical", "scope": "outside-lab",
@@ -336,7 +343,7 @@ def main() -> None:
         query = str(row.get("query") or "").strip().lower()
         if not query or query in ("-", "(empty)") or query.endswith((".local", ".lab", ".arpa")):
             continue
-        if any(query.endswith(suffix.lower().lstrip(".")) for suffix in args.allow_domain):
+        if any(query == suffix or query.endswith(f".{suffix}") for suffix in allowed_domains):
             continue
         resolver = str(row.get("id.resp_h") or row.get("id_resp_h") or "")
         queries[(query, resolver)] += 1
@@ -364,9 +371,10 @@ def main() -> None:
     report = {
         "schema_version": 3,
         "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
-        "claim": ("no traffic attributable to the declared attack reached an off-lab host; "
-                  "all other off-lab traffic is recorded in the manifest and is not judged"),
+        "claim": ("no traffic attributable to the declared attack left the lab, and "
+                  "everything else that did is in the manifest"),
         "allowed_networks": [str(net) for net in allow],
+        "allowed_domains": allowed_domains,
         "management_networks": [str(net) for net in management],
         "declared_tool_images": tools,
         "inputs": {

@@ -1,85 +1,139 @@
 {
-  "schema_version": 1,
-  "rule": "SAFETY RULE 1 - attack traffic never leaves the isolated lab",
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
   "allowed_networks": [
     "192.168.1.0/24"
+  ],
+  "allowed_domains": [
+    "c2.sliver.lab"
   ],
   "management_networks": [
     "10.9.0.0/24"
   ],
-  "allowed_domains": [
-    {
-      "name": "c2.sliver.lab",
-      "reason": "non-public lab-only Sliver DNS parent served by Kali 192.168.1.50"
-    },
-    {
-      "name": "ntp.ubuntu.com",
-      "reason": "48 base-OS time-service lookups were sent to the lab resolver and received no path to a public resolver; they were not implant traffic"
-    }
+  "declared_tool_images": [
+    "windows-session.exe",
+    "system-audit.exe",
+    "windows-https.exe",
+    "telemetry-service.exe",
+    "sliver-inert-assembly.exe",
+    "notepad.exe",
+    "faultrep.dll",
+    "WerFault.exe",
+    "cmd.exe"
   ],
   "inputs": {
-    "zeek_dir": "/tmp/sliver-scope-combined-v2",
-    "sysmon_json": "/tmp/sliver-scope-combined-v2/network.json",
-    "sysmon_attribution_available": true,
-    "composition": "conn.log, dns.log, and network.json combined HTTP, HTTPS, mTLS, the safety-aborted DNS attempt, and the completed DNS flow before this check"
-  },
-  "process_attribution": {
-    "source": "collect-run auditd:lab_connect correlation plus auditd SOCKADDR records; raw Sysmon EID 3 Image was not used as sole ownership proof",
-    "raw_sysmon_image_not_used_as_sole_owner": true,
-    "attributed_connections": [
-      {
-        "role": "delivery downloader",
-        "owning_process_image": "/usr/bin/curl",
-        "destination_port": 18080,
-        "count": 5
-      },
-      {
-        "role": "renamed HTTP implant",
-        "owning_process_image": "/tmp/.cache-update-6f32",
-        "destination_port": 8080,
-        "count": 11
-      },
-      {
-        "role": "renamed HTTPS implant",
-        "owning_process_image": "/var/tmp/.lib-cache-93a1",
-        "destination_port": 8443,
-        "count": 15
-      },
-      {
-        "role": "renamed mTLS implant",
-        "owning_process_image": "/dev/shm/.dbus-helper-417",
-        "destination_port": 31337,
-        "count": 1
-      },
-      {
-        "role": "renamed DNS implant",
-        "owning_process_image": "/var/tmp/.net-cache-284e",
-        "destination": "127.0.0.53:53 local systemd-resolved stub",
-        "count": 72,
-        "attribution_source": "successful auditd lab_connect SYSCALL plus SOCKADDR pairs"
-      }
+    "zeek_dir": "/home/operator/sliver-run-20260811/nsm",
+    "sysmon_json": "/home/operator/sliver-run-20260811/raw/events.json",
+    "operator_logs": [
+      "/home/operator/sliver-run-20260811/operator/sliver.log",
+      "/home/operator/sliver-run-20260811/operator/audit.json",
+      "/home/operator/sliver-run-20260811/operator/operator.cfg",
+      "/home/operator/sliver-run-20260811/setup.rc",
+      "/home/operator/sliver-run-20260811/mtls-actions.rc",
+      "/home/operator/sliver-run-20260811/mtls-marker-fixed.rc",
+      "/home/operator/sliver-run-20260811/mtls-tasks-fixed.rc",
+      "/home/operator/sliver-run-20260811/https-actions.rc",
+      "/home/operator/sliver-run-20260811/operator/mtls-marker-fixed.log",
+      "/home/operator/sliver-run-20260811/operator/mtls-tasks-fixed.log",
+      "/home/operator/sliver-run-20260811/operator/https-actions.log",
+      "/home/operator/sliver-run-20260811/operator/pivot-http.log"
     ],
-    "dns_resolution_chain": "The completed pcap recorded 73 encoded C2 queries from 192.168.1.51 only to 192.168.1.50:53. Link-specific resolvectl evidence named only 192.168.1.50, and the target egress guard rejected all non-lab IPv4/IPv6 output.",
-    "raw_eid3_caveat": "Sysmon did not emit a usable EID 3 owner for the implant-to-local-stub UDP traffic; auditd attributed the local connects and the pcap plus exclusive resolver configuration established the resolver-to-Kali leg."
+    "sysmon_eid3_events_read": 61,
+    "sysmon_eid22_events_read": 5,
+    "attributed_destinations": 2,
+    "attribution_available": true
   },
-  "execution_guard": {
-    "completed_dns_flow_offlab_pcap_packets": {
-      "ipv4": 0,
-      "ipv6": 0
-    },
-    "completed_dns_flow_target_firewall_rejections": {
-      "ipv4_packets": 4,
-      "ipv6_packets": 3
-    },
-    "aborted_dns_attempt": {
-      "reason": "link status still advertised 1.1.1.1 after the first resolver change",
-      "action": "implant stopped before tasking; pcap and telemetry preserved; VM 103 rolled back before retry",
-      "offlab_pcap_packets": 0,
-      "pcap_sha256": "2e14595773007abf753d65f63d915ddb8dfecdd3718bc095a51236633288d32c"
-    }
+  "capture_scale": {
+    "conn_log_rows": 65,
+    "off_lab_destinations": 3,
+    "note": "a capture pre-filtered to in-lab traffic cannot show an off-lab destination, so 0 here proves nothing on its own - never filter the input"
   },
   "violation_count": 0,
   "violations": [],
-  "os_background_destinations": [],
+  "manifest_count": 6,
+  "manifest": [
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 20.190.141.39:443/tcp (1 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "20.190.141.39",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": [
+        "RSTRH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 23.220.70.138:80/tcp (4 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "23.220.70.138",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 4,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": [
+        "SHR"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 4.213.25.242:443/tcp (1 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "4.213.25.242",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": [
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "client.wns.windows.com",
+      "queries": 48,
+      "resolver": "192.168.1.50",
+      "scope": "external-name-queried-in-lab",
+      "detail": "'client.wns.windows.com' asked of in-lab resolver 192.168.1.50 (48 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "v10.events.data.microsoft.com",
+      "queries": 24,
+      "resolver": "192.168.1.50",
+      "scope": "external-name-queried-in-lab",
+      "detail": "'v10.events.data.microsoft.com' asked of in-lab resolver 192.168.1.50 (24 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "settings-win.data.microsoft.com",
+      "queries": 6,
+      "resolver": "192.168.1.50",
+      "scope": "external-name-queried-in-lab",
+      "detail": "'settings-win.data.microsoft.com' asked of in-lab resolver 192.168.1.50 (6 queries)"
+    }
+  ],
   "verdict": "PASS"
 }

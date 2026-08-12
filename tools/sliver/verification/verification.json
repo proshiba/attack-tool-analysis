@@ -294,7 +294,19 @@
     },
     {
       "path": "evidence/safety/lab-scope.json",
-      "description": "PASS verdict from combined Zeek flow output and auditd-correlated process attribution."
+      "description": "Schema-v3 PASS from the full unfiltered Windows expanded-run Zeek output, Sysmon attribution, and operator record."
+    },
+    {
+      "path": "evidence/safety/lab-scope-linux.json",
+      "description": "Schema-v3 PASS regenerated from the retained full Linux flow evidence and operator records."
+    },
+    {
+      "path": "evidence/windows-expanded-endpoint-signals.json",
+      "description": "Sanitized five-dimension endpoint outcomes for all five Windows flows, including explicit negative evidence."
+    },
+    {
+      "path": "evidence/windows-expanded-network-signals.json",
+      "description": "Sanitized full-capture responder accounting, delivery, pivot, TLS, x509, and fingerprint evidence."
     },
     {
       "path": "evidence/safety/dns-generated-triage/poc-review.json",
@@ -314,6 +326,7 @@
       "fp_likelihood": "medium",
       "recommended_role": "hunt",
       "level": "medium",
+      "provenance": ["Sliver v1.7.3 release", "commit 140489472f7bfba90fbaaf9b4e67c844cf3edf71", "evidence/windows-expanded-endpoint-signals.json", "unfiltered capture 8d8654fc494e4585301b56f58feb23153a01a6257c2cd3437b96ad5f5528a773"],
       "precision_measurement": {
         "measured": true,
         "fp_count": 3,
@@ -332,6 +345,7 @@
       "fp_likelihood": "high",
       "recommended_role": "hunt",
       "level": "low",
+      "provenance": ["Sliver v1.7.3 release", "commit 140489472f7bfba90fbaaf9b4e67c844cf3edf71", "evidence/windows-expanded-endpoint-signals.json", "unfiltered capture 8d8654fc494e4585301b56f58feb23153a01a6257c2cd3437b96ad5f5528a773"],
       "precision_measurement": {
         "measured": true,
         "fp_count": 321,
@@ -350,6 +364,7 @@
       "fp_likelihood": "high",
       "recommended_role": "hunt",
       "level": "low",
+      "provenance": ["Sliver v1.7.3 release", "commit 140489472f7bfba90fbaaf9b4e67c844cf3edf71", "evidence/windows-expanded-endpoint-signals.json", "unfiltered capture 8d8654fc494e4585301b56f58feb23153a01a6257c2cd3437b96ad5f5528a773"],
       "precision_measurement": {
         "measured": true,
         "fp_count": 64,
@@ -367,8 +382,8 @@
       "status": "experimental",
       "fp_likelihood": "high",
       "recommended_role": "hunt",
-      "level": "medium",
-      "provenance": ["Sliver v1.7.3 release", "evidence/network-signals.json prior Windows mTLS run", "evidence/linux-network-signals.json Linux HTTPS and mTLS flows"],
+      "level": "low",
+      "provenance": ["Sliver v1.7.3 release", "evidence/windows-expanded-network-signals.json 2026-08-11 Windows mTLS", "evidence/linux-network-signals.json Linux HTTPS and mTLS flows"],
       "authorship_bar": "A dimension upstream does not cover: NSM JA3/JA3S",
       "precision_measurement": {
         "measured": false,
@@ -377,7 +392,7 @@
         "fp_share_of_category_percent": null,
         "category_denominator": null,
         "detection_hit": true,
-        "positive_evidence": "15 of 15 Linux HTTPS TLS events and the one Linux mTLS TLS event matched",
+        "positive_evidence": "15 of 15 Linux HTTPS TLS events, one Linux mTLS event, and the 2026-08-11 Windows mTLS event matched",
         "corpus": "run-local Zeek TLS evidence; clean EVTX remains inapplicable"
       }
     },
@@ -388,8 +403,8 @@
       "status": "experimental",
       "fp_likelihood": "high",
       "recommended_role": "hunt",
-      "level": "medium",
-      "provenance": ["Sliver v1.7.3 release", "evidence/network-signals.json prior Windows mTLS run", "evidence/linux-network-signals.json Linux HTTPS and mTLS flows"],
+      "level": "low",
+      "provenance": ["Sliver v1.7.3 release", "evidence/windows-expanded-network-signals.json 2026-08-11 Windows mTLS", "evidence/linux-network-signals.json Linux HTTPS and mTLS flows"],
       "authorship_bar": "A dimension upstream does not cover: NSM JA3/JA3S",
       "precision_measurement": {
         "measured": false,
@@ -398,7 +413,7 @@
         "fp_share_of_category_percent": null,
         "category_denominator": null,
         "detection_hit": true,
-        "positive_evidence": "15 of 15 Linux HTTPS EVE TLS events and the one Linux mTLS EVE TLS event matched",
+        "positive_evidence": "15 of 15 Linux HTTPS EVE TLS events, one Linux mTLS EVE event, and the 2026-08-11 Windows mTLS EVE event matched",
         "corpus": "run-local Suricata TLS evidence; clean EVTX remains inapplicable"
       }
     },
@@ -410,7 +425,7 @@
       "fp_likelihood": "high",
       "recommended_role": "hunt",
       "level": "low",
-      "provenance": ["Sliver v1.7.3 release", "evidence/network-signals.json prior Windows mTLS run", "evidence/linux-network-signals.json Linux HTTPS and mTLS flows"],
+      "provenance": ["Sliver v1.7.3 release", "evidence/windows-expanded-network-signals.json 2026-08-11 Windows mTLS", "evidence/linux-network-signals.json Linux HTTPS and mTLS flows"],
       "authorship_bar": "A dimension upstream does not cover: NSM TLS metadata",
       "precision_measurement": {
         "measured": false,
@@ -419,7 +434,7 @@
         "fp_share_of_category_percent": null,
         "category_denominator": null,
         "detection_hit": true,
-        "positive_evidence": "15 Linux HTTPS events and the one Linux mTLS event matched",
+        "positive_evidence": "15 Linux HTTPS events, one Linux mTLS event, and the 2026-08-11 Windows mTLS event matched; the named HTTPS flow correctly did not match",
         "corpus": "run-local Zeek TLS evidence; clean EVTX remains inapplicable"
       }
     },
@@ -690,7 +705,7 @@
       }
     ],
     "transport_comparison": "The HTTPS beacon and raw mTLS session had identical JA3, JA3S, and all-zero JARM in this v1.7.3 run. HTTPS was distinguishable by repeated short connections at the configured cadence; mTLS session mode held one 60.057947-second flow. Clear HTTP exposed its request profile, DNS exposed encoded A/TXT query bursts, and neither had TLS fingerprints.",
-    "scope_check": {"verdict": "PASS", "evidence": "evidence/safety/lab-scope.json", "process_attribution": "collect-run auditd:lab_connect correlation was used for TCP and auditd SYSCALL/SOCKADDR pairs attributed DNS implant connects to 127.0.0.53; raw EID 3 Image was not used as sole ownership proof"},
+    "scope_check": {"schema_version": 3, "verdict": "PASS", "evidence": "evidence/safety/lab-scope-linux.json", "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest", "process_attribution": "collect-run auditd:lab_connect correlation was used for TCP and auditd SYSCALL/SOCKADDR pairs attributed DNS implant connects to 127.0.0.53; raw EID 3 Image was not used as sole ownership proof"},
     "cleanup": {"kali": "listeners stopped, isolated state and generated implants deleted, temporary egress chain removed", "remnux": "temporary static-analysis artifacts deleted", "nsm": "temporary active-JARM script deleted", "target": "VM 103 rolled back to linux_verify_baseline after every execution; final Proxmox task exit status OK; Sysmon, auditd, and qemu-guest-agent active, four instrumentation hashes matched, and no run path or implant remained"}
   },
   "upstream": {
@@ -709,6 +724,17 @@
       {"path": "rules/linux/process_creation/proc_creation_lnx_susp_exec_from_dev_shm.yml", "modified": null, "result": "covered the renamed mTLS implant executing from /dev/shm; no duplicate local rule authored"},
       {"path": "rules/linux/file_event/file_event_lnx_wget_download_file_in_tmp_dir.yml", "modified": null, "result": "covers wget file writes but not the curl delivery observed in all four flows"}
     ],
+    "windows_expanded_comparison": {
+      "commit": "8eaafff1f2845a696050e05e72ba1140ee190698",
+      "conclusion": "SigmaHQ contains generic and named-tool coverage for portions of these techniques, but no upstream rule identifies the renamed Sliver implants or the complete five-flow behavior. Existing upstream or AdaptixC2 coverage was adopted where it matched; no duplicate pivot, injection, sideload, or TLS rule was added without a stable observed discriminator.",
+      "relevant_rules": [
+        {"path": "rules/windows/process_creation/proc_creation_win_hktl_sliver_c2_execution_pattern.yml", "result": "did not fire", "reason": "keys on a Sliver execution pattern absent from both renamed implants"},
+        {"path": "rules/windows/process_creation/proc_creation_win_pua_chisel.yml", "result": "did not fire", "reason": "the pivot used Sliver's in-process SOCKS implementation, not a Chisel binary or command line"},
+        {"path": "rules/windows/process_access/proc_access_win_susp_all_access_uncommon_target.yml", "result": "not evaluable on this flow", "reason": "the in-memory task emitted no related Sysmon EID 10, so no positive event existed to ground a local injection rule"},
+        {"path": "rules/windows/image_load/image_load_side_load_from_non_system_location.yml", "result": "not evaluable on this flow", "reason": "the sensor emitted no related EID 7; the existing AdaptixC2 faultrep.dll file-event rule fired and was adopted instead"},
+        {"path": "tools/adaptixc2/verification/sigma/file_event_faultrep_dll_outside_windows.yml", "result": "fired", "reason": "the bounded sideload reused the proven faultrep.dll technique; no duplicate Sliver-local rule was authored"}
+      ]
+    },
     "authored_rule_bars": [
       {"path": "sigma/file_event_lnx_curl_writes_hidden_transient_executable.yml", "bar": "A dimension upstream does not cover", "why": "adds Linux file-event coverage for curl staging; upstream has wget file-event and generic curl process rules but no equivalent curl file-event rule"},
       {"path": "sigma/proc_creation_lnx_hidden_executable_var_tmp.yml", "bar": "Form coverage", "why": "the lab proved renamed hidden /var/tmp execution; upstream's /tmp and /dev/shm execution rules miss this path"},
@@ -721,7 +747,150 @@
     ],
     "reported_upstream": {"status": "not_reported", "reason": "local rules remain experimental and Linux endpoint precision was only judged qualitatively against run-local evidence"}
   },
-  "audit_gate": {
+  "windows_expanded_run": {
+    "id": "sliver-windows-expanded-20260811",
+    "status": "verified",
+    "evidence_commit": "140489472f7bfba90fbaaf9b4e67c844cf3edf71",
+    "target": "VM 104 WIN10-ANALYSIS 192.168.1.52",
+    "c2_and_services": "VM 100 Kali 192.168.1.50 only",
+    "baseline_snapshot": "win_verify_baseline",
+    "collection_window": {
+      "start_utc": "2026-08-11T05:19:08.065Z",
+      "end_utc": "2026-08-11T05:26:50.128Z",
+      "event_count": 10261,
+      "pcap_bytes": 310804832,
+      "pcap_sha256": "8d8654fc494e4585301b56f58feb23153a01a6257c2cd3437b96ad5f5528a773",
+      "capture_loss_gaps": 0,
+      "capture_loss_percent": 0.0
+    },
+    "upstream": {
+      "tool_version": "v1.7.3",
+      "tool_commit": "3bbaf805104dcc4a75414ee0084e8de50702cad4",
+      "server_sha256": "e3216ecd12f6e7e97cb4588bb6d85c70eca3bdfad8b0818ffd53ccb2e357ccc8",
+      "client_sha256": "b0e328a131e4d679e9b268552db99ca2d46051b9205a67f9b7f7c1628983daae",
+      "session_implant_sha256": "93687267b75b076e77e7e199a0a5adefd1727837075363e0f260ac95f612648e",
+      "https_implant_sha256": "1f55cb6f0240a5919ed80d8a5849cacdd5a2049f627498c27d32bddf3e5534a4"
+    },
+    "safety": {
+      "checker_schema": 3,
+      "verdict": "PASS",
+      "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+      "conn_log_rows": 65,
+      "attack_attributed_off_lab": 0,
+      "manifest_entries": 6,
+      "declared_images": [
+        "windows-session.exe",
+        "system-audit.exe",
+        "windows-https.exe",
+        "telemetry-service.exe",
+        "sliver-inert-assembly.exe",
+        "notepad.exe",
+        "faultrep.dll",
+        "WerFault.exe",
+        "cmd.exe"
+      ],
+      "operator_records_supplied": 12,
+      "responder_accounting": "59 Zeek rows terminated at declared Kali services; six rows covered three public responders, had zero target-origin packets, no declared-tool attribution, and remain in the manifest. External Windows names were queried only through the in-lab Kali resolver."
+    },
+    "flows": [
+      {
+        "id": "windows-mtls-foothold",
+        "attack": ["T1105", "T1573.002", "T1033", "T1082", "T1083", "T1059.003", "T1041"],
+        "operator_actions": "Launch system-audit.exe; getuid; info; ls C:\\lab; execute fixed cmd.exe marker; download only the 29-byte fixed marker.",
+        "dimensions": {
+          "network_and_dns": "One TLS 1.3 connection to 192.168.1.50:31337 attributed by EID 3; no DNS observed.",
+          "files": "PowerShell wrote the renamed session; cmd.exe wrote the fixed marker and Sliver returned it.",
+          "registry": "none observed for the session ProcessGuid",
+          "process_identity_and_command": "Renamed, unversioned Go executable ran as SYSTEM; EID 1 captured the fixed cmd.exe command.",
+          "parent_child": "PowerShell -> system-audit.exe -> cmd.exe observed."
+        },
+        "rules_fired": [
+          "file_event_script_host_writes_executable",
+          "proc_creation_untrusted_parent_spawns_shell",
+          "proc_creation_unversioned_executable_from_script_host",
+          "network_zeek_sliver_mtls_ja3_pair",
+          "network_suricata_sliver_mtls_ja3_pair",
+          "network_zeek_tls13_no_sni_no_visible_cert"
+        ]
+      },
+      {
+        "id": "socks5-pivot",
+        "attack": ["T1572"],
+        "operator_actions": "Start SOCKS5 on Kali 127.0.0.1:1081; curl one fixed marker through it to 192.168.1.50:18084; stop SOCKS5.",
+        "dimensions": {
+          "network_and_dns": "One EID 3-attributed implant connection and one Zeek HTTP GET returned the 30-byte marker; no DNS observed.",
+          "files": "none observed on the target",
+          "registry": "none observed",
+          "process_identity_and_command": "no new target process; tunnel ran in the existing session",
+          "parent_child": "none observed"
+        },
+        "rules_fired": []
+      },
+      {
+        "id": "execute-assembly-notepad",
+        "attack": ["T1055"],
+        "operator_actions": "execute-assembly the lab-authored inert .NET assembly in a newly created C:\\Windows\\System32\\notepad.exe without AMSI or ETW bypass flags.",
+        "dimensions": {
+          "network_and_dns": "none observed from notepad.exe",
+          "files": "none observed for the assembly or notepad.exe on the target",
+          "registry": "Windows CIT recorded CLR loading for notepad.exe; no persistence observed.",
+          "process_identity_and_command": "SYSTEM notepad.exe PID 4224 returned SLIVER_IN_MEMORY_INERT_MARKER and exited after about one second.",
+          "parent_child": "system-audit.exe -> notepad.exe observed; no related EID 10 or EID 7 observed."
+        },
+        "rules_fired": []
+      },
+      {
+        "id": "inert-dll-sideload",
+        "attack": ["T1574.001", "T1036.005"],
+        "operator_actions": "Copy baseline Microsoft-signed WerFault.exe beside the reviewed inert faultrep.dll; run WerFault.exe -?; verify the fixed marker.",
+        "dimensions": {
+          "network_and_dns": "none observed",
+          "files": "PowerShell wrote faultrep.dll and copied WerFault.exe; the signed host wrote sideload-marker.txt.",
+          "registry": "only OS application-inventory records; no persistence observed",
+          "process_identity_and_command": "Microsoft-signed WerFault.exe executed from C:\\lab\\sliver-sideload as SYSTEM with -?.",
+          "parent_child": "PowerShell -> copied WerFault.exe observed; no child process observed."
+        },
+        "rules_fired": ["adaptixc2/file_event_faultrep_dll_outside_windows"]
+      },
+      {
+        "id": "named-https-c2",
+        "attack": ["T1105", "T1071.001", "T1573.002", "T1033", "T1083"],
+        "operator_actions": "Launch telemetry-service.exe; resolve c2.sliver.lab only through Kali; task getuid and ls C:\\lab over HTTPS to 192.168.1.50:18443.",
+        "dimensions": {
+          "network_and_dns": "Six DNS observations, EID 22 attribution, 40 TLS 1.2 connections, SNI c2.sliver.lab, and a visible leaf/intermediate chain.",
+          "files": "PowerShell wrote the renamed beacon; no task-created file observed.",
+          "registry": "none observed for the beacon ProcessGuid",
+          "process_identity_and_command": "Renamed, unversioned Go beacon ran as SYSTEM; no shell command was tasked.",
+          "parent_child": "PowerShell -> telemetry-service.exe observed; no beacon child process observed."
+        },
+        "rules_fired": [
+          "file_event_script_host_writes_executable",
+          "proc_creation_unversioned_executable_from_script_host"
+        ]
+      }
+    ],
+    "tls_comparison": {
+      "raw_mtls": {
+        "ja3": "2196848d251b217de8b2c037e356c11d",
+        "ja3s": "f4febc55ea12b31ae17cfb7e614afda8",
+        "jarm": "not remeasured; retained Linux and prior Windows mTLS result was all zero"
+      },
+      "named_https": {
+        "ja3": "a0e9f5d64349fb13191bc781f81f42e1",
+        "ja3s_full": "a3080493c64c675cef762b91f46aa81a",
+        "ja3s_resumed": "326de7c6719a77bb7ef65f6cac962193",
+        "jarm": "00000000000000000000000000000000000000000000000000000000000000"
+      },
+      "decision": "No new TLS rule. Raw mTLS re-fired the existing generic Go crypto/tls hunts. Named HTTPS used generic WinINet/SChannel; its resumed JA3S overlapped AdaptixC2 and its JARM was all zero."
+    },
+    "evidence": [
+      "evidence/windows-expanded-endpoint-signals.json",
+      "evidence/windows-expanded-network-signals.json",
+      "evidence/safety/lab-scope.json",
+      "evidence/safety/lab-scope-linux.json"
+    ]
+  },
+  "audit_gate_previous": {
     "status": "PASS",
     "measured_commit": "8a4cad0a352b46299fe809f654638a13fa79ffc1",
     "iteration": 2,
@@ -774,12 +943,74 @@
       {"iteration": 2, "measured_commit": "8a4cad0a352b46299fe809f654638a13fa79ffc1", "decision": "PASS", "blockers": 0}
     ]
   },
+  "audit_gate": {
+    "status": "PASS",
+    "branch": "feat/sliver-windows-safety-rerun",
+    "measured_commit": "5498dff59c851802bdd1370664964d9b16f084e9",
+    "iteration": 1,
+    "iteration_count": 1,
+    "exit_code": 0,
+    "output": "/opt/audit/results/gate-tools-sliver-20260812-iteration1/gate-result.md",
+    "report_hashes": {
+      "gate_result_json_sha256": "4ee0202860a6427482e766b4ebc67907e1ef4ed28f7f0e8e28de5651899e9f7f",
+      "auditor_report_json_sha256": "5f57f36dedc1008003aff0ea13ec4c49b80213906d400aaedba2bb0b7e2929fd",
+      "precision_input_json_sha256": "4a4d62be313f54feb683bb095101eeb36fe1d2003a5e6f04d247325013ed0eee"
+    },
+    "safety": "safe",
+    "blockers": 0,
+    "non_blocking_findings": 10,
+    "harness": {
+      "rule_count": 12,
+      "blocking": 0,
+      "pass": 3,
+      "not_testable_on_evtx": 9
+    },
+    "precision_source": {
+      "path": "/opt/audit/results/gate-tools-sliver-20260812-iteration1/precision/precision-input.json",
+      "repo_commit_measured": "5498dff",
+      "auditor_report_commit": "5498dff59c851802bdd1370664964d9b16f084e9",
+      "reconciliation_rule": "fp_likelihood = max(measured floor, auditor judgement); high fp_likelihood forces recommended_role=hunt and level<=low"
+    },
+    "precision": [
+      {"rule": "file_event_lnx_curl_writes_hidden_transient_executable.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": 542441, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "file_event_script_host_writes_executable.yml", "harness_verdict": "pass", "fp_count": 64, "fp_share_of_category_percent": 0.011799, "category_denominator": 542441, "detection_hit": true, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "network_suricata_sliver_dns_encoded_query_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_suricata_sliver_http_request_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_suricata_sliver_mtls_ja3_pair.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "network_zeek_sliver_dns_encoded_query_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_zeek_sliver_http_request_profile.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "medium", "recommended_role": "alert", "recommended_level": "medium"},
+      {"rule": "network_zeek_sliver_mtls_ja3_pair.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "network_zeek_tls13_no_sni_no_visible_cert.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "proc_creation_lnx_hidden_executable_var_tmp.yml", "harness_verdict": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": 23695, "detection_hit": null, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "proc_creation_untrusted_parent_spawns_shell.yml", "harness_verdict": "pass", "fp_count": 321, "fp_share_of_category_percent": 1.354716, "category_denominator": 23695, "detection_hit": true, "fp_likelihood": "high", "recommended_role": "hunt", "recommended_level": "low"},
+      {"rule": "proc_creation_unversioned_executable_from_script_host.yml", "harness_verdict": "pass", "fp_count": 3, "fp_share_of_category_percent": 0.012661, "category_denominator": 23695, "detection_hit": true, "fp_likelihood": "medium", "recommended_role": "hunt", "recommended_level": "medium"}
+    ],
+    "scenario_coverage": {
+      "verified_grounded_use_cases": 8,
+      "grounded_lab_runnable_denominator": 13,
+      "coverage_percent": 61.5,
+      "floor_percent": 60,
+      "verdict": "expand",
+      "blocks_merge": false,
+      "caveat": "The T1055 and T1574.001 cases use bounded inert lab-authored proxies; T1055 emitted no EID 10/EID 7 and the sideload reused an existing AdaptixC2 rule."
+    },
+    "notable_non_blocking": [
+      "The nearest SigmaHQ neighbours for the broad Windows shell-parent and PowerShell-write rules measured zero corpus false positives; compare/adopt their filters in a future text-and-measure pass.",
+      "The highest-value next run is Sliver's own shell command to validate or falsify the upstream Sliver command-line rule.",
+      "Network and Linux rules remain not-testable-on-evtx and are judged against run-local evidence."
+    ],
+    "history": [
+      {"iteration": 1, "measured_commit": "5498dff59c851802bdd1370664964d9b16f084e9", "decision": "PASS", "blockers": 0}
+    ]
+  },
   "detection_limitations": [
     "Generated names, hashes, ports, transport profiles, and TLS stacks are operator- or version-dependent; no rule hardcodes the lab address or port.",
-    "JA3/JA3S can overlap with other Go software and can change across Sliver/Go versions; HTTPS and mTLS were identical here, so use flow shape, periodicity, and endpoint context rather than claiming transport discrimination.",
+    "JA3/JA3S can overlap with other software and can change across Sliver, Go, and Windows versions. Linux HTTPS and mTLS were identical; Windows raw mTLS exposed generic Go crypto/tls while named HTTPS exposed generic WinINet/SChannel. Use flow shape, periodicity, and endpoint context rather than claiming Sliver or transport discrimination.",
     "Single-event Sigma cannot express the observed 10+0–3 second flow or DNS-burst periodicity; an analytics layer must aggregate by endpoint pair/profile or by DNS source and terminal parent domain.",
     "The clear HTTP User-Agent and URI profile are operator-configurable; HTTPS encrypted those request fields and therefore could not be evaluated against the HTTP-profile rules.",
-    "TLS 1.3 HTTPS and mTLS exposed no passive certificate chain/x509 row in these Linux traces, and both active JARM measurements were all-zero.",
+    "TLS 1.3 HTTPS and mTLS exposed no passive certificate chain/x509 row in the Linux traces. Windows named HTTPS exposed its lab chain and SNI, but active JARM was still all-zero and its resumed JA3S overlapped AdaptixC2.",
+    "The bounded execute-assembly flow created notepad.exe and returned inert output but produced no related Sysmon EID 10 or EID 7, so this run does not ground a single-event process-injection rule.",
+    "The SOCKS flow produced an implant-attributed connection to the fixed lab service, but no stable tool-independent single-event discriminator; no pivot rule was authored.",
     "Linux endpoint and Zeek/Suricata rules are not testable on the Windows EVTX corpora; precision is classified qualitatively from run-local positive evidence and production false-positive reasoning.",
     "The broad no-SNI/no-visible-cert Zeek rule is intentionally a low-level hunt and requires aggregation/tuning.",
     "The DNS rules identify an observed restricted-alphabet multi-label encoding rather than Sliver exclusively; legitimate DNS tunnels can match, and a custom encoder can evade them."
@@ -797,17 +1028,24 @@
     "notes": "Only detection-relevant endpoint fields, TLS fingerprints, JARM result, HTTP/DNS profile fields, NSM versions, alert summaries, hashes, and aggregate flow metadata are committed."
   },
   "validation": {
-    "pysigma": "All twelve Sigma rules passed sigma-cli 3.1.0 checks with zero errors, condition errors, or issues on 2026-08-10.",
-    "json": "verification.json and all sanitized evidence and safety JSON files passed jq validation on 2026-08-10.",
-    "scenario_scope": "check-scenario-scope.py returned PASS on 2026-08-10."
+    "pysigma": "The required audit gate performs authoritative pySigma validation for all twelve rules; local sigma-cli was unavailable on the AI VM.",
+    "json": "verification.json and all sanitized expanded-run and safety JSON files passed jq validation on 2026-08-12.",
+    "scenario_scope": "check-scenario-scope.py returned PASS for scenarios.md on 2026-08-12."
   },
   "cleanup": {
     "status": "confirmed",
     "confirmed_at": "2026-08-09T21:57:00Z",
     "attacker": "Stopped the isolated Sliver server/listener; confirmed no Sliver process and no listeners on TCP 31337/31338; deleted /tmp/sliver-nsm including implant, server/client assets, C2 database, operator profile, certificates/keys, chunks, scripts, and logs; preserved pre-existing /root/.sliver state.",
     "target": "Proxmox rollback of VM 104 to win_verify_baseline completed with exitstatus OK. After startup, confirmed the implant, marker, pcap, ETL, telemetry exports, push chunks, helper scripts, and implant process were absent and pktmon was stopped.",
-    "baseline_health": "Sysmon64 15.21 was Running with config SHA-256 5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71; Defender real-time, behavior monitoring, and tamper protection remained off as defined by the baseline."
+    "baseline_health": "Sysmon64 15.21 was Running with config SHA-256 5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71; Defender real-time, behavior monitoring, and tamper protection remained off as defined by the baseline.",
+    "windows_expanded_20260811": {
+      "status": "confirmed",
+      "confirmed_at": "2026-08-12",
+      "attacker": "Sliver and the temporary active-JARM listener were stopped; no target-facing listener remained. The temporary Kali JARM egress guard was removed after measurement.",
+      "target": "VM 104 was rolled back again to win_verify_baseline through the Proxmox API; rollback task exitstatus was OK. After restart, C:\\lab\\sliver-run and C:\\lab\\sliver-sideload were absent and pktmon was stopped.",
+      "baseline_health": "WIN10-ANALYSIS responded through the guest agent; Sysmon64 was Running, and Defender real-time, behavior monitoring, and tamper protection were false."
+    }
   },
-  "verified_at": "2026-08-09T21:36:07Z",
+  "verified_at": "2026-08-11T05:26:50.128Z",
   "verifier": "Codex lab orchestrator"
 }

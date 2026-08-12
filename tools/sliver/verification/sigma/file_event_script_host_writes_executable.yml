@@ -10,6 +10,7 @@ references:
   - https://github.com/BishopFox/sliver/releases/tag/v1.7.3
 author: Codex lab orchestrator
 date: '2026-08-09'
+modified: '2026-08-12'
 tags:
   - attack.command-and-control
   - attack.t1105
@@ -41,6 +42,12 @@ falsepositives:
 fp_likelihood: high
 recommended_role: hunt
 precision_notes: >-
+  Positive provenance was re-grounded by commit
+  140489472f7bfba90fbaaf9b4e67c844cf3edf71 and the unfiltered 2026-08-11
+  Windows capture SHA-256
+  8d8654fc494e4585301b56f58feb23153a01a6257c2cd3437b96ad5f5528a773:
+  PowerShell wrote both renamed implants and the inert faultrep.dll, without
+  any implant-name predicate in this rule.
   The clean corpus produced 64 matches, 0.011799% of 542441 file events; all 64
   were powershell.exe writing a DLL or EXE during benign module, assembly, or
   software deployment. Package managers, bootstrap scripts, and installers
