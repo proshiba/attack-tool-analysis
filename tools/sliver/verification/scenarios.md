@@ -2,7 +2,7 @@
 
 ## Scope
 
-### Windows safety re-grounding and coverage expansion (planned 2026-08-11)
+### Windows safety re-grounding and coverage expansion (verified 2026-08-11)
 
 - **VM 100 — `kalivm` — `192.168.1.50` — the only C2, DNS, pivot-service,
   build, and operator host.** Sliver server/client control is loopback-only.
@@ -30,9 +30,10 @@
 - **VM 102 and VM 108 — not used for execution.** The AI workspace may retain
   sanitized evidence and lab-authored source, but no Sliver binary, generated
   implant, inert assembly, or sideload DLL is executed on either host.
-- **Destinations.** Every target-generated connection, DNS query, C2 message,
-  SOCKS request, and pivoted request terminates at Kali `192.168.1.50`; local
-  operator control and the SOCKS listener terminate at loopback. The official
+- **Destinations.** Every connection, DNS query, C2 message, SOCKS request,
+  and pivoted request attributable to the declared attack terminates at Kali
+  `192.168.1.50`; local operator control and the SOCKS listener terminate at
+  loopback. The official
   Sliver repository and release URLs are provenance citations/acquisition
   sources before the run, never implant, pivot, or C2 destinations. Public
   hosts, `10.9.0.0/24`, and any second target are forbidden.
@@ -62,6 +63,29 @@ cover all five flows, with UTC action boundaries retained so each flow can be
 reported separately. The raw capture is analyzed once with `nsm-analyze`; the
 post-run scope gate consumes that complete Zeek output and the same-window
 Sysmon JSON, not selected C2-only rows.
+
+The verified capture contained 65 Zeek connections with zero capture-loss
+gaps. Fifty-nine rows terminated at Kali: 14 DNS, one pivot marker, three
+artifact staging, 40 named HTTPS, and one raw mTLS connection. Six remaining
+rows represented three public responders. In every such row the target sent
+zero packets; none was attributed by Sysmon to a declared tool, so the rows
+are retained as manifest-only OS/background traffic. The resulting schema-v3
+scope record is `PASS`: no traffic attributable to the declared attack left
+the lab, and everything else that did is in the manifest. The manifest also
+retains Windows notification, telemetry, and settings names queried through
+the in-lab resolver.
+
+The mTLS flow re-grounded all three load-bearing Windows rules. The SOCKS flow
+added an implant-owned connection to a second lab service without a second
+victim. Execute-assembly created a short-lived SYSTEM `notepad.exe` child and
+returned the inert marker, but emitted no related Sysmon EID 10 or EID 7 and
+wrote no assembly on the target. The sideload created a marker through a
+copied Microsoft-signed `WerFault.exe` and inert `faultrep.dll`, with no
+network behavior. Named HTTPS supplied six DNS observations, SNI, a leaf and
+intermediate certificate, and distinct WinINet/SChannel JA3/JA3S values. No
+new TLS rule was justified because those values describe generic platform
+stacks rather than Sliver, the resumed JA3S overlaps the AdaptixC2 run, and
+JARM was all zero.
 
 ### Linux extension (verified 2026-08-10)
 
@@ -172,7 +196,11 @@ following contained use cases.
 | Linux HTTPS beacon, host survey, and directory listing | T1105, T1071.001, T1573.002, T1033, T1082, T1083 | Verified on VM 103; encrypted web profile fields were not passively visible |
 | Linux raw mTLS session, host survey, directory listing, and small file download | T1105, T1573.002, T1033, T1082, T1083, T1041 | Verified on VM 103; session flow was not periodic |
 | Linux DNS C2 beacon through a direct lab-only resolver | T1105, T1071.004, T1572, T1033, T1082, T1083, T1041 | Verified on VM 103; encoded A/TXT bursts were measurable and no TLS fingerprint existed |
-| Prior Windows TLS foothold, host survey, command execution, and small file transfer | T1573.002, T1105, T1033, T1082, T1057, T1083, T1059.003, T1041 | Verified with an mTLS beacon on VM 104 |
+| Windows mTLS foothold, host survey, command execution, and small file transfer | T1573.002, T1105, T1033, T1082, T1083, T1059.003, T1041 | Re-verified with a renamed mTLS session on VM 104 and schema-v3 safety evidence |
+| SOCKS5 pivot to a fixed lab-internal HTTP service | T1572 | Verified on VM 104; one 30-byte marker response, no second target |
+| In-memory execute-assembly in a newly created benign process | T1055 | Verified with inert output in notepad.exe; no related EID 10/EID 7 or target assembly write |
+| Inert DLL sideload from a copied signed Windows host | T1574.001, T1036.005 | Verified with WerFault.exe and lab-authored faultrep.dll; no network behavior |
+| Named HTTPS C2 through lab DNS and a lab certificate chain | T1071.001, T1573.002 | Verified with DNS, SNI, x509 chain, and platform-generic TLS fingerprints |
 | Named-pipe pivot or lateral movement | T1090, T1021, T1572 | Future scenario; no pipe event occurred here |
 | In-memory BOF, .NET, or process-injection tasking | T1055 and task-specific techniques | Future higher-risk scenario |
 
@@ -221,14 +249,12 @@ The iteration-1 audit split its remaining gaps before any new execution. DNS
 C2 was the only gap selected for immediate verification because it raises
 grounded coverage from 5/10 (50%) to 6/10 (60%), the gate floor, and adds a
 distinct network dimension.
-Named HTTPS/SNI, SOCKS or port-forward tunnelling, DLL/shellcode delivery, and
-in-memory injection remain future scenarios. Injection remains deferred
-because it would add cross-process impact and higher-risk tasking unrelated to
-the requested Linux transport comparison; DLL delivery requires a separate
-Windows redesign; the other two are useful but unnecessary once the bounded
-DNS flow reaches the minimum coverage. macOS and Windows-to-Windows lateral
-movement remain lab-capability gaps (no macOS host and no second Windows host),
-not executable scenario gaps.
+That Linux-only run deferred named HTTPS/SNI, SOCKS tunnelling, DLL delivery,
+and in-memory tasking; the 2026-08-11 Windows run now verifies all four in
+bounded form. Shellcode delivery, named-pipe pivoting, macOS, and
+Windows-to-Windows lateral movement remain unverified; the latter two remain
+lab-capability gaps (no macOS host and no second Windows host), not executable
+scenario gaps.
 
 ## Prior Windows verified scenario
 

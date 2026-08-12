@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "sliver-windows-expanded-20260811",
+  "capture": {
+    "method": "pktmon full packet, no capture filter; analyzed with nsm-analyze",
+    "bytes": 310804832,
+    "sha256": "8d8654fc494e4585301b56f58feb23153a01a6257c2cd3437b96ad5f5528a773",
+    "zeek_conn_rows": 65,
+    "zeek_capture_loss_gaps": 0,
+    "zeek_capture_loss_percent": 0.0,
+    "raw_committed": false
+  },
+  "responders": [
+    {"destination": "192.168.1.50", "port": 53, "protocol": "udp", "connections": 14, "purpose": "exclusive Kali DNS resolver", "scope": "lab"},
+    {"destination": "192.168.1.50", "port": 18084, "protocol": "tcp", "connections": 1, "purpose": "fixed pivot marker service", "scope": "lab"},
+    {"destination": "192.168.1.50", "port": 18085, "protocol": "tcp", "connections": 3, "purpose": "reviewed artifact staging", "scope": "lab"},
+    {"destination": "192.168.1.50", "port": 18443, "protocol": "tcp", "connections": 40, "purpose": "named HTTPS C2", "scope": "lab"},
+    {"destination": "192.168.1.50", "port": 31337, "protocol": "tcp", "connections": 1, "purpose": "raw mTLS C2", "scope": "lab"},
+    {"destination": "20.190.141.39", "port": 443, "protocol": "tcp", "connections": 1, "orig_packets": 0, "conn_state": "RSTRH", "scope": "manifest-only; no declared-tool attribution"},
+    {"destination": "23.220.70.138", "port": 80, "protocol": "tcp", "connections": 4, "orig_packets": 0, "conn_state": "SHR", "scope": "manifest-only; no declared-tool attribution"},
+    {"destination": "4.213.25.242", "port": 443, "protocol": "tcp", "connections": 1, "orig_packets": 0, "conn_state": "OTH", "scope": "manifest-only; no declared-tool attribution"}
+  ],
+  "delivery": [
+    {"uri": "/windows-session.exe", "bytes": 35167232, "sha256": "93687267b75b076e77e7e199a0a5adefd1727837075363e0f260ac95f612648e"},
+    {"uri": "/windows-https.exe", "bytes": 37604352, "sha256": "1f55cb6f0240a5919ed80d8a5849cacdd5a2049f627498c27d32bddf3e5534a4"},
+    {"uri": "/faultrep.dll", "bytes": 12800, "sha256": "19c082713ff08b8326a8d4fd8ba5f60b4cda5f5bf9721092fe1801d1366b6289"}
+  ],
+  "pivot": {
+    "request": "GET /pivot-marker.txt",
+    "user_agent": "curl/8.20.0",
+    "response_bytes": 30,
+    "target_connection": "192.168.1.52 -> 192.168.1.50:18084",
+    "socks_listener": "127.0.0.1:1081 on Kali"
+  },
+  "mtls": {
+    "connections": 1,
+    "tls_version": "TLS 1.3",
+    "sni": "none observed",
+    "certificate_chain": "none passively visible",
+    "ja3": "2196848d251b217de8b2c037e356c11d",
+    "ja3s": "f4febc55ea12b31ae17cfb7e614afda8"
+  },
+  "named_https": {
+    "connections": 40,
+    "tls_version": "TLS 1.2",
+    "sni": "c2.sliver.lab",
+    "dns_queries": 6,
+    "ja3": "a0e9f5d64349fb13191bc781f81f42e1",
+    "ja3s_full_handshake": "a3080493c64c675cef762b91f46aa81a",
+    "ja3s_resumed": "326de7c6719a77bb7ef65f6cac962193",
+    "jarm": "00000000000000000000000000000000000000000000000000000000000000",
+    "leaf_subject": "CN=c2.sliver.lab",
+    "leaf_issuer": "CN=Sliver Lab Intermediate CA",
+    "san": "c2.sliver.lab",
+    "certificate_chain_fingerprints": [
+      "988779c8cd5ddaa113d7158ac058968563188564b603e4dbad0a79743d228f0c",
+      "169310f27fe0841d48ff93cb40f7f46c68e0620587dbd8b55f23d0dc04b89974"
+    ]
+  },
+  "tls_rule_decision": "No named-HTTPS TLS rule was authored: the client fingerprint is Windows WinINet/SChannel, the resumed server fingerprint was also observed in AdaptixC2, and JARM was all zero. The raw mTLS pair matched the existing generic Go crypto/tls hunt only and is not claimed as Sliver-exclusive.",
+  "safety": {
+    "verdict": "PASS",
+    "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+    "report": "safety/lab-scope.json"
+  }
+}
