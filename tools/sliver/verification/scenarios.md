@@ -174,8 +174,10 @@ implant had passed REMnux static review and `poc-triage.py`.
   `192.168.1.50:31337` on VM 100. The active JARM measurement also targeted
   that same lab listener. Sliver's local server/client control used
   `127.0.0.1:31338` on VM 100 and did not leave that host. Thus every remote
-  run destination was inside `192.168.1.0/24`, and nothing outside the lab was
-  contacted; VM 106's recorded `10.9.0.20` address was not a run destination.
+  run destination was inside `192.168.1.0/24`. The 2026-08-11 re-grounding
+  now supports the narrower mechanical claim: no traffic attributable to the
+  declared attack left the lab, and everything else that did is in the
+  manifest. VM 106's recorded `10.9.0.20` address was not a run destination.
 - **Hosting and references.** VM 100 hosted the generated implant, Sliver
   server, operator client, and mTLS C2; the implant was then staged locally on
   VM 104 through the recorded out-of-band guest-agent workflow. No public
