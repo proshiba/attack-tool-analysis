@@ -9,7 +9,11 @@ Five new, independently rolled-back runs verify the remote-download shapes
 that the prior lab-shaped rule missed: canonical `-urlcache -f` without
 `-split`, `-verifyctl -f`, a `services.exe` parent, Kali-only HTTPS, and an
 inert PE download followed by execution. Every accepted pcap and its Sysmon
-EID 3 attribution passed the post-run lab-scope gate.
+EID 3 attribution was re-adjudicated against its full `nsm/` output and passed
+the post-run lab-scope gate. The supported claim is: *no traffic attributable
+to the declared attack left the lab, and everything else that did is in the
+manifest.* All five accepted full captures had zero off-lab destinations, so
+their manifest is empty.
 
 | Run | Command / action | Network | Files | Registry | Process | Parent-child |
 |---|---|---|---|---|---|---|
@@ -68,18 +72,23 @@ although benign administrative certutil retrievals can still match.
 
 ## Safety and excluded attempts
 
-Two timing/isolation probes were rejected by `check-lab-scope.py` and are not
-used as verification evidence. Windows background services contacted a public
-DNS resolver and Microsoft/Akamai HTTP(S) endpoints during one longer capture;
-a second short capture contained responder-only packets from pre-existing
-sessions. Certutil itself contacted only Kali, but the mechanical Zeek gate
-correctly blocked both captures. Work stopped and VM 104 was rolled back after
-each. The accepted method cleared the default gateway, reset the adapter,
-removed default routes, waited for quiescence, and only then captured; all five
-accepted reports read `PASS`.
+The five accepted runs were re-checked under the current attack-attribution
+model using the retained full `nsm/` directories, normalized Sysmon EID 3
+records, `certutil.exe`, and (for the fifth run) `inert-marker.exe`. No operator
+record exists in the retained directories. All five reports read `PASS`, with
+nine total Zeek connection rows, zero off-lab destinations, zero violations,
+and an empty manifest. The previously committed `nsm-lab-only/` input was
+deleted because a pre-filtered lab-only subset cannot prove post-run scope.
 
-The committed evidence contains selected telemetry fields, hashes, and a
-sanitized Zeek connection log only. Raw PCAP, EVTX, combined exports,
-certificate/key material, and packet content are not committed. Public-domain
+Two earlier timing/isolation probes were rejected under the superseded model
+because Windows background traffic appeared. They are not accepted verification
+evidence and were not re-adjudicated. The accepted runs cleared the default
+gateway, reset the adapter, removed default routes, waited for quiescence, and
+only then captured; this correction did not repeat any run.
+
+The committed evidence contains selected telemetry fields, hashes, aggregate
+full-input check results, and no pre-filtered Zeek input. Raw PCAP, EVTX,
+combined exports, certificate/key material, and packet content are not
+committed. Public-domain
 reputation, internet rarity, and real-public-CA TLS signals are out of lab
 scope because payload delivery was required to remain on Kali.

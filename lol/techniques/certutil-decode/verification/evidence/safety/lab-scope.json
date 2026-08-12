@@ -1,19 +1,29 @@
 {
-  "schema_version": 1,
-  "rule": "SAFETY RULE 1 - attack traffic never leaves the isolated lab",
-  "allowed_networks": [
-    "192.168.1.0/24"
-  ],
-  "management_networks": [
-    "10.9.0.0/24"
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "NOT PROVEN: without a packet capture, this verification cannot establish that no traffic attributable to the declared attack left the lab, or record everything else that did in a manifest",
+  "required_pass_claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+  "declared_tool_images": [
+    "certutil.exe"
   ],
   "inputs": {
-    "zeek_dir": "lol/techniques/certutil-decode/verification/evidence/safety/nsm-local-only",
-    "sysmon_json": "lol/techniques/certutil-decode/verification/evidence/safety/sysmon-eid3-attribution.json",
-    "sysmon_attribution_available": true
+    "packet_capture_taken": false,
+    "zeek_logs_available": false,
+    "zeek_input": "evidence/safety/nsm-local-only contains README.md only",
+    "operator_logs": [],
+    "endpoint_summary": "evidence/endpoint-signals.json",
+    "endpoint_summary_eid3_count": 0,
+    "endpoint_summary_eid22_count": 0,
+    "endpoint_summary_limitation": "The zero counts are a hand-authored sanitized assertion about the run windows, not mechanical packet-capture proof."
   },
-  "violation_count": 0,
-  "violations": [],
-  "os_background_destinations": [],
-  "verdict": "PASS"
+  "previous_record": {
+    "verdict": "PASS",
+    "valid": false,
+    "reason": "The earlier check used an empty NSM directory containing no conn.log or dns.log, so its PASS did not prove post-run scope."
+  },
+  "violation_count": null,
+  "violations": null,
+  "manifest_count": null,
+  "manifest": null,
+  "verdict": "NOT_PROVEN"
 }

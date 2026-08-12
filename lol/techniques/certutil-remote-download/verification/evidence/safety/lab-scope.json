@@ -1,19 +1,86 @@
 {
-  "schema_version": 1,
-  "rule": "SAFETY RULE 1 - attack traffic never leaves the isolated lab",
+  "schema_version": 3,
+  "aggregate": true,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
   "allowed_networks": [
     "192.168.1.0/24"
   ],
   "management_networks": [
     "10.9.0.0/24"
   ],
+  "declared_tool_images": [
+    "certutil.exe",
+    "inert-marker.exe"
+  ],
   "inputs": {
-    "zeek_dir": "lol/techniques/certutil-remote-download/verification/evidence/safety/nsm-lab-only",
-    "sysmon_json": "lol/techniques/certutil-remote-download/verification/evidence/safety/sysmon-eid3-attribution.json",
-    "sysmon_attribution_available": true
+    "method": "safety/check-lab-scope.py was run separately against the full retained nsm/ directory for each accepted run",
+    "retained_root": "/tmp/certutil-remote-download.9tLdBl",
+    "prefiltered_input": false,
+    "operator_logs": [],
+    "operator_log_note": "No operator record exists in the retained run directories; the checker received the available normalized Sysmon EID 3 records instead.",
+    "raw_packets_committed": false
   },
+  "capture_scale": {
+    "conn_log_rows": 9,
+    "off_lab_destinations": 0,
+    "note": "These counts are from the five full nsm/ inputs, not the previously committed lab-only subset."
+  },
+  "flow_results": [
+    {
+      "run": "accepted-run1-urlcache-no-split",
+      "verdict": "PASS",
+      "declared_tool_images": ["certutil.exe"],
+      "sysmon_eid3_events_read": 2,
+      "attributed_destinations": 1,
+      "conn_log_rows": 2,
+      "off_lab_destinations": 0,
+      "manifest_count": 0
+    },
+    {
+      "run": "accepted-run2-verifyctl",
+      "verdict": "PASS",
+      "declared_tool_images": ["certutil.exe"],
+      "sysmon_eid3_events_read": 1,
+      "attributed_destinations": 1,
+      "conn_log_rows": 1,
+      "off_lab_destinations": 0,
+      "manifest_count": 0
+    },
+    {
+      "run": "accepted-run3-service-parent",
+      "verdict": "PASS",
+      "declared_tool_images": ["certutil.exe"],
+      "sysmon_eid3_events_read": 1,
+      "attributed_destinations": 1,
+      "conn_log_rows": 2,
+      "off_lab_destinations": 0,
+      "manifest_count": 0
+    },
+    {
+      "run": "accepted-run4-https",
+      "verdict": "PASS",
+      "declared_tool_images": ["certutil.exe"],
+      "sysmon_eid3_events_read": 2,
+      "attributed_destinations": 1,
+      "conn_log_rows": 2,
+      "off_lab_destinations": 0,
+      "manifest_count": 0
+    },
+    {
+      "run": "accepted-run5-download-execute",
+      "verdict": "PASS",
+      "declared_tool_images": ["certutil.exe", "inert-marker.exe"],
+      "sysmon_eid3_events_read": 2,
+      "attributed_destinations": 1,
+      "conn_log_rows": 2,
+      "off_lab_destinations": 0,
+      "manifest_count": 0
+    }
+  ],
   "violation_count": 0,
   "violations": [],
-  "os_background_destinations": [],
+  "manifest_count": 0,
+  "manifest": [],
   "verdict": "PASS"
 }

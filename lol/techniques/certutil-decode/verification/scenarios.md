@@ -17,8 +17,9 @@
   download source, attacker VM, or third-party code.
 - **Execution boundary.** The decoded bytes are inert marker text. The output
   named `.dll` is only a filename used to exercise file telemetry; it is never
-  loaded or executed. Every run collects Sysmon EID 3 attribution for the
-  post-run lab-scope proof even though network activity is not expected.
+  loaded or executed. The retained endpoint summary asserts zero Sysmon EID 3
+  and EID 22 events, but no packet capture was taken, so it is not a mechanical
+  post-run lab-scope proof.
 - **External references.** The LOLBAS Certutil page is a citation used to ground
   command syntax, not a host contacted during a run.
 
@@ -43,8 +44,8 @@ form, mapping to **Deobfuscate/Decode Files or Information (T1140)**.
 5. Endpoint telemetry was collected and VM 104 was rolled back. This run had no
    retained raw export and cannot independently prove post-run network scope.
    It is not current verification evidence and is not counted in coverage. The
-   four runs below replace it with new, scope-checked executions rather than
-   attempting to backfill an unprovable claim.
+   four runs below replace its behavioral coverage with endpoint-observed
+   executions, but they do not backfill the unprovable network-safety claim.
 
 ## Verified flow 1: hexadecimal decode
 
@@ -110,6 +111,10 @@ content and launch the produced file to observe the process chain. It is
 explicitly out of scope here because executing decoded content changes the
 safety profile and requires its own bounded scenario, pre-run scope gate,
 post-run lab-scope proof, and target rollback.
+
+Every future run of this technique must take a packet capture even when no
+network activity is expected. The capture exists to show what the target did,
+not what the command or tool was intended to do.
 
 Additional future hardening scenarios are a renamed copy of certutil to exercise
 the `OriginalFileName` identity branch, and a realistic `cmd.exe /c certutil`

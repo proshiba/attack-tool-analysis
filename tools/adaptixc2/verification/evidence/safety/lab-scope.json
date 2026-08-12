@@ -1,45 +1,171 @@
 {
-  "schema_version": 1,
-  "rule": "SAFETY RULE 1 - attack traffic never leaves the isolated lab",
-  "allowed_networks": ["192.168.1.0/24"],
-  "management_networks": ["10.9.0.0/24"],
-  "verdict": "PASS",
-  "violation_count": 0,
+  "schema_version": 3,
+  "aggregate": true,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+  "allowed_networks": [
+    "192.168.1.0/24"
+  ],
+  "management_networks": [
+    "10.9.0.0/24"
+  ],
+  "declared_tool_images": [
+    "http-beacon-lab.exe",
+    "https-beacon-lab.exe",
+    "survey-host.exe",
+    "telemetry-check.exe"
+  ],
   "inputs": {
-    "method": "check-lab-scope.py was run separately against the target-to-Kali subset of every network-producing full pcap; HTTP and HTTPS runs also supplied normalized Sysmon EID 3 ownership records",
-    "full_capture_retained_outside_repository": true,
+    "method": "safety/check-lab-scope.py was run separately against each retained full nsm/ directory",
+    "retained_root": "/tmp/adaptix-work",
+    "flows": [
+      "default-fingerprint",
+      "listener-default-404",
+      "listener-modified-404",
+      "http-flow",
+      "https-flow"
+    ],
+    "prefiltered_input": false,
+    "operator_logs": [],
+    "operator_log_note": "No Adaptix operator log or configuration was present in the retained flow directories.",
+    "earlier_report_limitation": "The earlier PASS was computed on target-to-Kali scope-nsm/ subsets and therefore did not show off-lab traffic present in the full captures.",
     "raw_packets_committed": false
   },
+  "capture_scale": {
+    "conn_log_rows": 39,
+    "off_lab_destinations": 5,
+    "note": "Counts are summed across the five full nsm/ inputs; a destination appearing in two captures is counted once per capture."
+  },
   "flow_results": [
-    {"flow": "teamserver_default_404", "verdict": "PASS", "violations": 0, "attribution": "target-to-Kali pcap; no endpoint event export for this two-second probe"},
-    {"flow": "listener_default_404", "verdict": "PASS", "violations": 0, "attribution": "target-to-Kali pcap; no endpoint event export for this two-second probe"},
-    {"flow": "listener_modified_404", "verdict": "PASS", "violations": 0, "attribution": "target-to-Kali pcap; no endpoint event export for this two-second probe"},
-    {"flow": "default_http_beacon", "verdict": "PASS", "violations": 0, "attribution": "Sysmon EID 3 attributed delivery to curl.exe and C2 to the renamed agent; both destinations were 192.168.1.50"},
-    {"flow": "default_https_beacon", "verdict": "PASS", "violations": 0, "attribution": "Sysmon EID 3 attributed TLS C2 to the renamed agent; every agent destination was 192.168.1.50:18443"},
-    {"flow": "inert_dll_sideload", "verdict": "PASS", "violations": 0, "attribution": "zero packets captured; the inert source contains no networking"}
+    {
+      "flow": "default-fingerprint",
+      "verdict": "PASS",
+      "conn_log_rows": 1,
+      "off_lab_destinations": 0,
+      "sysmon_eid3_events_read": 0,
+      "manifest_count": 0
+    },
+    {
+      "flow": "listener-default-404",
+      "verdict": "PASS",
+      "conn_log_rows": 1,
+      "off_lab_destinations": 0,
+      "sysmon_eid3_events_read": 0,
+      "manifest_count": 0
+    },
+    {
+      "flow": "listener-modified-404",
+      "verdict": "PASS",
+      "conn_log_rows": 1,
+      "off_lab_destinations": 0,
+      "sysmon_eid3_events_read": 0,
+      "manifest_count": 0
+    },
+    {
+      "flow": "http-flow",
+      "verdict": "PASS",
+      "conn_log_rows": 6,
+      "off_lab_destinations": 2,
+      "sysmon_eid3_events_read": 6,
+      "attributed_destinations": 4,
+      "manifest_count": 2
+    },
+    {
+      "flow": "https-flow",
+      "verdict": "PASS",
+      "conn_log_rows": 30,
+      "off_lab_destinations": 3,
+      "sysmon_eid3_events_read": 26,
+      "attributed_destinations": 1,
+      "manifest_count": 3
+    }
   ],
-  "process_attribution": {
-    "source": "Windows Sysmon Event ID 3 plus ProcessGuid/PID correlation in collect-run.ps1 output",
-    "http": [
-      {"role": "delivery", "image": "C:\\Windows\\System32\\curl.exe", "destination": "192.168.1.50:18080"},
-      {"role": "renamed HTTP agent", "destination": "192.168.1.50:18081"}
-    ],
-    "https": [
-      {"role": "delivery", "image": "C:\\Windows\\System32\\curl.exe", "destination": "192.168.1.50:18080", "note": "the earliest delivery EID 3 had an unknown image in this export, but its PID matched the captured curl process start and staging flow"},
-      {"role": "renamed HTTPS agent", "destination": "192.168.1.50:18443", "connections": 25}
-    ]
-  },
-  "full_capture_accounting": {
-    "unrelated_os_background": [
-      {"flow": "default_http_beacon", "image": "C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\4.18.26070.9-0\\MpDefenderCoreService.exe", "destination": "52.123.129.14:443", "classification": "pre-existing Windows Defender service traffic; not an AdaptixC2 process or child, excluded from the tool-attributed target-to-Kali safety input"}
-    ],
-    "adaptix_process_off_lab_connections": 0,
-    "management_plane_connections": 0,
-    "external_dns_queries_by_tool": 0
-  },
-  "execution_guard": {
-    "kali_ipv4": "temporary OUTPUT chain allowed loopback and 192.168.1.0/24, rejected all other destinations",
-    "kali_ipv6": "temporary OUTPUT chain allowed loopback/::1 and rejected all other destinations",
-    "removed_after_run": true
-  }
+  "violation_count": 0,
+  "violations": [],
+  "manifest_count": 5,
+  "manifest": [
+    {
+      "flow": "http-flow",
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "source": "192.168.1.52",
+      "destination": "52.123.129.14",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 1181,
+      "packets_sent": 42,
+      "conn_states": ["RSTR"],
+      "attributed_images": [
+        "C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\4.18.26070.9-0\\MpDefenderCoreService.exe"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "flow": "http-flow",
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "source": "192.168.1.52",
+      "destination": "4.213.25.241",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 2,
+      "packets_sent": 12,
+      "conn_states": ["OTH"],
+      "attributed_images": [],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "flow": "https-flow",
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "source": "192.168.1.52",
+      "destination": "72.145.35.105",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": ["RSTRH"],
+      "attributed_images": [],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "flow": "https-flow",
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "source": "192.168.1.52",
+      "destination": "72.145.35.115",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": ["RSTRH"],
+      "attributed_images": [],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "flow": "https-flow",
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "source": "192.168.1.52",
+      "destination": "4.213.25.241",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 2,
+      "packets_sent": 12,
+      "conn_states": ["OTH"],
+      "attributed_images": [],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    }
+  ],
+  "verdict": "PASS"
 }

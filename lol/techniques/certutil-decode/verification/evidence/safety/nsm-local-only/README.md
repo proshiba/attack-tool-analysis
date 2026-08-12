@@ -1,9 +1,10 @@
-# Local-only NSM input
+# No NSM evidence was collected
 
-These four scenarios performed local file-to-file transforms and named no
-network destination, so the playbook did not require packet capture or NSM
-analysis. This intentionally contains no `conn.log` or `dns.log`.
+No packet capture was taken for these local file-to-file runs, so this directory
+contains no Zeek `conn.log`, `dns.log`, or other mechanical network evidence.
+It must not be passed to `safety/check-lab-scope.py` as though it were an NSM
+input. The earlier `PASS` computed against this empty directory was invalid.
 
-The companion `sysmon-eid3-attribution.json` is the process-attributed network
-input to `safety/check-lab-scope.py`; it aggregates the complete EID 3 exports
-for all four run windows and contains zero events.
+`evidence/endpoint-signals.json` records zero Sysmon EID 3 and zero EID 22 for
+the run windows, but those values are a hand-authored sanitized assertion, not
+a packet-capture proof. Post-run safety is therefore recorded as `NOT_PROVEN`.
