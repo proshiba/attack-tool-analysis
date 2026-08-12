@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 2 - third-party PoC code is reviewed before it is executed",
+  "target": "/tmp/shieldbreak-review.3VuZhS/ShieldBreak",
+  "source_url": "https://github.com/MSNightmare/ShieldBreak.git",
+  "file_count": 14,
+  "severity_counts": {
+    "high": 10
+  },
+  "findings": [
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "README.md"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 3.78",
+      "file": "Report.wer"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.98",
+      "file": "ShieldBreak.aps"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 2.90",
+      "file": "ShieldBreak.rc"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "ShieldBreak.vcxproj"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "ShieldBreak.vcxproj.filters"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "ShieldBreak.vcxproj.user"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 6.19",
+      "file": "Warden.dll"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.99",
+      "file": "eicar_com.zip"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 1.17",
+      "file": "shlbrk.ico"
+    }
+  ],
+  "files": [
+    {
+      "file": "LICENSE",
+      "bytes": 1075,
+      "sha256": "5797d842ae200473ba2c6d474dadc7478d0eddec3f9fd5b836f74ded0d5d92b7",
+      "findings": []
+    },
+    {
+      "file": "README.md",
+      "bytes": 604,
+      "sha256": "359b8733a876f0e01de411e9a6214fbae9dfc67839088cfad1d96205cad6c435",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "Report.wer",
+      "bytes": 9252,
+      "sha256": "5a508e371dfe58f5f2d307fd9b9a7608908b37f965200cad42ecbe27b2dfe07f",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 3.78"
+        }
+      ]
+    },
+    {
+      "file": "ShieldBreak.aps",
+      "bytes": 443856,
+      "sha256": "db90494aff270057e3b782b82bc88afbe8889ce635ec01a506bafa77959b5767",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.98"
+        }
+      ]
+    },
+    {
+      "file": "ShieldBreak.cpp",
+      "bytes": 47318,
+      "sha256": "782ead4756247d05541e8ae1291851fdcb4d3491407ffa3df11879dadfad3889",
+      "findings": []
+    },
+    {
+      "file": "ShieldBreak.rc",
+      "bytes": 4252,
+      "sha256": "0ca78a35cbd52e2b2459efaade75f1a6ada1011209786417446cd10bfddbed7f",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 2.90"
+        }
+      ]
+    },
+    {
+      "file": "ShieldBreak.slnx",
+      "bytes": 208,
+      "sha256": "0d15f457e91ab1c6ee7df3a6a97d7721d3f2223d3c0b687fc48289496aad4fdf",
+      "findings": []
+    },
+    {
+      "file": "ShieldBreak.vcxproj",
+      "bytes": 7412,
+      "sha256": "daf4aa48edda125f70e4639eb97ab9658e6ccab13d752976815973adc3edc18f",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "ShieldBreak.vcxproj.filters",
+      "bytes": 1544,
+      "sha256": "20d3fb308ae4eb06bb195be13a90d6ac7103a5ef08bea069ac9993f14e616486",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "ShieldBreak.vcxproj.user",
+      "bytes": 168,
+      "sha256": "c06a75b13f855a94d46616796e024c52b499f8f92cf00ccb571ddbc6ff574676",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "Warden.dll",
+      "bytes": 107008,
+      "sha256": "691857f3f28049a7e33f5767d4e4eb3d739e1aa76c2a43c8cccadf871cfa7c1a",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 6.19"
+        }
+      ]
+    },
+    {
+      "file": "eicar_com.zip",
+      "bytes": 107127,
+      "sha256": "87cc7ad5f7e8d70250bff5c92c8316f3a508c089eb81e9921c8941eca5a741d6",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.99"
+        }
+      ]
+    },
+    {
+      "file": "resource.h",
+      "bytes": 634,
+      "sha256": "4092cba451e55d832efb2b156c5ee6cd39432a002625dc6c73ef394a0b804553",
+      "findings": []
+    },
+    {
+      "file": "shlbrk.ico",
+      "bytes": 171330,
+      "sha256": "96119e15a334fd857eaed4d98669653579cf41102427a5056148318a956acea6",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 1.17"
+        }
+      ]
+    }
+  ],
+  "mechanical_verdict": "NEEDS-HUMAN-REVIEW",
+  "disclaimer": "A mechanical scan never clears code. Read the source. Treat compiled or obfuscated artefacts as unknown-malicious and analyse them on REMnux (VM 105). Execution happens only on the isolated target, snapshot before and roll back after."
+}
