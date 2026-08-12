@@ -71,11 +71,11 @@ supported claim is: *no traffic attributable to the declared attack left the
 lab, and everything else that did is in the manifest.*
 
 The manifest now exposes what the filtered report hid. The HTTP capture records
-1,181 bytes to `52.123.129.14:443`, attributed by Sysmon EID 3 to
+1,181 bytes to `52[.]123[.]129[.]14:443`, attributed by Sysmon EID 3 to
 `MpDefenderCoreService.exe`, plus an unattributed 2-byte `OTH` flow to
-`4.213.25.241:443`. The HTTPS capture also records that 2-byte flow and two
-responder-only, zero-byte `RSTRH` flows to `72.145.35.105:443` and
-`72.145.35.115:443`. None is attributed to a declared Adaptix image. No
+`4[.]213[.]25[.]241:443`. The HTTPS capture also records that 2-byte flow and two
+responder-only, zero-byte `RSTRH` flows to `72[.]145[.]35[.]105:443` and
+`72[.]145[.]35[.]115:443`. None is attributed to a declared Adaptix image. No
 operator log or configuration was present in the retained flow directories.
 
 Raw pcaps, EVTX, endpoint JSON, generated agents, operator database, heartbeat
