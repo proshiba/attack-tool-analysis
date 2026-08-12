@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 2 - third-party PoC code is reviewed before it is executed",
+  "target": "/opt/lab/adaptix-linux-review/runtime/generated/agent.bin",
+  "source_url": "https://github.com/Adaptix-Framework/AdaptixC2/tree/a4b80bf370f704d6843e69433bfb5c06274f57df/AdaptixServer/extenders/gopher_agent",
+  "file_count": 1,
+  "severity_counts": {
+    "high": 1
+  },
+  "findings": [
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 6.14",
+      "file": "agent.bin"
+    }
+  ],
+  "files": [
+    {
+      "file": "agent.bin",
+      "bytes": 6717602,
+      "sha256": "42dcfa4ade2d29146126455d00fe1e3de3c8cb1886c414b3123aad64d72ce16e",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 6.14"
+        }
+      ]
+    }
+  ],
+  "mechanical_verdict": "NEEDS-HUMAN-REVIEW",
+  "disclaimer": "A mechanical scan never clears code. Read the source. Treat compiled or obfuscated artefacts as unknown-malicious and analyse them on REMnux (VM 105). Execution happens only on the isolated target, snapshot before and roll back after."
+}
