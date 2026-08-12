@@ -8,6 +8,10 @@ description: >-
 references:
   - https://hijacklibs.net/
   - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/image_load/image_load_side_load_from_non_system_location.yml
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/file/file_event/file_event_win_werfault_dll_hijacking.yml
+related:
+  - id: 28a452f3-786c-4fd8-b8f2-bddbe9d616d1
+    type: derived
 author: Codex lab orchestrator
 date: '2026-08-11'
 tags:

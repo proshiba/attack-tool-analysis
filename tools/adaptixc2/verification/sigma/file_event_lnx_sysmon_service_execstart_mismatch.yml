@@ -15,11 +15,16 @@ date: '2026-08-12'
 tags:
   - attack.persistence
   - attack.t1543.002
-  - attack.defense-evasion
+  - attack.stealth
   - attack.t1036
 logsource:
   category: file_event
   product: linux
+  definition: >-
+    Requires a non-default file-integrity enrichment pipeline that reads newly
+    created systemd unit files and maps their complete text to FileContent.
+    Standard Sysmon for Linux FileCreate and auditd PATH records do not provide
+    file content and cannot evaluate this rule.
 detection:
   selection_unit:
     TargetFilename|endswith: '/sysmon.service'
@@ -35,15 +40,16 @@ falsepositives:
   - Locally packaged or wrapper-based Sysmon deployments using a different reviewed binary path
   - Authorized security-product migrations before the unit and package inventory are updated
 fp_likelihood: low
-recommended_role: alert
+recommended_role: hunt
 precision_notes: >-
   Linux file/content telemetry is not testable on the Windows EVTX corpus. In
   this run, auditd recorded one creation of /etc/systemd/system/sysmon.service
   and the retained unit content showed ExecStart in a hidden, non-package-owned
   path; the baseline unit launched /opt/sysmon/sysmon with the installed XML.
-  The content mismatch therefore matched once by cross-source correlation.
-  Raw auditd PATH alone does not contain ExecStart, so a backend without unit
-  content enrichment cannot evaluate this rule. Package ownership and signer
-  or provenance checks should raise confidence but are not portable Sigma
-  fields.
-level: high
+  This was a manual cross-source correlation, not a rule evaluation. Raw auditd
+  PATH and standard Sysmon for Linux FileCreate records do not contain
+  ExecStart, so a backend without the declared content enrichment cannot
+  evaluate this rule. Keep it as a medium-level hunt until a real enriched
+  pipeline demonstrates the rule firing. Package ownership and signer or
+  provenance checks should raise confidence but are not portable Sigma fields.
+level: medium

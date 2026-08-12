@@ -15,16 +15,18 @@ tags:
   - attack.execution
   - attack.persistence
   - attack.t1543.002
-  - attack.defense-evasion
+  - attack.stealth
   - attack.t1036
 logsource:
   product: linux
   service: auditd
+  definition: >-
+    Requires auditd SYSCALL records for execve/execveat events; scope those
+    syscalls in the audit ruleset before applying this detection.
 detection:
   selection:
     type: 'SYSCALL'
-    syscall: 'execve'
-    ppid: '1'
+    ppid: 1
     exe|contains: '/.'
   condition: selection
 falsepositives:
