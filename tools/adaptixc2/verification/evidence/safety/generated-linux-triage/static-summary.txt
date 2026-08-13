@@ -1,0 +1,16 @@
+AdaptixC2 generated Linux Gopher static review
+reviewed_at=2026-08-12T15:02:53Z
+42dcfa4ade2d29146126455d00fe1e3de3c8cb1886c414b3123aad64d72ce16e  agent.bin
+agent.bin: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, Go BuildID=BnKy_NzqdQgvYSecVOyQ/OezWlo8rn4nl5fH5qQ3F/3Hz3rEmkcFLu41Je6Mk5/uiyFYJOEyWC76caUZgZL, BuildID[sha1]=6dac567a67f533567511eb211e1b09dfea77c49e, stripped
+dynamic_section= There is no dynamic section in this file. 
+literal_callback_exact_line_count=0
+public_google_dns_exact_line_count=0
+public_cloudflare_dns_exact_line_count=0
+dns_google_name_exact_line_count=0
+cloudflare_doh_name_exact_line_count=0
+os_environ_symbol_count=1
+start_pty_symbol_count=1
+process_list_symbol_count=1
+ghidra=INFO  REPORT: Analysis succeeded for file: file:///opt/lab/adaptix-linux-static/agent.bin (HeadlessAnalyzer)  
+ghidra_go_note=ERROR Untested Go version [1.26.4] (GoRttiMapper)  
+capa=timed out after 180 seconds without emitting a result

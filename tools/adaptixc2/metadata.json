@@ -45,6 +45,18 @@
     {
       "id": "T1574.001",
       "name": "Hijack Execution Flow: DLL"
+    },
+    {
+      "id": "T1543.002",
+      "name": "Create or Modify System Process: Systemd Service"
+    },
+    {
+      "id": "T1071.004",
+      "name": "Application Layer Protocol: DNS"
+    },
+    {
+      "id": "T1036",
+      "name": "Masquerading"
     }
   ],
   "usage": [
@@ -84,7 +96,7 @@
   ],
   "status": "active",
   "first_seen": "2024",
-  "last_reviewed": "2026-08-11",
+  "last_reviewed": "2026-08-12",
   "release_history": [
     {
       "version": "v1.2",

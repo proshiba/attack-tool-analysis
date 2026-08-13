@@ -1,0 +1,88 @@
+{
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+  "verdict": "PASS",
+  "declared_tool_images": [
+    "agent.bin",
+    "telemetry-helper"
+  ],
+  "attribution_source": "auditd-correlated owner from collect-run.sh; raw Sysmon EID 3 alone was not used",
+  "full_unfiltered_captures": [
+    {
+      "name": "linux-mtls",
+      "sha256": "166ccae527393f0a01476cf6e19398136716ae70ba25cdbe463a0d415c807681",
+      "conn_log_rows": 4,
+      "off_lab_destinations": 0,
+      "sysmon_eid3_events_read": 3,
+      "attribution_available": true,
+      "verdict": "PASS"
+    },
+    {
+      "name": "sysmon-masquerade-primary",
+      "sha256": "b8016e2116dfbf4aa20257d972f8ce297fbe25ad7632c59e0dd20554e8eb07d3",
+      "conn_log_rows": 4,
+      "off_lab_destinations": 2,
+      "attribution_available": false,
+      "verdict": "INCONCLUSIVE",
+      "disposition": "Preserved, disclosed, and rerun under verified target egress guards; this is not represented as a pass."
+    },
+    {
+      "name": "sysmon-masquerade-guarded-rerun",
+      "sha256": "66a86d0366e4143cae85026d48428f86a0645fa91478cb64339149e986891d84",
+      "conn_log_rows": 1,
+      "off_lab_destinations": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "dns-listener-preflight",
+      "sha256": "38b13463f47413684bc6d9f14e0c423749e70ea35d427755cdc364faeaa42506",
+      "conn_log_rows": 13,
+      "off_lab_destinations": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "dns-source-faithful-profile",
+      "sha256": "ea8e4d8ab830aee0fd2fe19fe8441e23b859c9d32e4c6d4605e1f1ee7ebf53db",
+      "conn_log_rows": 10,
+      "off_lab_destinations": 0,
+      "verdict": "PASS"
+    }
+  ],
+  "manifest": [
+    {
+      "capture": "sysmon-masquerade-primary",
+      "scope": "outside-lab",
+      "destination": "54.154.251.197:443/tcp",
+      "connections": 1,
+      "bytes_sent": 819,
+      "packets_sent": 13,
+      "attributed_images": [],
+      "note": "Ubuntu MOTD background HTTPS during the deliberate sensor re-home; unattributed, recorded, and not judged."
+    },
+    {
+      "capture": "sysmon-masquerade-primary",
+      "scope": "outside-lab",
+      "destination": "1.1.1.1:53/udp",
+      "connections": 2,
+      "bytes_sent": 88,
+      "packets_sent": 2,
+      "query": "motd.ubuntu.com",
+      "attributed_images": [],
+      "note": "Pre-guard Ubuntu resolver background during the deliberate sensor re-home; unattributed, recorded, and not judged."
+    }
+  ],
+  "operator_records_checked": [
+    "AdaptixC2 teamserver log",
+    "Gopher mTLS listener configuration",
+    "BeaconDNS listener configuration",
+    "HTTP staging log",
+    "operator command transcript",
+    "agent task results",
+    "masquerading unit content",
+    "target guard verification",
+    "DNS query transcripts"
+  ],
+  "violation_count": 0,
+  "interpretation": "The final executable flows and both DNS checks passed. The first persistence attempt remains explicitly inconclusive because ordinary OS traffic occurred while ownership telemetry was unavailable; the same persistence sequence passed when rerun under verified IPv4/IPv6 egress guards. No capture was filtered before checking."
+}

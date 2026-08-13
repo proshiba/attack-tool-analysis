@@ -1,0 +1,45 @@
+title: Systemd Launches an Executable from a Hidden Path
+id: 399df062-94dc-4b49-88b5-c6e1fd3f19fd
+status: experimental
+description: >-
+  Detects PID 1 launching an executable from a hidden path component. This
+  covers generated or renamed payloads installed as systemd services without
+  relying on a tool or agent filename. Correlate with recent unit creation,
+  enablement, and an unexpected or non-package-owned ExecStart.
+references:
+  - https://censys.com/blog/adaptixc2-open-source-c2-framework/
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/linux/auditd/path/lnx_auditd_systemd_service_creation.yml
+author: Codex lab orchestrator
+date: '2026-08-12'
+tags:
+  - attack.execution
+  - attack.persistence
+  - attack.t1543.002
+  - attack.stealth
+  - attack.t1036
+logsource:
+  product: linux
+  service: auditd
+  definition: >-
+    Requires auditd SYSCALL records for execve/execveat events; scope those
+    syscalls in the audit ruleset before applying this detection.
+detection:
+  selection:
+    type: 'SYSCALL'
+    ppid: 1
+    exe|contains: '/.'
+  condition: selection
+falsepositives:
+  - Locally managed system services intentionally launched from hidden application directories
+  - Development, test, or container workloads whose systemd units point to hidden build paths
+fp_likelihood: high
+recommended_role: hunt
+precision_notes: >-
+  Linux auditd telemetry is not testable on the Windows EVTX corpus. The rule
+  matched the service-launched renamed ELF once in each persistence attempt;
+  its audit record had ppid=1 and the executable beneath a hidden directory.
+  The direct interactive launch had a shell parent and did not match. Hidden
+  paths alone are not malicious, so high false-positive likelihood forces a
+  hunt role and low level; require the unit/ExecStart mismatch or unusual
+  network behavior before escalation.
+level: low

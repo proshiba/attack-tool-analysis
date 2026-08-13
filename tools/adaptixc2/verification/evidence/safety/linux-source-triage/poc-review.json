@@ -1,0 +1,1946 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 2 - third-party PoC code is reviewed before it is executed",
+  "target": "/opt/lab/adaptix-linux-review/source",
+  "source_url": "https://github.com/Adaptix-Framework/AdaptixC2",
+  "file_count": 252,
+  "severity_counts": {
+    "high": 23,
+    "medium": 1,
+    "critical": 2
+  },
+  "findings": [
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "1.1.1.1, 8.8.8.8, 9.9.9.9, cloudflare-dns.com, dns.google, dns.quad9.net",
+      "file": "AdaptixServer/extenders/beacon_agent/ax_config.axs"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "cloudflare-dns.com, dns.google, dns.quad9.net",
+      "file": "AdaptixServer/extenders/beacon_agent/pl_utils.go"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/beacon.h"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/beacon.vcxproj"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/beacon.vcxproj.filters"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/beacon.vcxproj.user"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "altdevblogaday.org, gist.github.com, unlicense.org, www.geocities.com",
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/miniz.cpp"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "www.ietf.org",
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/miniz.h"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "www.acc.umu.se, www.nirsoft.net",
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ntdll.h"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 6.42",
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/files/stub.x64.bin"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 6.38",
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/files/stub.x86.bin"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "qwe.zip",
+      "file": "AdaptixServer/extenders/gopher_agent/ax_config.axs"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/binutil/r_byteslice_windows.go"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/binutil/r_readerat_windows.go"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/boffer/boffer_windows.go"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/coffer/coffer_windows.go"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/coffer/file_windows.go"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/coffer/section_windows.go"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/coffer/symbol_windows.go"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/defwin/defwin_windows.go"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/memory/memory_windows.go"
+    },
+    {
+      "id": "obfuscation",
+      "severity": "medium",
+      "line": 4,
+      "why": "large encoded or escaped blob - review its decoded content before running",
+      "evidence": "// []byte(\"\\x8b\\x90\\xbe\\xbd\\x3e\\x69\\x97\\x65\\xe1\\x82\\x97\\x43\\x93\\xbe\\x5a\\x7d\\x41\\xf1\\x5f\\x59\\x9d\\xc3\\x7a\\xf0\\xa9\\xdc\\xef\\x35\\x72\\x37\\xeb\\x42\\xb7\\xac\\x2e\\xbd\\x45\\xdc\\x04\\xad\\xe8\\x75\\x23\\x08\\x23\\x50\\xa1\\",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/config.go"
+    },
+    {
+      "id": "credential-theft",
+      "severity": "critical",
+      "line": 193,
+      "why": "reads credentials or secrets belonging to the machine that runs it",
+      "evidence": "process.Env = append(os.Environ(),",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/functions/functions_mac.go"
+    },
+    {
+      "id": "credential-theft",
+      "severity": "critical",
+      "line": 197,
+      "why": "reads credentials or secrets belonging to the machine that runs it",
+      "evidence": "process.Env = append(os.Environ(),",
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/functions/functions_unix.go"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "fsf.org, www.gnu.org",
+      "file": "LICENSE"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "adaptix-framework.gitbook.io, github.com",
+      "file": "README.md"
+    }
+  ],
+  "files": [
+    {
+      "file": "AdaptixServer/404page.html",
+      "bytes": 1133,
+      "sha256": "af98111ef3078ab381b276c64d8c1bcd9e6a9bd1534ea10c57b716763fe86941",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/axscript/bridge_ax.go",
+      "bytes": 37467,
+      "sha256": "7be13f0d8f63c98c2e182ae1743d9f39eb4867055bf79331c618d473247c9312",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/axscript/bridge_command.go",
+      "bytes": 9631,
+      "sha256": "263f4adde8fb9aec83fd88761d823d1cdb56e89742e4eacdda2d8c44988f6541",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/axscript/bridge_helpers.go",
+      "bytes": 3633,
+      "sha256": "6e6acff83af2189ac51f5503a91356872ce79cb8593f6407a808a4030c6732ed",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/axscript/bridge_stubs.go",
+      "bytes": 11444,
+      "sha256": "c3d87d7329855929f1644dea735891d7a1fee6d855fc84b44696527a6745bdaa",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/axscript/engine.go",
+      "bytes": 5481,
+      "sha256": "0cfd1c64d24282bc98a170aacc005eb781e34192adf12d0943c5ef480f8106a2",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/axscript/hooks.go",
+      "bytes": 2676,
+      "sha256": "702663bb859dde0eb6857a260acde1c522993c9a9889091f7a1a52148c1048fc",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/axscript/manager.go",
+      "bytes": 22930,
+      "sha256": "24289517dbcb3a406429db3f8abbe8b16acdee1b1c1c950a18ce28e856539541",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/axscript/parser.go",
+      "bytes": 4780,
+      "sha256": "92cb23b476cf24874515980d8a65fddd36040004197623709d78623585eda3f4",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/axscript/registry.go",
+      "bytes": 11804,
+      "sha256": "451d7fa2dea23889ad693315846a1692b3fb84bee3b35ca61e8fb8faf260f41d",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/axscript/types.go",
+      "bytes": 3174,
+      "sha256": "141732dc5b73489a458b70e952ed61c72757045ff3b559171be27d0e41370316",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/connector.go",
+      "bytes": 22357,
+      "sha256": "6389f60ddfcedeb4cbf7b94d8b1550351032c60ea4d68083769ad70f4461115f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_agents.go",
+      "bytes": 13887,
+      "sha256": "fa4285854e7a0979de93d118ca82c57bc3a043276f7cbad12c8c1f9f18b44bfa",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_axscript.go",
+      "bytes": 2618,
+      "sha256": "772116483726cc693ae08fdd126d0ed29528b55af59463023c6686372a753854",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_chat.go",
+      "bytes": 540,
+      "sha256": "06088b02133c711bda08366ec203be70b0dce18f4c2fcdfe9e5520b1589ceeaf",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_client.go",
+      "bytes": 6121,
+      "sha256": "590b8c652a98c0f13881d5cbc30117d46f571928b1a733c7dff3d83a9d2b10d0",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_creds.go",
+      "bytes": 3242,
+      "sha256": "3f516eddffbfc76d5535ce20903e18cf8ace15fb4cbfdcce1dbf2b0baf849601",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_downloads.go",
+      "bytes": 1662,
+      "sha256": "4e68ec02c25b4c43a75f25f298b97a842bd43d29390ded606344bdc8f9ab5bfb",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_listeners.go",
+      "bytes": 3076,
+      "sha256": "a75e332cddd6efc6e43c538db50c3c1862962adb55185c616d143b98f77c4bed",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_otp.go",
+      "bytes": 5017,
+      "sha256": "25f18c970b28e8ef7942e3c2af21b99ee8681a185a56b2724b728c12cae0cdb8",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_screenshot.go",
+      "bytes": 2522,
+      "sha256": "111df1c959ba78c048330281cbf29f031d188f6363ed3090eba2ddef3bfc86ed",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_services.go",
+      "bytes": 2545,
+      "sha256": "b1bf4e356d64d9ae3a54d49b0698ca994fd03646c01a71e771451006f9e0c75a",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_targets.go",
+      "bytes": 3071,
+      "sha256": "61821c67c980cdc7e7c7597db6f462a31131be304d0d7020d2f18ac3409e6b9b",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_tasks.go",
+      "bytes": 5725,
+      "sha256": "8dca6ede70ab108a6e2ab3a8c33c703acb20aa77553597b9f1970301cfff0aea",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/connector/tc_tunnels.go",
+      "bytes": 8180,
+      "sha256": "a75a061ecd0ecc06e31ebedef40764cee24e77ea59b855b5491265389b1a8149",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/database.go",
+      "bytes": 7980,
+      "sha256": "15f082348391e584142d143cdbc1bcba35517c963997c9f807cf5826bb6adc16",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/db_agents.go",
+      "bytes": 4832,
+      "sha256": "5cd7fb0783cd7ccf071bb903ac61f7024098748f2aace6cfb40f506b9ba74365",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/db_chat.go",
+      "bytes": 1109,
+      "sha256": "533e6b69bb52c6b7a09e98c75a7d16da9ab61b54b39ba76d1ed8b954fe0d180c",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/db_consoles.go",
+      "bytes": 2488,
+      "sha256": "1309a1effffee496f27794624442bdae07ad3900f4a2b43c80443976c1b3f11d",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/db_creds.go",
+      "bytes": 5851,
+      "sha256": "1ba0bc78f3917efeeaa029643dbb6434a79d3acd58780d2cec29a325f4f04eb5",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/db_downloads.go",
+      "bytes": 3747,
+      "sha256": "aa3a45ed96cb981929dcba794fe5ffac11ac54a706b17f405365564b4f281872",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/db_extender.go",
+      "bytes": 2136,
+      "sha256": "a3ceaf9f4a2efbf617a0bdb4f907d5617a42c9efb193b4f61b2fc1cd2189d650",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/db_listeners.go",
+      "bytes": 3758,
+      "sha256": "22e94f89c9e391f408d63ec1e1aec69013147bfa5123ea8e7d581ce5c353f12b",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/db_pivots.go",
+      "bytes": 1997,
+      "sha256": "95523d307a55983a79a68159dbdf1e9fc539bed5609cbdfb5d6e5c3b354d0a74",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/db_screenshots.go",
+      "bytes": 3238,
+      "sha256": "3c700746a32ababdc7617336fee60593c86d48b09b56691ce782d6fad5ca2a9b",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/db_targets.go",
+      "bytes": 6846,
+      "sha256": "fbbe4230246d73177f30f3ddc1e6ff8a2869f93734e4dc3109cbabf7be4a17e6",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/database/db_tasks.go",
+      "bytes": 7061,
+      "sha256": "db4e037941bdc2af989015c98ebc03d2479032aa2964d88f9f3c9a5f916e8141",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/eventing/evt_helpers.go",
+      "bytes": 10003,
+      "sha256": "43b4c5b5a0981b519f880293aed5f0eb86475fbb08798168ae5e2ac7b8bdaf15",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/eventing/evt_manager.go",
+      "bytes": 7091,
+      "sha256": "890ec90676eb5ba997426778b6e7e93afa61b79b3a64b82f18d5611d0e44b7e2",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/eventing/evt_types.go",
+      "bytes": 4738,
+      "sha256": "602a6b6f078d8d0a6c2aaabec590a5520f58aad493bf1c529262f1a75f68027d",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/extender/ex_agent.go",
+      "bytes": 920,
+      "sha256": "08b7df2cab4e94398a1539d7c455213e009b7ed46474351ae7d5119744ea27bf",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/extender/ex_listener.go",
+      "bytes": 2097,
+      "sha256": "95e660f1d30dc142d692efbcb9de2476ef5359696a1e4f42ffb14d5c306ceff5",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/extender/ex_service.go",
+      "bytes": 2382,
+      "sha256": "38a7ac9bcd2dfcb570843a9c2805e700afbf1407381a0dd1da0edfce69b12fda",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/extender/extender.go",
+      "bytes": 6460,
+      "sha256": "c9ffe2a102cab86e89efea70886bb35f588aa0867869254092c3de677efb9fee",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/extender/utils.go",
+      "bytes": 3752,
+      "sha256": "040eeb658d0cb8877b1696f4638ecf84f14a194e1f516b45fc69de5817f3658c",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/profile/profile.go",
+      "bytes": 6898,
+      "sha256": "90b058aa5b3db7cd5c8d84a728bd74daf602874f09ba29228929f8b85d92b1b8",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/profile/utils.go",
+      "bytes": 2023,
+      "sha256": "b979ed77f62b610ac05a270f4d43aeda5916be94859c539dce66ec64f67eb92f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/mgr_broker.go",
+      "bytes": 15072,
+      "sha256": "6349b922f3799dbb980b3389fc2296657e5c2d3f2d6ad647c377b6de5ada78be",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/mgr_handler_job.go",
+      "bytes": 7711,
+      "sha256": "19fa6c1744430cdb4309e4be2bd474d30113d5ea25cff7502583fe1dea799e0f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/mgr_handler_task.go",
+      "bytes": 2948,
+      "sha256": "da22769d535f1f30970000e8ecb7f1b219e7222fa992346aea7f788d9708b301",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/mgr_handler_tunnel.go",
+      "bytes": 1742,
+      "sha256": "a0575f65a12b029d3a5d004f5be8c4194b497d428d1b05c4b7b7726539960a45",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/mgr_task.go",
+      "bytes": 9875,
+      "sha256": "31db53d597814f15267e0ebd0d90ad830af90840f6b5b4c01e66680b1eb45298",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/mgr_tunnel.go",
+      "bytes": 11586,
+      "sha256": "94d4962347f1b681066e0ebacb7b8c902abe7ce10f5758c11019bfe4667bb280",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/server.go",
+      "bytes": 6241,
+      "sha256": "952174e0d270879bbdd7f36499db30fcebebc5ebf047a144082c97fbcb3599d6",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_agent.go",
+      "bytes": 24021,
+      "sha256": "e7a4757670185aa2146d2eaa683700416b3a878424654497da31dae6ac6d92a6",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_agent_builder.go",
+      "bytes": 7669,
+      "sha256": "aaa9f7ef4e884e60a16f47e9e0fe7ef7f503a9c4c466e78e830955f261356e2e",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_axscript.go",
+      "bytes": 13678,
+      "sha256": "2dc97d7b5d760c2d488d037ea7c4d5544f921f61bc432f796927a37d1b8b8114",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_browser.go",
+      "bytes": 3709,
+      "sha256": "d37660660aa4232b5b8e8dc3e4577f5cda0c9da939dff8f6869a3709132520ff",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_chat.go",
+      "bytes": 495,
+      "sha256": "0d7da1ce2783e77db8c3cc781ea54439ad268997ebe1d89b53c02f49984e7a78",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_clients.go",
+      "bytes": 4275,
+      "sha256": "561c104e8e23e6f8bd3525e3b14a5ac69d86f6f7aa04f5b96cb53a9e4bcfeb0f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_creds.go",
+      "bytes": 5002,
+      "sha256": "e63ffa2682f473cbbfb7981f18448235258cd693bf76195ef370b44e86120a26",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_downloads.go",
+      "bytes": 10985,
+      "sha256": "a6b28367508bbbea05f3e136febbe17022e40688c9df76604b6ad6c2a90d8b85",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_encoding.go",
+      "bytes": 31853,
+      "sha256": "214a74de39e9d42646724fbdbfbe99fda36b3bc4aecd4ae12ebe029443ef9183",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_endpoints.go",
+      "bytes": 2195,
+      "sha256": "ce82a9e173ed5446dc1a7040e05b78ac708c4b62db51b447c6bcc2672f5c701c",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_eventing.go",
+      "bytes": 1009,
+      "sha256": "eca58ca620e98c463c745ff0e88289b69a612fe58b7377435d7bc90cf84fc506",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_extenders.go",
+      "bytes": 731,
+      "sha256": "7d0a31bd0d3645fe1487e49411b2bcf98daceeaeaaedd2e4b84011201572af37",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_listeners.go",
+      "bytes": 9155,
+      "sha256": "3c6d03e82ecccca07e29af71e39e6540359406a251ec629693ba2eba5852c781",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_notify.go",
+      "bytes": 4246,
+      "sha256": "310fe6c2770372b0e14de7c935cfb7d7c11b367bc06ce435bced7e369bc80677",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_otp.go",
+      "bytes": 1480,
+      "sha256": "569dbe1d00931088b0e231035b780dda4e760d2354e0861a428891fc28ad4a28",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_pivot.go",
+      "bytes": 4939,
+      "sha256": "ebc23e2a65823c1a79cd3b5d2b98fb1a9464c25ba4ed46586b0b1b742b05e596",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_plugins.go",
+      "bytes": 2621,
+      "sha256": "8ca985c2755cc912dd7a9cb030af971cb14034bcd553f217e795c69c18cc8d5c",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_screenshots.go",
+      "bytes": 4320,
+      "sha256": "0bd402d72da2d81136b9a9d6dd449695172d6496e5de9ddde1bdb94a167e0332",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_services.go",
+      "bytes": 1210,
+      "sha256": "3eba38590ec61c5793e69d1c1742f31a09d83555a45bf8b1ad733ac71449637b",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_sync.go",
+      "bytes": 16983,
+      "sha256": "dd690049ab66297e56b2a914a2825277512d99881ae603c676701f8711608175",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_syncpacket.go",
+      "bytes": 19223,
+      "sha256": "326ead8af2f12750e8b0d3aac8c03fad2a66bac0da06d98f447867749f2df94c",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_targets.go",
+      "bytes": 8030,
+      "sha256": "7d3c74aeaa32b9576dec338035a1dda04474f2219643ec04c54022fd8e8c6a90",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_tasks.go",
+      "bytes": 8285,
+      "sha256": "2a1f9c49ff8c04b5e5dd68359abf44b4fe1623c050c44e9a08d9d178c322ed0b",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_terminal.go",
+      "bytes": 5408,
+      "sha256": "fe87ee14a753ef14ff06fc14c1dad37256d3290f30698a0e37b91460f0ca45a6",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/ts_tunnels.go",
+      "bytes": 28745,
+      "sha256": "9b7e5046f7367d0b12724786966db7c1b199f870a20312367bfa8e579d1f1f39",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/server/utils.go",
+      "bytes": 19690,
+      "sha256": "9ab7a466e7da76a63a35f0457b9cc316eeb01a9a74bd684f89deb8d69cda7b8c",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/fsystem/fs.go",
+      "bytes": 393,
+      "sha256": "f8f15eaddf34f6d6f29345728452782004b775c577f3f77b6f7fbe447ad88040",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/krypt/crypt.go",
+      "bytes": 320,
+      "sha256": "5a04f0140fbfd030259679dde63f8bc26abe7180e128a6e385fd19c78c626c40",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/krypt/hash.go",
+      "bytes": 477,
+      "sha256": "09c7ddb47c1adf5468298b8bf8fea09bd5cb19ee5c360a9cb172f41961bec57f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/krypt/rand.go",
+      "bytes": 637,
+      "sha256": "c7751aa0c799da08a804cebad50ad6b103ff34ed809483d0bf0d49b760789557",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/logs/logs.go",
+      "bytes": 1156,
+      "sha256": "20f8630b9b82dfb93bfdc33de881a8bed6c41ffa269480385b980a5d281f3e4f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/logs/repo.go",
+      "bytes": 1893,
+      "sha256": "ce854816bef3ef408c2a6d993f8f2e7181d255ff797037abb3bab26a8e6155bd",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/proxy/socks.go",
+      "bytes": 6154,
+      "sha256": "ee67d9e49d8dd6ebd2d53ba896f3ef4914a8a5d914dbe50f2af707dc929304ef",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/safe/buffer.go",
+      "bytes": 419,
+      "sha256": "e979de923c3e15efd0203d6389d58920c8a034ac713c4a163d7489569bb0a487",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/safe/map.go",
+      "bytes": 1553,
+      "sha256": "de0a8326f7ddcbde7bb76c322d79d8b0fa32d5422028d4f46cd4488b37ba58e3",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/safe/queue.go",
+      "bytes": 2689,
+      "sha256": "8af4881e6f47e9b8d5f95446910a9ccb0bda960a0e5063bf8f00c53019ba13dd",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/safe/slice.go",
+      "bytes": 1836,
+      "sha256": "d1986271cb086f0c1d0ba020fbeb6246d25b91e3cb6abbcecc5cf6b0086e1cb2",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/std/std.go",
+      "bytes": 937,
+      "sha256": "e81526d5ba55eb9a9dd15d820460c98ea315ceee000d085f00d77b52ab64d6b6",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/tformat/tformat.go",
+      "bytes": 1005,
+      "sha256": "7d50170a084ae9089b207df4ee25a86a29ed1057caad7c0cc7675c115185418f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/token/jwt.go",
+      "bytes": 3426,
+      "sha256": "97d2e0b409117f7466082a88071fe49119ed35c6bd9b88b49a531f83cc392166",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/token/otp.go",
+      "bytes": 2076,
+      "sha256": "620f48ac463a1f587bb363a10a796d267c5a24b04fa687541cc5eca5b3e8cb1f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/core/utils/valid/valid.go",
+      "bytes": 727,
+      "sha256": "cb856ed13d397bc1e4331fe0710ad0e94e33f33d5febfe08e796443b8f43726a",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/Makefile",
+      "bytes": 616,
+      "sha256": "06427c5d4638ef562e0a03a3041de7c7b890ea027677cbf90e740a7d8fa36363",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/ax_config.axs",
+      "bytes": 28046,
+      "sha256": "7ae2d1a2194a3f62eee0b83e7d7783f7f719b21598a537e5f48d91090fbb8073",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "1.1.1.1, 8.8.8.8, 9.9.9.9, cloudflare-dns.com, dns.google, dns.quad9.net"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/config.yaml",
+      "bytes": 230,
+      "sha256": "08d85baf1da42539f4f7bcab9cffa6c87748aea5c29e1f2e20688498a9165f84",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/go.mod",
+      "bytes": 89,
+      "sha256": "df567ece4ae79ddc7de7ab650ef9fe0e29952625ddda9754f7e53f513cf9f442",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/go.sum",
+      "bytes": 89,
+      "sha256": "d07dfbc5ecdeda4d7ec83f30ae8ddfebf287921752a2ffb6a1054dcda3771fd4",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/pl_main.go",
+      "bytes": 70750,
+      "sha256": "a1daab05080cca941f2abb4e25d430af4a32ad0d57a3ac326d94df8b4191755f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/pl_packer.go",
+      "bytes": 3560,
+      "sha256": "ec4b071d527b49ca02599317f383e58d6f6f1a85e48a758d60e20a0b197ddf7d",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/pl_sideloading.go",
+      "bytes": 5609,
+      "sha256": "ec876b960b705ee093c031442dc3930b4741146d963b095e48bf1c07da111034",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/pl_utils.go",
+      "bytes": 9759,
+      "sha256": "7fbd795fd592862ab5ad669620bd9263a8ee7d44c7ad523417baf11161b07201",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "cloudflare-dns.com, dns.google, dns.quad9.net"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/Makefile",
+      "bytes": 9074,
+      "sha256": "0a35334589e8625339e2bbd7e7502db5ec75d458d2263a5f90fa18458ed07252",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Agent.cpp",
+      "bytes": 4312,
+      "sha256": "d004de6f49ac6f23cceb301b8eeb59f186179cf3df707ce092a9f820d40a0b4d",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Agent.h",
+      "bytes": 854,
+      "sha256": "fecb7bd19d87fe40802cfa82c56a3f5388033af0c24f84786093cda4e2486335",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/AgentConfig.cpp",
+      "bytes": 4342,
+      "sha256": "a5754b2b2e27bd7e4c5c65bdd8e4a1438bd75e07cb8b0f2aec48e8f73d52ed78",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/AgentConfig.h",
+      "bytes": 1804,
+      "sha256": "9e35ffb29816af076361edb5a2482cb270672864f92751ad6328397e69d036e9",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/AgentInfo.cpp",
+      "bytes": 1543,
+      "sha256": "b7972b610b45194607701612093eccdd66e5754841c379b09489f4384c65749e",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/AgentInfo.h",
+      "bytes": 482,
+      "sha256": "244a5e998ae78ed8a07e9765559a2432bb47cb980e0bd314eae0570d200c2563",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ApiDefines.h",
+      "bytes": 11318,
+      "sha256": "c3fa0b0b72b3d9bc9cb58d78b8ede3b067868c78c6323c1f8ed0ff4a03ec52eb",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ApiLoader.cpp",
+      "bytes": 18168,
+      "sha256": "0fe682b0757bfc536b1dfbe3aab8b7d7f1b706183385f8bcbdacc2fa03148f10",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ApiLoader.h",
+      "bytes": 3946,
+      "sha256": "1a29b4a255d7dc862f3b42ce46dcc60213fe2e6ba216f2057467001abf4e8410",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Boffer.cpp",
+      "bytes": 10622,
+      "sha256": "02606e8c68be7bb4f241c4f86c22984bb6ac414ac3885d4dc9b8926fb519b455",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Boffer.h",
+      "bytes": 1557,
+      "sha256": "b4e255b2ecacc77531abe5866c67443ca2df22440cf8e5372f8c0007dee3ed2a",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Commander.cpp",
+      "bytes": 34431,
+      "sha256": "12b62f02532f98cb59855a218d0c6b759c39e1d39b8b5746f235d6ecb856f748",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Commander.h",
+      "bytes": 3855,
+      "sha256": "10f851c93adb3b54b34cc16df96327450a936c6c83cb53686a62c395ac1023ca",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Connector.h",
+      "bytes": 709,
+      "sha256": "3d288102b8623eec8b419af210d8800aa3562c5ad5019608ef42b8dc872eeb31",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ConnectorDNS.cpp",
+      "bytes": 58373,
+      "sha256": "5713424df39960b08fec91a638cf2794aa2651c8b71c5bc69345189cd239eeb3",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ConnectorDNS.h",
+      "bytes": 7597,
+      "sha256": "26932a4b45a9dd12cc4a3bea33efa72dfd5169be7d89269ef26d5266facbde92",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ConnectorHTTP.cpp",
+      "bytes": 15932,
+      "sha256": "68d271dfe7c7cc88df37bfc994952cbd430513ea4c3cdc6ececa31c8ff1579e8",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ConnectorHTTP.h",
+      "bytes": 2655,
+      "sha256": "fec115c4203e5da4e1de7643c5f9ee86788e4aa0ef22466dd1a8dc7064424786",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ConnectorSMB.cpp",
+      "bytes": 8302,
+      "sha256": "9688c314cb79a46c4de3ada30b0e0c33c4d209e5c731abd572fc1e1b9542a330",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ConnectorSMB.h",
+      "bytes": 2099,
+      "sha256": "bc7845619ea6f2d2968c83eac29289eaf7e198721b27897611293b2378ec5be0",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ConnectorTCP.cpp",
+      "bytes": 7922,
+      "sha256": "34c555f9e3e40cfcb61d13fa7964c627dae6c789ac6387e21249783a93f6ae86",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ConnectorTCP.h",
+      "bytes": 1994,
+      "sha256": "51f4be6494994a217ddea96e614acf6932e53287ae672d7ea578709b533db38e",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Crypt.cpp",
+      "bytes": 1037,
+      "sha256": "561bd42ef59845c5725276a641fbf710893ac8171ab766e7cbe6318c2527a00e",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Crypt.h",
+      "bytes": 340,
+      "sha256": "f7ec5d64152994d3264d2b88b107077a3b9e79b9621f133d41266fdf00635907",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/DnsCodec.cpp",
+      "bytes": 7030,
+      "sha256": "954506ea944139286ec7c2859b4cb1ce684f14fe8f1f5bacadebd1badd551b42",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/DnsCodec.h",
+      "bytes": 1235,
+      "sha256": "98e25524a297af60e282125d932d870666cefd4a567c3b97cc51db2e89f3314d",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Downloader.cpp",
+      "bytes": 2458,
+      "sha256": "676b7efb4bcc52821bc474e28d68cf7a0f7d81631971beafb3cc9e4e349afc7c",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Downloader.h",
+      "bytes": 836,
+      "sha256": "5067ed0a32837f7dbf3de175b804ebbb2d74b57ad32a813aaa80f514f5dcc38b",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Encoders.cpp",
+      "bytes": 3416,
+      "sha256": "6ac1b91e0fc2156c52d4306719459625a3045396adc35bf857cff1d8e565da67",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Encoders.h",
+      "bytes": 170,
+      "sha256": "c6dd118e4b67418b5e942bacddb7a8d791565c2d56d53c87867c25f51f0ba393",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/JobsController.cpp",
+      "bytes": 2316,
+      "sha256": "1c5db3430dc80427d61ede4640d0a3d8c05ad7bdbd7575d346c58a99678720a3",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/JobsController.h",
+      "bytes": 835,
+      "sha256": "7b369558e6f04b19ade13f4a150f6f85d4fd3b79f6260d96ea60e1b94f0981cf",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/MainAgent.cpp",
+      "bytes": 2919,
+      "sha256": "c4300bb4a310a24dd77b6f5419e1f1032f43c67db6e12d295e83d2ea88c27a88",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/MemorySaver.cpp",
+      "bytes": 1030,
+      "sha256": "bbf09b2ecf06d96b3ebdcc8fe531b3a83971a08eebbaf216b1155146f015ff0b",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/MemorySaver.h",
+      "bytes": 457,
+      "sha256": "aa2edce6f5d474c97a331f572e5e3168e7e2f8305f58bde0b7cca9dd01940077",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Packer.cpp",
+      "bytes": 5043,
+      "sha256": "c1be0697b64ca1eb02bbeec5e7267e479cc5343d26f6497b5706bd601b62e20d",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Packer.h",
+      "bytes": 766,
+      "sha256": "3712ff64d6b157acd27cb13e54b750531f2c3de1f6c4fa2f9dcf459f266452ee",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Pivotter.cpp",
+      "bytes": 8863,
+      "sha256": "d7b3c54358d896ea4241b27652706bddc9580f5b63986c956202bb2aec8b7dda",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Pivotter.h",
+      "bytes": 823,
+      "sha256": "b024bd2f99d50c354cdc30ff8cc1b8bf12039c1dc954979cb2ff8b5824509863",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ProcLoader.cpp",
+      "bytes": 4970,
+      "sha256": "87549dd06bfe43aaff6e8a10e3144ad73c1cd70c5a5332416d5e00aebfea8c50",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ProcLoader.h",
+      "bytes": 209,
+      "sha256": "ddfec03483875ff06a9d0e4d55b0dea7988700bef934c552ba4fd5ff456dbbe9",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Proxyfire.cpp",
+      "bytes": 20712,
+      "sha256": "9bc9be66ffdebb09086323bc88245cace6af573ca2e8cdbf060d3483fe8fef34",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/Proxyfire.h",
+      "bytes": 2089,
+      "sha256": "e1adb54c916107b51326035a4e9b21e292e3a1ac89b7b62745c64452bb9433b1",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/WaitMask.cpp",
+      "bytes": 1408,
+      "sha256": "9a0a4d90e215824ca6dde18d33b08043427f2c4ff9fefae099a534097580fe50",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/WaitMask.h",
+      "bytes": 229,
+      "sha256": "008d5adeee6d2e22acfb57071090f4f401564faaedb2261a4b68d914b183e20f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/adaptix.h",
+      "bytes": 227,
+      "sha256": "d149191d360143c8241eb5211a0fde04448f1325dc71dab2f71c03c267980000",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/beacon.h",
+      "bytes": 14209,
+      "sha256": "0d47600f8ddec316e1094d607766e6abad5ef2753cdd40d345349582f4706014",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/beacon.vcxproj",
+      "bytes": 25287,
+      "sha256": "659e0eeb366567cb3c4f58b15ca6503fdb8f0d7614256229a2b30839d933b3d4",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/beacon.vcxproj.filters",
+      "bytes": 8920,
+      "sha256": "ce8c467c63d6def40b9e777d3e754ddc67110f60afea2e93662416b025cb0670",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/beacon.vcxproj.user",
+      "bytes": 165,
+      "sha256": "c65b2b1a71dcd26333d8dc209ffeb90a906ddd8bbab6d45dada8e3bc84c30226",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/beacon_functions.cpp",
+      "bytes": 11657,
+      "sha256": "820ac439164c2bf0a93bedc5ccaff60d3a8396aa06e6167b381a4d9f40730431",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/bof_loader.cpp",
+      "bytes": 12900,
+      "sha256": "c5faac3bd1c9ce923d03795bf8b9f8c38eef21eeef8d6054f9f7f848f59e84b1",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/bof_loader.h",
+      "bytes": 2163,
+      "sha256": "4a6d261e50970c060d2ce76e36ac0b1c58b91ee7c46f1cef8b86eefe9ab19b70",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/chkstk_x64.asm",
+      "bytes": 712,
+      "sha256": "418769bb82d4c7ba8eb1a709b6d70530c0f13459817000bf0e9fceceec129e04",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/config.cpp",
+      "bytes": 623,
+      "sha256": "c016dd50fd72b0ca4f30e425fcc91c12b2a1f7c41eb1e7ac4ea8320331f0c28e",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/config.h",
+      "bytes": 147,
+      "sha256": "e8d571e76fa362665b0597b231ad9a1a2b3044195c7924b0f2ab856feac24958",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/crt.cpp",
+      "bytes": 14118,
+      "sha256": "b7211300e7efac5495e522b03fa42781db004359d1752d3cf02cf9a82d1a2afe",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/defines.h",
+      "bytes": 40681,
+      "sha256": "507bb8c3971d27fe39a9c78e42448dff7cd7c31fe6c18100317a9631600767e3",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/main.cpp",
+      "bytes": 4613,
+      "sha256": "97b6cc65c8c1bc9e4a071b072aea0a8eb966ea735e355bb52d0b108457791468",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/main.h",
+      "bytes": 126,
+      "sha256": "61c6dacd3476f35b9410e6c679db1fc70c31339627920167a94ca9d5afe9f9bc",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/miniz.cpp",
+      "bytes": 348549,
+      "sha256": "01cb27df1fdf5cf2000b7630aa1dc8b857f0ccb9538c56ff3dd6368c53c7e9a5",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "altdevblogaday.org, gist.github.com, unlicense.org, www.geocities.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/miniz.h",
+      "bytes": 76464,
+      "sha256": "a6da33fca267cd3f8f479345a69118cb2992cef6b2afe129cdf05779343605d7",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "www.ietf.org"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/ntdll.h",
+      "bytes": 513578,
+      "sha256": "239205ce14579d561f868cf947689ad4a36efc5e77a83c53b26a12f790cfef04",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "www.acc.umu.se, www.nirsoft.net"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/std.cpp",
+      "bytes": 4845,
+      "sha256": "8cf90406c5885656c913620a044fc6cbd3ae9ada30e53faa439903920090bbc1",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/utils.cpp",
+      "bytes": 15073,
+      "sha256": "0fd2059a7ff5de771c49d8c756f6664a0f865e628b0fbe29caa965a532b7298a",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon/utils.h",
+      "bytes": 1944,
+      "sha256": "b63f5b00af809929af6c6e7ea6e6ff6605a0f1fae9786d8c3a42f9dee619ebec",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/beacon.sln",
+      "bytes": 8122,
+      "sha256": "9487f466cdf4163dc38174407adac18709b6dc3f734c912e1ce458264031682c",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/files/config.tpl",
+      "bytes": 281,
+      "sha256": "0236015e9ea9d0f6aa4d2bc411fc8abc6bcae5ae17b8622324867f6726853334",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/files/hashes.py",
+      "bytes": 4231,
+      "sha256": "8b65f7d530c5c2fdd49d2de1ca9dd402908c5c9aafba9b98b5a4bd02473ec4ed",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/files/stub.x64.bin",
+      "bytes": 1023,
+      "sha256": "26b689749bc57991cbae2aab8ab6cf5acab6c64db4829ba2b1ced6c60d99a7a8",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 6.42"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_agent/src_beacon/files/stub.x86.bin",
+      "bytes": 1023,
+      "sha256": "d8979f8aa2498450376a0b56a05a9f5798f583f781d02cccc8f270757d45a256",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 6.38"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_dns/Makefile",
+      "bytes": 301,
+      "sha256": "b783970ce3e2d1c31034386a72cc6dc73948cbaaa48aad209eeff8c674bf0316",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_dns/ax_config.axs",
+      "bytes": 4093,
+      "sha256": "7f66e78b91aea0cbc6576dd99c108b95bd4f58ccad093141552059f0bbb7895c",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_dns/config.yaml",
+      "bytes": 161,
+      "sha256": "4dd50f7440ec2190daeabec6defbdc4d93e858f7c133f5db6d6c60e31ed3da6d",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_dns/go.mod",
+      "bytes": 374,
+      "sha256": "4126b7db9d812e21a18ea8435d0268417904639dc2505e2687fc3782c4247ec5",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_dns/go.sum",
+      "bytes": 779,
+      "sha256": "821a7b6aa08b6a6d6c61f14d8f1ec6bd30d66cf0c01f47458b039b60c5f3fe9b",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_dns/pl_main.go",
+      "bytes": 5139,
+      "sha256": "39c3b450f6ee433b1d55cf8c519f3d9ec19baad9da4ebe621ca7160513907c07",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_dns/pl_transport.go",
+      "bytes": 23338,
+      "sha256": "0287b0b93098cb2b9a1cc7199a843a2380495a93697799d27653677012328499",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_http/Makefile",
+      "bytes": 304,
+      "sha256": "e531e06c9fff38a95fde453131e2413a430013b2e25594bca57d34d2a14614cb",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_http/ax_config.axs",
+      "bytes": 6940,
+      "sha256": "16b5c2e98a4b39c243c2be1c69dec690c81a1f250df50de7a06a37b8b94de701",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_http/config.yaml",
+      "bytes": 164,
+      "sha256": "5d5b6a964fa82ebbd03d68430ab00ce4c4297030200f6498483f9537542daa4c",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_http/go.mod",
+      "bytes": 1579,
+      "sha256": "52b080db2a32baacd71ba06b6786a763fc41eb319699f80474d5cf917d01f9fc",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_http/go.sum",
+      "bytes": 6628,
+      "sha256": "adf5da8bc192b9775259f8724e296b092aaaa34006ec4f4426fe83349cf7e595",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_http/pl_main.go",
+      "bytes": 4935,
+      "sha256": "3298597f51b7e649c58ba627bd3969e5786ac83d073986f4c50291b745570573",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_http/pl_transport.go",
+      "bytes": 13156,
+      "sha256": "a2b27d5a2bbae7d51a9660a7b51bc74c8ee91ec4530561d85dcd772184bbdfe9",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_smb/Makefile",
+      "bytes": 302,
+      "sha256": "28e593fbb3a514a72e38eda9af965701d75d71e9210380fb3f26cf3fc8fc543f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_smb/ax_config.axs",
+      "bytes": 1509,
+      "sha256": "39138a6547046b6d53c77883194aa25999f1b0346fea1eacbf47b6820a8c9696",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_smb/config.yaml",
+      "bytes": 166,
+      "sha256": "97f428d96b5aa3945a99dc69bd8030d1cba95f0ab0f7e05ea5b5e3c06674e4ea",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_smb/go.mod",
+      "bytes": 96,
+      "sha256": "0d74ba3c3543837cc77ee655c4c8acbc37c8fde5a7ae7f720f75452ad44315ec",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_smb/go.sum",
+      "bytes": 89,
+      "sha256": "d07dfbc5ecdeda4d7ec83f30ae8ddfebf287921752a2ffb6a1054dcda3771fd4",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_smb/pl_main.go",
+      "bytes": 3880,
+      "sha256": "22d0b6abd32f9274a4aeeed06ed7c7d420146e5b630f8940a06f203c59c168bf",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_smb/pl_transport.go",
+      "bytes": 824,
+      "sha256": "af73bebff79c3db37a5b8022276f486c6f1da452192d868054ee58916863ca00",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_tcp/Makefile",
+      "bytes": 302,
+      "sha256": "f191108f4f6da19160430ca0fbca506f46a60e4bfa38d020d0a56834d6227eca",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_tcp/ax_config.axs",
+      "bytes": 1877,
+      "sha256": "bd55b90540f5abe55f5d4fa74da012c38510b8cb5e75ef2652d762292fd52733",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_tcp/config.yaml",
+      "bytes": 166,
+      "sha256": "a72df1716902a94080c5a19d10d3f25cd719e6feb13092a29fb7a97ddffc3de9",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_tcp/go.mod",
+      "bytes": 96,
+      "sha256": "d9b8ded52e17905134c04b5ea4775ea5cfec13c3c55c861d3e4b47b74a974830",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_tcp/go.sum",
+      "bytes": 89,
+      "sha256": "d07dfbc5ecdeda4d7ec83f30ae8ddfebf287921752a2ffb6a1054dcda3771fd4",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_tcp/pl_main.go",
+      "bytes": 4787,
+      "sha256": "ce01e06583b50b98c385d27807e769a3f354616e152c4453634b56ece2b6ab80",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/beacon_listener_tcp/pl_transport.go",
+      "bytes": 821,
+      "sha256": "f31224bf06ebbee3a56a7341829c401edc359427aa4f7273cbad3b8648799dc1",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/Makefile",
+      "bytes": 429,
+      "sha256": "e95dee2ce6c008b45f400abb960fcd9313cd1bd16b89f5864da1d5ad6e5a82e1",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/ax_config.axs",
+      "bytes": 13453,
+      "sha256": "e35e60db8fe7d70199900bd01249c90922bcbb3ab5151613758b5cd6f5a21d8e",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "qwe.zip"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/config.yaml",
+      "bytes": 180,
+      "sha256": "42929145da24e08ea44e2aa415396d52562cb990f602867a655f42ab24d8f670",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/go.mod",
+      "bytes": 314,
+      "sha256": "dbe46dfd3c053b92cb860ca8bdd8728459416207a4e9debf20f6eb99c02c5bcc",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/go.sum",
+      "bytes": 1098,
+      "sha256": "a90f089e86214a5944b7ae3143310478302c2c4522728954601d144f9c32f011",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/pl_main.go",
+      "bytes": 49460,
+      "sha256": "607b570c128d6929e62e3824e5c7b3c5e093bd4017c435227840d3fe50a0651f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/pl_utils.go",
+      "bytes": 8156,
+      "sha256": "520e8cc7779eb0677ce18f2a9c7f3901d3bfe6ca60309b551dc6e834760b59ca",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/Makefile",
+      "bytes": 775,
+      "sha256": "9ede731de5bcf9034d650845547620a7b964a41b2dba2353a7d7a62ce612d972",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/binutil/r_byteslice_windows.go",
+      "bytes": 914,
+      "sha256": "ecc219dd25263da95c5906e06af30ef41c6d747a87e8e7b2fb076aa33a306eb2",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/binutil/r_readerat_windows.go",
+      "bytes": 1137,
+      "sha256": "98beab50dffabd3708f96e04e0b3fa7956ce1720881d169d1c46129e0d3e055d",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/boffer/boffer_windows.go",
+      "bytes": 15637,
+      "sha256": "b61b9baeb643fe31d5e92083ffaf3b8e748686eb1a8080afa927972c6511ab2b",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/coffer/coffer.go",
+      "bytes": 471,
+      "sha256": "5889019679869f00f3cab0ad85f6b54fb9bc401fefa76d0749576b800c85b7e0",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/coffer/coffer_windows.go",
+      "bytes": 17416,
+      "sha256": "d3f7e74ddad3a22b39874e04fb3942381b29e75760bfeb3d6c1d92267d6b9fa7",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/coffer/file_windows.go",
+      "bytes": 14976,
+      "sha256": "d919e1d70206a2bbb228c8850cc45089d821a94e8f08ff0da8ccee20e8e01ef8",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/coffer/section_windows.go",
+      "bytes": 3599,
+      "sha256": "8182e0d011908f760f21e5e0793dd16f38bf2f7ba2187c35a868e1d04a2bdb5e",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/coffer/symbol_windows.go",
+      "bytes": 257,
+      "sha256": "17a2ab24697129f260892cba366d03eaef6a725a692d50fddc425759fe3f315d",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/defwin/defwin_windows.go",
+      "bytes": 22165,
+      "sha256": "52b7aff2e928c5094782ad8df49717b9b72a8490bb19c7983a0047d39f1b5f27",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/bof/memory/memory_windows.go",
+      "bytes": 1375,
+      "sha256": "cf9ca4dd68658c6a7a36075fff55489bf30bbea0fff46d8de19d2c49167bd2a3",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/config.go",
+      "bytes": 1388,
+      "sha256": "85c99f969e5f36339f9b81908135c3f0705a001ca2e4f2258ff88e94870c7347",
+      "findings": [
+        {
+          "id": "obfuscation",
+          "severity": "medium",
+          "line": 4,
+          "why": "large encoded or escaped blob - review its decoded content before running",
+          "evidence": "// []byte(\"\\x8b\\x90\\xbe\\xbd\\x3e\\x69\\x97\\x65\\xe1\\x82\\x97\\x43\\x93\\xbe\\x5a\\x7d\\x41\\xf1\\x5f\\x59\\x9d\\xc3\\x7a\\xf0\\xa9\\xdc\\xef\\x35\\x72\\x37\\xeb\\x42\\xb7\\xac\\x2e\\xbd\\x45\\xdc\\x04\\xad\\xe8\\x75\\x23\\x08\\x23\\x50\\xa1\\"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/functions/functions.go",
+      "bytes": 6855,
+      "sha256": "b72ab5039e1259236427376f23e95e60ede65921bb425c87a79d34ebf487c865",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/functions/functions_mac.go",
+      "bytes": 4170,
+      "sha256": "f074f11f652443dc84e2753b130188a6da0a3a659d5b815c76158a019fd2a171",
+      "findings": [
+        {
+          "id": "credential-theft",
+          "severity": "critical",
+          "line": 193,
+          "why": "reads credentials or secrets belonging to the machine that runs it",
+          "evidence": "process.Env = append(os.Environ(),"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/functions/functions_unix.go",
+      "bytes": 4334,
+      "sha256": "b77c1d14154c71533649f325aab73f6bcbc77639f22f0c3564329b05f5b96dac",
+      "findings": [
+        {
+          "id": "credential-theft",
+          "severity": "critical",
+          "line": 197,
+          "why": "reads credentials or secrets belonging to the machine that runs it",
+          "evidence": "process.Env = append(os.Environ(),"
+        }
+      ]
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/functions/functions_win.go",
+      "bytes": 5536,
+      "sha256": "75998ea9ff58a16fc15351c720dafa22ef757d8b1704323b645e9c04779cec6f",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/go.mod",
+      "bytes": 1000,
+      "sha256": "b09d57c11aabe05f6aa2a60d958eef30c66a702161f0b0acb1934b25907e3039",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/go.sum",
+      "bytes": 4823,
+      "sha256": "924d31e8ae34d5de3b4c106d447a9e34fad97ac79aee580c81ebf49d735d6b38",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/main.go",
+      "bytes": 4709,
+      "sha256": "38e8cf6943114d8a78bee7cc60d53dd203f1ed4efff147ebe2ef393197c164f8",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/tasks.go",
+      "bytes": 32457,
+      "sha256": "d01d0c8d00428e2910f33705e10eb2acb856cd1092e924f374303cba1339eff7",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/utils/crypt.go",
+      "bytes": 1001,
+      "sha256": "c4ba1cd77e8c226b4aca62394f54f4e73160ff0588e5b087d7ffb65830ea39db",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_agent/src_gopher/utils/utils.go",
+      "bytes": 7512,
+      "sha256": "792765884598a3adde56e201132d0ce84e9f9c49542e13034b4f6ad5592b8551",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_listener_tcp/Makefile",
+      "bytes": 309,
+      "sha256": "5c7d25ba4ad423a51d0b645fd4150bb970145a8b80b50d9ba87ca75c7cf026d1",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_listener_tcp/ax_config.axs",
+      "bytes": 6392,
+      "sha256": "a9f94d51a755db55b96c7ef1b3641846aa76d1934abb6f89aa52b36d84df6594",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_listener_tcp/config.yaml",
+      "bytes": 161,
+      "sha256": "5888d6b59b2797ebe1e22034abc9c4209da7984d7b1fa9526ba5200017fd16e3",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_listener_tcp/go.mod",
+      "bytes": 261,
+      "sha256": "9db0b6ba1eb30164aa8b9734f058ceae5643c7fc0b01eada5926aadb945f4312",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_listener_tcp/go.sum",
+      "bytes": 877,
+      "sha256": "9fa033ffb9aa51733a62a41ea6ef5f5b87cbdcdb2de1a60de0aea064b00462a5",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_listener_tcp/map.go",
+      "bytes": 1553,
+      "sha256": "74284d9a4e5d24ec03de4b58762b052253bada5aa4229966986ce46cc4496245",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_listener_tcp/pl_main.go",
+      "bytes": 5275,
+      "sha256": "3c09dc09c7e346edb966404f716156da8fd84803ed122d2ec00f70544f0380ab",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/extenders/gopher_listener_tcp/pl_transport.go",
+      "bytes": 14265,
+      "sha256": "79aec4c6b5e9366258cab5ca49f2f58c1137d2feec22e6c009bdc4576d1b0551",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/go.mod",
+      "bytes": 1938,
+      "sha256": "066f7f22216eb98767185a6c12bab3ef33d0bd95b7a91001c49ed8f0b56fbb78",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/go.sum",
+      "bytes": 9099,
+      "sha256": "a5675c1bfa3fdc13487e250ec5c0078e7cfd888e01e2ea07cab11077d1f6b215",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/go.work",
+      "bytes": 240,
+      "sha256": "a10486ea087c56cbf1874736f5020f98b551a4f475699a1402c51252b4c3e217",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/go.work.sum",
+      "bytes": 13633,
+      "sha256": "2989add188494bd925d03582c3e68ba19e1acf54c105b9089b0bc8d72d3f8133",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/main.go",
+      "bytes": 1237,
+      "sha256": "5ffacf609a58810872b9202958ce736fb4470d5f308d819c5911b346508acce7",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/profile.yaml",
+      "bytes": 1535,
+      "sha256": "a1182d94ddded12f3102cd3f2197f8a09cc0494b5ca1cc392146c5c6a3388389",
+      "findings": []
+    },
+    {
+      "file": "AdaptixServer/ssl_gen.sh",
+      "bytes": 347,
+      "sha256": "fc9ef751fb4ebeebd4087a2df0651af940d8911309ba15a9cc0c634af5c2354b",
+      "findings": []
+    },
+    {
+      "file": "LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "fsf.org, www.gnu.org"
+        }
+      ]
+    },
+    {
+      "file": "Makefile",
+      "bytes": 6684,
+      "sha256": "e3d0feb5c2aa8dff5ea205e300774ea6fd6b4b15cdc6998c0a01b397d5d3441e",
+      "findings": []
+    },
+    {
+      "file": "README.md",
+      "bytes": 3460,
+      "sha256": "2982dc32a5c17ae2f06998614bd9bbda02d46fe1d65faad15d780b1d66c78aa1",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "adaptix-framework.gitbook.io, github.com"
+        }
+      ]
+    }
+  ],
+  "mechanical_verdict": "NEEDS-HUMAN-REVIEW",
+  "disclaimer": "A mechanical scan never clears code. Read the source. Treat compiled or obfuscated artefacts as unknown-malicious and analyse them on REMnux (VM 105). Execution happens only on the isolated target, snapshot before and roll back after."
+}
