@@ -1,0 +1,108 @@
+{
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+  "allowed_networks": [
+    "192.168.1.0/24"
+  ],
+  "allowed_domains": [],
+  "management_networks": [
+    "10.9.0.0/24"
+  ],
+  "declared_tool_images": [
+    "wmic.exe",
+    "cmd.exe",
+    "wmic-jscript-http.xsl"
+  ],
+  "inputs": {
+    "zeek_dir": "/tmp/wmic-xsl-expansion-20260815/flow0-http-jscript/nsm",
+    "sysmon_json": "/tmp/wmic-xsl-expansion-20260815/flow0-http-jscript/sysmon.json",
+    "operator_logs": [
+      "lol/techniques/wmic-xsl-script-processing/verification/evidence/safety/flow0-http-jscript-operator.txt"
+    ],
+    "sysmon_eid3_events_read": 15,
+    "sysmon_eid22_events_read": 10,
+    "attributed_destinations": 7,
+    "attribution_available": true
+  },
+  "capture_scale": {
+    "conn_log_rows": 13,
+    "off_lab_destinations": 3,
+    "note": "a capture pre-filtered to in-lab traffic cannot show an off-lab destination, so 0 here proves nothing on its own - never filter the input"
+  },
+  "violation_count": 0,
+  "violations": [],
+  "manifest_count": 4,
+  "manifest": [
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 1.1.1.1:53/udp (4 connections, 1056 bytes, 24 packets sent)",
+      "attributed_images": [
+        "C:\\Windows\\System32\\svchost.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "1.1.1.1",
+      "port": "53",
+      "proto": "udp",
+      "connections": 4,
+      "bytes_sent": 1056,
+      "packets_sent": 24,
+      "conn_states": [
+        "SF"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 204.79.197.203:80/tcp (1 connections, 247 bytes, 12 packets sent)",
+      "attributed_images": [
+        "C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\4.18.26070.9-0\\MpDefenderCoreService.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "204.79.197.203",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 247,
+      "packets_sent": 12,
+      "conn_states": [
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 13.69.116.109:443/tcp (1 connections, 1081 bytes, 60 packets sent)",
+      "attributed_images": [
+        "C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\4.18.26070.9-0\\MpDefenderCoreService.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "13.69.116.109",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 1081,
+      "packets_sent": 60,
+      "conn_states": [
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "*",
+      "queries": 6,
+      "resolver": "192.168.1.50",
+      "scope": "external-name-queried-in-lab",
+      "detail": "'*' asked of in-lab resolver 192.168.1.50 (6 queries)"
+    }
+  ],
+  "verdict": "PASS"
+}

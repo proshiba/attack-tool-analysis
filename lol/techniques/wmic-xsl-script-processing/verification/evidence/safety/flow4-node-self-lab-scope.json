@@ -1,0 +1,330 @@
+{
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+  "allowed_networks": [
+    "192.168.1.0/24"
+  ],
+  "allowed_domains": [
+    "192.168.1.52",
+    "win10-analysis",
+    "52.1.168.192.in-addr.arpa"
+  ],
+  "management_networks": [
+    "10.9.0.0/24"
+  ],
+  "declared_tool_images": [
+    "wmic.exe"
+  ],
+  "inputs": {
+    "zeek_dir": "/tmp/wmic-xsl-expansion-20260815/flow4-node-self/nsm",
+    "sysmon_json": "/tmp/wmic-xsl-expansion-20260815/flow4-node-self/safety-local-name-normalized.json",
+    "operator_logs": [
+      "lol/techniques/wmic-xsl-script-processing/verification/evidence/safety/flow4-node-self-operator.txt"
+    ],
+    "sysmon_eid3_events_read": 65,
+    "sysmon_eid22_events_read": 42,
+    "attributed_destinations": 19,
+    "attribution_available": true
+  },
+  "capture_scale": {
+    "conn_log_rows": 43,
+    "off_lab_destinations": 10,
+    "note": "a capture pre-filtered to in-lab traffic cannot show an off-lab destination, so 0 here proves nothing on its own - never filter the input"
+  },
+  "violation_count": 0,
+  "violations": [],
+  "manifest_count": 20,
+  "manifest": [
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 199.232.210.172:80/tcp (1 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "199.232.210.172",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": [
+        "SHR"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 1.1.1.1:53/udp (21 connections, 5532 bytes, 126 packets sent)",
+      "attributed_images": [
+        "C:\\Windows\\System32\\svchost.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "1.1.1.1",
+      "port": "53",
+      "proto": "udp",
+      "connections": 21,
+      "bytes_sent": 5532,
+      "packets_sent": 126,
+      "conn_states": [
+        "SF"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 52.123.129.14:443/tcp (1 connections, 980 bytes, 102 packets sent)",
+      "attributed_images": [
+        "C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\4.18.26070.9-0\\MpDefenderCoreService.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "52.123.129.14",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 980,
+      "packets_sent": 102,
+      "conn_states": [
+        "S1"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 20.42.179.204:443/tcp (1 connections, 3029 bytes, 72 packets sent)",
+      "attributed_images": [
+        "C:\\Windows\\System32\\svchost.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "20.42.179.204",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 3029,
+      "packets_sent": 72,
+      "conn_states": [
+        "SF"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 23.193.119.141:80/tcp (1 connections, 288 bytes, 24 packets sent)",
+      "attributed_images": [
+        "C:\\Windows\\Sysmon64.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "23.193.119.141",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 288,
+      "packets_sent": 24,
+      "conn_states": [
+        "S1"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 204.79.197.203:80/tcp (1 connections, 490 bytes, 42 packets sent)",
+      "attributed_images": [
+        "C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\4.18.26070.9-0\\MpDefenderCoreService.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "204.79.197.203",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 490,
+      "packets_sent": 42,
+      "conn_states": [
+        "S1"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 20.42.73.24:443/tcp (1 connections, 1282 bytes, 78 packets sent)",
+      "attributed_images": [
+        "C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\4.18.26070.9-0\\MpDefenderCoreService.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "20.42.73.24",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 1282,
+      "packets_sent": 78,
+      "conn_states": [
+        "S1"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 20.190.141.37:443/tcp (1 connections, 5460 bytes, 90 packets sent)",
+      "attributed_images": [
+        "C:\\Windows\\System32\\svchost.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "20.190.141.37",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 5460,
+      "packets_sent": 90,
+      "conn_states": [
+        "SF"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 52.253.84.76:443/tcp (1 connections, 2927 bytes, 96 packets sent)",
+      "attributed_images": [
+        "C:\\Windows\\System32\\svchost.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "52.253.84.76",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 2927,
+      "packets_sent": 96,
+      "conn_states": [
+        "SF"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 23.11.38.161:80/tcp (2 connections, 510 bytes, 48 packets sent)",
+      "attributed_images": [
+        "C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\4.18.26070.9-0\\MpDefenderCoreService.exe",
+        "C:\\Windows\\System32\\svchost.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "23.11.38.161",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 510,
+      "packets_sent": 48,
+      "conn_states": [
+        "S1"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "workgroup",
+      "queries": 18,
+      "resolver": "192.168.1.255",
+      "scope": "external-name-queried-in-lab",
+      "detail": "'workgroup' asked of in-lab resolver 192.168.1.255 (18 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "dns.msftncsi.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'dns.msftncsi.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "ctldl.windowsupdate.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'ctldl.windowsupdate.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "mobile.events.data.microsoft.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'mobile.events.data.microsoft.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "login.live.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'login.live.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "ocsp.digicert.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'ocsp.digicert.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "oneocsp.microsoft.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'oneocsp.microsoft.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "licensing.mp.microsoft.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'licensing.mp.microsoft.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "settings-win.data.microsoft.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'settings-win.data.microsoft.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "ecs.office.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'ecs.office.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    }
+  ],
+  "verdict": "PASS"
+}

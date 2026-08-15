@@ -1,45 +1,78 @@
 {
-  "capture": {
-    "source": "Windows pktmon",
-    "command": "pktmon.exe start --capture --pkt-size 0 -f C:\\lab\\wmic-xsl-script-processing.etl",
-    "full_packet": true,
-    "started_at": "2026-08-10T01:46:10.3002656Z",
-    "ended_at": "2026-08-10T01:46:13.3784369Z",
-    "pcapng_size_bytes": 41928,
-    "pcapng_sha256": "25774880406F4E72DFF6155AE9E4DBAEB911C5BA39416888A9A6954D37CB8FC2",
-    "packets_analyzed": 346,
-    "capture_loss_percent": 0.0
+  "schema_version": 2,
+  "source": {
+    "capture": "Windows pktmon full-packet capture, unfiltered",
+    "analysis": "offline nsm-analyze on VM 106 with Zeek, Suricata, and JA3",
+    "raw_pcap_committed": false,
+    "raw_nsm_logs_committed": false,
+    "capture_loss_percent_all_flows": 0.0
   },
-  "nsm": {
-    "vmid": 106,
-    "zeek_version": "8.2.1",
-    "suricata_version": "7.0.10",
-    "analyzed_at": "2026-08-10T01:46:52Z"
-  },
-  "zeek_http": {
-    "timestamp": "2026-08-10T01:46:10.435152Z",
-    "method": "GET",
-    "host": "192.168.1.50:18082",
-    "uri": "/benign.xsl",
-    "http_version": "1.0",
-    "user_agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; Win64; x64; Trident/7.0; .NET4.0C; .NET4.0E)",
-    "status_code": 200,
-    "response_body_len": 571,
-    "response_mime_type": "application/xml"
-  },
-  "zeek_file": {
-    "source": "HTTP",
-    "seen_bytes": 571,
-    "missing_bytes": 0,
-    "sha256": "B0390CCFDBC5D4DB943EC83B0FBD8240D959EB4248507D79B3594368414BD970"
-  },
-  "suricata": {
-    "http_records": 1,
-    "method": "GET",
-    "url": "/benign.xsl",
-    "status": 200,
-    "response_length": 571,
-    "content_type": "application/xslt+xml",
-    "assessment": "Suricata independently decoded the XSL request and legacy MSIE/Trident User-Agent. Alerts were limited to the Python test server banner and pktmon checksum artifacts."
-  }
+  "flows": [
+    {
+      "id": "flow0-http-jscript",
+      "pcap_sha256": "12bcae0a55b599a2dd749ac3c4380e62423692c25140415098549f0513c3151f",
+      "packets": 266,
+      "transport": "HTTP",
+      "connection": "192.168.1.52 to 192.168.1.50:18082/tcp",
+      "http": {"method": "GET", "uri": "/wmic-jscript-http.xsl", "status": 200, "response_body_bytes": 617, "user_agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; Win64; x64; Trident/7.0; .NET4.0C; .NET4.0E)"}
+    },
+    {
+      "id": "flow1-local-jscript-standard-user",
+      "pcap_sha256": "5fe45603280bdaa93b27392ed9d5938e87790857e523ee821dd8c096f02b56d1",
+      "packets": 14,
+      "transport": "none",
+      "attack_attributed_connections": 0,
+      "http_records": 0,
+      "smb_records": 0,
+      "tls_records": 0
+    },
+    {
+      "id": "flow2-smb-jscript",
+      "pcap_sha256": "6f18ae843b93daeec6c996fa2b732ac9745990f32816ea1e4a664bfa502fbf8e",
+      "packets": 148,
+      "transport": "SMB",
+      "connection": "192.168.1.52 to 192.168.1.50:445/tcp",
+      "services": ["gssapi", "smb", "ntlm"],
+      "share_mappings": ["IPC$", "wmicxsl (DISK)"],
+      "authentication": "guest NTLM success",
+      "file_open": {"name": "wmic-jscript-smb.xsl", "bytes": 606},
+      "http_records": 0
+    },
+    {
+      "id": "flow3-process-call-create",
+      "pcap_sha256": "98bff884d1f81bf1eeecb770645f6e6f3c10c13e18f07bd06e0d71d51c4cd6db",
+      "packets": 1622,
+      "transport": "none attributable to the tool",
+      "attack_attributed_connections": 0,
+      "note": "unfiltered OS background traffic was retained and manifested by the safety checker"
+    },
+    {
+      "id": "flow4-node-self",
+      "pcap_sha256": "276f4a267dfbd95d235b1787b5ef0401459e52db32e5367edf402f9d5b296705",
+      "packets": 1372,
+      "transport": "no DCOM TCP flow observed",
+      "attack_attributed_connections": 0,
+      "local_background": "System NBNS to the target's own address and a reverse lookup were observed",
+      "negative_result": "Windows optimized /node:192.168.1.52 locally"
+    },
+    {
+      "id": "flow5-http-vbscript",
+      "pcap_sha256": "79585003a122ac4861dde9fe67c8ce3f8fa5d9a88035880d35962dcf5428b0fb",
+      "packets": 1564,
+      "transport": "HTTP",
+      "connection": "192.168.1.52 to 192.168.1.50:18083/tcp",
+      "http": {"method": "GET", "uri": "/wmic-vbscript-http.xsl", "status": 200, "response_body_bytes": 637, "user_agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; Win64; x64; Trident/7.0; .NET4.0C; .NET4.0E)"}
+    },
+    {
+      "id": "flow6-https-jscript",
+      "pcap_sha256": "b13779590d3b28d44788aabf40d152402a897e6bbc95bf80d0815f2f23c454e7",
+      "packets": 778,
+      "transport": "TLS",
+      "connection": "192.168.1.52 to 192.168.1.50:18443/tcp",
+      "tls": {"version": "TLSv1.2", "cipher": "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384", "sni": "certutil.lab", "ja3": "a0e9f5d64349fb13191bc781f81f42e1", "ja3s": "ec74a5c51106f0419184d0dd08fb05bc"},
+      "certificate": {"subject": "CN=certutil.lab", "issuer": "CN=certutil.lab", "san": "certutil.lab", "self_signed": true, "serial": "317587988CE130F4F26C16AF8C7A02D5AE2AEEA7"},
+      "http_records": 0,
+      "http_assessment": "none visible because the XSL transfer was encrypted"
+    }
+  ]
 }

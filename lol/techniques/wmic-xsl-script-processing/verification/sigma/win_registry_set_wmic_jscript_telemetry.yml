@@ -13,7 +13,6 @@ tags:
 logsource:
   category: registry_set
   product: windows
-  service: sysmon
 detection:
   selection:
     Image|endswith: '\wmic.exe'
@@ -24,7 +23,8 @@ falsepositives:
 fp_likelihood: low
 recommended_role: alert
 precision_notes: >-
-  The clean corpus produced 0 matches among 1151508 registry-set events.
+  Measured against the registry-set category after removing the dead
+  service-qualified logsource.
   Approved WMIC reporting with JScript-bearing XSL can create the value, but it
   records actual script-engine initialization and survives URL or extension
   changes. Correlate with a /format process, stylesheet retrieval/cache event,

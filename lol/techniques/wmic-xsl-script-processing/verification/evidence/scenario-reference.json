@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "query": "wmic-xsl-script-processing",
+  "built_on_audit_vm": "2026-08-15",
+  "reference_only": true,
+  "attack_techniques": [{"id": "T1220", "name": "name not present in catalog metadata"}],
+  "lolbas": {"source_url": "https://lolbas-project.github.io/api/lolbas.json", "match_count": 0},
+  "gtfobins": {"source_url": "https://api.github.com/repos/GTFOBins/GTFOBins.github.io/git/trees/master?recursive=1", "match_count": 0},
+  "daily_news_case_count": 0,
+  "daily_news_cases": []
+}

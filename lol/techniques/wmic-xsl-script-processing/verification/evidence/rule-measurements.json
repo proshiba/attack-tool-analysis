@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "measured_at": "2026-08-15",
+  "harness": "/opt/audit/audit-rule.sh",
+  "corpus": {
+    "baseline": "NextronSystems/evtx-baseline v0.8.4",
+    "events": 6611183,
+    "process_creation_denominator": 23695,
+    "file_event_denominator": 542441,
+    "registry_set_denominator": 1151508,
+    "attack_samples_commit": "4ceed2f4706daf601c212a8f91c113dd85349a2c",
+    "sigma_dataset_commit": "8eaafff1f2845a696050e05e72ba1140ee190698"
+  },
+  "summary": {
+    "rule_count": 10,
+    "measured_count": 8,
+    "blocking_count": 0,
+    "verdict_counts": {"pass": 5, "no-corpus-coverage": 3, "not-testable-on-evtx": 2, "needs-work": 0, "fail": 0, "void": 0}
+  },
+  "rules": [
+    {"id": "8d63dadf-b91b-4187-87b6-34a1114577ea", "path": "sigma/proc_creation_win_wmic_squiblytwo_bypass.yml", "category": "process_creation", "verdict": "pass", "syntax_ok": true, "detection_hit": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},
+    {"id": "5b4b1f39-0964-4bf9-b1de-8226f262d036", "path": "sigma/win_process_creation_wmic_local_user_writable_xsl.yml", "category": "process_creation", "verdict": "no-corpus-coverage", "syntax_ok": true, "detection_hit": false, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},
+    {"id": "ac2c0a8c-7e39-45b5-96a0-fc8481856380", "path": "sigma/win_process_creation_wmic_xsl_spawns_shell.yml", "category": "process_creation", "verdict": "pass", "syntax_ok": true, "detection_hit": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},
+    {"id": "e329114d-ed5e-45bc-a4ae-85f4f8394159", "path": "sigma/win_file_event_wmic_xsl_cache.yml", "category": "file_event", "verdict": "pass", "syntax_ok": true, "detection_hit": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},
+    {"id": "59a1805f-300b-458f-b23b-b8406a047e33", "path": "sigma/win_registry_set_wmic_jscript_telemetry.yml", "category": "registry_set", "verdict": "no-corpus-coverage", "syntax_ok": true, "detection_hit": false, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},
+    {"id": "526be59f-a573-4eea-b5f7-f0973207634d", "path": "sigma/proc_creation_win_wmic_process_creation.yml", "category": "process_creation", "verdict": "pass", "syntax_ok": true, "detection_hit": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "medium", "recommended_role": "hunt", "level": "low"},
+    {"id": "3c89a1e8-0fba-449e-8f1b-8409d6267ec8", "path": "sigma/proc_creation_win_wmic_susp_process_creation.yml", "category": "process_creation", "verdict": "pass", "syntax_ok": true, "detection_hit": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},
+    {"id": "7773b877-5abb-4a3e-b9c9-fd0369b59b00", "path": "sigma/proc_creation_win_wmic_remote_execution.yml", "category": "process_creation", "verdict": "no-corpus-coverage", "syntax_ok": true, "detection_hit": false, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "medium", "recommended_role": "hunt", "level": "low"},
+    {"id": "09524123-3892-4af2-b9c4-56dc6304ae58", "path": "sigma/network_zeek_wmic_remote_xsl.yml", "category": "http", "verdict": "not-testable-on-evtx", "syntax_ok": true, "detection_hit": null, "fp_count": null, "fp_share_of_category_percent": null, "declared_fp_likelihood": "medium", "recommended_role": "hunt", "level": "low"},
+    {"id": "7168c3d7-1330-4970-9c28-9bbc92f49487", "path": "sigma/network_suricata_wmic_remote_xsl.yml", "category": "http", "verdict": "not-testable-on-evtx", "syntax_ok": true, "detection_hit": null, "fp_count": null, "fp_share_of_category_percent": null, "declared_fp_likelihood": "medium", "recommended_role": "hunt", "level": "low"}
+  ],
+  "interpretation": "Zero matches use the per-category denominator. A no-corpus-coverage verdict is not represented as a positive detection result, and network rules have no fabricated EVTX precision number."
+}

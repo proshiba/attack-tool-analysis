@@ -1,0 +1,41 @@
+title: Process Creation Attempt via Wmic.EXE
+id: 526be59f-a573-4eea-b5f7-f0973207634d
+related:
+  - id: 3c89a1e8-0fba-449e-8f1b-8409d6267ec8
+    type: derived
+status: experimental
+description: >-
+  Detects a WMIC process call create attempt. Logic adopted from SigmaHQ
+  master at commit 3c0d35188942eb6a8c373e4f4973ac7e84116993.
+references:
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_process_creation.yml
+  - https://attack.mitre.org/techniques/T1047/
+author: Michael Haag, Florian Roth (Nextron Systems), juju4, oscd.community; precision enrichment by Codex lab orchestrator
+date: '2019-01-16'
+modified: '2026-08-15'
+tags:
+  - attack.execution
+  - attack.t1047
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith: '\wmic.exe'
+    - OriginalFileName: 'wmic.exe'
+  selection_cli:
+    CommandLine|contains|all:
+      - 'process'
+      - 'call'
+      - 'create'
+  condition: all of selection_*
+falsepositives:
+  - Legitimate local or remote administration that creates a process through WMI
+fp_likelihood: medium
+recommended_role: hunt
+precision_notes: >-
+  Measured against the process-creation category. This is intentionally broad
+  T1047 behavior and is not T1220; legitimate software deployment and remote
+  administration can match. Treat it as a hunt and enrich with the created
+  process, account, source host, and remote-logon context.
+level: low

