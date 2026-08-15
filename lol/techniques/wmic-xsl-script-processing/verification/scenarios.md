@@ -125,10 +125,14 @@ and lab server, not WMIC-specific behavior.
 ## Grounding and priority
 
 The audit VM's committed scenario-reference builder
-(`evidence/scenario-reference.json`) found one T1220 technique
-reference but **zero LOLBAS matches, zero GTFOBins matches, and zero daily-news
-cases**. The cited audit finding over 954 daily-news files reports zero files
-for `xsl` or `XSL`; it does show `wmic process call create` and `/node:`, while
+(`evidence/scenario-reference.json`) was initially queried with the technique
+slug and returned zero LOLBAS matches. That is a query-alias limitation, not a
+grounding result: the current LOLBAS `Wmic.exe` entry explicitly documents
+remote URL and SMB `/format:` XSL, local `process call create`, remote
+`/node:` process creation, and ADS process creation. The daily-news result is
+separate and remains **zero cases**. The cited audit finding over 954
+daily-news files reports zero files for `xsl` or `XSL`; it does show
+`wmic process call create` and `/node:`, while
 `mshta` occurs in 33 files and `rundll32` in 12. Those adjacent forms are not
 inflated into T1220 coverage.
 
@@ -144,5 +148,8 @@ prevalence.
   domain-authenticated WMI. The self-node negative result must not be
   generalized to a real remote target.
 - `msxsl.exe` is not built in and was outside this LOLBIN verification.
+- LOLBAS ADS process creation (`process call create` with an alternate data
+  stream executable) is runnable in this lab but was outside the requested
+  flows. It is a future T1564.004/T1047 scenario and is not counted as covered.
 - Changing the queried WMIC alias may alter output without changing the
   `/format:` script-processing primitive.

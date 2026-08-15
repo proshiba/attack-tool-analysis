@@ -12,13 +12,14 @@
     "sigma_dataset_commit": "8eaafff1f2845a696050e05e72ba1140ee190698"
   },
   "summary": {
-    "rule_count": 10,
-    "measured_count": 8,
+    "rule_count": 11,
+    "measured_count": 9,
     "blocking_count": 0,
-    "verdict_counts": {"pass": 5, "no-corpus-coverage": 3, "not-testable-on-evtx": 2, "needs-work": 0, "fail": 0, "void": 0}
+    "verdict_counts": {"pass": 5, "no-corpus-coverage": 4, "not-testable-on-evtx": 2, "needs-work": 0, "fail": 0, "void": 0}
   },
   "rules": [
     {"id": "8d63dadf-b91b-4187-87b6-34a1114577ea", "path": "sigma/proc_creation_win_wmic_squiblytwo_bypass.yml", "category": "process_creation", "verdict": "pass", "syntax_ok": true, "detection_hit": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},
+    {"id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "path": "sigma/proc_creation_win_wmic_xsl_script_execution.yml", "category": "process_creation", "verdict": "no-corpus-coverage", "syntax_ok": true, "detection_hit": false, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "medium", "recommended_role": "hunt", "level": "low"},
     {"id": "5b4b1f39-0964-4bf9-b1de-8226f262d036", "path": "sigma/win_process_creation_wmic_local_user_writable_xsl.yml", "category": "process_creation", "verdict": "no-corpus-coverage", "syntax_ok": true, "detection_hit": false, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},
     {"id": "ac2c0a8c-7e39-45b5-96a0-fc8481856380", "path": "sigma/win_process_creation_wmic_xsl_spawns_shell.yml", "category": "process_creation", "verdict": "pass", "syntax_ok": true, "detection_hit": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},
     {"id": "e329114d-ed5e-45bc-a4ae-85f4f8394159", "path": "sigma/win_file_event_wmic_xsl_cache.yml", "category": "file_event", "verdict": "pass", "syntax_ok": true, "detection_hit": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},

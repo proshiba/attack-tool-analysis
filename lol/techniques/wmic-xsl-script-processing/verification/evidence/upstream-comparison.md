@@ -9,7 +9,8 @@ LOLBAS-pinned snapshot was used.
 ### `proc_creation_win_wmic_squiblytwo_bypass.yml` — adopted upstream
 
 Upstream ID/path: `8d63dadf-b91b-4187-87b6-34a1114577ea`,
-`rules/windows/process_creation/proc_creation_win_wmic_squiblytwo_bypass.yml`.
+`rules/windows/process_creation/proc_creation_win_wmic_squiblytwo_bypass.yml`
+(modified 2026-01-24).
 Upstream covers both URL and UNC remote sources, WMIC identity through image,
 original filename and five import hashes, and canonical slash arguments via
 `|windash`. Local coverage adds no detection logic to this adopted copy; it
@@ -20,16 +21,22 @@ and slash normalization, so it had no defensible unique gap and was removed.
 
 ### `win_process_creation_wmic_local_user_writable_xsl.yml` — locally authored
 
-Nearest upstream rules: ID `8d63dadf-b91b-4187-87b6-34a1114577ea` at the
-path above and image-load ID `06ce37c2-61ab-4f05-9ff5-b1a96d18ae32`,
+Nearest upstream rules: local-XSL ID
+`05c36dd6-79d6-4a9a-97da-3db20298ab2d`,
+`rules/windows/process_creation/proc_creation_win_wmic_xsl_script_execution.yml`;
+ID `8d63dadf-b91b-4187-87b6-34a1114577ea` at the path above; and image-load
+ID `06ce37c2-61ab-4f05-9ff5-b1a96d18ae32`,
 `rules/windows/image_load/image_load_wmic_remote_xsl_scripting_dlls.yml`.
-Upstream 8d covers URL/UNC sources and stronger executable identity; upstream
-06 detects JScript/VBScript DLL loads independent of source text. This local
-rule covers the proven missing form: `/format:` plus an XSL/XSLT under a
-per-user `AppData\Local\Temp` path, with no URL, UNC, network, or cache. The
-image-load alternative was not adopted because verification Sysmon does not
-collect EID 7, its upstream rule documents normal-WMIC false positives, and
-there is no measured precision basis here.
+Upstream 05c covers local `/format:` from any path without requiring an
+extension and filters built-in format aliases; upstream 8d covers URL/UNC
+sources and stronger executable identity; upstream 06 detects JScript/VBScript
+DLL loads independent of source text. This local rule does not claim a new
+form. It covers upstream's unmeasured precision gap by narrowing to the
+lab-proven `AppData\Local\Temp` plus XSL/XSLT subset at alert/high; it misses
+all other local paths that adopted 05c retains as hunt/low. The image-load
+alternative was not adopted because verification Sysmon does not collect EID
+7, its upstream rule documents normal-WMIC false positives, and there is no
+measured precision basis here.
 
 ### `win_process_creation_wmic_xsl_spawns_shell.yml` — local measured logic
 
@@ -37,8 +44,8 @@ Nearest upstream: ID 8d/path above. Upstream covers a remote `/format:`
 attempt without requiring successful script execution and does not require an
 extension. This rule covers what upstream does not: a direct WMIC-to-command
 or script-interpreter child, proving an execution consequence, and it works
-for local as well as remote XSL. It can miss script without a listed child or
-without `.xsl`/`.xslt` in the parent command.
+for local as well as remote XSL without requiring a stylesheet extension. It
+can miss script that produces no listed child.
 
 ### `win_file_event_wmic_xsl_cache.yml` — local measured logic
 
@@ -72,12 +79,26 @@ HTTPS content and therefore remain hunt/low; EVTX cannot measure them.
 No TLS rule was added. SNI/certificate observations identify the lab service,
 and JA3/JA3S identify a reusable client/server stack rather than WMIC abuse.
 
-## Adjacent T1047 rules — adopted upstream
+## Adopted local T1220 and adjacent T1047 rules
+
+### `proc_creation_win_wmic_xsl_script_execution.yml`
+
+Upstream ID/path: `05c36dd6-79d6-4a9a-97da-3db20298ab2d`,
+`rules/windows/process_creation/proc_creation_win_wmic_xsl_script_execution.yml`
+(modified 2026-01-24).
+Detection logic is identical and covers arbitrary local `/format:` values
+while filtering built-in formats and remote sources; the corrected remote
+upstream rule does not cover this form. The local copy adds measured precision
+and the flow-1 standard-user evidence but no detection breadth. Because
+approved custom local reporting can match, it is precision-adjusted to
+medium/hunt/low. This is T1220 despite its placement beside the other newly
+adopted process rules here.
 
 ### `proc_creation_win_wmic_process_creation.yml`
 
 Upstream ID/path: `526be59f-a573-4eea-b5f7-f0973207634d`,
-`rules/windows/process_creation/proc_creation_win_wmic_process_creation.yml`.
+`rules/windows/process_creation/proc_creation_win_wmic_process_creation.yml`
+(modified 2023-02-14).
 Detection logic is identical and covers all WMIC `process call create`
 attempts, including benign administration; the T1220-local rules do not cover
 this primitive. The local copy adds per-category precision measurement and
@@ -87,7 +108,8 @@ adds no detection breadth, so it remains hunt/low.
 ### `proc_creation_win_wmic_susp_process_creation.yml`
 
 Upstream ID/path: `3c89a1e8-0fba-449e-8f1b-8409d6267ec8`,
-`rules/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml`.
+`rules/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml`
+(modified 2023-02-14).
 Detection logic is identical and adds a suspicious interpreter/LOLBIN or
 user-writable-path constraint beyond the generic rule; it hit the lab's
 `cmd.exe /c` command. The local copy covers nothing upstream lacks except
@@ -96,7 +118,8 @@ measured precision and lab validation.
 ### `proc_creation_win_wmic_remote_execution.yml`
 
 Upstream ID/path: `7773b877-5abb-4a3e-b9c9-fd0369b59b00`,
-`rules/windows/process_creation/proc_creation_win_wmic_remote_execution.yml`.
+`rules/windows/process_creation/proc_creation_win_wmic_remote_execution.yml`
+(modified 2025-10-22).
 Detection logic is identical, including `|windash` and localhost filters. It
 covers `/node:` command intent, which the T1220 rules do not. The local copy
 adds precision metadata and a negative lab finding: `/node:192.168.1.52`

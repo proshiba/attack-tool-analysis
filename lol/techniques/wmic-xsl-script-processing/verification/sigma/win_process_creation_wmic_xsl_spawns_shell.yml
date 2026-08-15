@@ -17,9 +17,6 @@ detection:
   selection_parent:
     ParentImage|endswith: '\wmic.exe'
     ParentCommandLine|contains|windash: '/format:'
-    ParentCommandLine|contains:
-      - '.xsl'
-      - '.xslt'
   selection_child:
     Image|endswith:
       - '\cmd.exe'
@@ -36,8 +33,9 @@ fp_likelihood: low
 recommended_role: alert
 precision_notes: >-
   Measured against the process-creation category and hit the HTTP, local,
-  SMB, VBScript, and HTTPS stylesheet samples. A custom legacy reporting stylesheet can
-  legitimately launch a helper interpreter, but this proves script execution
-  rather than merely stylesheet retrieval. Correlate with remote /format or
-  XSL network/cache evidence and JScript-start telemetry.
+  SMB, VBScript, and HTTPS stylesheet samples. The rule does not require an XSL
+  extension because WMIC accepts differently named stylesheet resources. A
+  custom legacy reporting stylesheet can legitimately launch a helper, but
+  this proves an execution consequence rather than retrieval alone. Correlate
+  with remote /format, cache/retrieval, or script-engine telemetry.
 level: high

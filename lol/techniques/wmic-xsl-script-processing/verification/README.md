@@ -39,9 +39,11 @@ former local remote-XSL process rule was retired in favor of upstream ID
 UNC sources, executable identity hashes, and `/format:` through `|windash`.
 The three corpus-grounded adjacent rules were likewise adopted from master.
 
-Only one new rule was authored: local user-writable XSL, against the proven
-flow-1 gap. Existing local process-child, cache, registry, Zeek, and Suricata
-rules were retained as independently measured sensor dimensions. The dead
+Only one new rule was authored: a high-confidence user-Temp narrowing of
+SigmaHQ's broad local-XSL rule, against its unmeasured precision gap. The broad
+local rule is now adopted as hunt/low, so other local paths remain covered.
+Existing process-child, cache, registry, Zeek, and Suricata rules were retained
+as independently measured sensor dimensions. The dead
 `service: sysmon` qualifiers were removed from file/registry rules, slash
 arguments use `|windash`, and no condition uses a numeric quantifier above
 `1 of`. Network rules are hunt/low because their precision cannot be measured
@@ -50,7 +52,8 @@ on EVTX. Broad process-create and `/node:` rules are also hunt/low.
 | Rule | Origin | Measurement | FP/category | Role/level |
 |---|---|---|---:|---|
 | SquiblyTwo remote `/format:` (8d63…) | adopted | pass, positive hit | 0/23,695 (0%) | alert/high |
-| Local user Temp XSL (5b4b…) | new proven gap | no positive corpus sample | 0/23,695 (0%) | alert/high |
+| Broad local XSL (05c3…) | adopted | no positive corpus sample | 0/23,695 (0%) | hunt/low, medium FP |
+| Local user Temp XSL (5b4b…) | precision-gap narrowing | no positive corpus sample | 0/23,695 (0%) | alert/high |
 | WMIC XSL spawns shell (ac2c…) | existing local | pass, positive hit | 0/23,695 (0%) | alert/high |
 | WMIC cache XSL (e329…) | existing local, repaired logsource | pass, positive hit | 0/542,441 (0%) | alert/high |
 | WMIC JScript telemetry (59a1…) | existing local, repaired logsource | no positive corpus sample | 0/1,151,508 (0%) | alert/high |
@@ -86,3 +89,8 @@ committed. The repository contains selected sanitized telemetry fields,
 capture hashes/counts, benign fixtures, and checker proofs. Kali listeners
 were stopped, and VM 104 was rolled back to `win_verify_baseline` before and
 after every run.
+
+The current LOLBAS Wmic entry was checked separately after the slug-based
+scenario-reference query returned zero matches. It documents the URL/SMB XSL
+forms and adjacent process-create, `/node:`, and ADS forms. ADS process
+creation is recorded as a future scenario, not silently counted as covered.

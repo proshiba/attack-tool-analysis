@@ -3,9 +3,10 @@ id: 5b4b1f39-0964-4bf9-b1de-8226f262d036
 status: experimental
 description: >-
   Detects WMIC applying an XSL or XSLT stylesheet from a per-user temporary
-  directory. This local form is absent from SigmaHQ's remote SquiblyTwo rule
-  and was proven with a medium-integrity standard-user lab run.
+  directory. This is a measured high-confidence narrowing of SigmaHQ's broad
+  local-XSL rule 05c36dd6, proven with a medium-integrity standard-user run.
 references:
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_xsl_script_execution.yml
   - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_squiblytwo_bypass.yml
   - https://attack.mitre.org/techniques/T1220/
 author: Codex lab orchestrator
@@ -34,7 +35,9 @@ fp_likelihood: low
 recommended_role: alert
 precision_notes: >-
   Measured against the process-creation category and exercised by the
-  standard-user local-XSL flow. The path constraint avoids a generic WMIC
-  /format hunt. Correlate with a WMIC child process or script-engine telemetry
-  where approved legacy reporting exists.
+  standard-user local-XSL flow. Upstream 05c36dd6 covers the broad local form
+  as hunt/low; this rule's AppData Temp plus XSL-extension constraints close
+  its unmeasured precision gap for an alert/high subset. It deliberately misses
+  other local and relative paths. Correlate with a WMIC child or script-engine
+  telemetry where approved legacy reporting exists.
 level: high

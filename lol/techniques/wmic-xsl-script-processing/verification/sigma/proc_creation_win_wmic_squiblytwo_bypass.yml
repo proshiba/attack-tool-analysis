@@ -39,7 +39,7 @@ detection:
     CommandLine|contains|windash: '/format:'
     CommandLine|contains:
       - '://'
-      - '\\'
+      - '\\\\'
   condition: all of selection_*
 falsepositives:
   - Approved legacy WMIC inventory or reporting with remote stylesheets

@@ -24,7 +24,9 @@ fp_likelihood: low
 recommended_role: alert
 precision_notes: >-
   Measured against the registry-set category after removing the dead
-  service-qualified logsource.
+  service-qualified logsource. Collection requires Sysmon RegistryEvent rules
+  that include the Windows Script Settings Telemetry path; many stock/community
+  configurations omit it and would make this detection operationally silent.
   Approved WMIC reporting with JScript-bearing XSL can create the value, but it
   records actual script-engine initialization and survives URL or extension
   changes. Correlate with a /format process, stylesheet retrieval/cache event,

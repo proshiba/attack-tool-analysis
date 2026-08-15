@@ -36,5 +36,6 @@ precision_notes: >-
   reporting applications can fetch ordinary XSL or XSLT assets with the same
   MSIE 7.0 and Trident/7.0 URL-moniker profile. Make the signal actionable by
   correlating the requester with WMIC /format execution, a WMIC shell child,
-  or WMIC JScript-start registry telemetry.
+  or WMIC JScript-start registry telemetry. It is extension-dependent and
+  cannot inspect the HTTPS flow, so endpoint correlation is required.
 level: low
