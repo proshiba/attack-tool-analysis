@@ -43,12 +43,14 @@ detection:
   condition: all of selection_*
 falsepositives:
   - Approved legacy WMIC inventory or reporting with remote stylesheets
-fp_likelihood: low
+fp_likelihood: medium
 recommended_role: alert
 precision_notes: >-
-  Measured against the process-creation category. The adopted upstream logic
-  matched the HTTP, SMB/UNC, VBScript HTTP, and HTTPS lab flows but correctly
-  did not match the local stylesheet. Legitimate legacy remote reporting is
-  the principal residual false positive; correlate with a WMIC shell child,
+  Measured 0 of 23,695 process-creation events, but that corpus contains only
+  three WMIC events and no benign WMIC /format population, so zero does not
+  demonstrate low noise. The adopted logic matched the HTTP, SMB/UNC,
+  VBScript HTTP, and HTTPS lab flows and correctly missed local XSL. A benign
+  UNC output path combined with a built-in /format alias also matches because
+  this rule has no built-in-format filter. Correlate with a shell child,
   script-engine telemetry, or stylesheet retrieval.
 level: high

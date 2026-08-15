@@ -51,14 +51,14 @@ on EVTX. Broad process-create and `/node:` rules are also hunt/low.
 
 | Rule | Origin | Measurement | FP/category | Role/level |
 |---|---|---|---:|---|
-| SquiblyTwo remote `/format:` (8d63…) | adopted | pass, positive hit | 0/23,695 (0%) | alert/high |
+| SquiblyTwo remote `/format:` (8d63…) | adopted | pass, positive hit | 0/23,695 (0%) | alert/high, medium FP |
 | Broad local XSL (05c3…) | adopted | no positive corpus sample | 0/23,695 (0%) | hunt/low, medium FP |
 | Local user Temp XSL (5b4b…) | precision-gap narrowing | no positive corpus sample | 0/23,695 (0%) | alert/high |
 | WMIC XSL spawns shell (ac2c…) | existing local | pass, positive hit | 0/23,695 (0%) | alert/high |
 | WMIC cache XSL (e329…) | existing local, repaired logsource | pass, positive hit | 0/542,441 (0%) | alert/high |
 | WMIC JScript telemetry (59a1…) | existing local, repaired logsource | no positive corpus sample | 0/1,151,508 (0%) | alert/high |
 | Generic process call create (526b…) | adopted | pass, positive hit | 0/23,695 (0%) | hunt/low, medium FP |
-| Suspicious process call create (3c89…) | adopted | pass, positive hit | 0/23,695 (0%) | alert/high |
+| Suspicious process call create (3c89…) | adopted | pass, positive hit | 0/23,695 (0%) | alert/high, medium FP |
 | Remote `/node:` (7773…) | adopted | no positive corpus sample | 0/23,695 (0%) | hunt/low, medium FP |
 | Zeek XSL HTTP (0952…) | existing local | not testable on EVTX | not measurable | hunt/low, medium FP |
 | Suricata XSL HTTP (7168…) | existing local | not testable on EVTX | not measurable | hunt/low, medium FP |
@@ -94,3 +94,13 @@ The current LOLBAS Wmic entry was checked separately after the slug-based
 scenario-reference query returned zero matches. It documents the URL/SMB XSL
 forms and adjacent process-create, `/node:`, and ADS forms. ADS process
 creation is recorded as a future scenario, not silently counted as covered.
+
+## Merge gate
+
+Iteration 1 BLOCKED on an under-escaped UNC selector in the adopted remote
+rule. The selector was restored exactly to SigmaHQ master and independently
+rechecked. Iteration 2 at `80d5cb3` PASSed with exit 0: 11 rules, zero
+blocking rule verdicts, safety `safe`, and scenario `expand` at 5/6 grounded
+in-scope use-cases (83%, above the 60% floor). The required precision
+reconciliation raised the remote SquiblyTwo and suspicious process-create
+rules from low to medium FP likelihood while preserving alert/high severity.

@@ -15,7 +15,10 @@ Upstream covers both URL and UNC remote sources, WMIC identity through image,
 original filename and five import hashes, and canonical slash arguments via
 `|windash`. Local coverage adds no detection logic to this adopted copy; it
 adds the precision fields, zero-of-23,695 baseline measurement, and lab proof
-for HTTP, SMB, VBScript HTTP, and HTTPS. The retired local remote-XSL rule had
+for HTTP, SMB, VBScript HTTP, and HTTPS. Because the corpus has only three
+WMIC events and no benign `/format:` population, the gate reconciled the
+measured low floor to medium FP likelihood while retaining alert/high. The
+retired local remote-XSL rule had
 required `.xsl` text but missed upstream's source breadth, identity hashes,
 and slash normalization, so it had no defensible unique gap and was removed.
 
@@ -23,7 +26,7 @@ and slash normalization, so it had no defensible unique gap and was removed.
 
 Nearest upstream rules: local-XSL ID
 `05c36dd6-79d6-4a9a-97da-3db20298ab2d`,
-`rules/windows/process_creation/proc_creation_win_wmic_xsl_script_execution.yml`;
+`rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml`;
 ID `8d63dadf-b91b-4187-87b6-34a1114577ea` at the path above; and image-load
 ID `06ce37c2-61ab-4f05-9ff5-b1a96d18ae32`,
 `rules/windows/image_load/image_load_wmic_remote_xsl_scripting_dlls.yml`.
@@ -84,7 +87,7 @@ and JA3/JA3S identify a reusable client/server stack rather than WMIC abuse.
 ### `proc_creation_win_wmic_xsl_script_execution.yml`
 
 Upstream ID/path: `05c36dd6-79d6-4a9a-97da-3db20298ab2d`,
-`rules/windows/process_creation/proc_creation_win_wmic_xsl_script_execution.yml`
+`rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml`
 (modified 2026-01-24).
 Detection logic is identical and covers arbitrary local `/format:` values
 while filtering built-in formats and remote sources; the corrected remote

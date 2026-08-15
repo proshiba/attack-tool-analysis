@@ -6,7 +6,7 @@ description: >-
   directory. This is a measured high-confidence narrowing of SigmaHQ's broad
   local-XSL rule 05c36dd6, proven with a medium-integrity standard-user run.
 references:
-  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_xsl_script_execution.yml
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml
   - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_squiblytwo_bypass.yml
   - https://attack.mitre.org/techniques/T1220/
 author: Codex lab orchestrator

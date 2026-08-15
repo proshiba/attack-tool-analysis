@@ -33,5 +33,6 @@ precision_notes: >-
   WMIC reporting that retrieves remote stylesheets can create the same cache
   artifact, though routine benign analogues are scarce. Correlate with a WMIC
   /format command, the matching XSL HTTP request, a shell child, or JScript
-  registry telemetry.
+  registry telemetry. Local and SMB delivery create no Internet-cache event,
+  and a stylesheet served under a non-XSL name evades the extension check.
 level: high

@@ -151,5 +151,9 @@ prevalence.
 - LOLBAS ADS process creation (`process call create` with an alternate data
   stream executable) is runnable in this lab but was outside the requested
   flows. It is a future T1564.004/T1047 scenario and is not counted as covered.
+- SigmaHQ image-load ID `06ce37c2-61ab-4f05-9ff5-b1a96d18ae32` covers
+  `jscript.dll`/`vbscript.dll` loading by WMIC, but the baseline Sysmon config
+  does not collect EID 7. Enabling a WMIC-scoped image-load filter and
+  measuring that upstream rule is a future, uncounted T1220 scenario.
 - Changing the queried WMIC alias may alter output without changing the
   `/format:` script-processing primitive.

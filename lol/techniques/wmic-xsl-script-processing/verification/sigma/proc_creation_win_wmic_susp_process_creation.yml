@@ -54,10 +54,12 @@ detection:
   condition: selection
 falsepositives:
   - Administrative process creation using an interpreter or user-writable path
-fp_likelihood: low
+fp_likelihood: medium
 recommended_role: alert
 precision_notes: >-
-  Measured against the process-creation category and hit the cmd.exe /c lab
-  sample. The rule is more selective than the generic upstream companion but
-  still requires review of the requested child command and initiating host.
+  Measured 0 of 23,695 process-creation events and hit the cmd.exe /c sample,
+  but the corpus contains only three WMIC events. Legacy administration also
+  uses process call create with cmd or PowerShell and user-writable staging,
+  so the absence of those inputs does not support low FP likelihood. Retain
+  alert/high severity but review the requested child and initiating host.
 level: high

@@ -37,5 +37,7 @@ precision_notes: >-
   extension because WMIC accepts differently named stylesheet resources. A
   custom legacy reporting stylesheet can legitimately launch a helper, but
   this proves an execution consequence rather than retrieval alone. Correlate
-  with remote /format, cache/retrieval, or script-engine telemetry.
+  with remote /format, cache/retrieval, or script-engine telemetry. Collection
+  requires ParentCommandLine (present in Sysmon EID 1 but not ordinary
+  Security 4688), so a 4688-only deployment is silent.
 level: high

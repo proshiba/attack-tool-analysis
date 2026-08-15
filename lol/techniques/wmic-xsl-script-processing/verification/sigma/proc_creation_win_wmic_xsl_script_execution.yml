@@ -11,7 +11,7 @@ description: >-
   Logic adopted from SigmaHQ master at commit
   3c0d35188942eb6a8c373e4f4973ac7e84116993.
 references:
-  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_xsl_script_execution.yml
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml
   - https://attack.mitre.org/techniques/T1220/
 author: Timur Zinniatullin, oscd.community, Swachchhanda Shrawan Poudel; precision enrichment by Codex lab orchestrator
 date: '2019-10-21'

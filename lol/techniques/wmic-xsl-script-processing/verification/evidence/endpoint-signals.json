@@ -29,7 +29,7 @@
       "parent_child": "wmic.exe directly spawned cmd.exe for the marker",
       "network": "Sysmon EID 3 linked wmic.exe to 192.168.1.50:18082",
       "files": ["system-profile INetCache XSL", "marker"],
-      "registry": ["wmic.exe JScriptSetScriptStateStarted"]
+      "registry": ["HKU\\<SID-REDACTED>\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe\\JScriptSetScriptStateStarted"]
     },
     {
       "id": "flow1-local-jscript-standard-user",
@@ -46,7 +46,7 @@
       "network": "none attributed to wmic.exe; no EID 3 or EID 22 relevant to the flow",
       "files": ["local user Temp XSL", "local user Temp marker"],
       "internet_cache_xsl": "none observed",
-      "registry": ["per-user wmic.exe JScriptSetScriptStateStarted"]
+      "registry": ["HKU\\<SID-REDACTED>\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe\\JScriptSetScriptStateStarted"]
     },
     {
       "id": "flow2-smb-jscript",
@@ -62,7 +62,7 @@
       "network": "no WMIC EID 3 in the bounded endpoint window; packet evidence proves SMB retrieval",
       "files": ["marker"],
       "internet_cache_xsl": "none observed",
-      "registry": ["wmic.exe JScriptSetScriptStateStarted"]
+      "registry": ["HKU\\<SID-REDACTED>\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe\\JScriptSetScriptStateStarted"]
     },
     {
       "id": "flow3-process-call-create",
@@ -123,7 +123,7 @@
       "parent_child": "wmic.exe directly spawned cmd.exe for the marker",
       "network": "Sysmon EID 3 linked wmic.exe to 192.168.1.50:18443",
       "files": ["system-profile INetCache XSL", "marker"],
-      "registry": ["wmic.exe JScriptSetScriptStateStarted"]
+      "registry": ["HKU\\<SID-REDACTED>\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe\\JScriptSetScriptStateStarted"]
     }
   ]
 }
