@@ -13,7 +13,7 @@
   },
   "audit_gate": {
     "iteration": 3,
-    "measured_commit": "58fc04c",
+    "measured_commit": "43d098b5a438fdad37ef10a84edb2b7d803ca2de",
     "decision": "PASS",
     "blockers": 0,
     "harness": {
@@ -25,13 +25,15 @@
     },
     "auditor_safety": "safe",
     "scenario_verdict": "expand",
-    "scenario_coverage": "5/7 grounded reference use-cases exercised (71%, above the 0.6 floor); the two declared future scenarios are NOT counted as covered",
+    "scenario_coverage": "5/8 independently inventoried grounded reference use-cases exercised (62.5%, above the 0.6 floor)",
+    "dead_logsource_remeasurement": "The category-only file_event query is alive. An image-agnostic path probe matched 670/542,441 file events, while the exact corrected rule measured a real 0/542,441 with no positive-corpus coverage. The prior service-qualified zero is recorded separately as INVALID.",
     "non_blocking_findings": [
       "Unverified — Alternate Data Stream destination: LOLBAS documents certutil.exe -urlcache -f {REMOTEURL:.ps1} {PATH_ABSOLUTE}:ttt (T1564.004). The process rule would still fire because its command-line conditions are unchanged, but the ADS write is not characterised: the file-event rule is limited to the Cryptnet cache directory, and no rule or evidence covers a TargetFilename with a :stream suffix.",
       "Unverified — Cache-only -URL retrieval (top future scenario): LOLBAS documents certutil.exe -URL {REMOTEURL:.exe} (T1105) and tags it as GUI. selection_download_verb includes '-URL ' by inference rather than lab coverage; the GUI-tagged verb can produce materially different process, network, and cache telemetry from -urlcache. The auditor identified this as the single most valuable next run.",
       "Unverified — -verifyctl to an explicit output FILE: flow 2 supplied a directory, and parsing the inert-text fixture failed with CRYPT_E_ASN1_BADTAG. Closing this gap requires a parser-accepted, CTL-shaped fixture rather than a rerun of the same input.",
       "Unverified — Standard-user execution: LOLBAS records Privileges: User for every download command, while all five lab runs used NT AUTHORITY\\SYSTEM and therefore produced only the systemprofile cache path. This is not a rule defect because the file-event match is profile-agnostic, but standard-user telemetry is the population expected in production and was not exercised here.",
-      "Unverified — No lab run used -split: this was deliberate because removing that requirement is the regression point of the expansion. The dominant real-world form is -urlcache -split -f; recall for it is established by the EVTX corpus, not by these five lab runs."
+      "Unverified — No lab run used -split: this was deliberate because removing that requirement is the regression point of the expansion. The dominant real-world form is -urlcache -split -f; recall for it is established by the EVTX corpus, not by these five lab runs.",
+      "Non-blocking convention finding — the repository's category=http, product=zeek logsource convention differs from SigmaHQ's product=zeek, service=<log> convention. The rule fields compile and are not dead, but routing compatibility should be handled repository-wide rather than in this focused correction."
     ]
   },
   "environment": {
