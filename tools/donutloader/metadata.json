@@ -29,6 +29,6 @@
     {"id": "T1546.001", "name": "Event Triggered Execution: Change Default File Association"},
     {"id": "T1562.001", "name": "Impair Defenses: Disable or Modify Tools"}
   ],
-  "status": "verification-in-progress",
+  "status": "verified",
   "last_reviewed": "2026-08-16"
 }

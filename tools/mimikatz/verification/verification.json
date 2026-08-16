@@ -49,6 +49,15 @@
       "path": "C:\\lab\\mimikatz.exe",
       "sha256": "61C0810A23580CF492A6BA4F7654566108331E7A4134C968C2D6A05261B2D8A1"
     },
+    "in_memory_verified": true,
+    "in_memory_verification": {
+      "date": "2026-08-16",
+      "input_sha256": "61C0810A23580CF492A6BA4F7654566108331E7A4134C968C2D6A05261B2D8A1",
+      "conversion": "Donut v1.1 x64 embedded shellcode with bypass, compression, and entropy disabled",
+      "target_executable_written": false,
+      "host": "C:\\ProgramData\\Microsoft\\NetTokenBroker\\RuntimeBroker.exe",
+      "host_exit": 0
+    },
     "commands": [
       {
         "working_directory": "C:\\lab",
@@ -91,6 +100,11 @@
       "event_ids": [1],
       "status": "observed",
       "details": "PowerShell PID 1224 launched mimikatz PID 4452 as NT AUTHORITY\\SYSTEM."
+    },
+    "in_memory_execution": {
+      "event_ids": [1, 7, 8, 10, 17, 18, 25],
+      "status": "verified",
+      "details": "The Donut run had no Mimikatz process and no module token in EID 1. One RuntimeBroker.exe-to-LSASS EID 10 with 0x1010 survived; mscoree.dll loaded once, while clr.dll, amsi.dll, EID 8, EID 25, attributed pipes, and attributed network were absent."
     }
   },
   "observed_techniques": [
@@ -98,6 +112,11 @@
       "id": "T1003.001",
       "name": "OS Credential Dumping: LSASS Memory",
       "observation": "Sysmon EID 10 recorded mimikatz opening lsass.exe with GrantedAccess 0x1010, including PROCESS_VM_READ."
+    },
+    {
+      "id": "T1055",
+      "name": "Process Injection / In-Memory Execution",
+      "observation": "The approved module executed from Donut shellcode inside a differently named host; no Mimikatz PE or command line appeared on the target."
     }
   ],
   "telemetry_summary": {
@@ -117,6 +136,20 @@
       "event_id_22": 0,
       "event_id_23": 1,
       "process_access_granted_access": "0x1010"
+    },
+    "in_memory_run": {
+      "window": {"start": "2026-08-16T11:28:35.9636027Z", "end": "2026-08-16T11:28:41.1442430Z"},
+      "event_id_1_mimikatz": 0,
+      "command_line_rule_token_matches": 0,
+      "event_id_10_host_to_lsass": 1,
+      "process_access_granted_access": "0x1010",
+      "mscoree_loads": 1,
+      "clr_loads": 0,
+      "amsi_loads": 0,
+      "event_id_8": 0,
+      "event_id_25": 0,
+      "attributed_named_pipe_events": 0,
+      "attributed_network_events": 0
     }
   },
   "evidence": [
@@ -129,6 +162,11 @@
       "path": "evidence/sysmon-eid10-lsass-process-access.json",
       "event_ids": [10],
       "description": "Sanitized Sysmon ProcessAccess event showing mimikatz opening LSASS with GrantedAccess 0x1010."
+    },
+    {
+      "path": "evidence/in-memory-donut-execution.json",
+      "event_ids": [1, 7, 8, 10, 17, 18, 25],
+      "description": "Sanitized command-line miss and surviving in-memory behavioral signals for the Donut-hosted run."
     }
   ],
   "sigma": [
@@ -149,6 +187,8 @@
         "corpus": "evtx-baseline v0.8.4",
         "repo_commit": "7a20965"
       },
+      "in_memory_lab_hit": false,
+      "in_memory_result": "expected structural miss: no Mimikatz module token appeared in any process command line",
       "description": "Primary portable, name-agnostic detection for characteristic mimikatz module::command syntax; parent context is optional enrichment rather than required identity."
     },
     {
@@ -168,18 +208,20 @@
         "corpus": "evtx-baseline v0.8.4",
         "repo_commit": "7a20965"
       },
+      "in_memory_lab_hit": true,
+      "in_memory_result": "one 0x1010 ProcessAccess event from the unusual ProgramData host to LSASS",
       "description": "Deep Sysmon-native, name-agnostic detection for memory-read-capable LSASS access masks."
     }
   ],
   "validation": {
-    "pysigma": "Both remaining Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",
-    "json": "verification.json passed Python JSON validation on 2026-08-10."
+    "pysigma": "Both Sigma rules parsed successfully with pySigma 1.5.0; revalidated on 2026-08-16.",
+    "json": "verification.json passed JSON validation on 2026-08-16."
   },
   "sanitization": {
     "credential_output_committed": false,
     "raw_event_export_committed": false,
-    "notes": "Native mimikatz output was discarded on the VM and never pulled or inspected. Only Sigma-relevant telemetry fields are committed; no recovered credentials or LSASS-derived hashes are present."
+    "notes": "Native mimikatz output from both disk and in-memory runs was discarded and never pulled or inspected. Only Sigma-relevant telemetry fields are committed; no recovered credentials or LSASS-derived hashes are present."
   },
-  "verified_at": "2026-08-09T06:47:26Z",
+  "verified_at": "2026-08-16T11:28:41Z",
   "verifier": "Codex lab orchestrator"
 }

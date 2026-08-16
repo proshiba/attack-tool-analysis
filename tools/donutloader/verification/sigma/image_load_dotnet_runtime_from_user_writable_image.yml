@@ -1,0 +1,46 @@
+title: DotNet Runtime Loaded By Image In a User-Writable Staging Root
+id: 856329b4-ba3a-4e8a-8dd3-de4e594ce7fb
+status: experimental
+description: >-
+  Detects .NET runtime hosting by an image launched from common user-writable
+  staging roots. Donut generated the in-memory module in the verified runs, but
+  the detection deliberately does not depend on a loader, DLL, or data filename.
+references:
+  - https://x.com/bomccss/status/2077318455716679970
+  - https://x.com/tdatwja/status/2082761360321200396
+  - https://github.com/TheWover/donut
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/image_load/image_load_susp_script_dotnet_clr_dll_load.yml
+related:
+  - id: 4508a70e-97ef-4300-b62b-ff27992990ea
+    type: derived
+author: Codex lab orchestrator
+date: '2026-08-16'
+tags:
+  - attack.t1055
+logsource:
+  category: image_load
+  product: windows
+detection:
+  selection_image:
+    Image|startswith:
+      - 'C:\ProgramData\'
+      - 'C:\Users\'
+      - 'C:\Windows\Temp\'
+  selection_runtime:
+    ImageLoaded|endswith:
+      - '\mscoree.dll'
+      - '\clr.dll'
+  condition: selection_image and selection_runtime
+falsepositives:
+  - Legitimate managed applications installed or unpacked under a user-writable root
+  - Enterprise deployment, updater, or inventory tools that host the .NET Framework from ProgramData
+  - Malware-analysis and penetration-testing activity
+fp_likelihood: medium
+recommended_role: hunt
+precision_notes: >-
+  The evtx-baseline v0.8.4 corpus produced 18 matches among 727396 image-load
+  events (0.002475%). This broad, rename-resistant lead has no exclusions and
+  therefore no attacker-controlled filter off switch. Correlate with an unsigned
+  adjacent DLL, a separate inert-looking data file, LSASS ProcessAccess, or
+  injection telemetry before escalation.
+level: low

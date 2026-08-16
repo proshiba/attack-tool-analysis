@@ -1,0 +1,45 @@
+title: New Kernel Driver Via SC.EXE Without Command-Line Exclusions
+id: c253bb68-5908-4b65-b366-218a71068939
+status: experimental
+description: >-
+  Detects SC.EXE creating or changing a kernel-driver service. This measured
+  local variant removes upstream optional command-line filters because an
+  attacker controls the service name and arguments and can reproduce those
+  strings as a detection off switch.
+references:
+  - https://x.com/bomccss/status/2083123859537137838
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_sc_new_kernel_driver.yml
+related:
+  - id: 431a1fdb-4799-4f3b-91c3-a683b003fc49
+    type: derived
+author: Codex lab orchestrator
+date: '2026-08-16'
+tags:
+  - attack.t1543.003
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_image:
+    Image|endswith: '\sc.exe'
+  selection_action:
+    CommandLine|contains:
+      - 'create'
+      - 'config'
+  selection_driver:
+    CommandLine|contains|all:
+      - 'binPath'
+      - 'type'
+      - 'kernel'
+  condition: all of selection_*
+falsepositives:
+  - Legitimate driver installation and reconfiguration by administrators or software deployment systems
+  - Endpoint-security and hardware-management product installation
+fp_likelihood: medium
+recommended_role: hunt
+precision_notes: >-
+  The evtx-baseline v0.8.4 corpus produced 6 matches among 23695 process starts
+  (0.025322%). No filter consumes the attacker-controlled service name, binary
+  path, or arguments. Correlate with an unsigned driver in a writable path and
+  Code Integrity or service-start failure telemetry.
+level: low

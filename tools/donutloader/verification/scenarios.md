@@ -61,9 +61,17 @@ Every adopted or authored filter is audited for attacker-controlled bypasses. No
 
 The Kali HTTP server and marker listener produce a full, unfiltered packet capture. Zeek and Suricata should see the ISO transfer and the fixed callback request, including flow, HTTP method/path, headers, and transferred object bytes. They should not infer that the `.dat` or `.ttf` blob becomes a PE in memory, observe remote-thread injection, or recover the absent on-disk payload executable. Clear HTTP has no JA3; if no TLS occurs, the correct JA3 result is not applicable rather than zero detections.
 
+Measured result: Zeek recorded the ISO GET in all canonical runs and the fixed
+Run A POST, while Suricata produced only a Python server-banner alert plus
+capture diagnostics. There were no lab TLS rows, so JA3 was not applicable.
+Neither engine exposed the memory-only PE or endpoint-only relationships.
+
 ## Future scenarios and capability gaps
 
 - A genuine vendor-signed application with a naturally vulnerable import graph would improve fidelity beyond the ephemeral lab certificate, but acquiring and publishing a third-party binary is unnecessary for the technique-level test.
 - Cross-architecture injection and process hollowing are distinct T1055 variants and are deferred.
-- A properly built unsigned WDK driver would isolate driver-signature enforcement more cleanly if the native-subsystem stand-in fails earlier in image validation. Security posture will not be weakened to force a successful load.
+- A properly built unsigned WDK driver could add richer driver-load telemetry,
+  but the native-subsystem stand-in already reached Windows signature
+  verification and failed with error 577. Security posture was not and will not
+  be weakened to force a successful load.
 - Encrypted delivery would add TLS metadata and JA3/JA3S measurement; this run intentionally uses clear lab HTTP so transferred-object visibility can be measured directly.

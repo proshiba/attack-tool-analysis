@@ -60,6 +60,19 @@ No registry, file, or network rule is retained because the canonical run did
 not produce a rename-resilient, distinctive signal in those dimensions. This
 avoids rules based on unobserved behavior or attacker-controlled filenames.
 
+## In-memory closure (2026-08-16)
+
+The same approved binary hash was converted to Donut shellcode and executed
+inside a lab-authored ProgramData host, with no Mimikatz executable on VM 104.
+The host exited 0 and produced one LSASS EID 10 with access `0x1010`.
+
+This measured the known structural blind spot: `proc_creation_mimikatz_cmdline.yml`
+stayed silent because no EID 1 contained `sekurlsa::`, `privilege::debug`, or
+another module token. `process_access_lsass_read.yml` replaced it for this run
+and matched the unusual source opening LSASS. `mscoree.dll` loaded, but
+`clr.dll`, `amsi.dll`, EID 8, EID 25, attributed pipes, and attributed network
+did not. The absence of those optional signals is part of the result.
+
 ## Evidence and sanitization
 
 `evidence/multidimensional-signals.json` contains only the event fields needed
@@ -68,3 +81,7 @@ to support the five-dimension findings. The ProcessAccess event is retained in
 mimikatz output was discarded on the VM and was never pulled or inspected. No
 credential material, hashes harvested from LSASS, or raw security log is
 committed.
+
+`evidence/in-memory-donut-execution.json` contains the sanitized in-memory
+closure measurement. The raw pcap, EVTX, opaque shellcode, loader, and any
+native output remain outside the repository.

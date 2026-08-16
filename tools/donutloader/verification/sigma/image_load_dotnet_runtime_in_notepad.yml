@@ -1,0 +1,39 @@
+title: DotNet Runtime Loaded Into Windows Notepad
+id: e84012d1-f497-4bcf-b7b2-b4232854a04f
+status: experimental
+description: >-
+  Detects the .NET runtime loading into Windows Notepad. The verified chain
+  produced this after a remote thread began Donut-generated managed code in
+  Notepad; no managed executable appeared on disk.
+references:
+  - https://x.com/tdatwja/status/2082761360321200396
+  - https://github.com/TheWover/donut
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/image_load/image_load_susp_script_dotnet_clr_dll_load.yml
+related:
+  - id: 4508a70e-97ef-4300-b62b-ff27992990ea
+    type: derived
+author: Codex lab orchestrator
+date: '2026-08-16'
+tags:
+  - attack.t1055
+logsource:
+  category: image_load
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\notepad.exe'
+    ImageLoaded|endswith:
+      - '\mscoree.dll'
+      - '\clr.dll'
+  condition: selection
+falsepositives:
+  - Authorized instrumentation or accessibility software hosting managed code inside Notepad
+  - Malware-analysis and penetration-testing activity
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  The evtx-baseline v0.8.4 corpus produced 0 matches among 727396 image-load
+  events (0.0%). This rule has no exclusions: neither the injected process name
+  nor an attacker-controlled path can disable it. Correlate with Sysmon EID 8,
+  an anomalous Notepad child, or both.
+level: high

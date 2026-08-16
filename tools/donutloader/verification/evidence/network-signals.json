@@ -1,0 +1,15 @@
+{
+  "sensor": "nsm-analyze on VM 106 with Zeek 8.2.1 and Suricata 7.0.10",
+  "raw_pcap_committed": false,
+  "captures": [
+    {"run": "A", "sha256": "83f60689842216aea1677a2efe91641e0f2836ecc547dd03fc8c66567131b6eb", "lab_http": ["GET /donut-delivery.iso 200, response 2533376 bytes", "POST /lab-marker 204, request 27 bytes"], "lab_tls_rows": 0},
+    {"run": "B retry", "sha256": "c10a595d34e01f2f413f1e423aafcd97fb3e7f3bbd1d171f5ec686654f539249", "lab_http": ["GET /donut-delivery.iso 200, response 2533376 bytes"], "lab_tls_rows": 0},
+    {"run": "C", "sha256": "15927a0f4e983b982fe00087bcb8e1e603a26c8733b8d109bc3826a6ffa133ae", "lab_http": ["GET /donut-delivery.iso 200, response 2533376 bytes"], "lab_tls_rows": 0}
+  ],
+  "zeek_observed": ["lab source and destination", "TCP flow", "HTTP method", "host header", "URI", "user agent", "status", "request and response byte counts", "ISO MIME type"],
+  "suricata_observed": ["Python SimpleHTTP server banner", "capture checksum and retransmission diagnostics"],
+  "suricata_chain_specific_alerts": 0,
+  "ja3": "not applicable: the lab delivery and marker protocol was clear HTTP and produced no lab TLS rows",
+  "not_observable_to_nsm": ["the PE represented by the opaque data blob", "DLL sideload relationship", "in-memory execution", "remote thread injection", "LSASS access", "scheduled task or registry persistence", "whether .dat or .ttf bytes become executable"],
+  "finding": "NSM sees the transferred ISO and clear marker but cannot infer the memory-only PE. The absence of an on-disk payload PE is an endpoint fact, not a network signature."
+}
