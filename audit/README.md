@@ -86,7 +86,7 @@ loop, not in this script.
 | `GATE_REPO` | `/opt/audit/scratch/gate-repo` | read-only checkout of the ref under audit |
 | `REPO_URL` | the public repo | where the audited branch is fetched from |
 
-## What the engine measures, and the four defects it was built to fix
+## What the engine measures, and the defects it was built to fix
 
 **1. A syntax gate runs before anything is staged.** `sigma-cli` 3.1.0 accepts only `1 of`
 and `all of`; a numeric quantifier such as `2 of selection_check_*` is rejected anywhere it
@@ -120,6 +120,22 @@ control rule, then judge recall qualitatively against the verification's own `ev
 is the authoritative set the merge gate consumes; every scorecard and summary carries a
 `blocking` boolean and a `blocking_count`. `no-corpus-coverage` and `not-testable-on-evtx`
 state a limit of the corpus, so they are reported but never route work back to the author.
+
+**6. A category mapping owns the service.** The THOR logsource mapping selects generic rules by
+`category` + `product`, adds the category's EventID condition, and rewrites `service` to the
+concrete provider. Declaring `service` on one of those mapped categories can therefore compile and
+produce an apparently clean zero while matching no events. The structural schema gate derives the
+service-rewriting keys from the active THOR mapping and rejects a rule that declares all three with
+`rule-schema-invalid`; remove `service` and let the category mapping select the event stream.
+
+Run the focused self-test with:
+
+```bash
+python3 -m unittest audit/tests/test_schema_gate.py
+```
+
+It exercises a known-bad Windows `file_event` + `service: sysmon` rule, the corrected category-only
+form, and a valid service-only Linux `auditd` logsource.
 
 ## Precision-convention enforcement
 

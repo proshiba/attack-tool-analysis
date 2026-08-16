@@ -15,7 +15,6 @@ tags:
 logsource:
   category: process_access
   product: windows
-  service: sysmon
 detection:
   selection_target:
     TargetImage|endswith: '\lsass.exe'

@@ -50,6 +50,15 @@ What changed in schema_version 3 (2026-08-10)
    `fail` / `rule-schema-invalid` at the gate, and a rule the checker refuses even
    in isolation is `fail` / `rule-unparseable-by-checker` carrying the checker's own
    error - not the generic `void`.
+
+What changed in schema_version 4 (2026-08-16)
+---------------------------------------------
+8. DEAD LOGSOURCE MAPPINGS FAIL BEFORE MEASUREMENT. The THOR mapping selects generic
+   rules by category+product, adds the category EventID, and rewrites service. A rule
+   that also pins service can compile and report zero matches while never being
+   eligible for the mapped event stream. The structural gate now derives every
+   service-rewriting category+product pair from THOR and rejects that redundant,
+   measurement-voiding service qualifier with a clear repair message.
 """
 
 from __future__ import annotations
@@ -65,7 +74,7 @@ from pathlib import Path
 
 import yaml
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 BASELINE = Path(os.getenv("AUDIT_BASELINE", "/data/datasets/evtx-baseline"))
 ATTACK = Path(os.getenv("AUDIT_ATTACK", "/data/datasets/EVTX-ATTACK-SAMPLES"))
@@ -297,7 +306,29 @@ def measured_likelihood(share_percent: float | None) -> str | None:
     return "low"
 
 
-def schema_errors(metadata: dict) -> list[str]:
+def service_rewrite_keys(mapping: dict) -> dict[tuple[str, str], set[str]]:
+    """Return category+product keys whose mapping chooses the concrete service."""
+    keys: dict[tuple[str, str], set[str]] = {}
+    logsources = mapping.get("logsources") if isinstance(mapping, dict) else None
+    if not isinstance(logsources, dict):
+        return keys
+    for entry in logsources.values():
+        if not isinstance(entry, dict):
+            continue
+        category = entry.get("category")
+        product = entry.get("product")
+        rewrite = entry.get("rewrite")
+        rewritten_service = rewrite.get("service") if isinstance(rewrite, dict) else None
+        if not all(isinstance(value, str) and value for value in
+                   (category, product, rewritten_service)):
+            continue
+        key = (category.lower(), product.lower())
+        keys.setdefault(key, set()).add(rewritten_service.lower())
+    return keys
+
+
+def schema_errors(metadata: dict,
+                  mapped_service_rewrites: dict[tuple[str, str], set[str]] | None = None) -> list[str]:
     """Structural checks `sigma check` does not make.
 
     pySigma parses a rule into its own model and is relaxed about the surrounding
@@ -326,6 +357,22 @@ def schema_errors(metadata: dict) -> list[str]:
     for key in ("logsource", "detection"):
         if key in metadata and not isinstance(metadata[key], dict):
             problems.append(f"{key} must be a mapping, got {type(metadata[key]).__name__}")
+    logsource = metadata.get("logsource")
+    if isinstance(logsource, dict) and mapped_service_rewrites:
+        category = logsource.get("category")
+        product = logsource.get("product")
+        service = logsource.get("service")
+        if all(isinstance(value, str) and value for value in (category, product, service)):
+            key = (category.lower(), product.lower())
+            if key in mapped_service_rewrites:
+                rewritten = ", ".join(sorted(mapped_service_rewrites[key]))
+                problems.append(
+                    "logsource must not declare service when its category+product mapping "
+                    f"rewrites service: category={category!r}, product={product!r}, "
+                    f"declared service={service!r}, mapped service(s)={rewritten!r}; "
+                    "remove service so the category mapping can select its event stream "
+                    "(otherwise a compiling rule can become a dead zero-match query)"
+                )
     for key in ("title", "id", "level", "description"):
         if key in metadata and metadata[key] is not None and not isinstance(metadata[key], str):
             problems.append(f"{key} must be a string, got {type(metadata[key]).__name__}")
@@ -358,6 +405,11 @@ def main() -> None:
         print(f"WARNING: {CATEGORY_METRICS} missing - category-normalised rates unavailable. "
               f"Run baseline_metrics.py.", file=sys.stderr)
     categories = (category_catalog.get("categories") or {})
+    try:
+        mapping_document = yaml.safe_load(THOR.read_text(encoding="utf-8")) or {}
+    except Exception as exc:  # noqa: BLE001 - a broken mapping voids the schema check
+        fail(f"Unable to read logsource mapping {THOR}: {exc}")
+    mapped_service_rewrites = service_rewrite_keys(mapping_document)
     # The per-file measurement is authoritative: it is the same pass that produced
     # the category denominators, so corpus and category rates stay consistent.
     measured_events = ((category_catalog.get("dataset") or {}).get("total_events"))
@@ -403,7 +455,7 @@ def main() -> None:
         syntax = run(["sigma", "check", str(record["source"])], 300)
         record["syntax_text"] = syntax.stdout + syntax.stderr
         record["syntax_exit_code"] = syntax.returncode
-        record["schema_errors"] = schema_errors(record["metadata"])
+        record["schema_errors"] = schema_errors(record["metadata"], mapped_service_rewrites)
         record["syntax_ok"] = (syntax.returncode == 0 and record["parse_error"] is None
                                and not record["schema_errors"])
     compiling = [r for r in records if r["syntax_ok"]]
