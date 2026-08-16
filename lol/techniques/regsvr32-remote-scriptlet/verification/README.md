@@ -33,11 +33,19 @@ PCAP, EVTX, event exports, and NSM logs remain outside the repository.
 | 1 | `windows/process_creation` | `win_process_creation_regsvr32_spawns_shell.yml` |
 | 1 | `zeek/http` | `network_zeek_regsvr32_remote_sct.yml` |
 | 1 | `suricata/http` | `network_suricata_regsvr32_remote_sct.yml` |
-| 1 | `windows/sysmon/file_event` | `win_file_event_regsvr32_sct_cache.yml` |
-| 2 | `windows/sysmon/registry_set` | `win_registry_set_regsvr32_jscript_telemetry.yml` |
+| 1 | `windows/file_event` | `win_file_event_regsvr32_sct_cache.yml` |
+| 2 | `windows/registry_set` | `win_registry_set_regsvr32_jscript_telemetry.yml` |
 
-All six rules parsed successfully with pySigma 1.5.0. No rule contains the
-lab IP or port.
+The two category rules previously also declared `service: sysmon`. Their PR
+#15-era clean zeros are invalid because the mapping rewrote service and the
+queries were dead. After removing service, the file rule measured 0/542,441
+and the registry rule 0/1,151,508 on the clean corpus. Both remain alert/high
+because their exact regsvr32 + SCT/JScript conjunctions stayed clean; neither
+has a positive-corpus sample, so the retained sanitized lab fields are
+qualitative recall evidence only.
+
+All six rules passed sigma-cli 3.1.0 / pySigma validation on audit VM 107. No
+rule contains the lab IP or port.
 
 Kali staging and its HTTP listener were removed. VM 104 was rolled back to
 `win_verify_baseline`; the marker, PCAP, and telemetry directory were absent,

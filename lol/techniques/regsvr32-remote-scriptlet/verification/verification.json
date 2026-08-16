@@ -237,7 +237,7 @@
       "path": "sigma/win_file_event_regsvr32_sct_cache.yml",
       "tier": 1,
       "role": "file",
-      "logsource": "windows/sysmon/file_event",
+      "logsource": "windows/file_event",
       "status": "experimental",
       "fp_likelihood": "low",
       "recommended_role": "alert",
@@ -247,16 +247,35 @@
         "fp_count": 0,
         "fp_share_of_category_percent": 0.0,
         "category_denominator": 542441,
+        "measured_fp_likelihood_floor": "low",
         "detection_hit": false,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
+        "verdict": "no-corpus-coverage",
+        "verdict_reason": "The positive corpus contains no matching regsvr32 SCT cache file event; this is non-blocking and does not establish recall.",
+        "corpus": "evtx-baseline v0.8.4 and EVTX-ATTACK-SAMPLES/regression_data",
+        "repo_commit": "527b5ae5238a6ae889bd72b5ad1f42c91a142182",
+        "measurement_provenance": "VM 107 audit harness against the corrected category-only query and the catalog denominator in audit/catalog/baseline-category-metrics.json"
+      },
+      "previous_precision_measurement": {
+        "status": "INVALID",
+        "recorded_fp_count": 0,
+        "recorded_fp_share_of_category_percent": 0.0,
+        "recorded_category_denominator": 542441,
+        "recorded_repo_commit": "7a20965522042850975222773fd119be4a4d3f78",
+        "origin": "PR #15 precision pass",
+        "reason": "The rule declared category=file_event, product=windows, and service=sysmon. The THOR mapping selected category+product and rewrote service, leaving a compiling query that matched no events. The recorded zero was a null, not precision evidence."
+      },
+      "recall_measurement": {
+        "measured": false,
+        "reason": "no-corpus-coverage",
+        "retained_evidence": "evidence/endpoint-signals.json records a regsvr32-attributed INetCache SCT write, but sanitized JSON is qualitative evidence and is not replayed by the EVTX harness.",
+        "required_to_measure": "Add a replayable positive EVTX sample, or repeat the existing bounded remote benign SCT flow on VM 104 from win_verify_baseline and grade the corrected rule against its EID 11 output. No target run was performed for this fix."
       }
     },
     {
       "path": "sigma/win_registry_set_regsvr32_jscript_telemetry.yml",
       "tier": 2,
       "role": "registry-depth",
-      "logsource": "windows/sysmon/registry_set",
+      "logsource": "windows/registry_set",
       "status": "experimental",
       "fp_likelihood": "low",
       "recommended_role": "alert",
@@ -266,15 +285,34 @@
         "fp_count": 0,
         "fp_share_of_category_percent": 0.0,
         "category_denominator": 1151508,
+        "measured_fp_likelihood_floor": "low",
         "detection_hit": false,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
+        "verdict": "no-corpus-coverage",
+        "verdict_reason": "The positive corpus contains no matching regsvr32 JScript telemetry registry event; this is non-blocking and does not establish recall.",
+        "corpus": "evtx-baseline v0.8.4 and EVTX-ATTACK-SAMPLES/regression_data",
+        "repo_commit": "527b5ae5238a6ae889bd72b5ad1f42c91a142182",
+        "measurement_provenance": "VM 107 audit harness against the corrected category-only query and the catalog denominator in audit/catalog/baseline-category-metrics.json"
+      },
+      "previous_precision_measurement": {
+        "status": "INVALID",
+        "recorded_fp_count": 0,
+        "recorded_fp_share_of_category_percent": 0.0,
+        "recorded_category_denominator": 1151508,
+        "recorded_repo_commit": "7a20965522042850975222773fd119be4a4d3f78",
+        "origin": "PR #15 precision pass",
+        "reason": "The rule declared category=registry_set, product=windows, and service=sysmon. The THOR mapping selected category+product and rewrote service, leaving a compiling query that matched no events. The recorded zero was a null, not precision evidence."
+      },
+      "recall_measurement": {
+        "measured": false,
+        "reason": "no-corpus-coverage",
+        "retained_evidence": "evidence/endpoint-signals.json records JScriptSetScriptStateStarted for regsvr32.exe, but sanitized JSON is qualitative evidence and is not replayed by the EVTX harness.",
+        "required_to_measure": "Add a replayable positive EVTX sample, or repeat the existing bounded remote benign SCT flow on VM 104 from win_verify_baseline and grade the corrected rule against its EID 13 output. No target run was performed for this fix."
       }
     }
   ],
   "validation": {
-    "pysigma": "All six Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",
-    "json": "verification.json and both sanitized evidence JSON files passed JSON validation on 2026-08-10."
+    "pysigma": "All six Sigma rules passed sigma-cli 3.1.0 / pySigma validation on audit VM 107 on 2026-08-16.",
+    "json": "verification.json and both sanitized evidence JSON files passed JSON validation on 2026-08-16."
   },
   "sanitization": {
     "raw_pcap_committed": false,

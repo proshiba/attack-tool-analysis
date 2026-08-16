@@ -27,11 +27,13 @@ falsepositives:
 fp_likelihood: medium
 recommended_role: hunt
 precision_notes: >-
-  The clean corpus produced 0 matches among 542441 file events. The certutil
-  image constraint excludes routine CryptSvc writes, but every legitimate
-  certutil URL retrieval can still write here, including CRL, CTL,
-  certificate-chain, enrollment, and PKI troubleshooting activity. Treat this
-  as corroborating hunt telemetry, not a standalone alert; correlate it with
-  the remote-download process rule, destination context, or a newly written
-  executable or script.
+  The PR #15-era zero was invalid because it was measured through the dead
+  category+product+service mapping. After removing service, the corrected query
+  produced 0 matches among 542441 file events; the positive corpus has no
+  matching sample, so recall is not measured there. The certutil image
+  constraint excludes routine CryptSvc writes, but every legitimate certutil
+  URL retrieval can still write here, including CRL, CTL, certificate-chain,
+  enrollment, and PKI troubleshooting activity. Treat this as corroborating
+  hunt telemetry, not a standalone alert; correlate it with the remote-download
+  process rule, destination context, or a newly written executable or script.
 level: low

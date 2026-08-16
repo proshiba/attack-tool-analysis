@@ -137,6 +137,13 @@ python3 -m unittest audit/tests/test_schema_gate.py
 It exercises a known-bad Windows `file_event` + `service: sysmon` rule, the corrected category-only
 form, and a valid service-only Linux `auditd` logsource.
 
+The mirror-image failure from an over-broad `filter_*` cannot use the same hard gate: Sigma search
+identifier names carry no semantics, and a filename may be attacker-controlled in one rule but an
+invariant system value in another. A blanket filename-filter ban would reject legitimate allowlists.
+A cheap future check could emit a non-blocking review warning when a negated filter suppresses the
+same filename field used by a positive selection, but it should not become blocking without an
+explicit rule annotation that identifies attacker-controlled fields.
+
 ## Precision-convention enforcement
 
 Every verification rule must carry `fp_likelihood`, `precision_notes` and `recommended_role`,

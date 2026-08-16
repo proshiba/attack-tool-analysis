@@ -64,7 +64,11 @@ rather than treating an empty certutil denominator as proof of low noise.
 
 The Cryptnet cache-content rule remains a low-level hunt: legitimate certutil
 CRL, CTL, certificate-chain, enrollment, and troubleshooting retrievals can
-all match. The `Microsoft-CryptoAPI/` Zeek rule remains a high-FP, low-level
+all match. Its earlier zero was invalid because `service: sysmon` made the
+category-mapped query dead. The corrected `windows/file_event` query measured
+0 of 542,441 file events and has no positive-corpus sample; the retained lab
+evidence is qualitative, not a replayable recall measurement. The
+`Microsoft-CryptoAPI/` Zeek rule remains a high-FP, low-level
 hunt because that User-Agent is normal Windows certificate-chain traffic. A
 new alert-tier Zeek rule covers the exact `CertUtil URL Agent` value observed
 in the URL-cache, service-parent, and PE runs; it is more certutil-specific,
