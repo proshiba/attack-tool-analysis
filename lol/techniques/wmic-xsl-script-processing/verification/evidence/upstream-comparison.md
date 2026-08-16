@@ -88,14 +88,53 @@ and JA3/JA3S identify a reusable client/server stack rather than WMIC abuse.
 
 Upstream ID/path: `05c36dd6-79d6-4a9a-97da-3db20298ab2d`,
 `rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml`
-(modified 2026-01-24).
-Detection logic is identical and covers arbitrary local `/format:` values
-while filtering built-in formats and remote sources; the corrected remote
-upstream rule does not cover this form. The local copy adds measured precision
-and the flow-1 standard-user evidence but no detection breadth. Because
-approved custom local reporting can match, it is precision-adjusted to
-medium/hunt/low. This is T1220 despite its placement beside the other newly
-adopted process rules here.
+(modified 2026-01-24), pinned here from SigmaHQ commit
+`3c0d35188942eb6a8c373e4f4973ac7e84116993`.
+
+The 2026-08-16 falsification found a defect in the adopted upstream logic. Its
+`filter_main_known_format` used a plain `CommandLine|contains` match for text
+such as `Format:List` and `Format:csv`. A standard user placed the lab-authored
+scripted stylesheet in a user-writable current directory and executed:
+
+```text
+"C:\Windows\System32\wbem\WMIC.exe" os get Caption /format:list.xsl
+```
+
+WMIC exited 0 and wrote the marker, but the original rule did not fire. The
+same result was measured for relative `csv.xsl`, `table.xsl`, `value.xsl`, and
+dash-form `-format:list.xsl`. The selector-only diagnostic matched all 13
+initial rows; the known-format-filter diagnostic matched exactly those five;
+the remote-operation filter matched none. This is therefore a filter-caused
+false negative on successful T1220 execution, not a rule-reading inference.
+
+Gate iteration 1 challenged whether `/format:list` could also load a planted
+`list.xsl` from the CWD and remain suppressed by `endswith`. The added
+standard-user row refuted that extensionless variant: WMIC exited 0, returned
+its normal built-in list output, did not write the marker, and both original
+and fixed rules stayed silent. Across the resulting 14 rows, selector-only
+matched 14, known-format filter matched the five explicit-filename evasions
+plus this one benign built-in invocation, and the remote filter matched zero.
+
+Our copy narrows the filter to `CommandLine|endswith` for the actual built-in
+tokens. The fixed rule matched 13 of 14 captured WMIC format events, restoring
+the five successful scripted-XSL findings while continuing to suppress the
+benign extensionless built-in row. The trade-off is deliberate: a
+benign command that places another argument after a built-in format token may
+now alert, while a filename suffix can no longer activate the suppression.
+The filter remains present, so ordinary terminal `/format:list`-style commands
+retain their noise suppression.
+
+Clean-corpus precision did not move: 0 of 23,695 process-creation events
+(0.0%; measured floor `low`), and the public attack corpus still has no
+positive sample (`no-corpus-coverage`). The declared `medium` FP likelihood,
+`hunt` role, and `low` level remain because arbitrary approved custom local
+stylesheets are still within the selection. The task's 20,136-of-6,923,967
+figures are the superseded catalog values; the current repository catalog
+documents 23,695 of 6,611,183 as the authoritative per-file measurement.
+
+This defect was not sent outside the repository. A proposed upstream change
+and evidence summary are staged in `evidence/upstream-report-draft.md` for the
+orchestrator to review.
 
 ### `proc_creation_win_wmic_process_creation.yml`
 

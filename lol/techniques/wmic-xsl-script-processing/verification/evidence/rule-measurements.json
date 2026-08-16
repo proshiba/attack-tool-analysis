@@ -12,6 +12,37 @@
     "attack_samples_commit": "4ceed2f4706daf601c212a8f91c113dd85349a2c",
     "sigma_dataset_commit": "8eaafff1f2845a696050e05e72ba1140ee190698"
   },
+  "format_filter_remeasurement": {
+    "measured_at": "2026-08-16",
+    "rule_id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d",
+    "change": "filter_main_known_format changed from CommandLine|contains to CommandLine|endswith",
+    "captured_matrix": {
+      "event_count": 14,
+      "original_findings": 8,
+      "fixed_findings": 13,
+      "selector_diagnostic_findings": 14,
+      "known_format_filter_diagnostic_findings": 6,
+      "remote_operation_filter_diagnostic_findings": 0,
+      "successful_script_executions_restored": 5,
+      "extensionless_builtin_row": "suppressed by both original and fixed rule; planted list.xsl did not execute"
+    },
+    "clean_corpus": {
+      "events": 6611183,
+      "process_creation_denominator": 23695,
+      "superseded_catalog_values": {"events": 6923967, "process_creation_denominator": 20136},
+      "fp_count": 0,
+      "fp_share_of_category_percent": 0.0,
+      "measured_fp_likelihood_floor": "low",
+      "detection_hit": false,
+      "verdict": "no-corpus-coverage"
+    },
+    "declared_disposition_unchanged": {
+      "fp_likelihood": "medium",
+      "recommended_role": "hunt",
+      "level": "low",
+      "reason": "The fix restores recall but the selection still includes arbitrary approved custom local reporting stylesheets."
+    }
+  },
   "summary": {
     "rule_count": 11,
     "measured_count": 9,
@@ -20,7 +51,7 @@
   },
   "rules": [
     {"id": "8d63dadf-b91b-4187-87b6-34a1114577ea", "path": "sigma/proc_creation_win_wmic_squiblytwo_bypass.yml", "category": "process_creation", "verdict": "pass", "syntax_ok": true, "detection_hit": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "measured_fp_likelihood_floor": "low", "auditor_fp_likelihood": "medium", "declared_fp_likelihood": "medium", "recommended_role": "alert", "level": "high"},
-    {"id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "path": "sigma/proc_creation_win_wmic_xsl_script_execution.yml", "category": "process_creation", "verdict": "no-corpus-coverage", "syntax_ok": true, "detection_hit": false, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "medium", "recommended_role": "hunt", "level": "low"},
+    {"id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "path": "sigma/proc_creation_win_wmic_xsl_script_execution.yml", "category": "process_creation", "verdict": "no-corpus-coverage", "syntax_ok": true, "detection_hit": false, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "medium", "recommended_role": "hunt", "level": "low", "captured_matrix_original_findings": 8, "captured_matrix_fixed_findings": 13, "adopted_upstream_defect_fixed": true},
     {"id": "5b4b1f39-0964-4bf9-b1de-8226f262d036", "path": "sigma/win_process_creation_wmic_local_user_writable_xsl.yml", "category": "process_creation", "verdict": "no-corpus-coverage", "syntax_ok": true, "detection_hit": false, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},
     {"id": "ac2c0a8c-7e39-45b5-96a0-fc8481856380", "path": "sigma/win_process_creation_wmic_xsl_spawns_shell.yml", "category": "process_creation", "verdict": "pass", "syntax_ok": true, "detection_hit": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},
     {"id": "e329114d-ed5e-45bc-a4ae-85f4f8394159", "path": "sigma/win_file_event_wmic_xsl_cache.yml", "category": "file_event", "verdict": "pass", "syntax_ok": true, "detection_hit": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "declared_fp_likelihood": "low", "recommended_role": "alert", "level": "high"},

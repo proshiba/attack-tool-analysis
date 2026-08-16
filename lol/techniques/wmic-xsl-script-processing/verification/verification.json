@@ -132,6 +132,51 @@
         "parent_child": {"status": "observed", "signals": ["wmic.exe to cmd.exe"]}
       },
       "safety": "evidence/safety/flow6-https-jscript-lab-scope.json: PASS"
+    },
+    {
+      "id": "flow7-format-filter-falsification",
+      "technique": "T1220",
+      "scenario": "14-row resolution, built-in-filename, extensionless built-in, dash-form, absolute-path, and extension matrix",
+      "account": "WIN10-ANALYSIS\\FmtStd at medium integrity for attack rows; WIN10-ANALYSIS\\FmtAdmin at high integrity for administrator resolution probes",
+      "window": ["2026-08-16T07:38:03.1796480Z", "2026-08-16T08:27:28.0025977Z"],
+      "resolution": {
+        "standard_user_cwd": "relative benign.xsl executed",
+        "administrator_cwd": "relative benign.xsl executed",
+        "wbem_fallback": "with no CWD copy, System32\\wbem\\benign.xsl executed as administrator",
+        "practical_precondition": "standard-user write access to the chosen current directory; elevation only for the WBEM fallback",
+        "absolute_syntax": "unquoted absolute path refused with exit 44005; quoted absolute path executed"
+      },
+      "result": {
+        "hypothesis": "confirmed",
+        "successful_original_rule_evasions": ["/format:list.xsl", "/format:csv.xsl", "/format:table.xsl", "/format:value.xsl", "-format:list.xsl"],
+        "each_evasion": "WMIC exit 0, marker created, original rule silent, selector diagnostic matched, known-format filter diagnostic matched, remote filter did not match",
+        "absolute_list_control": "quoted user-Temp list.xsl executed and original rule fired",
+        "extensionless_builtin_control": "/format:list returned exit 0 and normal built-in Caption output, but did not execute the planted CWD list.xsl or create a marker; both original and fixed rules remained silent",
+        "extension_independence": "refuted on this WMIC build: quoted .txt and .jpg copies were refused with exit 44210 and no marker"
+      },
+      "measurement": {
+        "evidence": "evidence/format-filter-falsification.json",
+        "original_findings": 8,
+        "fixed_findings": 13,
+        "selector_diagnostic_findings": 14,
+        "known_format_filter_diagnostic_findings": 6,
+        "remote_operation_filter_diagnostic_findings": 0,
+        "fixed_clean_corpus": "0/23695 process_creation events (0.0%), measured floor low, verdict no-corpus-coverage"
+      },
+      "fix": {
+        "path": "sigma/proc_creation_win_wmic_xsl_script_execution.yml",
+        "change": "filter_main_known_format CommandLine|contains to CommandLine|endswith",
+        "tradeoff": "A benign built-in token followed by another argument may alert; terminal built-in tokens remain suppressed, while filenames cannot activate the filter.",
+        "disposition": "medium FP likelihood, hunt, low unchanged because arbitrary approved custom stylesheets remain in scope"
+      },
+      "dimensions": {
+        "network": {"status": "none attributable", "assessment": "local-only flow; unfiltered Sysmon EID 3/22 checked per row"},
+        "files": {"status": "observed", "signals": ["lab-authored stylesheet", "marker on successful rows"]},
+        "registry": {"status": "observed", "signals": ["JScript engine telemetry on successful rows"]},
+        "process": {"status": "observed", "signals": ["exact WMIC command line per all 14 rows"]},
+        "parent_child": {"status": "no shell child by fixture design", "signals": []}
+      },
+      "safety": "evidence/safety/format-filter-*-lab-scope.json: 14/14 PASS"
     }
   ],
   "grounding": {
@@ -143,7 +188,7 @@
     "coverage": {"verified_grounded_use_cases": 5, "grounded_in_scope_use_cases": 6, "ratio": 0.8333333333, "future_in_scope": ["LOLBAS ADS process creation (T1564.004/T1047)"], "excluded_lab_capability": ["true cross-host /node: process creation"]},
     "conclusion": "Remote WMIC XSL has no current daily-news grounding and is lower priority than grounded WMIC process-create/node forms and the mshta/rundll32 families."
   },
-  "upstream": {"repository": "SigmaHQ/sigma", "ref": "master", "commit": "3c0d35188942eb6a8c373e4f4973ac7e84116993", "comparison": "evidence/upstream-comparison.md", "rules_compared": [
+  "upstream": {"repository": "SigmaHQ/sigma", "ref": "master", "commit": "3c0d35188942eb6a8c373e4f4973ac7e84116993", "comparison": "evidence/upstream-comparison.md", "adopted_defect": {"rule_id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "status": "confirmed and fixed in local copy", "cause": "loose built-in-format substring filter is triggerable by a scripted filename", "exact_evasion": "WMIC.exe os get Caption /format:list.xsl", "upstream_report": "evidence/upstream-report-draft.md", "external_contact_made": false}, "rules_compared": [
     {"id": "8d63dadf-b91b-4187-87b6-34a1114577ea", "path": "rules/windows/process_creation/proc_creation_win_wmic_squiblytwo_bypass.yml", "modified": "2026-01-24"},
     {"id": "06ce37c2-61ab-4f05-9ff5-b1a96d18ae32", "path": "rules/windows/image_load/image_load_wmic_remote_xsl_scripting_dlls.yml", "modified": "2022-10-13"},
     {"id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "path": "rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml", "modified": "2026-01-24"},
@@ -154,7 +199,7 @@
   "rule_disposition": {
     "adopted": [
       {"path": "sigma/proc_creation_win_wmic_squiblytwo_bypass.yml", "id": "8d63dadf-b91b-4187-87b6-34a1114577ea", "upstream_path": "rules/windows/process_creation/proc_creation_win_wmic_squiblytwo_bypass.yml", "role": "alert", "level": "high", "fp_likelihood": "medium"},
-      {"path": "sigma/proc_creation_win_wmic_xsl_script_execution.yml", "id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "upstream_path": "rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml", "role": "hunt", "level": "low", "fp_likelihood": "medium"},
+      {"path": "sigma/proc_creation_win_wmic_xsl_script_execution.yml", "id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "upstream_path": "rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml", "role": "hunt", "level": "low", "fp_likelihood": "medium", "origin_note": "adopted logic with measured local endswith filter fix"},
       {"path": "sigma/proc_creation_win_wmic_process_creation.yml", "id": "526be59f-a573-4eea-b5f7-f0973207634d", "upstream_path": "rules/windows/process_creation/proc_creation_win_wmic_process_creation.yml", "role": "hunt", "level": "low", "fp_likelihood": "medium"},
       {"path": "sigma/proc_creation_win_wmic_susp_process_creation.yml", "id": "3c89a1e8-0fba-449e-8f1b-8409d6267ec8", "upstream_path": "rules/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml", "role": "alert", "level": "high", "fp_likelihood": "medium"},
       {"path": "sigma/proc_creation_win_wmic_remote_execution.yml", "id": "7773b877-5abb-4a3e-b9c9-fd0369b59b00", "upstream_path": "rules/windows/process_creation/proc_creation_win_wmic_remote_execution.yml", "role": "hunt", "level": "low", "fp_likelihood": "medium"}
@@ -172,7 +217,7 @@
   },
   "sigma": [
     {"path": "sigma/proc_creation_win_wmic_squiblytwo_bypass.yml", "id": "8d63dadf-b91b-4187-87b6-34a1114577ea", "origin": "adopted SigmaHQ master", "logsource": "windows/process_creation", "fp_likelihood": "medium", "recommended_role": "alert", "level": "high", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "auditor_fp_likelihood": "medium", "detection_hit": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4", "gate_commit": "80d5cb3266cc22640cd29266c9545d4e801fd742"}},
-    {"path": "sigma/proc_creation_win_wmic_xsl_script_execution.yml", "id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "origin": "adopted SigmaHQ master", "logsource": "windows/process_creation", "fp_likelihood": "medium", "recommended_role": "hunt", "level": "low", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": false, "verdict": "no-corpus-coverage", "verdict_reason": "no positive public corpus sample; flow 1 supplies lab validation", "corpus": "evtx-baseline v0.8.4", "auditor_adjustment": "broad arbitrary local /format values can include approved custom reporting"}},
+    {"path": "sigma/proc_creation_win_wmic_xsl_script_execution.yml", "id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "origin": "adopted SigmaHQ master with measured local defect fix", "logsource": "windows/process_creation", "fp_likelihood": "medium", "recommended_role": "hunt", "level": "low", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": false, "verdict": "no-corpus-coverage", "verdict_reason": "no positive public corpus sample; flow 7 supplies five captured positive evasions and fixed-rule hits", "captured_matrix_original_findings": 8, "captured_matrix_fixed_findings": 13, "corpus": "evtx-baseline v0.8.4", "auditor_adjustment": "broad arbitrary local /format values can include approved custom reporting"}},
     {"path": "sigma/win_process_creation_wmic_local_user_writable_xsl.yml", "id": "5b4b1f39-0964-4bf9-b1de-8226f262d036", "origin": "local precision-gap narrowing of upstream 05c36dd6", "logsource": "windows/process_creation", "fp_likelihood": "low", "recommended_role": "alert", "level": "high", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": false, "verdict": "no-corpus-coverage", "verdict_reason": "lab positive exists; public attack corpus has no positive sample", "corpus": "evtx-baseline v0.8.4"}},
     {"path": "sigma/win_process_creation_wmic_xsl_spawns_shell.yml", "id": "ac2c0a8c-7e39-45b5-96a0-fc8481856380", "origin": "existing local dimension", "logsource": "windows/process_creation", "fp_likelihood": "low", "recommended_role": "alert", "level": "high", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4"}},
     {"path": "sigma/win_file_event_wmic_xsl_cache.yml", "id": "e329114d-ed5e-45bc-a4ae-85f4f8394159", "origin": "existing local dimension; repaired logsource", "logsource": "windows/file_event", "fp_likelihood": "low", "recommended_role": "alert", "level": "high", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 542441, "measured_fp_likelihood_floor": "low", "detection_hit": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4"}},
@@ -186,31 +231,40 @@
   "safety": {
     "scenario_scope_pre_run": {"path": "evidence/safety/scenario-scope-pre-run.json", "verdict": "REVIEW", "critical_findings": 0, "review": "lab-only certutil.lab name declared in Scope"},
     "scenario_scope_final": {"path": "evidence/safety/scenario-scope-final.json", "verdict": "PASS", "critical_findings": 0},
-    "accepted_post_run_verdicts": {"flow0": "PASS", "flow1": "PASS", "flow2": "PASS", "flow3": "PASS", "flow4": "PASS", "flow5": "PASS", "flow6": "PASS"},
+    "accepted_post_run_verdicts": {"flow0": "PASS", "flow1": "PASS", "flow2": "PASS", "flow3": "PASS", "flow4": "PASS", "flow5": "PASS", "flow6": "PASS", "flow7_format_filter_rows": "14/14 PASS"},
+    "format_filter_scenario_scope_pre_run": {"path": "evidence/safety/scenario-scope-format-filter-pre-run.json", "verdict": "PASS", "critical_findings": 0},
+    "format_filter_iteration2_scenario_scope_pre_run": {"path": "evidence/safety/scenario-scope-format-filter-iteration2-pre-run.json", "verdict": "PASS", "critical_findings": 0},
+    "format_filter_scenario_scope_final": {"path": "evidence/safety/scenario-scope-format-filter-final.json", "verdict": "PASS", "critical_findings": 0},
+    "format_filter_iteration2_scenario_scope_final": {"path": "evidence/safety/scenario-scope-format-filter-iteration2-final.json", "verdict": "PASS", "critical_findings": 0},
+    "format_filter_operator_log": "evidence/safety/format-filter-operator-log.json",
     "failed_attempts": "Retained and explained in evidence/safety/README.md; all were rolled back. One initial self-name checker false positive is preserved beside its supported local-name readjudication PASS.",
     "attack_destinations": ["192.168.1.50", "192.168.1.52"],
     "forbidden_destinations_used": false
   },
   "audit": {
     "gate_iteration": 2,
-    "measured_commit": "80d5cb3266cc22640cd29266c9545d4e801fd742",
+    "measured_commit": "9d1c0df4287e3358a1aa050e8c9484d8d867820e",
     "decision": "PASS",
     "exit_code": 0,
     "blocking_count": 0,
+    "non_blocking_count": 7,
     "harness": {"rule_count": 11, "blocking_count": 0, "pass": 5, "no_corpus_coverage": 4, "not_testable_on_evtx": 2},
     "safety_verdict": "safe",
     "scenario_verdict": "expand",
-    "scenario_coverage": "5/6 grounded in-scope use-cases verified (83%, above 0.6 floor)",
-    "iteration_1": {"decision": "BLOCKED", "exit_code": 1, "commit": "a5e5a22b8feeb1781a128dbfaa58f2fc0bfb9298", "blocker": "remote UNC selector was under-escaped; corrected to exact SigmaHQ master logic"},
-    "precision_reconciliation": {"proc_creation_win_wmic_squiblytwo_bypass.yml": "medium/alert/high", "proc_creation_win_wmic_susp_process_creation.yml": "medium/alert/high"}
+    "scenario_coverage": "5/7 grounded in-scope use-cases verified (71%, above 0.6 floor)",
+    "iteration_1": {"decision": "BLOCKED", "exit_code": 1, "commit": "27b9066d55f805ead6ab9a31ef5a5bba61b10481", "blocker": "measure extensionless /format:list with a planted CWD list.xsl before accepting endswith", "resolution": "added row refuted script execution: WMIC used its built-in formatter, created no marker, and both rules remained silent"},
+    "precision_reconciliation": {"proc_creation_win_wmic_squiblytwo_bypass.yml": "medium/alert/high", "proc_creation_win_wmic_susp_process_creation.yml": "medium/alert/high"},
+    "auditor_precision_recommendation": {"rule": "win_registry_set_wmic_jscript_telemetry.yml", "fp_likelihood": "medium", "status": "non-blocking recommendation; unrelated rule left unchanged after PASS"},
+    "non_blocking_notes": ["record exact --allow-domain certutil.lab invocation for reproducible final scope PASS artifacts", "prioritize upstream scripting-DLL image-load dimension", "refresh daily-news denominator on the next broader WMIC iteration", "evidence/rule-measurements.json contains historical gate metadata; current authoritative gate is this audit object"]
   },
   "validation": {
     "rule_harness": {"rule_count": 11, "measured_count": 9, "blocking_count": 0, "syntax_failures": 0, "numeric_quantifier_above_one": false},
-    "merge_gate": {"iterations": 2, "exit_code": 0, "verdict": "PASS", "measured_commit": "80d5cb3"},
-    "json": "verification.json and sanitized evidence JSON validated on 2026-08-15"
+    "format_filter_validation": {"sigma_cli_version": "3.1.0", "pysigma_version": "1.5.0", "pysigma_rule_count": 11, "syntax_errors": 0, "captured_event_original_findings": 8, "captured_event_fixed_findings": 13, "captured_event_selector_findings": 14, "captured_event_known_format_filter_findings": 6, "clean_corpus_fp_count": 0},
+    "merge_gate": {"iterations": 2, "exit_code": 0, "verdict": "PASS", "measured_commit": "9d1c0df"},
+    "json": "verification.json and sanitized evidence JSON validated on 2026-08-16"
   },
   "sanitization": {"raw_pcap_committed": false, "raw_evtx_committed": false, "raw_event_export_committed": false, "raw_nsm_logs_committed": false, "credentials_committed": false, "host_data_committed": false, "committed": "selected telemetry fields, aggregate counts, hashes, lab-only names/addresses, benign commands and marker results"},
-  "cleanup_confirmation": {"attacker_listeners_stopped": true, "target_post_each_run_rollback": "OK", "target_final_snapshot": "win_verify_baseline", "final_rollback_verification": "Proxmox rollback task OK; VM 104 stopped; baseline snapshot present"},
-  "verified_at": "2026-08-15T12:04:08.0075142Z",
+  "cleanup_confirmation": {"attacker_listeners_stopped": true, "target_post_each_run_rollback": "OK", "target_final_snapshot": "win_verify_baseline", "final_rollback_verification": "Proxmox rollback task OK; VM 104 running at baseline; C:\\lab\\format-filter absent; disposable users and marker absent"},
+  "verified_at": "2026-08-16T08:27:28.0025977Z",
   "verifier": "Codex lab orchestrator"
 }
