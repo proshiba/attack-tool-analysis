@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 1 at design time - no scenario targets anything outside the lab",
+  "target": "tools/mimikatz/verification",
+  "files_checked": [
+    "tools/mimikatz/verification/README.md",
+    "tools/mimikatz/verification/scenarios.md",
+    "tools/mimikatz/verification/verification.json"
+  ],
+  "scope_declaration_present": true,
+  "severity_counts": {"high": 2, "info": 1},
+  "reviewed_findings": [
+    {"kind": "ipv4-like-version", "value": "2.2.0.0", "disposition": "Mimikatz file-version quad, not an address"},
+    {"kind": "ipv4-like-version", "value": "2.2.0.0", "disposition": "same version citation in verification metadata"},
+    {"kind": "provenance-reference", "disposition": "GitHub release URLs are citations only and not scenario destinations"}
+  ],
+  "critical_findings": 0,
+  "verdict": "REVIEW"
+}

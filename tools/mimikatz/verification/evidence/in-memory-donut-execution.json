@@ -1,6 +1,9 @@
 {
   "scenario": "approved Mimikatz converted to Donut shellcode and executed without an on-disk Mimikatz PE",
-  "source_verification": "tools/donutloader/verification/evidence/run-c-mimikatz-memory.json",
+  "source_verification": "../../donutloader/verification/evidence/run-c-mimikatz-memory.json",
+  "poc_review": "../../../poc-reviews/donut/poc-review.md",
+  "scope_report": "../../donutloader/verification/evidence/safety/lab-scope-run-c.json",
+  "operator_log": "../../donutloader/verification/evidence/safety/operator/run-c.log",
   "window_utc": {"start": "2026-08-16T11:28:35.9636027Z", "end": "2026-08-16T11:28:41.1442430Z"},
   "approved_input_sha256": "61c0810a23580cf492a6ba4f7654566108331e7a4134c968c2d6a05261b2d8a1",
   "mimikatz_executable_on_target": false,

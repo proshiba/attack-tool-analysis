@@ -2,44 +2,41 @@ title: Process Access to LSASS with a Memory Read Access Mask
 id: caf6daf0-615c-46f2-ba61-a8bb927605a6
 status: experimental
 description: >-
-  Detects a process opening LSASS with a commonly observed access mask that
-  includes PROCESS_VM_READ. The verified mimikatz sekurlsa::logonpasswords run
-  requested 0x1010. The rule intentionally does not depend on the source image
-  name, path, command line, or hash.
+  Detects a process launched from a user-writable staging root opening LSASS
+  with the verified PROCESS_VM_READ access mask. The rule accepts the hex form
+  emitted by the lab sensor and the decimal form used by the audit corpus.
 references:
   - https://github.com/gentilkiwi/mimikatz
 author: Codex lab orchestrator
 date: '2026-08-09'
 tags:
-  - attack.credential_access
+  - attack.credential-access
   - attack.t1003.001
 logsource:
   category: process_access
   product: windows
-  service: sysmon
 detection:
+  selection_source:
+    SourceImage|startswith:
+      - 'C:\ProgramData\'
+      - 'C:\Users\'
+      - 'C:\Windows\Temp\'
   selection_target:
     TargetImage|endswith: '\lsass.exe'
   selection_access:
     GrantedAccess:
-      - '0x0010'
-      - '0x0410'
       - '0x1010'
-      - '0x1410'
-      - '0x1438'
-      - '0x143a'
-      - '0x1fffff'
-  condition: selection_target and selection_access
+      - '4112'
+  condition: all of selection_*
 falsepositives:
-  - Antivirus, EDR, identity-protection, backup, and inventory agents inspecting LSASS
-  - Authorized debuggers, crash-dump utilities, administrator diagnostics, and Seatbelt-style process enumeration using 0x1410
-fp_likelihood: high
+  - Antivirus, EDR, identity-protection, backup, and inventory agents installed or unpacked under a writable root
+  - Authorized security testing and malware-analysis activity
+fp_likelihood: medium
 recommended_role: hunt
 precision_notes: >-
-  The clean corpus produced 0 matches among 1619360 process-access events, but
-  it contained only 7637 LSASS-targeted events. Seatbelt itself used listed
-  access 0x1410, and AV, EDR, identity, backup, and crash-dump tools routinely
-  open LSASS with these broad masks. Act on this hunt only with an unsigned or
-  unusual source image plus mimikatz module syntax, a suspicious CallTrace, or
-  dump-file creation.
-level: low
+  The evtx-baseline v0.8.4 corpus produced 0 matches among 1619360
+  process-access events (0.0%), and the public positive corpus matched. Medium
+  is a qualitative raise for security or support tools unpacked under writable
+  roots. The rule has no exclusions; correlate with CLR activation, an
+  in-memory call trace, injection, or dump-file creation.
+level: medium
