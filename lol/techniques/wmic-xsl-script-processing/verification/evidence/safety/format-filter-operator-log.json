@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "scope": "All commands were local to VM 104; no hostname, IP address, listener, or network source was configured.",
+  "tool_image": "wmic.exe",
+  "flows": [
+    {
+      "id": "resolution-std-cwd",
+      "start_utc": "2026-08-16T07:38:03.1796480Z",
+      "end_utc": "2026-08-16T07:38:04.8983997Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:benign.xsl",
+      "exit_code": 0,
+      "marker_created": true
+    },
+    {
+      "id": "resolution-admin-cwd",
+      "start_utc": "2026-08-16T07:40:43.0314995Z",
+      "end_utc": "2026-08-16T07:40:44.9533736Z",
+      "account": "WIN10-ANALYSIS\\FmtAdmin",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:benign.xsl",
+      "exit_code": 0,
+      "marker_created": true
+    },
+    {
+      "id": "resolution-admin-wbem",
+      "start_utc": "2026-08-16T07:41:49.9042383Z",
+      "end_utc": "2026-08-16T07:41:51.6073651Z",
+      "account": "WIN10-ANALYSIS\\FmtAdmin",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:benign.xsl",
+      "exit_code": 0,
+      "marker_created": true
+    },
+    {
+      "id": "control-abs-benign-unquoted-refused",
+      "start_utc": "2026-08-16T07:42:53.7749972Z",
+      "end_utc": "2026-08-16T07:42:53.9781262Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.xsl",
+      "exit_code": 44005,
+      "marker_created": false
+    },
+    {
+      "id": "control-abs-benign",
+      "start_utc": "2026-08-16T07:44:08.8502831Z",
+      "end_utc": "2026-08-16T07:44:09.6940324Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.xsl\"",
+      "exit_code": 0,
+      "marker_created": true
+    },
+    {
+      "id": "control-abs-list",
+      "start_utc": "2026-08-16T07:45:11.8337238Z",
+      "end_utc": "2026-08-16T07:45:13.4118461Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\list.xsl\"",
+      "exit_code": 0,
+      "marker_created": true
+    },
+    {
+      "id": "evasion-rel-list",
+      "start_utc": "2026-08-16T07:46:15.4615745Z",
+      "end_utc": "2026-08-16T07:46:17.0402292Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:list.xsl",
+      "exit_code": 0,
+      "marker_created": true
+    },
+    {
+      "id": "evasion-rel-csv",
+      "start_utc": "2026-08-16T07:47:18.3950870Z",
+      "end_utc": "2026-08-16T07:47:19.9888644Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:csv.xsl",
+      "exit_code": 0,
+      "marker_created": true
+    },
+    {
+      "id": "evasion-rel-table",
+      "start_utc": "2026-08-16T07:48:24.8808300Z",
+      "end_utc": "2026-08-16T07:48:25.9433584Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:table.xsl",
+      "exit_code": 0,
+      "marker_created": true
+    },
+    {
+      "id": "evasion-rel-value",
+      "start_utc": "2026-08-16T07:49:27.4484308Z",
+      "end_utc": "2026-08-16T07:49:29.2765578Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:value.xsl",
+      "exit_code": 0,
+      "marker_created": true
+    },
+    {
+      "id": "evasion-dash-list",
+      "start_utc": "2026-08-16T07:51:59.0492176Z",
+      "end_utc": "2026-08-16T07:52:00.4867207Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption -format:list.xsl",
+      "exit_code": 0,
+      "marker_created": true
+    },
+    {
+      "id": "extension-abs-txt",
+      "start_utc": "2026-08-16T07:54:05.8874471Z",
+      "end_utc": "2026-08-16T07:54:06.7936995Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.txt\"",
+      "exit_code": 44210,
+      "marker_created": false
+    },
+    {
+      "id": "extension-abs-jpg",
+      "start_utc": "2026-08-16T07:55:10.2064984Z",
+      "end_utc": "2026-08-16T07:55:10.8471246Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.jpg\"",
+      "exit_code": 44210,
+      "marker_created": false
+    }
+  ]
+}

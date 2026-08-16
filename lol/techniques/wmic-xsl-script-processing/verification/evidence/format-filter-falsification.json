@@ -1,0 +1,677 @@
+{
+  "schema_version": 1,
+  "run_date": "2026-08-16",
+  "target": "VM 104 WIN10-ANALYSIS",
+  "baseline_snapshot": "win_verify_baseline",
+  "rule": {
+    "id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d",
+    "upstream_commit": "3c0d35188942eb6a8c373e4f4973ac7e84116993",
+    "original_logic": "SigmaHQ adopted logic with CommandLine|contains built-in-format filter",
+    "fixed_logic": "CommandLine|endswith built-in-format filter"
+  },
+  "resolution": {
+    "current_working_directory_standard_user": "executed",
+    "current_working_directory_administrator": "executed",
+    "wbem_fallback_when_cwd_copy_absent": "executed as administrator",
+    "practical_precondition": "A standard user can execute a relative stylesheet from a user-writable current working directory. Administrator rights are needed only to plant the fallback copy in System32\\wbem.",
+    "absolute_path_syntax": "The unquoted absolute value was refused; the quoted absolute value executed."
+  },
+  "measurement": {
+    "engine": "/opt/audit/bin/evtx-sigma-checker on VM 107 with thor.yml log-source mapping",
+    "sigma_cli": "3.1.0 sigma check plus pySigma 1.5.0 parsed condition model; no output backend was installed",
+    "original_finding_count": 8,
+    "fixed_finding_count": 13,
+    "selector_diagnostic_count": 13,
+    "known_format_filter_diagnostic_count": 5,
+    "remote_operation_filter_diagnostic_count": 0,
+    "clean_corpus": {
+      "event_count_total": 6611183,
+      "process_creation_denominator": 23695,
+      "fp_count": 0,
+      "fp_share_of_category_percent": 0.0,
+      "measured_fp_likelihood_floor": "low",
+      "verdict": "no-corpus-coverage",
+      "detection_hit": false
+    }
+  },
+  "flows": [
+    {
+      "id": "resolution-std-cwd",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\benign.xsl",
+      "window": [
+        "2026-08-16T07:38:03.1796480Z",
+        "2026-08-16T07:38:04.8983997Z"
+      ],
+      "format_argument": "/format:benign.xsl",
+      "wmic_exit_code": 0,
+      "marker_created": true,
+      "marker_content": "benign-wmic-format-filter-test",
+      "wmic_output": [
+        "benign-wmic-format-filter-test",
+        ""
+      ],
+      "scripted_stylesheet_executed": true,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:38:03.2505098Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:benign.xsl",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": true,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": false,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selection_img and selection_cmd matched; neither measured filter matched"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": false,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "96a8e82641fc9042911dfb1e87b91b63ce90924773de09df5c3f6416ffe9e05c",
+        "events_json_sha256": "5920b084b07a32279a96a924509b3e44da36b040213aa2a0e0284af06855a5f0",
+        "flow_archive_sha256": "f5a07aade99991b4b6c739042d8615fbf06b2e9594ae1c8fd10ea1eebd260590"
+      }
+    },
+    {
+      "id": "resolution-admin-cwd",
+      "requested_privilege": "administrator",
+      "account": "WIN10-ANALYSIS\\FmtAdmin",
+      "is_administrator": true,
+      "integrity": "Mandatory Label\\High Mandatory Level                          Label            S-1-16-12288",
+      "working_directory": "C:\\Users\\FmtAdmin\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtAdmin\\AppData\\Local\\Temp\\fmtwork\\benign.xsl",
+      "window": [
+        "2026-08-16T07:40:43.0314995Z",
+        "2026-08-16T07:40:44.9533736Z"
+      ],
+      "format_argument": "/format:benign.xsl",
+      "wmic_exit_code": 0,
+      "marker_created": true,
+      "marker_content": "benign-wmic-format-filter-test",
+      "wmic_output": [
+        "benign-wmic-format-filter-test",
+        ""
+      ],
+      "scripted_stylesheet_executed": true,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:40:43.5383181Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:benign.xsl",
+        "current_directory": "C:\\Users\\FmtAdmin\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtAdmin",
+        "integrity_level": "High",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": true,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": false,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selection_img and selection_cmd matched; neither measured filter matched"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": false,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "646bde8815369b71735228a3af2979c787c8f6a28bbaa20ebed66fdcec9de781",
+        "events_json_sha256": "0307928122722fad3d6f966cf6bf899c4ec27a6f0fda18ce27ef1e3b477ec7b2",
+        "flow_archive_sha256": "c4827be8fc9e959ca5933aab0029062267fbcebd3f5d738635cc0683e758a037"
+      }
+    },
+    {
+      "id": "resolution-admin-wbem",
+      "requested_privilege": "administrator",
+      "account": "WIN10-ANALYSIS\\FmtAdmin",
+      "is_administrator": true,
+      "integrity": "Mandatory Label\\High Mandatory Level                          Label            S-1-16-12288",
+      "working_directory": "C:\\Users\\FmtAdmin\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Windows\\System32\\wbem\\benign.xsl",
+      "window": [
+        "2026-08-16T07:41:49.9042383Z",
+        "2026-08-16T07:41:51.6073651Z"
+      ],
+      "format_argument": "/format:benign.xsl",
+      "wmic_exit_code": 0,
+      "marker_created": true,
+      "marker_content": "benign-wmic-format-filter-test",
+      "wmic_output": [
+        "benign-wmic-format-filter-test",
+        ""
+      ],
+      "scripted_stylesheet_executed": true,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:41:49.9731990Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:benign.xsl",
+        "current_directory": "C:\\Users\\FmtAdmin\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtAdmin",
+        "integrity_level": "High",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": true,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": false,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selection_img and selection_cmd matched; neither measured filter matched"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": false,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "7265a9dc29db9bb0504f4a771e7e75b4971ae011089d0befc6997c8a1a4c74dd",
+        "events_json_sha256": "fc2b9fdd1e61842f3e1a962dc6e3677bb3144bf3745d39f6fe4101e2e2f05b22",
+        "flow_archive_sha256": "48f7c37967ad836739a16025e1ea53dce33fc58d2a19c5a4a10c1b58bce8bd8c"
+      }
+    },
+    {
+      "id": "control-abs-benign-unquoted-refused",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.xsl",
+      "window": [
+        "2026-08-16T07:42:53.7749972Z",
+        "2026-08-16T07:42:53.9781262Z"
+      ],
+      "format_argument": "/format:C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.xsl",
+      "wmic_exit_code": 44005,
+      "marker_created": false,
+      "marker_content": null,
+      "wmic_output": [
+        "Invalid command.",
+        "System.Management.Automation.RemoteException"
+      ],
+      "scripted_stylesheet_executed": false,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:42:53.8596434Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.xsl",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": true,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": false,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selection_img and selection_cmd matched; neither measured filter matched"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": false,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "2182b7fe81b7abaaa70498c6791bd9bf68913bbb61e595cfe49fe62220dbb44f",
+        "events_json_sha256": "aba3a782acf962cf4eba8f9bf6eae9203aabb3a0f2be7a32294e06fe84d628da",
+        "flow_archive_sha256": "39e8372223f01a47f91d23ae3c2867329f4b2332e7ab13e23213dfca841588d9"
+      }
+    },
+    {
+      "id": "control-abs-benign",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.xsl",
+      "window": [
+        "2026-08-16T07:44:08.8502831Z",
+        "2026-08-16T07:44:09.6940324Z"
+      ],
+      "format_argument": "/format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.xsl\"",
+      "wmic_exit_code": 0,
+      "marker_created": true,
+      "marker_content": "benign-wmic-format-filter-test",
+      "wmic_output": [
+        "benign-wmic-format-filter-test",
+        ""
+      ],
+      "scripted_stylesheet_executed": true,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:44:08.9042197Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.xsl\"",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": true,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": false,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selection_img and selection_cmd matched; neither measured filter matched"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": false,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "6963dc99af19ba6187bc40e92529a7b3e93a8fa466e4673001c413e96700996e",
+        "events_json_sha256": "60529e58490017964d8aef2b47aaa5afca7f4cbc2e8cdf679cf2722ecdcd5490",
+        "flow_archive_sha256": "6cacaade25c928e1b6bf85d553c87c38c00fa3971adcc8a64fe3ea7511662814"
+      }
+    },
+    {
+      "id": "control-abs-list",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\list.xsl",
+      "window": [
+        "2026-08-16T07:45:11.8337238Z",
+        "2026-08-16T07:45:13.4118461Z"
+      ],
+      "format_argument": "/format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\list.xsl\"",
+      "wmic_exit_code": 0,
+      "marker_created": true,
+      "marker_content": "benign-wmic-format-filter-test",
+      "wmic_output": [
+        "benign-wmic-format-filter-test",
+        ""
+      ],
+      "scripted_stylesheet_executed": true,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:45:11.9689028Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\list.xsl\"",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": true,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": false,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selection_img and selection_cmd matched; neither measured filter matched"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": false,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "79758739ad5ed0a2ed0af6ae6db4350f0a5a6a31e702406541cb3337f8af06a8",
+        "events_json_sha256": "adbf50067fc5147834504d7f485bf3abb887796c98959d8ec9c22f79a77d7638",
+        "flow_archive_sha256": "4aa3c227691102811836cb27654140c4adac9522f08f2fb38a756c1fbd389714"
+      }
+    },
+    {
+      "id": "evasion-rel-list",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\list.xsl",
+      "window": [
+        "2026-08-16T07:46:15.4615745Z",
+        "2026-08-16T07:46:17.0402292Z"
+      ],
+      "format_argument": "/format:list.xsl",
+      "wmic_exit_code": 0,
+      "marker_created": true,
+      "marker_content": "benign-wmic-format-filter-test",
+      "wmic_output": [
+        "benign-wmic-format-filter-test",
+        ""
+      ],
+      "scripted_stylesheet_executed": true,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:46:15.5204968Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:list.xsl",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": false,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": true,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selectors matched, but filter_main_known_format matched and excluded the event"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": true,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "9ec472a6a3e42dded4c129194db9dabfb3c7530fb515e4d09b3a72171fcf57b0",
+        "events_json_sha256": "35418810c85c7f8c9fac4b28646af8235af710dc5797df180e7e9068a687bd76",
+        "flow_archive_sha256": "73265e6a7234f2b86c9ea3ab67e1867bfba7ffaca33ab55f03171e0c78f5c30f"
+      }
+    },
+    {
+      "id": "evasion-rel-csv",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\csv.xsl",
+      "window": [
+        "2026-08-16T07:47:18.3950870Z",
+        "2026-08-16T07:47:19.9888644Z"
+      ],
+      "format_argument": "/format:csv.xsl",
+      "wmic_exit_code": 0,
+      "marker_created": true,
+      "marker_content": "benign-wmic-format-filter-test",
+      "wmic_output": [
+        "benign-wmic-format-filter-test",
+        ""
+      ],
+      "scripted_stylesheet_executed": true,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:47:18.4520102Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:csv.xsl",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": false,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": true,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selectors matched, but filter_main_known_format matched and excluded the event"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": true,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "aaddeee4c124e2f1df65a1aa3f7877835e40ab23e93949c8536777d08a49b9e7",
+        "events_json_sha256": "29958a15a7e37a004d3c87c08d0549bc10f431cc08b9a77a1817efb4c3469d48",
+        "flow_archive_sha256": "11db0f88e15e92255c5b0455f1f5d38c6206f056a30b84e70c73b649421738b3"
+      }
+    },
+    {
+      "id": "evasion-rel-table",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\table.xsl",
+      "window": [
+        "2026-08-16T07:48:24.8808300Z",
+        "2026-08-16T07:48:25.9433584Z"
+      ],
+      "format_argument": "/format:table.xsl",
+      "wmic_exit_code": 0,
+      "marker_created": true,
+      "marker_content": "benign-wmic-format-filter-test",
+      "wmic_output": [
+        "benign-wmic-format-filter-test",
+        ""
+      ],
+      "scripted_stylesheet_executed": true,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:48:25.1490191Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:table.xsl",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": false,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": true,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selectors matched, but filter_main_known_format matched and excluded the event"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": true,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "ad43db2f249abc0dc40b78432fd2f0e1fc295115206a6a4cf4f7ded5dd7c6a18",
+        "events_json_sha256": "6a9da7d17339401c1837de37dc1d5a46492927140d0cb77a812da1a019cba4e0",
+        "flow_archive_sha256": "571763657aef09ada5b5b1849e7417b44c532768f701b9479602a67cbe6cb214"
+      }
+    },
+    {
+      "id": "evasion-rel-value",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\value.xsl",
+      "window": [
+        "2026-08-16T07:49:27.4484308Z",
+        "2026-08-16T07:49:29.2765578Z"
+      ],
+      "format_argument": "/format:value.xsl",
+      "wmic_exit_code": 0,
+      "marker_created": true,
+      "marker_content": "benign-wmic-format-filter-test",
+      "wmic_output": [
+        "benign-wmic-format-filter-test",
+        ""
+      ],
+      "scripted_stylesheet_executed": true,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:49:27.6122744Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:value.xsl",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": false,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": true,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selectors matched, but filter_main_known_format matched and excluded the event"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": true,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "2a8064f69e59ca65bdc164a57cab0f9852227b6af84d5ca102c4d1561fe0ff3a",
+        "events_json_sha256": "105155d57810f255e3513420587e3d9fea9459a0cdda97ee62c363250a8738de",
+        "flow_archive_sha256": "e67da5c42de3b7abc0535afe1997145af31c75abd964d58bfccb312cdaece9f1"
+      }
+    },
+    {
+      "id": "evasion-dash-list",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\list.xsl",
+      "window": [
+        "2026-08-16T07:51:59.0492176Z",
+        "2026-08-16T07:52:00.4867207Z"
+      ],
+      "format_argument": "-format:list.xsl",
+      "wmic_exit_code": 0,
+      "marker_created": true,
+      "marker_content": "benign-wmic-format-filter-test",
+      "wmic_output": [
+        "benign-wmic-format-filter-test",
+        ""
+      ],
+      "scripted_stylesheet_executed": true,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:51:59.1694345Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption -format:list.xsl",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": false,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": true,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selectors matched, but filter_main_known_format matched and excluded the event"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": true,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "9179968390fc5cef660809bc6479c4ff312e38bc47ac0f8c6476e8b59d314a68",
+        "events_json_sha256": "788977fefc4a74a7a12009419d47807315b7d074c82ea8a46abf41b975ec807a",
+        "flow_archive_sha256": "cb9b17c65b0a552b189ed9644b65e9de74de94601f79a5b78f825e56e4df4429"
+      }
+    },
+    {
+      "id": "extension-abs-txt",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.txt",
+      "window": [
+        "2026-08-16T07:54:05.8874471Z",
+        "2026-08-16T07:54:06.7936995Z"
+      ],
+      "format_argument": "/format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.txt\"",
+      "wmic_exit_code": 44210,
+      "marker_created": false,
+      "marker_content": null,
+      "wmic_output": [
+        "Invalid XSL format (or) file name.",
+        "System.Management.Automation.RemoteException"
+      ],
+      "scripted_stylesheet_executed": false,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:54:05.9929299Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.txt\"",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": true,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": false,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selection_img and selection_cmd matched; neither measured filter matched"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": false,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "5fd03877971cb517f2e1eabfb3d8e7f69fda51eaa8fc5fffab0d969c82d2b4b0",
+        "events_json_sha256": "9c450460e5cf1de5cd1e493951a6b0b1ff581c74c71cb4eda5a189afc4cceac9",
+        "flow_archive_sha256": "214f5af054a7259ae9a76a32e3dad935a965fdab4ddf6f195b648f4c53d6aa5e"
+      }
+    },
+    {
+      "id": "extension-abs-jpg",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.jpg",
+      "window": [
+        "2026-08-16T07:55:10.2064984Z",
+        "2026-08-16T07:55:10.8471246Z"
+      ],
+      "format_argument": "/format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.jpg\"",
+      "wmic_exit_code": 44210,
+      "marker_created": false,
+      "marker_content": null,
+      "wmic_output": [
+        "Invalid XSL format (or) file name.",
+        "System.Management.Automation.RemoteException"
+      ],
+      "scripted_stylesheet_executed": false,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T07:55:10.3879729Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"C:\\Users\\FmtStd\\AppData\\Local\\Temp\\benign.jpg\"",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": true,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": false,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selection_img and selection_cmd matched; neither measured filter matched"
+      },
+      "fixed_rule": {
+        "fired": true
+      },
+      "evaded_original_rule": false,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "656598c5623fd0302cda96d5bae0feef6c6da5bc9283682d503848a0884ac14c",
+        "events_json_sha256": "797c7fc13ed70cdbce3915411f4dd782f7fa1e695008ac7aa3283d96552a988b",
+        "flow_archive_sha256": "4eb24f7e66b1f3e4bcecefe56820d926777d22437fff29da59a8d3ca1878b3d2"
+      }
+    }
+  ],
+  "conclusion": "CONFIRMED: five scripted XSL executions at built-in relative filenames evaded the adopted rule because the loose known-format substring filter matched. The endswith fix restored all five findings."
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+  "allowed_networks": [
+    "192.168.1.0/24"
+  ],
+  "allowed_domains": [],
+  "management_networks": [
+    "10.9.0.0/24"
+  ],
+  "declared_tool_images": [
+    "wmic.exe"
+  ],
+  "inputs": {
+    "zeek_dir": "/home/operator/wmic-format-filter-20260816/empty-zeek",
+    "sysmon_json": "/home/operator/wmic-format-filter-20260816/control-abs-benign-unquoted-refused/extracted/collection\\events.json",
+    "operator_logs": [
+      "lol/techniques/wmic-xsl-script-processing/verification/evidence/safety/format-filter-operator-log.json"
+    ],
+    "sysmon_eid3_events_read": 0,
+    "sysmon_eid22_events_read": 0,
+    "attributed_destinations": 0,
+    "attribution_available": false
+  },
+  "capture_scale": {
+    "conn_log_rows": 0,
+    "off_lab_destinations": 0,
+    "note": "a capture pre-filtered to in-lab traffic cannot show an off-lab destination, so 0 here proves nothing on its own - never filter the input"
+  },
+  "violation_count": 0,
+  "violations": [],
+  "manifest_count": 0,
+  "manifest": [],
+  "verdict": "PASS"
+}

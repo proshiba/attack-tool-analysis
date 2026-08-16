@@ -9,13 +9,14 @@ status: experimental
 description: >-
   Detects WMIC with the format flag loading a potentially scripted local XSL.
   Logic adopted from SigmaHQ master at commit
-  3c0d35188942eb6a8c373e4f4973ac7e84116993.
+  3c0d35188942eb6a8c373e4f4973ac7e84116993, with the built-in format
+  suppression narrowed after a measured filename-based evasion.
 references:
   - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml
   - https://attack.mitre.org/techniques/T1220/
-author: Timur Zinniatullin, oscd.community, Swachchhanda Shrawan Poudel; precision enrichment by Codex lab orchestrator
+author: Timur Zinniatullin, oscd.community, Swachchhanda Shrawan Poudel; precision enrichment and filter fix by Codex lab orchestrator
 date: '2019-10-21'
-modified: '2026-08-15'
+modified: '2026-08-16'
 tags:
   - attack.stealth
   - attack.t1047
@@ -39,7 +40,7 @@ detection:
   selection_cmd:
     CommandLine|contains|windash: '-format:'
   filter_main_known_format:
-    CommandLine|contains:
+    CommandLine|endswith:
       - 'Format:List'
       - 'Format:htable'
       - 'Format:hform'
@@ -61,7 +62,8 @@ recommended_role: hunt
 precision_notes: >-
   Measured against the process-creation category. This adopted broad local
   rule covers arbitrary local paths and does not require an XSL extension, so
-  approved custom reporting can match even after the built-in format filters.
-  Use as a hunt and promote only with a WMIC interpreter child, script-engine
-  telemetry, or a user-writable-path constraint.
+  approved custom reporting can match. The built-in suppression is limited to
+  command lines ending in the actual format token; filenames such as list.xsl
+  are not suppressed. Use as a hunt and promote only with a WMIC interpreter
+  child, script-engine telemetry, or a user-writable-path constraint.
 level: low

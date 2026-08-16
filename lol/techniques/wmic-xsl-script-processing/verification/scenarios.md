@@ -24,6 +24,12 @@
   the committed read-only share configuration. `wmic.exe`, `cmd.exe`, Task
   Scheduler, and the scripting engines are target OS components. No
   third-party attack code was used.
+- **2026-08-16 format-filter falsification.** The additional matrix is wholly
+  local to VM 104: it has no listener, remote source, hostname, IP address, or
+  network dependency. The lab-authored `wmic-format-filter-test.xsl` only
+  creates `%TEMP%\wmic-format-filter-marker.txt`. Disposable local standard
+  and administrator accounts separate privilege from path resolution. No
+  executable or script is run on VM 102 or VM 108.
 - **Safety evidence.** Each flow has a distinct operator command record and
   post-run `check-lab-scope.py` output under `evidence/safety/`. The checker
   received every planted binary/script via `--tool-image`; OS/Defender
@@ -121,6 +127,46 @@ Result: exit 0 and marker `benign-https-jscript`. Zeek recorded TLS 1.2, SNI
 endpoint cache, JScript, process, and child signals remained. No TLS rule was
 authored: the observed fingerprints describe the shared Windows client stack
 and lab server, not WMIC-specific behavior.
+
+## Flow 7: built-in-name filter falsification matrix
+
+This matrix tried to falsify the claim that a scripted local stylesheet named
+after a built-in WMIC format is suppressed by the adopted upstream rule. Path
+resolution was measured before interpreting the rule. A relative `benign.xsl`
+executed from the disposable user's writable current directory as both a
+medium-integrity standard user and a high-integrity administrator. When that
+directory had no copy, an administrator-only plant in
+`%SystemRoot%\System32\wbem` also executed, establishing WBEM as a fallback—not
+the only relative search location. The practical precondition is therefore
+only a standard user's ability to write the chosen current directory.
+
+The execution matrix then covers:
+
+- relative `list.xsl`, `csv.xsl`, `table.xsl`, and `value.xsl` at the
+  empirically reachable location;
+- `-format:list.xsl` to compare dash syntax with `/format:list.xsl`;
+- absolute user-writable `list.xsl`, where a path separates `Format:` from the
+  built-in filename and the loose substring should not apply;
+- absolute `benign.txt` and `benign.jpg` copies to test extension independence.
+
+The hypothesis was confirmed for all four slash candidates and the dash form:
+`/format:list.xsl`, `/format:csv.xsl`, `/format:table.xsl`,
+`/format:value.xsl`, and `-format:list.xsl` each exited 0, wrote the marker as a
+standard user, matched the rule's selectors, matched the loose known-format
+filter, and produced no original-rule finding. The quoted absolute
+`C:\Users\FmtStd\AppData\Local\Temp\list.xsl` executed and fired because the
+path separates `Format:` from `list`. An unquoted absolute path was refused
+with exit 44005. Contrary to the rule's extension-independent detection text,
+this WMIC build refused both quoted `.txt` and `.jpg` copies with exit 44210 and
+no marker; those rows are non-executions, not evasions.
+
+Every row began and ended with rollback to `win_verify_baseline`. Each accepted
+row retains the runner result, marker outcome, full bounded Sysmon collection,
+and exact Sysmon EID 1 command line. Because this flow is local-only, no network
+capture was manufactured: post-run safety used the unfiltered Sysmon EID 3/22
+collection plus the exact operator record and an empty Zeek directory to
+evaluate whether any traffic was attributable to `wmic.exe`. All 13 row
+verdicts are `PASS`.
 
 ## Grounding and priority
 

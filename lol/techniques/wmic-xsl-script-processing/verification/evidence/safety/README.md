@@ -23,3 +23,35 @@ The accepted flow 4 did not use credentials and its independent
 ordinary Windows/Defender traffic in each manifest as informational,
 non-tool-attributed activity; it is not silently removed or judged as attack
 traffic.
+
+## 2026-08-16 format-filter falsification
+
+`scenario-scope-format-filter-pre-run.json` was produced before any WMIC
+execution. The first checker invocation returned `REVIEW` only because the
+older HTTPS scenario contains the explicitly lab-mapped `certutil.lab` name;
+the committed report uses the checker's supported `--allow-domain
+certutil.lab` input and reads `PASS` with no findings.
+
+`format-filter-operator-log.json` contains the exact local-only WMIC commands,
+time windows, accounts, exit codes, and marker results for 13 accepted rows.
+Each `format-filter-*-lab-scope.json` report was computed from that record and
+the row's full, unfiltered bounded event JSON with `--tool-image wmic.exe`.
+All 13 verdicts are `PASS`: no traffic attributable to the declared attack
+left the lab. The Zeek directory was empty because these were deliberately
+local flows with no packet capture; the reports retain the checker's warning
+that zero packet rows alone prove nothing. Sysmon EID 3/22 attribution—not a
+pre-filtered capture—is the available network evidence.
+
+Failed setup attempts (Task Scheduler batch-logon precondition, result-file
+sharing race, archive-path quoting, and one collector rendering failure) were
+not entered into the result matrix. Each was followed by a successful
+`win_verify_baseline` rollback before retry. The unquoted absolute-path row and
+the `.txt`/`.jpg` rows are retained because they are valid collected negative
+results: WMIC executed as a process but refused the stylesheet, and no marker
+was written.
+
+The disposable local-account password used at runtime is not committed. The
+reusable `invoke-format-filter-flow.ps1` fixture therefore accepts it as a
+base64-transported mandatory parameter; base64 is transport, not storage or
+protection. Raw archive hashes in `format-filter-falsification.json` identify
+the exact collected artifacts retained outside the repository.

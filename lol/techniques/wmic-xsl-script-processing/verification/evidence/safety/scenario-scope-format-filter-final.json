@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 1 at design time - no scenario targets anything outside the lab",
+  "target": "lol/techniques/wmic-xsl-script-processing/verification",
+  "files_checked": [
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/wmic-xsl-script-processing/verification/scenarios.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/wmic-xsl-script-processing/verification/README.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/wmic-xsl-script-processing/verification/verification.json"
+  ],
+  "scope_declaration_present": true,
+  "severity_counts": {},
+  "findings": [],
+  "verdict": "PASS"
+}
