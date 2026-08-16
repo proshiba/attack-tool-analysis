@@ -1,0 +1,34 @@
+{
+  "id": "donutloader",
+  "name": "DonutLoader",
+  "categories": [
+    "execution",
+    "defense-evasion",
+    "persistence"
+  ],
+  "summary": "Donut-generated position-independent shellcode executed by a loader, including DLL sideload and remote-thread injection delivery shapes.",
+  "description": "This entry verifies detection of the recurring DonutLoader chain without acquiring any incident sample: a lab-authored signed-host stand-in loads a lab-authored DLL, the DLL reads Donut shellcode from an inert-looking adjacent data file, and bounded payloads execute only in memory. Delivery and persistence are reproduced with lab-hosted media and inert actions.",
+  "authors": [
+    "TheWover and Donut contributors"
+  ],
+  "language": "C",
+  "license": "BSD-3-Clause",
+  "os": [
+    "windows"
+  ],
+  "type": "shellcode-generator-and-loader-chain",
+  "repository": "https://github.com/TheWover/donut",
+  "attack_techniques": [
+    {"id": "T1055", "name": "Process Injection"},
+    {"id": "T1027.009", "name": "Embedded Payloads"},
+    {"id": "T1574.001", "name": "DLL Search Order Hijacking"},
+    {"id": "T1105", "name": "Ingress Tool Transfer"},
+    {"id": "T1553.005", "name": "Mark-of-the-Web Bypass"},
+    {"id": "T1053.005", "name": "Scheduled Task/Job: Scheduled Task"},
+    {"id": "T1543.003", "name": "Create or Modify System Process: Windows Service"},
+    {"id": "T1546.001", "name": "Event Triggered Execution: Change Default File Association"},
+    {"id": "T1562.001", "name": "Impair Defenses: Disable or Modify Tools"}
+  ],
+  "status": "verification-in-progress",
+  "last_reviewed": "2026-08-16"
+}

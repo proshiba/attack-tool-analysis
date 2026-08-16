@@ -1,0 +1,1949 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 2 - third-party PoC code is reviewed before it is executed",
+  "target": "Donut source tree at reviewed commit",
+  "source_url": "https://github.com/TheWover/donut",
+  "file_count": 141,
+  "severity_counts": {
+    "high": 67,
+    "medium": 1
+  },
+  "findings": [
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "docs.github.com",
+      "file": ".github/workflows/python-publish.yml"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": ".gitmodules"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "CHANGELOG.md"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "DemoCreateProcess/DemoCreateProcess.csproj"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "1.0.0.0",
+      "file": "DemoCreateProcess/Properties/AssemblyInfo.cs"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "www.mono-project.com",
+      "file": "DemoCreateProcess/Readme.md"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "Dockerfile"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "DonutTest/DonutTest.csproj"
+    },
+    {
+      "id": "dynamic-eval",
+      "severity": "high",
+      "line": 106,
+      "why": "executes decoded or decompressed data, hiding its real behaviour from review",
+      "evidence": "byte[] shellcode = Convert.FromBase64String(s);",
+      "file": "DonutTest/Program.cs"
+    },
+    {
+      "id": "obfuscation",
+      "severity": "medium",
+      "line": 13,
+      "why": "large encoded or escaped blob - review its decoded content before running",
+      "evidence": "static string x64 = @\"6HAaAABwGgAAMt355FGs7iIDer99AHARvjkxLxFrCx+e49pHTB2Y2JygBOYZO93j5g9qMawSYNBH/Skv4IAySQ/IhC9+ERbU0y3UElSCHcYgycykIMbrrIF6t0P018mDnwGJXpgnZz4MI4Cq0KsIiIJDJyZBKo/1asaF0iz6g49ze5z8Se",
+      "file": "DonutTest/Program.cs"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "1.0.0.0",
+      "file": "DonutTest/Properties/AssemblyInfo.cs"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "www.mono-project.com",
+      "file": "DonutTest/Readme.md"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 6.40",
+      "file": "DonutTest/rundotnet.exe"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "ModuleMonitor/ModuleMonitor.csproj"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "ModuleMonitor/ModuleMonitor.csproj.user"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "stackoverflow.com",
+      "file": "ModuleMonitor/Program.cs"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "1.0.0.0",
+      "file": "ModuleMonitor/Properties/AssemblyInfo.cs"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "ModuleMonitor/README.md"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "1.0.0.0, 6.0.0.0, schemas.microsoft.com",
+      "file": "ModuleMonitor/app.manifest"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.96",
+      "file": "ModuleMonitor/img/detected.png"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "ProcessManager/ProcessManager.csproj"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "schemas.microsoft.com",
+      "file": "ProcessManager/ProcessManager.csproj.user"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "pinvoke.net, stackoverflow.com",
+      "file": "ProcessManager/Program.cs"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "1.0.0.0",
+      "file": "ProcessManager/Properties/AssemblyInfo.cs"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "ProcessManager/README.md"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.55",
+      "file": "ProcessManager/img/usage.JPG"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "blog.xpnsec.com, bloodhoundgang.herokuapp.com, docs.microsoft.com, gist.github.com, github.com, img.shields.io, modexp.wordpress.com, thewover.github.io, tinycrypt.wordpress.com, twitter.com, www.somsubhra.com",
+      "file": "README.md"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "docs.microsoft.com, github.com, ibsensoftware.com, twitter.com, www.staging-server.com",
+      "file": "docs/2019-08-21-Python_Extension.md"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "en.wikipedia.org, github.com, modexp.wordpress.com",
+      "file": "docs/2019-5-31-Apple-Fritter.md"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "docs.microsoft.com, en.wikipedia.org, github.com, www.fireeye.com",
+      "file": "docs/2019-5-9-Introducing-Donut.md"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "blog.gentilkiwi.com, docs.microsoft.com, github.com, ibsensoftware.com, modexp.wordpress.com, mysmartlogon.com, pingcastle.com, tinycrypt.wordpress.com, twitter.com, www.staging-server.com",
+      "file": "docs/devnotes.md"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "modexp.wordpress.com, thewover.github.io",
+      "file": "docs/donut.1"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "stackoverflow.com",
+      "file": "donut.c"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "docs.python.org",
+      "file": "donutmodule.c"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "format.c"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "generators/Readme.md"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "stackoverflow.com",
+      "file": "hash.c"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.70",
+      "file": "img/ST_generate_and_copy.PNG"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.64",
+      "file": "img/ST_generate_and_copy_86.PNG"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.88",
+      "file": "img/ST_inject.PNG"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.97",
+      "file": "img/ST_success.PNG"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.97",
+      "file": "img/detected.png"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.98",
+      "file": "img/donut.PNG"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.98",
+      "file": "img/donut_logo.png"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.77",
+      "file": "img/donut_logo_black.jpg"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.76",
+      "file": "img/donut_logo_white.jpg"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.70",
+      "file": "img/generate_and_copy.PNG"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 7.93",
+      "file": "img/iexplore.png"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "www.ibsensoftware.com",
+      "file": "include/aplib.h"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "www.ibsensoftware.com",
+      "file": "include/depack.h"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "include/donut.h"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 2.84",
+      "file": "include/donut.ico"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "msdn.microsoft.com",
+      "file": "include/mmap-windows.c"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 5.58",
+      "file": "lib/aplib32.a"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 6.53",
+      "file": "lib/aplib32.lib"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 5.09",
+      "file": "lib/aplib64.a"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 6.42",
+      "file": "lib/aplib64.lib"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "gist.github.com",
+      "file": "loader/bypass.c"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "loader/clib.c"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "www.ibsensoftware.com",
+      "file": "loader/depack.c"
+    },
+    {
+      "id": "binary-artifact",
+      "severity": "high",
+      "line": 0,
+      "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+      "evidence": "entropy 6.42",
+      "file": "loader/encode/encode.exe"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "msdn.microsoft.com",
+      "file": "loader/encode/mmap-windows.c"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "msdn.microsoft.com",
+      "file": "loader/exe2h/mmap-windows.c"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "blog.rewolf.pl",
+      "file": "loader/peb.h"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "docs.microsoft.com",
+      "file": "loader/test/debug.cpp"
+    },
+    {
+      "id": "dynamic-eval",
+      "severity": "high",
+      "line": 139,
+      "why": "executes decoded or decompressed data, hiding its real behaviour from review",
+      "evidence": "// ([system.reflection.assembly]::loadfile(\"C:\\Windows\\Microsoft.NET\\assembly\\GAC_MSIL\\System.Management.Automation\\v4.0_3.0.0.0__31bf3856ad364e35\\System.Management.Automation.dll\")).FullName",
+      "file": "loader/test/rdt.cpp"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "3.0.0.0, 4.0.0.0, docs.microsoft.com",
+      "file": "loader/test/rdt.cpp"
+    },
+    {
+      "id": "external-endpoint",
+      "severity": "high",
+      "line": 0,
+      "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+      "evidence": "github.com",
+      "file": "setup.py"
+    }
+  ],
+  "files": [
+    {
+      "file": ".github/workflows/python-publish.yml",
+      "bytes": 1116,
+      "sha256": "ffed7fbf613ea645b10cc81e40436a6db56878656f06b9fb8f910a0c356684e3",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "docs.github.com"
+        }
+      ]
+    },
+    {
+      "file": ".gitignore",
+      "bytes": 3532,
+      "sha256": "dd5c4df8efe8b8b823e276b3152387256d424072e41645bc31802d90f7b3e966",
+      "findings": []
+    },
+    {
+      "file": ".gitmodules",
+      "bytes": 105,
+      "sha256": "8aa83ad77f26a4254716b9ee71edb197cc8517c9f85b0317f217aabff7a235fe",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "CHANGELOG.md",
+      "bytes": 3966,
+      "sha256": "c944aff183215a040003215feb3d73ab154393c5929572ccc494c9312e9a3367",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "DemoCreateProcess/Class1.cs",
+      "bytes": 358,
+      "sha256": "878c92500be3b05ad0667d855a57449bc5741c13b284d98956a5854d335ddb1a",
+      "findings": []
+    },
+    {
+      "file": "DemoCreateProcess/DemoCreateProcess.csproj",
+      "bytes": 2016,
+      "sha256": "6671f3ec416c31f3ba918c58c2fd5c379df68294adc4d3c8ccfcd68f3eb17724",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "DemoCreateProcess/DemoCreateProcess.sln",
+      "bytes": 1106,
+      "sha256": "4abb5e03468f51f35d0de2b0112e6bdbda755a3dd7106f7e5cf3e811755b3604",
+      "findings": []
+    },
+    {
+      "file": "DemoCreateProcess/Properties/AssemblyInfo.cs",
+      "bytes": 1405,
+      "sha256": "8a4197c967587469ff924d945f3c3cccff77974791bb9d2d5d14a2912ad09f2d",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "1.0.0.0"
+        }
+      ]
+    },
+    {
+      "file": "DemoCreateProcess/Readme.md",
+      "bytes": 1128,
+      "sha256": "1aa97c49dcec8f54dc5ab9842e3df22b54159a3f3a5cc42ed3d382f42e0628be",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "www.mono-project.com"
+        }
+      ]
+    },
+    {
+      "file": "Dockerfile",
+      "bytes": 448,
+      "sha256": "020a30c543dc50e027cc58da064f06f92c96e983376bbc8143dfcff829437d7e",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "DonutTest/App.config",
+      "bytes": 180,
+      "sha256": "a1b14c29c812e7f4e2788666733f49ccaf4b2ac4a567410edae350182dc1eb28",
+      "findings": []
+    },
+    {
+      "file": "DonutTest/DonutTest.csproj",
+      "bytes": 2384,
+      "sha256": "006f9531b0727f78ca20d66adf5cb44e2c85c3626c195ad06f5f7a110eec423e",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "DonutTest/DonutTest.sln",
+      "bytes": 1592,
+      "sha256": "2f2c65d1dfdedcdd875a30a1f569a3e3f23dabcfa625fcd395c67fc0c65abc6b",
+      "findings": []
+    },
+    {
+      "file": "DonutTest/Hello.cs",
+      "bytes": 196,
+      "sha256": "980bdb4fbc13f2487f2cfb94cafeee2f5b45f01349b128e6078262be576e7e41",
+      "findings": []
+    },
+    {
+      "file": "DonutTest/Program.cs",
+      "bytes": 31357,
+      "sha256": "439e00edf0f71660a7c5a7ff7e74e7e849c0725dd1b90a84d135946b0a75a946",
+      "findings": [
+        {
+          "id": "dynamic-eval",
+          "severity": "high",
+          "line": 106,
+          "why": "executes decoded or decompressed data, hiding its real behaviour from review",
+          "evidence": "byte[] shellcode = Convert.FromBase64String(s);"
+        },
+        {
+          "id": "obfuscation",
+          "severity": "medium",
+          "line": 13,
+          "why": "large encoded or escaped blob - review its decoded content before running",
+          "evidence": "static string x64 = @\"6HAaAABwGgAAMt355FGs7iIDer99AHARvjkxLxFrCx+e49pHTB2Y2JygBOYZO93j5g9qMawSYNBH/Skv4IAySQ/IhC9+ERbU0y3UElSCHcYgycykIMbrrIF6t0P018mDnwGJXpgnZz4MI4Cq0KsIiIJDJyZBKo/1asaF0iz6g49ze5z8Se"
+        }
+      ]
+    },
+    {
+      "file": "DonutTest/Properties/AssemblyInfo.cs",
+      "bytes": 1389,
+      "sha256": "f68324ee1000452d1de26d34c58fc081d3c79202fb343f9f18949508ef921785",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "1.0.0.0"
+        }
+      ]
+    },
+    {
+      "file": "DonutTest/Readme.md",
+      "bytes": 1378,
+      "sha256": "4c48dd71ccb84087f4e09a75eed6c75265956c07348546427922a46eb50ca75a",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "www.mono-project.com"
+        }
+      ]
+    },
+    {
+      "file": "DonutTest/calc.js",
+      "bytes": 87,
+      "sha256": "d631ab3dc77bbc08641877ce54f67106b9b3bec6d0e3602952df703cc6e6a830",
+      "findings": []
+    },
+    {
+      "file": "DonutTest/calc.vbs",
+      "bytes": 115,
+      "sha256": "cfeb22b660edbd5dcca27e251e0b199dd91cc5f4d82bb3dee49f72e6961cea36",
+      "findings": []
+    },
+    {
+      "file": "DonutTest/dlltest.c",
+      "bytes": 853,
+      "sha256": "b6926d3c83232c266a687a5439467c1ab164d2afac4cf1d8db354aa6c3c886bd",
+      "findings": []
+    },
+    {
+      "file": "DonutTest/rundotnet.cpp",
+      "bytes": 4530,
+      "sha256": "67fcaf77cbd0300f10678cd8ec2480e6c668da17b2a1fe0f54ce33f1887ccc99",
+      "findings": []
+    },
+    {
+      "file": "DonutTest/rundotnet.exe",
+      "bytes": 155648,
+      "sha256": "09ee3a11ce0547603a8ae71d4fe4c85d9465ce6937a00a167be0d9f7fefd7994",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 6.40"
+        }
+      ]
+    },
+    {
+      "file": "LICENSE",
+      "bytes": 1517,
+      "sha256": "2701c983bf88a57d03795111dcf4ea447c006de7a82dd17f6711b8f1248644d2",
+      "findings": []
+    },
+    {
+      "file": "MANIFEST.in",
+      "bytes": 264,
+      "sha256": "16c45d1a3bfd24ad642cc667775c2697b22731a496af00d193428de1b70005cf",
+      "findings": []
+    },
+    {
+      "file": "Makefile",
+      "bytes": 1192,
+      "sha256": "2b13ccaf7cf5e5d1f4600ad67556648f49083d14bb3b66329f5f11b08a3007de",
+      "findings": []
+    },
+    {
+      "file": "Makefile.mingw",
+      "bytes": 1905,
+      "sha256": "749f8ad83f669b93b4dea4cbb4cf2f30a708c2efc73aa47ebb94a7d7eaa3e4c9",
+      "findings": []
+    },
+    {
+      "file": "Makefile.msvc",
+      "bytes": 2253,
+      "sha256": "44790ffd8631da4410e6f4c3275ec3bf961281bfe90f9c298963159efb623cc8",
+      "findings": []
+    },
+    {
+      "file": "Makefile_x86.msvc",
+      "bytes": 2253,
+      "sha256": "8412a3f500d7662fd31476698cf9f3531dfc7a5306d8c8a597a76d8c6ebc805b",
+      "findings": []
+    },
+    {
+      "file": "ModuleMonitor/LICENSE",
+      "bytes": 1516,
+      "sha256": "4ae405b2f9237002e12fc8fb270338d3af61f30d35f2713c0835eb05b98b2fcf",
+      "findings": []
+    },
+    {
+      "file": "ModuleMonitor/ModuleMonitor.csproj",
+      "bytes": 2449,
+      "sha256": "2a5ffa2c44e062717ff1d133183dca19deab6665117f076892e7a33e8fe7a909",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "ModuleMonitor/ModuleMonitor.csproj.user",
+      "bytes": 290,
+      "sha256": "39e4f5d0bb1310ac6fa708ca2b16fd5c5bbda2220f4c24df4aaf005a8c1df971",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "ModuleMonitor/ModuleMonitor.sln",
+      "bytes": 1098,
+      "sha256": "a7c7a6d1cc06452f84d554847b84d4696fcf927efc506477d06d0764e7a16f1b",
+      "findings": []
+    },
+    {
+      "file": "ModuleMonitor/Program.cs",
+      "bytes": 13957,
+      "sha256": "765b1dc4c6e5c20bd969b89f08a146efaf62e811a9ae6f8c0f59761718bb9e27",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "stackoverflow.com"
+        }
+      ]
+    },
+    {
+      "file": "ModuleMonitor/Properties/AssemblyInfo.cs",
+      "bytes": 1397,
+      "sha256": "e0498b18a0067ff1e16c2b3da552ea83ecdaca4baecb483b11eddc2b0429ec75",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "1.0.0.0"
+        }
+      ]
+    },
+    {
+      "file": "ModuleMonitor/README.md",
+      "bytes": 1488,
+      "sha256": "18f4aae9c9f7c38e0eb0275f3e2d95019f6fdd2623817b8073a94aaa5c8e3c42",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "ModuleMonitor/app.config",
+      "bytes": 160,
+      "sha256": "93b3433679ee8d782f69e37136e207bd5e125f1ef79542bf9d7e84c1c84feea5",
+      "findings": []
+    },
+    {
+      "file": "ModuleMonitor/app.manifest",
+      "bytes": 3093,
+      "sha256": "f7dad476759a4cc67f24607044eaa20f22b5b7a0b8eb8cc79a6510f789c80163",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "1.0.0.0, 6.0.0.0, schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "ModuleMonitor/img/detected.png",
+      "bytes": 161814,
+      "sha256": "f70c7a4e30be5456ade8aaed03447458175d9f3fe751fb89011a7c48051fdf15",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.96"
+        }
+      ]
+    },
+    {
+      "file": "ProcessManager/App.config",
+      "bytes": 151,
+      "sha256": "194144fea1b25cdb522cc9888c7ed9da8914c50d0311c5892c262bfac557244b",
+      "findings": []
+    },
+    {
+      "file": "ProcessManager/LICENSE",
+      "bytes": 1516,
+      "sha256": "4ae405b2f9237002e12fc8fb270338d3af61f30d35f2713c0835eb05b98b2fcf",
+      "findings": []
+    },
+    {
+      "file": "ProcessManager/ProcessManager.csproj",
+      "bytes": 2475,
+      "sha256": "134fda8f4236d3dfe92b7f4b8eec7d4231497906d5af1c9d9a88ec58c40e7497",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "ProcessManager/ProcessManager.csproj.user",
+      "bytes": 426,
+      "sha256": "b4935cb4b2cfd84a06c3251e159c3685eb974a1c73018099995c610216faadef",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "schemas.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "ProcessManager/ProcessManager.sln",
+      "bytes": 1100,
+      "sha256": "2ed2f0366b185ea42ee265e6fe61f4dbf9f2043c0a9136c266793a3647e214f6",
+      "findings": []
+    },
+    {
+      "file": "ProcessManager/Program.cs",
+      "bytes": 21217,
+      "sha256": "e4f591386241c0aa0a227e721f9a7b0f96450c4cc2e918d370480dd635bd023f",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "pinvoke.net, stackoverflow.com"
+        }
+      ]
+    },
+    {
+      "file": "ProcessManager/Properties/AssemblyInfo.cs",
+      "bytes": 1399,
+      "sha256": "d8edcd53245652f047801c52d7cf74a36083fa4ac6ae689878fcc4577feed662",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "1.0.0.0"
+        }
+      ]
+    },
+    {
+      "file": "ProcessManager/README.md",
+      "bytes": 1716,
+      "sha256": "4e2c728f2c7a0a38ef92c56be2a48674ae184ac54eba8f46b416b020c890a3ac",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "ProcessManager/img/usage.JPG",
+      "bytes": 163456,
+      "sha256": "2aeef760a102cc6c0c884a691d2b61e0d09765543ac7b08df5273a29233d25ce",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.55"
+        }
+      ]
+    },
+    {
+      "file": "README.md",
+      "bytes": 18912,
+      "sha256": "b78aeeb3a21e171d79c0c33ac47f10d941c1549980acd6b66cc69e13b68e0830",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "blog.xpnsec.com, bloodhoundgang.herokuapp.com, docs.microsoft.com, gist.github.com, github.com, img.shields.io, modexp.wordpress.com, thewover.github.io, tinycrypt.wordpress.com, twitter.com, www.somsubhra.com"
+        }
+      ]
+    },
+    {
+      "file": "docs/2019-08-21-Python_Extension.md",
+      "bytes": 7889,
+      "sha256": "9d5b4ccb3cef956b6cf36afcf0b3e162a1c806d4d9962821230386aa3dc13011",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "docs.microsoft.com, github.com, ibsensoftware.com, twitter.com, www.staging-server.com"
+        }
+      ]
+    },
+    {
+      "file": "docs/2019-5-31-Apple-Fritter.md",
+      "bytes": 11100,
+      "sha256": "3c775fdb113ee87d6156968776f82eaed6d80f419449271be8a0e64bed0e97d1",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "en.wikipedia.org, github.com, modexp.wordpress.com"
+        }
+      ]
+    },
+    {
+      "file": "docs/2019-5-9-Introducing-Donut.md",
+      "bytes": 26522,
+      "sha256": "fae39aac21a970edb51f332cd4c8c307884bafefe81746509a4b3433968ec1ed",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "docs.microsoft.com, en.wikipedia.org, github.com, www.fireeye.com"
+        }
+      ]
+    },
+    {
+      "file": "docs/devnotes.md",
+      "bytes": 81630,
+      "sha256": "99c172a100b6a289b16e122c89a9414a84dc22941d8ca88842577d74b92efde8",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "blog.gentilkiwi.com, docs.microsoft.com, github.com, ibsensoftware.com, modexp.wordpress.com, mysmartlogon.com, pingcastle.com, tinycrypt.wordpress.com, twitter.com, www.staging-server.com"
+        }
+      ]
+    },
+    {
+      "file": "docs/donut.1",
+      "bytes": 5426,
+      "sha256": "9a62a1babcc3b861d41a9a066fb945d0e79cae7c59f54627856b4265e3435484",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "modexp.wordpress.com, thewover.github.io"
+        }
+      ]
+    },
+    {
+      "file": "donut.c",
+      "bytes": 76810,
+      "sha256": "a874326ed8a25bbc306c083503bf463df7c9dc0c6e2405c05e7eae72c44b540e",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "stackoverflow.com"
+        }
+      ]
+    },
+    {
+      "file": "donutmodule.c",
+      "bytes": 8129,
+      "sha256": "1e5caa36685260a7619eae9c2c574df5d3bf4c79a28c7bb6fb239012cf9a86e7",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "docs.python.org"
+        }
+      ]
+    },
+    {
+      "file": "encrypt.c",
+      "bytes": 5491,
+      "sha256": "3b0f077797fbe3639595d3ac3cb3e8ba1413bea32def814c1790fdd309a97f5e",
+      "findings": []
+    },
+    {
+      "file": "examples/dynamic.c",
+      "bytes": 2800,
+      "sha256": "bbd55f6157c2576090d7f765e07f3c50f169ff77b08cd1ecb3b84dd223f2effb",
+      "findings": []
+    },
+    {
+      "file": "examples/static.c",
+      "bytes": 1510,
+      "sha256": "9bd9d4e147a5a1a6b91b6d406e8223daa94aa6d30e2c3204f4130cb284a85bf2",
+      "findings": []
+    },
+    {
+      "file": "format.c",
+      "bytes": 7691,
+      "sha256": "867c133defab4fc3f233f2bfe8d12edd2aa41c27305c6f88359d28a345fbe079",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "generators/Readme.md",
+      "bytes": 308,
+      "sha256": "c70ffd65df0993d89a2d50c72bd259e4b0df70b09093a3945134bdc749ef2dac",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "hash.c",
+      "bytes": 10852,
+      "sha256": "22cb58adf6de5a1171b3c592ce0bf17e1cc5327e4e9002a3361a11892b3fad78",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "stackoverflow.com"
+        }
+      ]
+    },
+    {
+      "file": "img/ST_generate_and_copy.PNG",
+      "bytes": 70351,
+      "sha256": "0d5a84fd79426c2f488f3c1fb56fa0121b4fd41dff79e4650313d62d860da193",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.70"
+        }
+      ]
+    },
+    {
+      "file": "img/ST_generate_and_copy_86.PNG",
+      "bytes": 26327,
+      "sha256": "e627d15fbb9fe76cab8627321d137d95d1e099d79babffe50e08d8c4468906ff",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.64"
+        }
+      ]
+    },
+    {
+      "file": "img/ST_inject.PNG",
+      "bytes": 16258,
+      "sha256": "bc3cb9b75d218297b4d6d5e810dc29029ba4c3d62fc54e0c18125e903557adc0",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.88"
+        }
+      ]
+    },
+    {
+      "file": "img/ST_success.PNG",
+      "bytes": 300379,
+      "sha256": "391ed4dc5c5037d1f247bfcc17c091e85e2287ea31930b8a3a5ca3a7dbe7ae2d",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.97"
+        }
+      ]
+    },
+    {
+      "file": "img/detected.png",
+      "bytes": 189275,
+      "sha256": "d67298c4d349fc6c4187a1c5b2fe2906ac41a7452413e8cd5936bb45bdcf027a",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.97"
+        }
+      ]
+    },
+    {
+      "file": "img/donut.PNG",
+      "bytes": 502302,
+      "sha256": "0f524713ba4f7f35d278c02f96f744bf411df49553a602037dc8a7f2047b98a6",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.98"
+        }
+      ]
+    },
+    {
+      "file": "img/donut_logo.png",
+      "bytes": 59639,
+      "sha256": "2c111945fbdaa09d7c60386e732536587437a8c9fa02c3930fb7c64bae8f6d2a",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.98"
+        }
+      ]
+    },
+    {
+      "file": "img/donut_logo_black.jpg",
+      "bytes": 90255,
+      "sha256": "6ca4649f94669dec5ed40078f10308b7d39269a634ed29a2c6df8e74fcab68f5",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.77"
+        }
+      ]
+    },
+    {
+      "file": "img/donut_logo_white.jpg",
+      "bytes": 84811,
+      "sha256": "08cc8b87a2421c42e91fa7bffb97027e78db4c1178db7647f5baffeff9a727a3",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.76"
+        }
+      ]
+    },
+    {
+      "file": "img/generate_and_copy.PNG",
+      "bytes": 70351,
+      "sha256": "0d5a84fd79426c2f488f3c1fb56fa0121b4fd41dff79e4650313d62d860da193",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.70"
+        }
+      ]
+    },
+    {
+      "file": "img/iexplore.png",
+      "bytes": 17775,
+      "sha256": "65a0248c4f06ba33d3e72c7cd8575d914e2690b0ba81ee73384d3c39bd9531d9",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 7.93"
+        }
+      ]
+    },
+    {
+      "file": "include/aplib.h",
+      "bytes": 1863,
+      "sha256": "2c5358ca6939e6711770be066c240c69db73858c2c8b49ef1f0f3a94846a163d",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "www.ibsensoftware.com"
+        }
+      ]
+    },
+    {
+      "file": "include/depack.h",
+      "bytes": 530,
+      "sha256": "46c802ed7f649a3691878168c3c0af8392728d42883442ae51fb53066f8215f0",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "www.ibsensoftware.com"
+        }
+      ]
+    },
+    {
+      "file": "include/donut.h",
+      "bytes": 21729,
+      "sha256": "30cdde176b683e03f15501f95bdfd4d6f7704a65cca79a7cf5a9a9e6791b80ac",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "include/donut.ico",
+      "bytes": 9662,
+      "sha256": "720f0ea8f5d5a9702881b2b593c1dbf7796f80828445a2067f1af1f7c95481cd",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 2.84"
+        }
+      ]
+    },
+    {
+      "file": "include/donut.rc",
+      "bytes": 490,
+      "sha256": "c5d830a6cab7cb3dbd33c83aff3a13d081f5eb944fc19d77adfd3668b8dd1005",
+      "findings": []
+    },
+    {
+      "file": "include/encrypt.h",
+      "bytes": 2098,
+      "sha256": "995589935d4451e11286b17c7e302207377c1c80c9f34bd099d01f85364691bb",
+      "findings": []
+    },
+    {
+      "file": "include/errors.h",
+      "bytes": 2613,
+      "sha256": "eebbe336d18bc7165557d4065a6913da5dfddc3c78923bb2d262dc0c53ff2a77",
+      "findings": []
+    },
+    {
+      "file": "include/format.h",
+      "bytes": 2156,
+      "sha256": "a736dd4e9613ce72e627e756e4fefacd040a45a325f1fdec40fb5f5da15e3945",
+      "findings": []
+    },
+    {
+      "file": "include/hash.h",
+      "bytes": 2092,
+      "sha256": "0aed1b368fed5f34f57d6463df23ea30adefed7264b7e5aae3b5e3937a123e21",
+      "findings": []
+    },
+    {
+      "file": "include/mmap-windows.c",
+      "bytes": 1897,
+      "sha256": "6a60f89cb237eaba2533ed58e61f442bee22c7dc0950903141e7d2c54279edb0",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "msdn.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "include/mmap.h",
+      "bytes": 829,
+      "sha256": "a8eacbe6b33b774bd764b0b33da8e7b1bf72b3597605b7608e5145161db59b7b",
+      "findings": []
+    },
+    {
+      "file": "include/pe.h",
+      "bytes": 20041,
+      "sha256": "3a4cdc70606820f7bc254e4615ee2d3b08dcf7113bdef5de03814feaaa838200",
+      "findings": []
+    },
+    {
+      "file": "include/poppack.h",
+      "bytes": 986,
+      "sha256": "ef9897f9dcd82dac617d924e6f353a049e3be1a4e3c51a53bcca065426d618a7",
+      "findings": []
+    },
+    {
+      "file": "include/pshpack1.h",
+      "bytes": 886,
+      "sha256": "68b3cb608974b437916852cfe1f169f267c5d606e4824452348929b00c838e3c",
+      "findings": []
+    },
+    {
+      "file": "include/pshpack2.h",
+      "bytes": 886,
+      "sha256": "336850ef13feeb3e0974e4e2fa601c7c780e2a524d7a14dc5c252aa18dec0140",
+      "findings": []
+    },
+    {
+      "file": "include/pshpack4.h",
+      "bytes": 886,
+      "sha256": "64a68ac0c5f59e16ec41f2a04ae79133e222dd0ca6daf005ee1d402025ee4789",
+      "findings": []
+    },
+    {
+      "file": "include/pshpack8.h",
+      "bytes": 886,
+      "sha256": "612eb17b76ddc697f271bc704a8645c240346293fe4f0f13dac0f60f2d0929bf",
+      "findings": []
+    },
+    {
+      "file": "include/wintypes.h",
+      "bytes": 1106,
+      "sha256": "474eccbc6639d15a2448a7ba4aff96e6889bb6fa43a7794c4926a4c776ea31ad",
+      "findings": []
+    },
+    {
+      "file": "lib/aplib32.a",
+      "bytes": 16940,
+      "sha256": "ee26d6cc70205e01eb7a2fa4f3f450f7f25442e8653def3cde132d0f100b1a44",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 5.58"
+        }
+      ]
+    },
+    {
+      "file": "lib/aplib32.lib",
+      "bytes": 10516,
+      "sha256": "d43ba31fd13738c67e06c22c2ce2d4be6c6bde42a743597b213d12582f1da886",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 6.53"
+        }
+      ]
+    },
+    {
+      "file": "lib/aplib64.a",
+      "bytes": 22622,
+      "sha256": "45dba76acce3ef2f33b5842a56af63caa7b68305f0f788cde9ce546f7fdddfca",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 5.09"
+        }
+      ]
+    },
+    {
+      "file": "lib/aplib64.lib",
+      "bytes": 11872,
+      "sha256": "03f0d9cfe42edf9f20df102c195808c4cd3dba38a8ba79d01bb2108775c3ad4a",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 6.42"
+        }
+      ]
+    },
+    {
+      "file": "lib/donut.h",
+      "bytes": 9459,
+      "sha256": "232627d24548d9dc14004e1466a12ac03b18c359fbce6cf59a8cc3c37378408d",
+      "findings": []
+    },
+    {
+      "file": "loader/activescript.c",
+      "bytes": 10470,
+      "sha256": "02094c56469a0046ead5112aeb014d848d6c951622aade3efb48829033e5567a",
+      "findings": []
+    },
+    {
+      "file": "loader/activescript.h",
+      "bytes": 19077,
+      "sha256": "1e550a3383224de07080939cf475c80d42f0d3a799b09e908fd65a96ffc42e1e",
+      "findings": []
+    },
+    {
+      "file": "loader/amsi.h",
+      "bytes": 6738,
+      "sha256": "1e2746157807dacb94c1dcc5ff851f0c6fd51989414d057ab03943e682640bd1",
+      "findings": []
+    },
+    {
+      "file": "loader/bypass.c",
+      "bytes": 13317,
+      "sha256": "eb85a0f4375eb4c8d795f7ef895c2a1a5fc57be6dcae764820ab57b42ed72145",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "gist.github.com"
+        }
+      ]
+    },
+    {
+      "file": "loader/bypass.h",
+      "bytes": 20548,
+      "sha256": "af42c6f90bde0640e5f9f41e0f25f77b1719d291fd21b994f5f5a26776e00e3a",
+      "findings": []
+    },
+    {
+      "file": "loader/clib.c",
+      "bytes": 3708,
+      "sha256": "5fef8960ce8e7818cd8d019b84f2b4008e6d83db7c58a86a64a34b522f6c9f76",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "loader/clr.h",
+      "bytes": 31480,
+      "sha256": "a6776b8b9029a4d106393f95b2b628367adcd92857a35dd3f09446b99d404529",
+      "findings": []
+    },
+    {
+      "file": "loader/depack.c",
+      "bytes": 3150,
+      "sha256": "feb63ba601848e0a71eb2ce24a3805a2461fe74fbc51d220ffe590e684d27083",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "www.ibsensoftware.com"
+        }
+      ]
+    },
+    {
+      "file": "loader/encode/README.txt",
+      "bytes": 74,
+      "sha256": "c25b262179519b5d0499445d68efd10717aa3a3e84d63fe08eb2820f4b201482",
+      "findings": []
+    },
+    {
+      "file": "loader/encode/decode.h",
+      "bytes": 12364,
+      "sha256": "f8b3090e03b23559545d939f9e2a4e056bb1e0d34a678d540e7b28d51202470f",
+      "findings": []
+    },
+    {
+      "file": "loader/encode/encode.c",
+      "bytes": 2575,
+      "sha256": "e80d011e95c63ce5dc78ab8263eebd02fe69157c49dc8f6a5bcccc109c78dee1",
+      "findings": []
+    },
+    {
+      "file": "loader/encode/encode.exe",
+      "bytes": 140800,
+      "sha256": "09ae0d452b28399928ff4dcca806bf07ce6bc87663aa76f3188323b5b1f6af7c",
+      "findings": [
+        {
+          "id": "binary-artifact",
+          "severity": "high",
+          "line": 0,
+          "why": "compiled or binary artefact - source review is impossible here; analyse statically on REMnux (VM 105) before it is ever executed",
+          "evidence": "entropy 6.42"
+        }
+      ]
+    },
+    {
+      "file": "loader/encode/mmap-windows.c",
+      "bytes": 1893,
+      "sha256": "b9a041f2e7abf955169354db79be53791575941412b143a19edbc9a92f5bbbd4",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "msdn.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "loader/encode/mmap.h",
+      "bytes": 825,
+      "sha256": "6e04bde3a0e01be6ef6ced2489ff04c92fc7d401ff9d8c5449fb9ed07d8d75ce",
+      "findings": []
+    },
+    {
+      "file": "loader/exe2h/exe2h.c",
+      "bytes": 10475,
+      "sha256": "1ae0ce1e264486b58a1410c29253ea18546203904376d2effe486a0a18d6d13a",
+      "findings": []
+    },
+    {
+      "file": "loader/exe2h/mmap-windows.c",
+      "bytes": 1893,
+      "sha256": "b9a041f2e7abf955169354db79be53791575941412b143a19edbc9a92f5bbbd4",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "msdn.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "loader/exe2h/mmap.h",
+      "bytes": 825,
+      "sha256": "6e04bde3a0e01be6ef6ced2489ff04c92fc7d401ff9d8c5449fb9ed07d8d75ce",
+      "findings": []
+    },
+    {
+      "file": "loader/getpc.c",
+      "bytes": 2233,
+      "sha256": "562e3462f5387f5f3ac4e7a989c9ef4fee8a041baefad1b6b0e7a0fffc134f97",
+      "findings": []
+    },
+    {
+      "file": "loader/http_client.c",
+      "bytes": 10360,
+      "sha256": "e1f3ceb43023a0b1c8f17342a9af119f1731891206751d4fba5f03aa7fee3c76",
+      "findings": []
+    },
+    {
+      "file": "loader/inject.c",
+      "bytes": 6493,
+      "sha256": "397717828df0293ddbe18183a75da255a398b70ba2d347f25be30c3136921d03",
+      "findings": []
+    },
+    {
+      "file": "loader/inject.h",
+      "bytes": 2317,
+      "sha256": "09b4e74a44d3693b912c33fb26ff74ce81100003fd71409250ee0d3547b1ebd0",
+      "findings": []
+    },
+    {
+      "file": "loader/inject_local.c",
+      "bytes": 4176,
+      "sha256": "b99160bd4081097878d720b1e07e0715148ff4ec8125464974e5d71246515bfe",
+      "findings": []
+    },
+    {
+      "file": "loader/inmem_dotnet.c",
+      "bytes": 13060,
+      "sha256": "f7169b68167c3c7924e21352bbc45561790214e1bb1a25f52e6d395770f24101",
+      "findings": []
+    },
+    {
+      "file": "loader/inmem_pe.c",
+      "bytes": 31143,
+      "sha256": "eeb883073e936c71287badf23941ff445cc8b5134732c52463eb66199867f817",
+      "findings": []
+    },
+    {
+      "file": "loader/inmem_script.c",
+      "bytes": 6180,
+      "sha256": "2e01ecb5a1bfd1f1c45e4431d99f4298afef0b441a8cf87b290953c7d993b9dc",
+      "findings": []
+    },
+    {
+      "file": "loader/loader.c",
+      "bytes": 16134,
+      "sha256": "4be821884ba0a65b1163f4fde0b3aff2917ae2890cf8eb9495d127ed0d642c0a",
+      "findings": []
+    },
+    {
+      "file": "loader/loader.h",
+      "bytes": 5346,
+      "sha256": "3a031267dfa8232c817acf534ffcac2062d7c8241426b136baaf8549120804e5",
+      "findings": []
+    },
+    {
+      "file": "loader/order.txt",
+      "bytes": 11,
+      "sha256": "43636fa17e26b9547f803264fcb3df1ab312c6e7c4892073db8d973cf57fc2eb",
+      "findings": []
+    },
+    {
+      "file": "loader/peb.c",
+      "bytes": 10761,
+      "sha256": "c703b3a80f0778991d327b332668aef7f165ac833b9c9fdce2806997b78bff6e",
+      "findings": []
+    },
+    {
+      "file": "loader/peb.h",
+      "bytes": 11263,
+      "sha256": "6b379138c144bc5b0ffdde694833be8d6cd567cf4f0e713683b5154b27f1b720",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "blog.rewolf.pl"
+        }
+      ]
+    },
+    {
+      "file": "loader/runsc.c",
+      "bytes": 18237,
+      "sha256": "d237d54dcb0c84980bc24e2ae49dcf4428995ab7375ee797ff9e6148140128cb",
+      "findings": []
+    },
+    {
+      "file": "loader/test/api_test.c",
+      "bytes": 904,
+      "sha256": "546525258e0af389cc4b7a06a26aeb805a092fcdff6ac68338a9c602bf4c1d44",
+      "findings": []
+    },
+    {
+      "file": "loader/test/debug.cpp",
+      "bytes": 6034,
+      "sha256": "0c4cb711b9f875eb895e7aa10f5c2a1f78ba2340b9edc2a66515ab3a66f4d124",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "docs.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "loader/test/debug.h",
+      "bytes": 3139,
+      "sha256": "1d7f4293e116ce5889b5228cec40eb218d24004e1aab72bca8407d682d01b00c",
+      "findings": []
+    },
+    {
+      "file": "loader/test/rdt.cpp",
+      "bytes": 14817,
+      "sha256": "dd29608353be9da37df0e9fe882cb181385eadaf761a878e7042f372d0fa11ec",
+      "findings": [
+        {
+          "id": "dynamic-eval",
+          "severity": "high",
+          "line": 139,
+          "why": "executes decoded or decompressed data, hiding its real behaviour from review",
+          "evidence": "// ([system.reflection.assembly]::loadfile(\"C:\\Windows\\Microsoft.NET\\assembly\\GAC_MSIL\\System.Management.Automation\\v4.0_3.0.0.0__31bf3856ad364e35\\System.Management.Automation.dll\")).FullName"
+        },
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "3.0.0.0, 4.0.0.0, docs.microsoft.com"
+        }
+      ]
+    },
+    {
+      "file": "loader/winapi.h",
+      "bytes": 20455,
+      "sha256": "a25282b505d28f7b953c8563b8a250ce82dd7dc33018f612bc1e0566829a0870",
+      "findings": []
+    },
+    {
+      "file": "loader/wscript.c",
+      "bytes": 12077,
+      "sha256": "e25c18eea8f733fa84caeec3ed40b0f97fae3a8c94823806346371a8c38b51c8",
+      "findings": []
+    },
+    {
+      "file": "loader/wscript.h",
+      "bytes": 10189,
+      "sha256": "4378815abb910546677f68e31ca468f2caf6700bb4b431f38a1b381d6add72e9",
+      "findings": []
+    },
+    {
+      "file": "loader/xmldom.h",
+      "bytes": 20159,
+      "sha256": "42dcd27a771f5b99c0a6989cff7096a97ddc0d6d560b6152d3ef69d0790ef00c",
+      "findings": []
+    },
+    {
+      "file": "loader_exe_x64.go",
+      "bytes": 84028,
+      "sha256": "17b050b46c50365dff0875082de6d86341f73326d01ecf662360efb1989ce237",
+      "findings": []
+    },
+    {
+      "file": "loader_exe_x64.h",
+      "bytes": 83977,
+      "sha256": "6c072c99ba50c672bd0ec61684351095a0b194852db423cc67f674dfc6de0175",
+      "findings": []
+    },
+    {
+      "file": "loader_exe_x86.go",
+      "bytes": 72883,
+      "sha256": "f6e1912a96edfa850319eaf167ffb7acf713f1fda5f48991aaafa605b9e746f4",
+      "findings": []
+    },
+    {
+      "file": "loader_exe_x86.h",
+      "bytes": 72832,
+      "sha256": "8b521ddcacf3ac3b4f8768ce2b486736210ac4db6c11f59a39ddac6147fc07a9",
+      "findings": []
+    },
+    {
+      "file": "pyproject.toml",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "findings": []
+    },
+    {
+      "file": "setup.py",
+      "bytes": 1742,
+      "sha256": "a28b70af2602a8ad3df87fbd4c5fc452a9c786d2f56a003cacd093bf91a88493",
+      "findings": [
+        {
+          "id": "external-endpoint",
+          "severity": "high",
+          "line": 0,
+          "why": "hard-coded public host. Under SAFETY RULE 1 the PoC may not contact it: re-point it at a lab-hosted service on Kali (VM 100) or reject the PoC",
+          "evidence": "github.com"
+        }
+      ]
+    },
+    {
+      "file": "version-release-notes.txt",
+      "bytes": 3056,
+      "sha256": "152fb2fefba54200ccbf1756e7d389d16e1432c9ced09feacd69b98fe6bcc5a5",
+      "findings": []
+    }
+  ],
+  "mechanical_verdict": "NEEDS-HUMAN-REVIEW",
+  "disclaimer": "A mechanical scan never clears code. Read the source. Treat compiled or obfuscated artefacts as unknown-malicious and analyse them on REMnux (VM 105). Execution happens only on the isolated target, snapshot before and roll back after."
+}
