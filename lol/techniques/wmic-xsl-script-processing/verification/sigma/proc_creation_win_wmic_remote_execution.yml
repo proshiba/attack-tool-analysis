@@ -1,0 +1,44 @@
+title: WMIC Remote Command Execution
+id: 7773b877-5abb-4a3e-b9c9-fd0369b59b00
+related:
+  - id: e42af9df-d90b-4306-b7fb-05c863847ebd
+    type: obsolete
+  - id: 09af397b-c5eb-4811-b2bb-08b3de464ebf
+    type: obsolete
+status: experimental
+description: >-
+  Detects WMIC querying a remote node. Logic adopted from SigmaHQ master at
+  commit 3c0d35188942eb6a8c373e4f4973ac7e84116993.
+references:
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_remote_execution.yml
+  - https://attack.mitre.org/techniques/T1047/
+author: frack113, Nasreddine Bencherchali (Nextron Systems); precision enrichment by Codex lab orchestrator
+date: '2023-02-14'
+modified: '2026-08-15'
+tags:
+  - attack.execution
+  - attack.t1047
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_img:
+    - Image|endswith: '\WMIC.exe'
+    - OriginalFileName: 'wmic.exe'
+  selection_cli:
+    CommandLine|contains|windash: '/node:'
+  filter_main_localhost:
+    CommandLine|contains:
+      - 'localhost'
+      - '127.0.0.1'
+  condition: all of selection_* and not 1 of filter_main_*
+falsepositives:
+  - Legitimate remote inventory and administration through WMIC
+fp_likelihood: medium
+recommended_role: hunt
+precision_notes: >-
+  Measured against the process-creation category. The self-node lab command
+  matched, but Windows optimized the operation locally and produced no DCOM
+  TCP flow, so command-line context alone cannot prove lateral movement.
+  Enrich with a distinct destination host and remote-authentication telemetry.
+level: low

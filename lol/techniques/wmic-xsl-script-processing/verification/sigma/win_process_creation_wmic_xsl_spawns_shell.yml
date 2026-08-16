@@ -1,4 +1,4 @@
-title: WMIC Remote XSL Spawns a Command or Script Interpreter
+title: WMIC XSL Spawns a Command or Script Interpreter
 id: ac2c0a8c-7e39-45b5-96a0-fc8481856380
 status: experimental
 description: >-
@@ -16,9 +16,7 @@ logsource:
 detection:
   selection_parent:
     ParentImage|endswith: '\wmic.exe'
-    ParentCommandLine|contains|all:
-      - '/format:'
-      - '.xsl'
+    ParentCommandLine|contains|windash: '/format:'
   selection_child:
     Image|endswith:
       - '\cmd.exe'
@@ -34,9 +32,12 @@ falsepositives:
 fp_likelihood: low
 recommended_role: alert
 precision_notes: >-
-  The clean corpus produced 0 matches among 23695 process starts and the rule
-  hit the verified attack sample. A custom legacy reporting stylesheet can
-  legitimately launch a helper interpreter, but this proves script execution
-  rather than merely stylesheet retrieval. Correlate with remote /format or
-  XSL network/cache evidence and JScript-start telemetry.
+  Measured against the process-creation category and hit the HTTP, local,
+  SMB, VBScript, and HTTPS stylesheet samples. The rule does not require an XSL
+  extension because WMIC accepts differently named stylesheet resources. A
+  custom legacy reporting stylesheet can legitimately launch a helper, but
+  this proves an execution consequence rather than retrieval alone. Correlate
+  with remote /format, cache/retrieval, or script-engine telemetry. Collection
+  requires ParentCommandLine (present in Sysmon EID 1 but not ordinary
+  Security 4688), so a 4688-only deployment is silent.
 level: high

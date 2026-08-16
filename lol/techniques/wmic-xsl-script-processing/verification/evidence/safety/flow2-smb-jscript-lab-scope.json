@@ -1,0 +1,82 @@
+{
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+  "allowed_networks": [
+    "192.168.1.0/24"
+  ],
+  "allowed_domains": [],
+  "management_networks": [
+    "10.9.0.0/24"
+  ],
+  "declared_tool_images": [
+    "wmic.exe",
+    "cmd.exe",
+    "wmic-jscript-smb.xsl",
+    "smbd",
+    "smb.conf"
+  ],
+  "inputs": {
+    "zeek_dir": "/tmp/wmic-xsl-expansion-20260815/flow2-smb-jscript/nsm",
+    "sysmon_json": "/tmp/wmic-xsl-expansion-20260815/flow2-smb-jscript/wmic-flow2-safety.json",
+    "operator_logs": [
+      "lol/techniques/wmic-xsl-script-processing/verification/evidence/safety/flow2-smb-jscript-operator.txt",
+      "lol/techniques/wmic-xsl-script-processing/verification/fixtures/smb.conf"
+    ],
+    "sysmon_eid3_events_read": 48,
+    "sysmon_eid22_events_read": 35,
+    "attributed_destinations": 16,
+    "attribution_available": true
+  },
+  "capture_scale": {
+    "conn_log_rows": 3,
+    "off_lab_destinations": 2,
+    "note": "a capture pre-filtered to in-lab traffic cannot show an off-lab destination, so 0 here proves nothing on its own - never filter the input"
+  },
+  "violation_count": 0,
+  "violations": [],
+  "manifest_count": 2,
+  "manifest": [
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 199.232.214.172:80/tcp (1 connections, 0 bytes, 12 packets sent)",
+      "attributed_images": [
+        "C:\\Windows\\Sysmon64.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "199.232.214.172",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 12,
+      "conn_states": [
+        "SF"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 23.11.38.161:80/tcp (1 connections, 0 bytes, 12 packets sent)",
+      "attributed_images": [
+        "C:\\ProgramData\\Microsoft\\Windows Defender\\Platform\\4.18.26070.9-0\\MpDefenderCoreService.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "23.11.38.161",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 12,
+      "conn_states": [
+        "SF"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    }
+  ],
+  "verdict": "PASS"
+}

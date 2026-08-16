@@ -1,0 +1,43 @@
+title: WMIC Applies XSL From a User-Writable Path
+id: 5b4b1f39-0964-4bf9-b1de-8226f262d036
+status: experimental
+description: >-
+  Detects WMIC applying an XSL or XSLT stylesheet from a per-user temporary
+  directory. This is a measured high-confidence narrowing of SigmaHQ's broad
+  local-XSL rule 05c36dd6, proven with a medium-integrity standard-user run.
+references:
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_squiblytwo_bypass.yml
+  - https://attack.mitre.org/techniques/T1220/
+author: Codex lab orchestrator
+date: '2026-08-15'
+tags:
+  - attack.t1220
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_identity:
+    - Image|endswith: '\wmic.exe'
+    - OriginalFileName: 'wmic.exe'
+  selection_format:
+    CommandLine|contains|windash: '/format:'
+  selection_path:
+    CommandLine|contains: '\AppData\Local\Temp\'
+  selection_extension:
+    CommandLine|contains:
+      - '.xsl'
+      - '.xslt'
+  condition: selection_identity and selection_format and selection_path and selection_extension
+falsepositives:
+  - Approved legacy WMIC reporting that stores local stylesheets in a user's temporary directory
+fp_likelihood: low
+recommended_role: alert
+precision_notes: >-
+  Measured against the process-creation category and exercised by the
+  standard-user local-XSL flow. Upstream 05c36dd6 covers the broad local form
+  as hunt/low; this rule's AppData Temp plus XSL-extension constraints close
+  its unmeasured precision gap for an alert/high subset. It deliberately misses
+  other local and relative paths. Correlate with a WMIC child or script-engine
+  telemetry where approved legacy reporting exists.
+level: high

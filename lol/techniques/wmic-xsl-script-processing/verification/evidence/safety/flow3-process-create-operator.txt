@@ -1,0 +1,5 @@
+flow=flow3-process-call-create
+kali_service=none
+target=local VM 104 only
+command=C:\Windows\System32\wbem\WMIC.exe process call create "cmd.exe /c echo benign-process-create>C:\lab\wmic-process-create-marker.txt"
+effects=write C:\lab\wmic-process-create-marker.txt through cmd.exe only

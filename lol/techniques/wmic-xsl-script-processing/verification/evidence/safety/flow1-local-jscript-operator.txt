@@ -1,0 +1,7 @@
+flow=flow1-local-jscript-standard-user
+kali_service=none
+target=local VM 104 only
+account=WIN10-ANALYSIS\WmicLabUser, Users plus Performance Log Users, not Administrators, medium integrity
+fixture=C:\Users\WmicLabUser\AppData\Local\Temp\wmic-jscript-local.xsl
+command=C:\Windows\System32\wbem\WMIC.exe os get Caption /format:"C:\Users\WmicLabUser\AppData\Local\Temp\wmic-jscript-local.xsl"
+effects=write C:\Users\WmicLabUser\AppData\Local\Temp\wmic-local-marker.txt through cmd.exe only

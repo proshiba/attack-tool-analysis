@@ -1,0 +1,65 @@
+title: Suspicious Process Created Via Wmic.EXE
+id: 3c89a1e8-0fba-449e-8f1b-8409d6267ec8
+related:
+  - id: 526be59f-a573-4eea-b5f7-f0973207634d
+    type: derived
+status: experimental
+description: >-
+  Detects process call create with suspicious interpreters, LOLBINs, or
+  user-writable paths. Logic adopted from SigmaHQ master at commit
+  3c0d35188942eb6a8c373e4f4973ac7e84116993.
+references:
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_wmic_susp_process_creation.yml
+  - https://attack.mitre.org/techniques/T1047/
+author: Florian Roth (Nextron Systems), Nasreddine Bencherchali (Nextron Systems); precision enrichment by Codex lab orchestrator
+date: '2020-10-12'
+modified: '2026-08-15'
+tags:
+  - attack.execution
+  - attack.t1047
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    CommandLine|contains|all:
+      - 'process '
+      - 'call '
+      - 'create '
+    CommandLine|contains:
+      - 'rundll32'
+      - 'bitsadmin'
+      - 'regsvr32'
+      - 'cmd.exe /c '
+      - 'cmd.exe /k '
+      - 'cmd.exe /r '
+      - 'cmd /c '
+      - 'cmd /k '
+      - 'cmd /r '
+      - 'powershell'
+      - 'pwsh'
+      - 'certutil'
+      - 'cscript'
+      - 'wscript'
+      - 'mshta'
+      - '\Users\Public\'
+      - '\Windows\Temp\'
+      - '\AppData\Local\'
+      - '%temp%'
+      - '%tmp%'
+      - '%ProgramData%'
+      - '%appdata%'
+      - '%comspec%'
+      - '%localappdata%'
+  condition: selection
+falsepositives:
+  - Administrative process creation using an interpreter or user-writable path
+fp_likelihood: medium
+recommended_role: alert
+precision_notes: >-
+  Measured 0 of 23,695 process-creation events and hit the cmd.exe /c sample,
+  but the corpus contains only three WMIC events. Legacy administration also
+  uses process call create with cmd or PowerShell and user-writable staging,
+  so the absence of those inputs does not support low FP likelihood. Retain
+  alert/high severity but review the requested child and initiating host.
+level: high

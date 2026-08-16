@@ -30,11 +30,12 @@ detection:
 falsepositives:
   - Legacy enterprise reporting applications retrieving approved XSL resources through the Windows URL-moniker stack
 fp_likelihood: medium
-recommended_role: alert
+recommended_role: hunt
 precision_notes: >-
   This Suricata rule is not testable on the EVTX corpus. Legitimate legacy
   reporting applications can fetch ordinary XSL or XSLT assets with the same
   MSIE 7.0 and Trident/7.0 URL-moniker profile. Make the signal actionable by
   correlating the requester with WMIC /format execution, a WMIC shell child,
-  or WMIC JScript-start registry telemetry.
-level: high
+  or WMIC JScript-start registry telemetry. It is extension-dependent and
+  cannot inspect the HTTPS flow, so endpoint correlation is required.
+level: low

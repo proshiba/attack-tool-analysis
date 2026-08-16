@@ -1,0 +1,7 @@
+flow=flow4-node-self-remote
+kali_service=none
+target=192.168.1.52, VM 104's own analysis address
+accepted_command=C:\Windows\System32\wbem\WMIC.exe /node:192.168.1.52 os get Caption
+excluded_credentialed_attempt=C:\Windows\System32\wbem\WMIC.exe /node:192.168.1.52 /user:WIN10-ANALYSIS\WmicNodeAdmin /password:<redacted> os get Caption
+excluded_attempt_result=Windows rejected explicit credentials for a self-local connection; the disposable credential is never committed
+effects=query operating-system Caption only; no payload or process creation

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 1 at design time - no scenario targets anything outside the lab",
+  "target": "lol/techniques/wmic-xsl-script-processing/verification",
+  "files_checked": [
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/wmic-xsl-script-processing/verification/scenarios.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/wmic-xsl-script-processing/verification/README.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/wmic-xsl-script-processing/verification/verification.json"
+  ],
+  "scope_declaration_present": true,
+  "severity_counts": {
+    "high": 1
+  },
+  "findings": [
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "scenarios.md",
+      "line": 118,
+      "detail": "external host certutil.lab",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "`https://certutil.lab:18443/`; the target temporarily maps that name to Kali"
+    }
+  ],
+  "verdict": "REVIEW"
+}

