@@ -33,10 +33,10 @@ the committed report uses the checker's supported `--allow-domain
 certutil.lab` input and reads `PASS` with no findings.
 
 `format-filter-operator-log.json` contains the exact local-only WMIC commands,
-time windows, accounts, exit codes, and marker results for 13 accepted rows.
+time windows, accounts, exit codes, and marker results for 14 accepted rows.
 Each `format-filter-*-lab-scope.json` report was computed from that record and
 the row's full, unfiltered bounded event JSON with `--tool-image wmic.exe`.
-All 13 verdicts are `PASS`: no traffic attributable to the declared attack
+All 14 verdicts are `PASS`: no traffic attributable to the declared attack
 left the lab. The Zeek directory was empty because these were deliberately
 local flows with no packet capture; the reports retain the checker's warning
 that zero packet rows alone prove nothing. Sysmon EID 3/22 attribution—not a
@@ -55,3 +55,10 @@ reusable `invoke-format-filter-flow.ps1` fixture therefore accepts it as a
 base64-transported mandatory parameter; base64 is transport, not storage or
 protection. Raw archive hashes in `format-filter-falsification.json` identify
 the exact collected artifacts retained outside the repository.
+
+After gate iteration 1 requested the extensionless `/format:list` boundary,
+`scenario-scope-format-filter-iteration2-pre-run.json` returned `PASS` before
+execution. The new row's post-run scope report also returned `PASS`, and VM 104
+was rolled back to `win_verify_baseline` afterward.
+`scenario-scope-format-filter-iteration2-final.json` then returned `PASS` over
+the completed 14-row scenario and evidence set.

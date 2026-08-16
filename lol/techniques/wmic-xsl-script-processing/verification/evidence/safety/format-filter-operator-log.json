@@ -103,6 +103,15 @@
       "marker_created": true
     },
     {
+      "id": "evasion-rel-list-extensionless",
+      "start_utc": "2026-08-16T08:27:26.8776002Z",
+      "end_utc": "2026-08-16T08:27:28.0025977Z",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:list",
+      "exit_code": 0,
+      "marker_created": false
+    },
+    {
       "id": "extension-abs-txt",
       "start_utc": "2026-08-16T07:54:05.8874471Z",
       "end_utc": "2026-08-16T07:54:06.7936995Z",

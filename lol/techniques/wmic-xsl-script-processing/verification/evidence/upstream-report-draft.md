@@ -56,6 +56,11 @@ Relative `/format:csv.xsl`, `/format:table.xsl`, `/format:value.xsl`, and
 `/format:"C:\Users\FmtStd\AppData\Local\Temp\list.xsl"` executed but did not
 activate the loose filter because the path separates `Format:` from `list`.
 
+An additional gate-requested row planted `list.xsl` in the same standard-user
+CWD but invoked extensionless `/format:list`. WMIC returned its normal built-in
+list output and did not write the marker, so the file did not execute. Both the
+original and proposed filters correctly suppressed that benign invocation.
+
 Relative resolution does not require administrator rights: current-directory
 copies executed as both standard user and administrator. If the current
 directory has no copy, WMIC also falls back to `%SystemRoot%\System32\wbem`;
@@ -87,7 +92,7 @@ trade-off is that an unusual legitimate command with another argument after
 the built-in format token may alert. That is narrower than removing the filter
 and safer than the existing filename-triggerable substring exclusion.
 
-The change passes sigma-cli 3.1.0/pySigma parsing. Against the captured matrix,
-the original rule produced 8 findings and the proposed rule 13, restoring all
-five successful evasion rows. Clean-corpus FP remained 0/23,695 process-creation
-events (0.0%).
+The change passes sigma-cli 3.1.0/pySigma parsing. Against the 14-row captured
+matrix, the original rule produced 8 findings and the proposed rule 13,
+restoring all five successful evasion rows while suppressing the extensionless
+built-in row. Clean-corpus FP remained 0/23,695 process-creation events (0.0%).

@@ -14,15 +14,16 @@
     "current_working_directory_administrator": "executed",
     "wbem_fallback_when_cwd_copy_absent": "executed as administrator",
     "practical_precondition": "A standard user can execute a relative stylesheet from a user-writable current working directory. Administrator rights are needed only to plant the fallback copy in System32\\wbem.",
-    "absolute_path_syntax": "The unquoted absolute value was refused; the quoted absolute value executed."
+    "absolute_path_syntax": "The unquoted absolute value was refused; the quoted absolute value executed.",
+    "extensionless_builtin_alias": "With list.xsl planted in the CWD, /format:list used the built-in formatter and did not execute the file."
   },
   "measurement": {
     "engine": "/opt/audit/bin/evtx-sigma-checker on VM 107 with thor.yml log-source mapping",
     "sigma_cli": "3.1.0 sigma check plus pySigma 1.5.0 parsed condition model; no output backend was installed",
     "original_finding_count": 8,
     "fixed_finding_count": 13,
-    "selector_diagnostic_count": 13,
-    "known_format_filter_diagnostic_count": 5,
+    "selector_diagnostic_count": 14,
+    "known_format_filter_diagnostic_count": 6,
     "remote_operation_filter_diagnostic_count": 0,
     "clean_corpus": {
       "event_count_total": 6611183,
@@ -575,6 +576,65 @@
       }
     },
     {
+      "id": "evasion-rel-list-extensionless",
+      "requested_privilege": "standard",
+      "account": "WIN10-ANALYSIS\\FmtStd",
+      "is_administrator": false,
+      "integrity": "Mandatory Label\\Medium Mandatory Level Label            S-1-16-8192",
+      "working_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork",
+      "stylesheet_destination": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\list.xsl",
+      "window": [
+        "2026-08-16T08:27:26.8776002Z",
+        "2026-08-16T08:27:28.0025977Z"
+      ],
+      "format_argument": "/format:list",
+      "wmic_exit_code": 0,
+      "marker_created": false,
+      "marker_content": null,
+      "wmic_output": [
+        "",
+        "",
+        "",
+        "",
+        "Caption=Microsoft Windows 10 Enterprise LTSC Evaluation",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "scripted_stylesheet_executed": false,
+      "sysmon_eid1": {
+        "time_created_utc": "2026-08-16T08:27:26.9992189Z",
+        "image": "C:\\Windows\\System32\\wbem\\WMIC.exe",
+        "original_file_name": "wmic.exe",
+        "command_line": "\"C:\\Windows\\System32\\wbem\\WMIC.exe\" os get Caption /format:list",
+        "current_directory": "C:\\Users\\FmtStd\\AppData\\Local\\Temp\\fmtwork\\",
+        "user": "WIN10-ANALYSIS\\FmtStd",
+        "integrity_level": "Medium",
+        "hashes": "SHA1=3DD10F1CD6E63A3DACAFD6773E06D0B69D0C8E3E,MD5=EBE8CE528A79B5CC0782E8DFDA250600,SHA256=DA603FA720AB43AA6D4D36AA9FDB828DAB9645523EABAAC209AF6451D5B4D757,IMPHASH=527C7C66CDD13D72D793BCA3A417BCBE"
+      },
+      "original_rule": {
+        "fired": false,
+        "selector_diagnostic_matched": true,
+        "known_format_filter_diagnostic_matched": true,
+        "remote_operation_filter_diagnostic_matched": false,
+        "responsibility": "selectors matched, but filter_main_known_format matched and excluded the event"
+      },
+      "fixed_rule": {
+        "fired": false
+      },
+      "evaded_original_rule": false,
+      "raw_evidence": {
+        "committed": false,
+        "sysmon_evtx_sha256": "ec1cab989a94ce372e589cdce5f7469cd57020a8d344c2aa4211f56f925b66b4",
+        "events_json_sha256": "6fb092052c601f7b441427c5d76f1c7d438ca80f3dd88ce9e134d5e6c5e36733",
+        "flow_archive_sha256": "04ca2e2e736f9a3cfd72fd06a01958fca8a641ff719d712620af19f4d57076ac"
+      }
+    },
+    {
       "id": "extension-abs-txt",
       "requested_privilege": "standard",
       "account": "WIN10-ANALYSIS\\FmtStd",
@@ -673,5 +733,5 @@
       }
     }
   ],
-  "conclusion": "CONFIRMED: five scripted XSL executions at built-in relative filenames evaded the adopted rule because the loose known-format substring filter matched. The endswith fix restored all five findings."
+  "conclusion": "CONFIRMED: five scripted XSL executions at explicit built-in relative filenames evaded the adopted rule because the loose known-format substring filter matched. The endswith fix restored all five findings. A gate-requested extensionless /format:list row did not execute the planted list.xsl and was correctly suppressed by the fixed rule."
 }

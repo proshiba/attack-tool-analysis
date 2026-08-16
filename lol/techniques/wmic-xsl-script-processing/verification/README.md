@@ -1,6 +1,6 @@
 # WMIC XSL script-processing verification
 
-Seven original isolated-lab flows and a 13-row format-filter falsification
+Seven original isolated-lab flows and a 14-row format-filter falsification
 matrix completed, including the optional HTTPS flow. The original blind spot
 remains: a medium-integrity standard user can apply scripted XSL from a local
 user-writable directory without HTTP, SMB, TLS, URL, or Internet-cache signals.
@@ -46,12 +46,14 @@ CWD; elevation is needed only to plant the fallback directory.
 | quoted absolute `list.xsl` | yes | fired | fired | path breaks the loose substring |
 | relative `list/csv/table/value.xsl` | yes | **silent** | fired | known-format substring filter |
 | dash `-format:list.xsl` | yes | **silent** | fired | known-format substring filter |
+| extensionless `/format:list` with planted `list.xsl` | no; built-in output | silent | silent | exact built-in token correctly suppressed |
 | unquoted absolute `benign.xsl` | no, exit 44005 | fired | fired | WMIC refused; not an evasion |
 | quoted absolute `.txt` / `.jpg` | no, exit 44210 | fired | fired | WMIC refused extension; not an evasion |
 
-The selector-only diagnostic matched 13/13 captured WMIC events. The
-known-format filter diagnostic matched exactly the five successful silent
-rows, and the remote-operation filter matched 0/13. The hypothesis is
+The selector-only diagnostic matched 14/14 captured WMIC events. The
+known-format filter diagnostic matched the five successful silent rows plus
+the benign extensionless built-in row, and the remote-operation filter matched
+0/14. The hypothesis is
 therefore confirmed. Our copy changes the built-in filter from `contains` to
 `endswith`; its trade-off is a possible alert when a benign built-in token is
 not the final command-line text. The filter is retained rather than removed.
@@ -115,8 +117,8 @@ critical finding and requested review only for the declared lab-only
 three self-address/local-name checker false positives are retained and
 explained in `evidence/safety/README.md`.
 
-The 13-row local matrix has its own aggregate operator record and one post-run
-scope report per row; all 13 are `PASS`. No packet capture was needed or
+The 14-row local matrix has its own aggregate operator record and one post-run
+scope report per row; all 14 are `PASS`. No packet capture was needed or
 fabricated. The checker received each unfiltered bounded Sysmon JSON and
 `wmic.exe` attribution. VM 104 was rolled back before and after every row and
 the final baseline check found no fixture directory, disposable account, or

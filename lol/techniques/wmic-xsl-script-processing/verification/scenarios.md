@@ -160,12 +160,19 @@ with exit 44005. Contrary to the rule's extension-independent detection text,
 this WMIC build refused both quoted `.txt` and `.jpg` copies with exit 44210 and
 no marker; those rows are non-executions, not evasions.
 
+Gate iteration 1 identified a still-shorter falsification case: plant
+`list.xsl` in the standard user's current directory but invoke the canonical
+extensionless built-in token `/format:list`. The row exited 0 but did **not**
+write the marker; WMIC returned its normal built-in list output. The planted
+file was therefore not selected, both original and fixed rules were silent,
+and the negative row supports retaining the `endswith` built-in suppression.
+
 Every row began and ended with rollback to `win_verify_baseline`. Each accepted
 row retains the runner result, marker outcome, full bounded Sysmon collection,
 and exact Sysmon EID 1 command line. Because this flow is local-only, no network
 capture was manufactured: post-run safety used the unfiltered Sysmon EID 3/22
 collection plus the exact operator record and an empty Zeek directory to
-evaluate whether any traffic was attributable to `wmic.exe`. All 13 row
+evaluate whether any traffic was attributable to `wmic.exe`. All 14 row
 verdicts are `PASS`.
 
 ## Grounding and priority

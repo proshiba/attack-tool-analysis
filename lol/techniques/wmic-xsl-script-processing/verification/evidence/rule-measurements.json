@@ -17,13 +17,14 @@
     "rule_id": "05c36dd6-79d6-4a9a-97da-3db20298ab2d",
     "change": "filter_main_known_format changed from CommandLine|contains to CommandLine|endswith",
     "captured_matrix": {
-      "event_count": 13,
+      "event_count": 14,
       "original_findings": 8,
       "fixed_findings": 13,
-      "selector_diagnostic_findings": 13,
-      "known_format_filter_diagnostic_findings": 5,
+      "selector_diagnostic_findings": 14,
+      "known_format_filter_diagnostic_findings": 6,
       "remote_operation_filter_diagnostic_findings": 0,
-      "successful_script_executions_restored": 5
+      "successful_script_executions_restored": 5,
+      "extensionless_builtin_row": "suppressed by both original and fixed rule; planted list.xsl did not execute"
     },
     "clean_corpus": {
       "events": 6611183,

@@ -103,13 +103,22 @@ scripted stylesheet in a user-writable current directory and executed:
 WMIC exited 0 and wrote the marker, but the original rule did not fire. The
 same result was measured for relative `csv.xsl`, `table.xsl`, `value.xsl`, and
 dash-form `-format:list.xsl`. The selector-only diagnostic matched all 13
-captured rows; the known-format-filter diagnostic matched exactly those five;
+initial rows; the known-format-filter diagnostic matched exactly those five;
 the remote-operation filter matched none. This is therefore a filter-caused
 false negative on successful T1220 execution, not a rule-reading inference.
 
+Gate iteration 1 challenged whether `/format:list` could also load a planted
+`list.xsl` from the CWD and remain suppressed by `endswith`. The added
+standard-user row refuted that extensionless variant: WMIC exited 0, returned
+its normal built-in list output, did not write the marker, and both original
+and fixed rules stayed silent. Across the resulting 14 rows, selector-only
+matched 14, known-format filter matched the five explicit-filename evasions
+plus this one benign built-in invocation, and the remote filter matched zero.
+
 Our copy narrows the filter to `CommandLine|endswith` for the actual built-in
-tokens. The fixed rule matched all 13 captured WMIC format events, restoring
-the five successful scripted-XSL findings. The trade-off is deliberate: a
+tokens. The fixed rule matched 13 of 14 captured WMIC format events, restoring
+the five successful scripted-XSL findings while continuing to suppress the
+benign extensionless built-in row. The trade-off is deliberate: a
 benign command that places another argument after a built-in format token may
 now alert, while a filename suffix can no longer activate the suppression.
 The filter remains present, so ordinary terminal `/format:list`-style commands

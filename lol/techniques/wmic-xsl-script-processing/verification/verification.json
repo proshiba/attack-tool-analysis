@@ -136,9 +136,9 @@
     {
       "id": "flow7-format-filter-falsification",
       "technique": "T1220",
-      "scenario": "13-row resolution, built-in-filename, dash-form, absolute-path, and extension matrix",
+      "scenario": "14-row resolution, built-in-filename, extensionless built-in, dash-form, absolute-path, and extension matrix",
       "account": "WIN10-ANALYSIS\\FmtStd at medium integrity for attack rows; WIN10-ANALYSIS\\FmtAdmin at high integrity for administrator resolution probes",
-      "window": ["2026-08-16T07:38:03.1796480Z", "2026-08-16T07:55:10.8471246Z"],
+      "window": ["2026-08-16T07:38:03.1796480Z", "2026-08-16T08:27:28.0025977Z"],
       "resolution": {
         "standard_user_cwd": "relative benign.xsl executed",
         "administrator_cwd": "relative benign.xsl executed",
@@ -151,14 +151,15 @@
         "successful_original_rule_evasions": ["/format:list.xsl", "/format:csv.xsl", "/format:table.xsl", "/format:value.xsl", "-format:list.xsl"],
         "each_evasion": "WMIC exit 0, marker created, original rule silent, selector diagnostic matched, known-format filter diagnostic matched, remote filter did not match",
         "absolute_list_control": "quoted user-Temp list.xsl executed and original rule fired",
+        "extensionless_builtin_control": "/format:list returned exit 0 and normal built-in Caption output, but did not execute the planted CWD list.xsl or create a marker; both original and fixed rules remained silent",
         "extension_independence": "refuted on this WMIC build: quoted .txt and .jpg copies were refused with exit 44210 and no marker"
       },
       "measurement": {
         "evidence": "evidence/format-filter-falsification.json",
         "original_findings": 8,
         "fixed_findings": 13,
-        "selector_diagnostic_findings": 13,
-        "known_format_filter_diagnostic_findings": 5,
+        "selector_diagnostic_findings": 14,
+        "known_format_filter_diagnostic_findings": 6,
         "remote_operation_filter_diagnostic_findings": 0,
         "fixed_clean_corpus": "0/23695 process_creation events (0.0%), measured floor low, verdict no-corpus-coverage"
       },
@@ -172,10 +173,10 @@
         "network": {"status": "none attributable", "assessment": "local-only flow; unfiltered Sysmon EID 3/22 checked per row"},
         "files": {"status": "observed", "signals": ["lab-authored stylesheet", "marker on successful rows"]},
         "registry": {"status": "observed", "signals": ["JScript engine telemetry on successful rows"]},
-        "process": {"status": "observed", "signals": ["exact WMIC command line per all 13 rows"]},
+        "process": {"status": "observed", "signals": ["exact WMIC command line per all 14 rows"]},
         "parent_child": {"status": "no shell child by fixture design", "signals": []}
       },
-      "safety": "evidence/safety/format-filter-*-lab-scope.json: 13/13 PASS"
+      "safety": "evidence/safety/format-filter-*-lab-scope.json: 14/14 PASS"
     }
   ],
   "grounding": {
@@ -230,35 +231,37 @@
   "safety": {
     "scenario_scope_pre_run": {"path": "evidence/safety/scenario-scope-pre-run.json", "verdict": "REVIEW", "critical_findings": 0, "review": "lab-only certutil.lab name declared in Scope"},
     "scenario_scope_final": {"path": "evidence/safety/scenario-scope-final.json", "verdict": "PASS", "critical_findings": 0},
-    "accepted_post_run_verdicts": {"flow0": "PASS", "flow1": "PASS", "flow2": "PASS", "flow3": "PASS", "flow4": "PASS", "flow5": "PASS", "flow6": "PASS", "flow7_format_filter_rows": "13/13 PASS"},
+    "accepted_post_run_verdicts": {"flow0": "PASS", "flow1": "PASS", "flow2": "PASS", "flow3": "PASS", "flow4": "PASS", "flow5": "PASS", "flow6": "PASS", "flow7_format_filter_rows": "14/14 PASS"},
     "format_filter_scenario_scope_pre_run": {"path": "evidence/safety/scenario-scope-format-filter-pre-run.json", "verdict": "PASS", "critical_findings": 0},
+    "format_filter_iteration2_scenario_scope_pre_run": {"path": "evidence/safety/scenario-scope-format-filter-iteration2-pre-run.json", "verdict": "PASS", "critical_findings": 0},
     "format_filter_scenario_scope_final": {"path": "evidence/safety/scenario-scope-format-filter-final.json", "verdict": "PASS", "critical_findings": 0},
+    "format_filter_iteration2_scenario_scope_final": {"path": "evidence/safety/scenario-scope-format-filter-iteration2-final.json", "verdict": "PASS", "critical_findings": 0},
     "format_filter_operator_log": "evidence/safety/format-filter-operator-log.json",
     "failed_attempts": "Retained and explained in evidence/safety/README.md; all were rolled back. One initial self-name checker false positive is preserved beside its supported local-name readjudication PASS.",
     "attack_destinations": ["192.168.1.50", "192.168.1.52"],
     "forbidden_destinations_used": false
   },
   "audit": {
-    "gate_iteration": 2,
-    "measured_commit": "80d5cb3266cc22640cd29266c9545d4e801fd742",
-    "decision": "PASS",
-    "exit_code": 0,
-    "blocking_count": 0,
+    "gate_iteration": 1,
+    "measured_commit": "27b9066d55f805ead6ab9a31ef5a5bba61b10481",
+    "decision": "BLOCKED",
+    "exit_code": 1,
+    "blocking_count": 1,
     "harness": {"rule_count": 11, "blocking_count": 0, "pass": 5, "no_corpus_coverage": 4, "not_testable_on_evtx": 2},
     "safety_verdict": "safe",
     "scenario_verdict": "expand",
-    "scenario_coverage": "5/6 grounded in-scope use-cases verified (83%, above 0.6 floor)",
-    "iteration_1": {"decision": "BLOCKED", "exit_code": 1, "commit": "a5e5a22b8feeb1781a128dbfaa58f2fc0bfb9298", "blocker": "remote UNC selector was under-escaped; corrected to exact SigmaHQ master logic"},
+    "scenario_coverage": "4/5 format-filter scenarios covered in gate iteration 1 (80%, above 0.6 floor)",
+    "iteration_1": {"decision": "BLOCKED", "exit_code": 1, "commit": "27b9066d55f805ead6ab9a31ef5a5bba61b10481", "blocker": "measure extensionless /format:list with a planted CWD list.xsl before accepting endswith", "resolution": "added row refuted script execution: WMIC used its built-in formatter, created no marker, and both rules remained silent"},
     "precision_reconciliation": {"proc_creation_win_wmic_squiblytwo_bypass.yml": "medium/alert/high", "proc_creation_win_wmic_susp_process_creation.yml": "medium/alert/high"}
   },
   "validation": {
     "rule_harness": {"rule_count": 11, "measured_count": 9, "blocking_count": 0, "syntax_failures": 0, "numeric_quantifier_above_one": false},
-    "format_filter_validation": {"sigma_cli_version": "3.1.0", "pysigma_version": "1.5.0", "pysigma_rule_count": 11, "syntax_errors": 0, "captured_event_original_findings": 8, "captured_event_fixed_findings": 13, "clean_corpus_fp_count": 0},
-    "merge_gate": {"iterations": 2, "exit_code": 0, "verdict": "PASS", "measured_commit": "80d5cb3"},
+    "format_filter_validation": {"sigma_cli_version": "3.1.0", "pysigma_version": "1.5.0", "pysigma_rule_count": 11, "syntax_errors": 0, "captured_event_original_findings": 8, "captured_event_fixed_findings": 13, "captured_event_selector_findings": 14, "captured_event_known_format_filter_findings": 6, "clean_corpus_fp_count": 0},
+    "merge_gate": {"iterations": 1, "exit_code": 1, "verdict": "BLOCKED", "measured_commit": "27b9066"},
     "json": "verification.json and sanitized evidence JSON validated on 2026-08-16"
   },
   "sanitization": {"raw_pcap_committed": false, "raw_evtx_committed": false, "raw_event_export_committed": false, "raw_nsm_logs_committed": false, "credentials_committed": false, "host_data_committed": false, "committed": "selected telemetry fields, aggregate counts, hashes, lab-only names/addresses, benign commands and marker results"},
   "cleanup_confirmation": {"attacker_listeners_stopped": true, "target_post_each_run_rollback": "OK", "target_final_snapshot": "win_verify_baseline", "final_rollback_verification": "Proxmox rollback task OK; VM 104 running at baseline; C:\\lab\\format-filter absent; disposable users and marker absent"},
-  "verified_at": "2026-08-16T07:55:10.8471246Z",
+  "verified_at": "2026-08-16T08:27:28.0025977Z",
   "verifier": "Codex lab orchestrator"
 }
