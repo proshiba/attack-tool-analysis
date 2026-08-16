@@ -137,10 +137,15 @@ creation is recorded as a future scenario, not silently counted as covered.
 
 ## Merge gate
 
-Iteration 1 BLOCKED on an under-escaped UNC selector in the adopted remote
-rule. The selector was restored exactly to SigmaHQ master and independently
-rechecked. Iteration 2 at `80d5cb3` PASSed with exit 0: 11 rules, zero
-blocking rule verdicts, safety `safe`, and scenario `expand` at 5/6 grounded
-in-scope use-cases (83%, above the 60% floor). The required precision
-reconciliation raised the remote SquiblyTwo and suspicious process-create
-rules from low to medium FP likelihood while preserving alert/high severity.
+For this format-filter run, iteration 1 at `27b9066` BLOCKED until the
+extensionless `/format:list` boundary was measured. That added negative row
+showed built-in output, exit 0, and no marker despite a planted CWD
+`list.xsl`, closing the blocker empirically.
+
+Iteration 2 at `9d1c0df` PASSed with exit 0: 11 rules, zero blocking rule
+verdicts, safety `safe`, and scenario `expand` at 5/7 grounded in-scope use
+cases (71%, above the 60% floor). The harness outcomes were five pass, four
+no-corpus-coverage, and two not-testable-on-EVTX. Seven findings were
+non-blocking. The auditor recommended treating the separate JScript registry
+telemetry rule's FP likelihood as medium pending benign built-in-format
+controls; that unrelated rule was not changed after the PASS measurement.

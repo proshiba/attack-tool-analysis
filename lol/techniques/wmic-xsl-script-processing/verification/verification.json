@@ -242,22 +242,25 @@
     "forbidden_destinations_used": false
   },
   "audit": {
-    "gate_iteration": 1,
-    "measured_commit": "27b9066d55f805ead6ab9a31ef5a5bba61b10481",
-    "decision": "BLOCKED",
-    "exit_code": 1,
-    "blocking_count": 1,
+    "gate_iteration": 2,
+    "measured_commit": "9d1c0df4287e3358a1aa050e8c9484d8d867820e",
+    "decision": "PASS",
+    "exit_code": 0,
+    "blocking_count": 0,
+    "non_blocking_count": 7,
     "harness": {"rule_count": 11, "blocking_count": 0, "pass": 5, "no_corpus_coverage": 4, "not_testable_on_evtx": 2},
     "safety_verdict": "safe",
     "scenario_verdict": "expand",
-    "scenario_coverage": "4/5 format-filter scenarios covered in gate iteration 1 (80%, above 0.6 floor)",
+    "scenario_coverage": "5/7 grounded in-scope use-cases verified (71%, above 0.6 floor)",
     "iteration_1": {"decision": "BLOCKED", "exit_code": 1, "commit": "27b9066d55f805ead6ab9a31ef5a5bba61b10481", "blocker": "measure extensionless /format:list with a planted CWD list.xsl before accepting endswith", "resolution": "added row refuted script execution: WMIC used its built-in formatter, created no marker, and both rules remained silent"},
-    "precision_reconciliation": {"proc_creation_win_wmic_squiblytwo_bypass.yml": "medium/alert/high", "proc_creation_win_wmic_susp_process_creation.yml": "medium/alert/high"}
+    "precision_reconciliation": {"proc_creation_win_wmic_squiblytwo_bypass.yml": "medium/alert/high", "proc_creation_win_wmic_susp_process_creation.yml": "medium/alert/high"},
+    "auditor_precision_recommendation": {"rule": "win_registry_set_wmic_jscript_telemetry.yml", "fp_likelihood": "medium", "status": "non-blocking recommendation; unrelated rule left unchanged after PASS"},
+    "non_blocking_notes": ["record exact --allow-domain certutil.lab invocation for reproducible final scope PASS artifacts", "prioritize upstream scripting-DLL image-load dimension", "refresh daily-news denominator on the next broader WMIC iteration", "evidence/rule-measurements.json contains historical gate metadata; current authoritative gate is this audit object"]
   },
   "validation": {
     "rule_harness": {"rule_count": 11, "measured_count": 9, "blocking_count": 0, "syntax_failures": 0, "numeric_quantifier_above_one": false},
     "format_filter_validation": {"sigma_cli_version": "3.1.0", "pysigma_version": "1.5.0", "pysigma_rule_count": 11, "syntax_errors": 0, "captured_event_original_findings": 8, "captured_event_fixed_findings": 13, "captured_event_selector_findings": 14, "captured_event_known_format_filter_findings": 6, "clean_corpus_fp_count": 0},
-    "merge_gate": {"iterations": 1, "exit_code": 1, "verdict": "BLOCKED", "measured_commit": "27b9066"},
+    "merge_gate": {"iterations": 2, "exit_code": 0, "verdict": "PASS", "measured_commit": "9d1c0df"},
     "json": "verification.json and sanitized evidence JSON validated on 2026-08-16"
   },
   "sanitization": {"raw_pcap_committed": false, "raw_evtx_committed": false, "raw_event_export_committed": false, "raw_nsm_logs_committed": false, "credentials_committed": false, "host_data_committed": false, "committed": "selected telemetry fields, aggregate counts, hashes, lab-only names/addresses, benign commands and marker results"},
