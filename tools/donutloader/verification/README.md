@@ -65,3 +65,11 @@ the restrictions above. Each post-run lab-scope check returned PASS with zero
 attack-attributed violations. VM 104 was restored to `win_verify_baseline`
 before and after each run; after Run C, the run directory was absent and Sysmon
 was running. No security control was weakened to load the unsigned driver.
+
+## Audit gate
+
+VM 107 evaluated commit `4fcecf9` and returned PASS: safety `safe`, zero
+blocking rule verdicts, four `no-corpus-coverage` rules, one corpus PASS, and
+9/14 grounded lab-runnable scenarios covered. The `expand` scenario verdict is
+non-blocking and records deferred ClickFix, script-host, alternate injection,
+Startup-folder, and TLS variants rather than treating them as executed.

@@ -113,3 +113,12 @@ native output remain outside the repository.
 derived counts. Donut's PoC-review and Run C scope proof are cross-linked from
 the Mimikatz evidence so the third-party and post-run gates are discoverable
 from this verification directory.
+
+## Audit gate
+
+The first Mimikatz gate blocked the ungated historical run, dead ProcessAccess
+mapping/hex-only comparison, and 2/6 runnable coverage. After the fixes above,
+VM 107 evaluated commit `6b3c500` and returned PASS: safety `safe`, both rules
+non-blocking (one PASS and one `no-corpus-coverage`), and 3/5 lab-runnable
+grounded use cases covered. The remaining offline-minidump and pass-the-hash
+variants are explicitly unexecuted.

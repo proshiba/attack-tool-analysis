@@ -150,8 +150,15 @@
     "notes": "Run C output was never captured. Run D transient output was automatically reduced on target to success/error counts, deleted before packaging, never pulled or human-viewed, and removed again by rollback."
   },
   "audit_gate": {
-    "iteration_1": "BLOCKED: historical safety proof missing, ProcessAccess mapping/value defect, scenario coverage 2/6",
-    "iteration_2": "pending"
+    "initial_result": {"decision": "BLOCKED", "repo_commit": "4fcecf9", "fixes": ["withdrew the ungated historical run as proof", "linked current PASS scope reports and Donut review", "fixed ProcessAccess mapping and value representation", "executed SAM and LSA Secrets coverage"]},
+    "final_result": {
+      "decision": "PASS",
+      "repo_commit": "6b3c500",
+      "safety_verdict": "safe",
+      "scenario_verdict": "expand",
+      "scenario_coverage": "3/5 lab-runnable grounded use-cases",
+      "harness": {"rule_count": 2, "blocking_count": 0, "verdict_counts": {"no-corpus-coverage": 1, "pass": 1}}
+    }
   },
   "verified_at": "2026-08-16T12:39:06Z",
   "verifier": "Codex lab orchestrator"

@@ -201,7 +201,15 @@
     "certificates_or_keys_committed": false,
     "unrelated_host_data_committed": false
   },
-  "audit_gate": {"status": "pending"},
+  "audit_gate": {
+    "status": "PASS",
+    "repo_commit": "4fcecf9",
+    "iteration": 1,
+    "safety_verdict": "safe",
+    "scenario_verdict": "expand",
+    "scenario_coverage": "9/14 grounded lab-runnable use-cases",
+    "harness": {"rule_count": 5, "blocking_count": 0, "verdict_counts": {"no-corpus-coverage": 4, "pass": 1}}
+  },
   "verified_at": "2026-08-16T11:28:41Z",
   "verifier": "Codex lab orchestrator"
 }
