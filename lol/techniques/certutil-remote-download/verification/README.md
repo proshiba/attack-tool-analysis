@@ -1,9 +1,11 @@
 # Certutil remote-download verification
 
-Audit-gate iteration 3 passed at `58fc04c` with safety `safe`, 0 blocking
-findings, and 5/7 grounded reference use-cases covered (71%). A `PASS` means
-that no blocking defect was found; it does not mean that every rule was
-exercised.
+The dead-logsource remeasurement gate iteration 3 passed at `43d098b` with
+safety `safe`, 0 blocking findings, and 5/8 independently inventoried grounded
+reference use-cases covered (62.5%, above the 0.6 floor). The corrected
+file-event rule produced a real 0/542,441 measurement; its positive-corpus
+verdict remains `no-corpus-coverage`. A `PASS` means that no blocking defect
+was found; it does not mean that every rule was exercised.
 
 Five new, independently rolled-back runs verify the remote-download shapes
 that the prior lab-shaped rule missed: canonical `-urlcache -f` without
@@ -64,7 +66,11 @@ rather than treating an empty certutil denominator as proof of low noise.
 
 The Cryptnet cache-content rule remains a low-level hunt: legitimate certutil
 CRL, CTL, certificate-chain, enrollment, and troubleshooting retrievals can
-all match. The `Microsoft-CryptoAPI/` Zeek rule remains a high-FP, low-level
+all match. Its earlier zero was invalid because `service: sysmon` made the
+category-mapped query dead. The corrected `windows/file_event` query measured
+0 of 542,441 file events and has no positive-corpus sample; the retained lab
+evidence is qualitative, not a replayable recall measurement. The
+`Microsoft-CryptoAPI/` Zeek rule remains a high-FP, low-level
 hunt because that User-Agent is normal Windows certificate-chain traffic. A
 new alert-tier Zeek rule covers the exact `CertUtil URL Agent` value observed
 in the URL-cache, service-parent, and PE runs; it is more certutil-specific,

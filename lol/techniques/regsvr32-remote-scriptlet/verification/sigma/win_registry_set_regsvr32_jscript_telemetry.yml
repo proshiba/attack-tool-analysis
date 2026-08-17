@@ -13,7 +13,6 @@ tags:
 logsource:
   category: registry_set
   product: windows
-  service: sysmon
 detection:
   selection:
     Image|endswith: '\regsvr32.exe'
@@ -24,9 +23,12 @@ falsepositives:
 fp_likelihood: low
 recommended_role: alert
 precision_notes: >-
-  The clean corpus produced 0 matches among 1151508 registry-set events.
-  Authorized regsvr32 JScript deployment or compatibility testing can create
-  the value, but it records actual script-engine initialization rather than a
-  command-line token. Correlate with a remote /i command, SCT retrieval, cache
-  creation, or a shell child.
+  The PR #15-era zero was invalid because it was measured through the dead
+  category+product+service mapping. After removing service, the corrected query
+  produced 0 matches among 1151508 registry-set events; the positive corpus has
+  no matching sample, so recall is not measured there. Authorized regsvr32
+  JScript deployment or compatibility testing can create the value, but it
+  records actual script-engine initialization rather than a command-line token.
+  Correlate with a remote /i command, SCT retrieval, cache creation, or a shell
+  child.
 level: high

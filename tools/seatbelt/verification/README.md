@@ -55,8 +55,13 @@ loopback connection and DNS query.
   no image or original-filename dependency and survives executable renaming. A
   renamed run with only one check remains intentionally uncovered because a
   single check-name match would be too noisy.
-- Tier 2 / Sysmon `process_access`: managed .NET access to LSASS with `0x1410`,
-  independent of the source executable name.
+- Tier 2 / `windows/process_access`: managed .NET access to LSASS with `0x1410`,
+  independent of the source executable name. The PR #15-era 0 FP record is
+  invalid because a redundant `service: sysmon` made the category-mapped query
+  dead. The corrected query measured 0 of 1,619,360 process-access events and
+  remains a medium-level hunt on qualitative production-noise grounds. The
+  positive corpus has no matching sample; retained sanitized EID 10 fields are
+  qualitative evidence, not a replayable recall measurement.
 
 The former survey-output file rule was removed. Once the Seatbelt filename is
 removed, an arbitrary executable writing JSON or text has no useful detection

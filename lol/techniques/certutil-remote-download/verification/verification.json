@@ -13,7 +13,7 @@
   },
   "audit_gate": {
     "iteration": 3,
-    "measured_commit": "58fc04c",
+    "measured_commit": "43d098b5a438fdad37ef10a84edb2b7d803ca2de",
     "decision": "PASS",
     "blockers": 0,
     "harness": {
@@ -25,13 +25,15 @@
     },
     "auditor_safety": "safe",
     "scenario_verdict": "expand",
-    "scenario_coverage": "5/7 grounded reference use-cases exercised (71%, above the 0.6 floor); the two declared future scenarios are NOT counted as covered",
+    "scenario_coverage": "5/8 independently inventoried grounded reference use-cases exercised (62.5%, above the 0.6 floor)",
+    "dead_logsource_remeasurement": "The category-only file_event query is alive. An image-agnostic path probe matched 670/542,441 file events, while the exact corrected rule measured a real 0/542,441 with no positive-corpus coverage. The prior service-qualified zero is recorded separately as INVALID.",
     "non_blocking_findings": [
       "Unverified — Alternate Data Stream destination: LOLBAS documents certutil.exe -urlcache -f {REMOTEURL:.ps1} {PATH_ABSOLUTE}:ttt (T1564.004). The process rule would still fire because its command-line conditions are unchanged, but the ADS write is not characterised: the file-event rule is limited to the Cryptnet cache directory, and no rule or evidence covers a TargetFilename with a :stream suffix.",
       "Unverified — Cache-only -URL retrieval (top future scenario): LOLBAS documents certutil.exe -URL {REMOTEURL:.exe} (T1105) and tags it as GUI. selection_download_verb includes '-URL ' by inference rather than lab coverage; the GUI-tagged verb can produce materially different process, network, and cache telemetry from -urlcache. The auditor identified this as the single most valuable next run.",
       "Unverified — -verifyctl to an explicit output FILE: flow 2 supplied a directory, and parsing the inert-text fixture failed with CRYPT_E_ASN1_BADTAG. Closing this gap requires a parser-accepted, CTL-shaped fixture rather than a rerun of the same input.",
       "Unverified — Standard-user execution: LOLBAS records Privileges: User for every download command, while all five lab runs used NT AUTHORITY\\SYSTEM and therefore produced only the systemprofile cache path. This is not a rule defect because the file-event match is profile-agnostic, but standard-user telemetry is the population expected in production and was not exercised here.",
-      "Unverified — No lab run used -split: this was deliberate because removing that requirement is the regression point of the expansion. The dominant real-world form is -urlcache -split -f; recall for it is established by the EVTX corpus, not by these five lab runs."
+      "Unverified — No lab run used -split: this was deliberate because removing that requirement is the regression point of the expansion. The dominant real-world form is -urlcache -split -f; recall for it is established by the EVTX corpus, not by these five lab runs.",
+      "Non-blocking convention finding — the repository's category=http, product=zeek logsource convention differs from SigmaHQ's product=zeek, service=<log> convention. The rule fields compile and are not dead, but routing compatibility should be handled repository-wide rather than in this focused correction."
     ]
   },
   "environment": {
@@ -136,7 +138,44 @@
     {"path": "sigma/win_process_creation_certutil_remote_download.yml", "tier": 1, "role": "primary", "logsource": "windows/process_creation", "status": "experimental", "fp_likelihood": "medium", "recommended_role": "alert", "level": "medium", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4", "repo_commit": "58fc04cdfa8f073c951e888beb329472a7ae1da6", "measurement_provenance": {"iteration_2_commit": "856711507e646adc0ac136c24788c85158f7342b", "audit_gate_iteration": 3, "audit_gate_commit": "58fc04cdfa8f073c951e888beb329472a7ae1da6", "comparison": "The final gated commit was re-measured and reproduced the iteration 2 figures unchanged."}, "auditor_adjustment": "medium because the baseline contains zero benign certutil executions; legitimate PKI and CTL retrievals are a recurring production population"}},
     {"path": "sigma/network_zeek_certutil_cryptoapi_user_agent.yml", "tier": 1, "role": "network hunt", "logsource": "zeek/http", "status": "experimental", "fp_likelihood": "high", "recommended_role": "hunt", "level": "low", "precision_measurement": {"measured": false, "reason": "not-testable-on-evtx", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "verdict": "not-testable-on-evtx", "corpus": "evtx-baseline v0.8.4", "repo_commit": "58fc04cdfa8f073c951e888beb329472a7ae1da6", "measurement_provenance": {"iteration_2_commit": "856711507e646adc0ac136c24788c85158f7342b", "audit_gate_iteration": 3, "audit_gate_commit": "58fc04cdfa8f073c951e888beb329472a7ae1da6", "comparison": "Iteration 3 reassessed the final gated commit and reproduced the iteration 2 not-testable-on-evtx result; no FP figures were measured."}}},
     {"path": "sigma/network_zeek_certutil_url_agent.yml", "tier": 1, "role": "network alert", "logsource": "zeek/http", "status": "experimental", "fp_likelihood": "medium", "recommended_role": "alert", "level": "medium", "precision_measurement": {"measured": false, "reason": "not-testable-on-evtx; exact User-Agent observed in three lab pcaps", "fp_count": null, "fp_share_of_category_percent": null, "category_denominator": null, "detection_hit": null, "verdict": "not-testable-on-evtx", "corpus": "evtx-baseline v0.8.4", "repo_commit": "58fc04cdfa8f073c951e888beb329472a7ae1da6", "measurement_provenance": {"iteration_2_commit": "856711507e646adc0ac136c24788c85158f7342b", "audit_gate_iteration": 3, "audit_gate_commit": "58fc04cdfa8f073c951e888beb329472a7ae1da6", "comparison": "Iteration 3 reassessed the final gated commit and reproduced the iteration 2 not-testable-on-evtx result; no FP figures were measured."}}},
-    {"path": "sigma/win_file_event_certutil_urlcache_content.yml", "tier": 1, "role": "supporting hunt", "logsource": "windows/sysmon/file_event", "status": "experimental", "fp_likelihood": "medium", "recommended_role": "hunt", "level": "low", "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 542441, "measured_fp_likelihood_floor": "low", "detection_hit": false, "verdict": "no-corpus-coverage", "verdict_reason": "no positive file-event sample exists in the corpus", "corpus": "evtx-baseline v0.8.4", "repo_commit": "58fc04cdfa8f073c951e888beb329472a7ae1da6", "measurement_provenance": {"iteration_2_commit": "856711507e646adc0ac136c24788c85158f7342b", "audit_gate_iteration": 3, "audit_gate_commit": "58fc04cdfa8f073c951e888beb329472a7ae1da6", "comparison": "The final gated commit was re-measured and reproduced the iteration 2 figures unchanged."}}}
+    {
+      "path": "sigma/win_file_event_certutil_urlcache_content.yml",
+      "tier": 1,
+      "role": "supporting hunt",
+      "logsource": "windows/file_event",
+      "status": "experimental",
+      "fp_likelihood": "medium",
+      "recommended_role": "hunt",
+      "level": "low",
+      "precision_measurement": {
+        "measured": true,
+        "fp_count": 0,
+        "fp_share_of_category_percent": 0.0,
+        "category_denominator": 542441,
+        "measured_fp_likelihood_floor": "low",
+        "detection_hit": false,
+        "verdict": "no-corpus-coverage",
+        "verdict_reason": "The positive corpus contains no matching certutil Cryptnet cache file event; this is non-blocking and does not establish recall.",
+        "corpus": "evtx-baseline v0.8.4 and EVTX-ATTACK-SAMPLES/regression_data",
+        "repo_commit": "527b5ae5238a6ae889bd72b5ad1f42c91a142182",
+        "measurement_provenance": "VM 107 audit harness against the corrected category-only query and the catalog denominator in audit/catalog/baseline-category-metrics.json"
+      },
+      "previous_precision_measurement": {
+        "status": "INVALID",
+        "recorded_fp_count": 0,
+        "recorded_fp_share_of_category_percent": 0.0,
+        "recorded_category_denominator": 542441,
+        "recorded_repo_commit": "58fc04cdfa8f073c951e888beb329472a7ae1da6",
+        "origin": "The rule received precision metadata in the PR #15 era; later certutil gate passes reproduced the same dead-query zero.",
+        "reason": "The rule declared category=file_event, product=windows, and service=sysmon. The THOR mapping selected category+product and rewrote service, leaving a compiling query that matched no events. The recorded zero was a null, not precision evidence."
+      },
+      "recall_measurement": {
+        "measured": false,
+        "reason": "no-corpus-coverage",
+        "retained_evidence": "evidence/endpoint-signals.json records certutil-attributed CryptnetUrlCache Content writes, but sanitized JSON is qualitative evidence and is not replayed by the EVTX harness.",
+        "required_to_measure": "Add a replayable positive EVTX sample, or repeat the existing bounded -verifyctl/-urlcache lab flow on VM 104 from win_verify_baseline and grade the corrected rule against its EID 11 output. No target run was performed for this fix."
+      }
+    }
   ],
   "new_rule_assessment": {"authored": ["sigma/network_zeek_certutil_url_agent.yml"], "reason": "The exact CertUtil URL Agent value appeared in three runs and is certutil-specific enough for an alert-tier network rule. The expanded process rule already covers verifyctl. HTTPS JA3/certificate values are lab-server specific. A portable download-to-execute Sigma correlation cannot bind a parsed certutil destination token to a later Image value; a generic writable-path PE execution rule would be a broad hunt unrelated to certutil."},
   "safety": {"design_scope": "evidence/safety/scenario-scope.json", "post_run_scope": "evidence/safety/lab-scope.json", "post_run_verdict": "PASS", "post_run_claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest", "post_run_input": "the full retained nsm/ output for each of the five accepted captures; no pre-filtered input", "declared_tool_images": ["certutil.exe", "inert-marker.exe"], "operator_logs": [], "zeek_connection_records": 9, "sysmon_event_id_3_records": 8, "off_lab_destinations": 0, "manifest_count": 0, "accepted_destinations": ["192.168.1.50"], "filtered_subset_removed": "evidence/safety/nsm-lab-only was deleted because it was a lab-only subset and must not be used as checker input", "excluded_attempts": [{"reason": "Under the superseded any-off-lab-packet model, a longer timing probe was rejected after Windows background DNS/HTTPS appeared. It is not accepted verification evidence and was not re-adjudicated."}, {"reason": "Under the superseded any-off-lab-packet model, a short capture with responder-only packets from pre-existing sessions was rejected. It is not accepted verification evidence and was not re-adjudicated."}]},

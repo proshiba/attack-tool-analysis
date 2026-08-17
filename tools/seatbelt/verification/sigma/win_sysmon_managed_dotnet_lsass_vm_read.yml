@@ -15,7 +15,6 @@ tags:
 logsource:
   category: process_access
   product: windows
-  service: sysmon
 detection:
   selection_target:
     TargetImage|endswith: '\lsass.exe'
@@ -32,9 +31,12 @@ falsepositives:
 fp_likelihood: medium
 recommended_role: hunt
 precision_notes: >-
-  The clean corpus produced 0 matches among 1619360 process-access events and
-  only 7637 of those targeted LSASS. Managed EDR, identity, inventory, and
-  diagnostic agents can produce the same 0x1410 plus .NET Framework CallTrace.
-  Make it actionable with Seatbelt-style -group or multi-check syntax, an
-  unsigned unusual source image, or correlated discovery activity.
+  The PR #15-era zero was invalid because it was measured through the dead
+  category+product+service mapping. After removing service, the corrected query
+  produced 0 matches among 1619360 process-access events; the positive corpus
+  has no matching sample, so recall is not measured there. Only 7637 baseline
+  events targeted LSASS. Managed EDR, identity, inventory, and diagnostic agents
+  can produce the same 0x1410 plus .NET Framework CallTrace. Make it actionable
+  with Seatbelt-style -group or multi-check syntax, an unsigned unusual source
+  image, or correlated discovery activity.
 level: medium

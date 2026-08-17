@@ -242,7 +242,7 @@
       "path": "sigma/win_sysmon_managed_dotnet_lsass_vm_read.yml",
       "tier": 2,
       "role": "complement",
-      "logsource": "windows/sysmon/process_access",
+      "logsource": "windows/process_access",
       "status": "experimental",
       "fp_likelihood": "medium",
       "recommended_role": "hunt",
@@ -252,16 +252,35 @@
         "fp_count": 0,
         "fp_share_of_category_percent": 0.0,
         "category_denominator": 1619360,
+        "measured_fp_likelihood_floor": "low",
         "detection_hit": false,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
+        "verdict": "no-corpus-coverage",
+        "verdict_reason": "The positive corpus contains no managed .NET 0x1410 LSASS access sample; this is non-blocking and does not establish recall.",
+        "corpus": "evtx-baseline v0.8.4 and EVTX-ATTACK-SAMPLES/regression_data",
+        "repo_commit": "527b5ae5238a6ae889bd72b5ad1f42c91a142182",
+        "measurement_provenance": "VM 107 audit harness against the corrected category-only query and the catalog denominator in audit/catalog/baseline-category-metrics.json"
+      },
+      "previous_precision_measurement": {
+        "status": "INVALID",
+        "recorded_fp_count": 0,
+        "recorded_fp_share_of_category_percent": 0.0,
+        "recorded_category_denominator": 1619360,
+        "recorded_repo_commit": "7a20965522042850975222773fd119be4a4d3f78",
+        "origin": "PR #15 precision pass",
+        "reason": "The rule declared category=process_access, product=windows, and service=sysmon. The THOR mapping selected category+product and rewrote service, leaving a compiling query that matched no events. The recorded zero was a null, not precision evidence."
+      },
+      "recall_measurement": {
+        "measured": false,
+        "reason": "no-corpus-coverage",
+        "retained_evidence": "evidence/sysmon-seatbelt-lsass-process-access.json records 0x1410 access to LSASS with both managed CallTrace substrings, but sanitized JSON is qualitative evidence and is not replayed by the EVTX harness.",
+        "required_to_measure": "Add a replayable positive EVTX sample, or repeat Seatbelt.exe -group=all -q on VM 104 from win_verify_baseline and grade the corrected rule against its EID 10 output. No target run was performed for this fix."
       },
       "description": "Deep Sysmon-native, name-agnostic detection for managed .NET access to LSASS with VM-read rights."
     }
   ],
   "validation": {
-    "pysigma": "Both remaining Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",
-    "json": "verification.json passed Python JSON validation on 2026-08-10."
+    "pysigma": "Both remaining Sigma rules passed sigma-cli 3.1.0 / pySigma validation on audit VM 107 on 2026-08-16.",
+    "json": "verification.json passed JSON validation on 2026-08-16."
   },
   "sanitization": {
     "seatbelt_output_committed": false,

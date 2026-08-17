@@ -13,7 +13,6 @@ tags:
 logsource:
   category: file_event
   product: windows
-  service: sysmon
 detection:
   selection:
     Image|endswith: '\regsvr32.exe'
@@ -25,9 +24,12 @@ falsepositives:
 fp_likelihood: low
 recommended_role: alert
 precision_notes: >-
-  The clean corpus produced 0 matches among 542441 file events. Authorized
-  legacy registration or application-compatibility testing with remote SCT
-  files can match, but regsvr32 writing an SCT in INetCache has little routine
-  benign use. Correlate with the regsvr32 /i process command, the matching HTTP
-  request, or JScript-start registry telemetry.
+  The PR #15-era zero was invalid because it was measured through the dead
+  category+product+service mapping. After removing service, the corrected query
+  produced 0 matches among 542441 file events; the positive corpus has no
+  matching sample, so recall is not measured there. Authorized legacy
+  registration or application-compatibility testing with remote SCT files can
+  match, but regsvr32 writing an SCT in INetCache has little routine benign use.
+  Correlate with the regsvr32 /i process command, the matching HTTP request, or
+  JScript-start registry telemetry.
 level: high
