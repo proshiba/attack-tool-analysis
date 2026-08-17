@@ -1,0 +1,215 @@
+{
+  "environment": {
+    "operator": {"vmid": 100, "address": "192.168.1.50", "role": "Kali build, delivery, and fixed-marker listener"},
+    "target": {"vmid": 104, "address": "192.168.1.52", "os": "Windows 10 Enterprise LTSC", "architecture": "x64"},
+    "nsm": {"vmid": 106, "role": "offline full-pcap analysis through nsm-analyze"},
+    "audit": {"vmid": 107, "node": "analysis-proxmox"},
+    "baseline_snapshot": "win_verify_baseline",
+    "rollback_policy": "rollback before and after every execution run",
+    "sysmon": {
+      "version": "15.21",
+      "run_a_and_initial_b_config_sha256": "b2868511a95467dbd66726890163c03a07c02ab0cf85fcc904198dfc562512b3",
+      "bounded_b_retry_and_c_config_sha256": "7812ef8b6bb68c8fcc0ed27dfc04bb384d72c7677d6bf3c6633cbc5bf5f48b84",
+      "temporary_expansion": ["unfiltered ImageLoad", "CreateRemoteThread", "ProcessTampering", "PipeEvent", "DriverLoad", "ProcessAccess to Notepad or LSASS"],
+      "baseline_changed": false
+    },
+    "defender": {
+      "baseline_real_time_protection": false,
+      "exclusion_command_exit": 0,
+      "interpretation": "telemetry only; no evasion claim because protection was already disabled by baseline design"
+    }
+  },
+  "tool": {
+    "name": "Donut",
+    "version": "v1.1",
+    "commit": "47758d787209dd1744f58c140102ac91b649df16",
+    "source": "https://github.com/TheWover/donut",
+    "source_built_generator_sha256": "5f8058a054119f3c3b99665873bb92adff4ab95c615bd45662bafc2438a4c4d9",
+    "review": "poc-reviews/donut/poc-review.md",
+    "review_verdict": "safe-to-run-in-lab",
+    "forced_options": ["-a 2", "-b 1", "-e 1", "-z 1"],
+    "real_samples_acquired_or_executed": false
+  },
+  "runs": [
+    {
+      "id": "run-a",
+      "scenario": "ISO delivery, Defender-exclusion telemetry, DLL sideload, local in-memory managed marker, fixed HTTP marker",
+      "window_utc": {"start": "2026-08-16T10:57:01.6138361Z", "end": "2026-08-16T10:57:10.0513774Z"},
+      "execute": "success",
+      "detect": "success",
+      "host_exit": 0,
+      "mount_exit": 0,
+      "marker_created": true,
+      "sideload_eid7": true,
+      "script_block_4104": false,
+      "pcap_sha256": "83f60689842216aea1677a2efe91641e0f2836ecc547dd03fc8c66567131b6eb",
+      "scope_verdict": "PASS",
+      "evidence": ["evidence/run-a-signals.json", "evidence/network-signals.json", "evidence/safety/lab-scope-run-a.json"]
+    },
+    {
+      "id": "run-b-initial",
+      "scenario": "Notepad injection and persistence diagnostic",
+      "execute": "partial",
+      "detect": "partial",
+      "finding": "injection and marker succeeded; invalid hand-authored LogonType prevented task registration; the overlong wait generated no EID 8 under the first broad configuration",
+      "scope_verdict": "PASS",
+      "rollback_before_retry": true,
+      "evidence": ["evidence/safety/lab-scope-run-b.json"]
+    },
+    {
+      "id": "run-b-retry",
+      "scenario": "renamed ttf staging, remote-thread injection into Notepad, XML task, ms-settings registry form, and unsigned kernel service",
+      "window_utc": {"start": "2026-08-16T11:23:16.3017048Z", "end": "2026-08-16T11:23:26.0517867Z"},
+      "execute": "success with expected driver-start failure",
+      "detect": "success",
+      "host_exit": 0,
+      "marker_created": true,
+      "scheduled_task_present": true,
+      "registry_persistence_present": true,
+      "kernel_service_present": true,
+      "kernel_driver_start_exit": 577,
+      "kernel_driver_state": "Stopped",
+      "eid8_count": 1,
+      "eid10_count": 16,
+      "eid25_count": 0,
+      "named_pipe_events_attributed_to_chain": 0,
+      "pcap_sha256": "c10a595d34e01f2f413f1e423aafcd97fb3e7f3bbd1d171f5ec686654f539249",
+      "scope_verdict": "PASS",
+      "evidence": ["evidence/run-b-signals.json", "evidence/network-signals.json", "evidence/safety/lab-scope-run-b-retry.json"]
+    },
+    {
+      "id": "run-c",
+      "scenario": "approved Mimikatz converted to Donut shellcode and executed without an on-disk Mimikatz PE",
+      "window_utc": {"start": "2026-08-16T11:28:35.9636027Z", "end": "2026-08-16T11:28:41.1442430Z"},
+      "execute": "success",
+      "detect": "LSASS access success; command-line rule intentionally silent",
+      "host_exit": 0,
+      "mimikatz_process_creation_count": 0,
+      "mimikatz_command_rule_token_count": 0,
+      "lsass_process_access_count": 1,
+      "lsass_granted_access": "0x1010",
+      "runtime_loads": {"mscoree.dll": 1, "clr.dll": 0, "amsi.dll": 0},
+      "eid8_count": 0,
+      "eid25_count": 0,
+      "named_pipe_events_attributed_to_chain": 0,
+      "network_events_attributed_to_chain": 0,
+      "pcap_sha256": "15927a0f4e983b982fe00087bcb8e1e603a26c8733b8d109bc3826a6ffa133ae",
+      "scope_verdict": "PASS",
+      "evidence": ["evidence/run-c-mimikatz-memory.json", "evidence/network-signals.json", "evidence/safety/lab-scope-run-c.json"]
+    }
+  ],
+  "observed_techniques": [
+    {"id": "T1055", "observation": "CreateRemoteThread into Notepad and memory-only execution"},
+    {"id": "T1003.001", "observation": "in-memory approved Mimikatz opened LSASS with 0x1010"},
+    {"id": "T1574.001", "observation": "unsigned unversioned system-DLL names loaded next to stand-in hosts"},
+    {"id": "T1053.005", "observation": "Notepad child created a scheduled task from XML"},
+    {"id": "T1543.003", "observation": "kernel service created; start rejected by DSE"},
+    {"id": "T1546.001", "observation": "ms-settings shell open command and DelegateExecute set"},
+    {"id": "T1562.001", "observation": "Defender exclusions accepted while Defender was already off; telemetry only"},
+    {"id": "T1105", "observation": "lab ISO transferred by clear HTTP from Kali"}
+  ],
+  "sigma": [
+    {
+      "path": "sigma/image_load_dotnet_runtime_in_notepad.yml",
+      "id": "e84012d1-f497-4bcf-b7b2-b4232854a04f",
+      "tier": 2,
+      "lab_hit": true,
+      "fp_likelihood": "low",
+      "recommended_role": "alert",
+      "level": "high",
+      "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 727396, "measured_fp_likelihood_floor": "low", "detection_hit_public_corpus": false, "verdict": "no-corpus-coverage", "corpus": "evtx-baseline v0.8.4"}
+    },
+    {
+      "path": "sigma/image_load_dotnet_runtime_from_user_writable_image.yml",
+      "id": "856329b4-ba3a-4e8a-8dd3-de4e594ce7fb",
+      "tier": 2,
+      "lab_hit": true,
+      "fp_likelihood": "medium",
+      "recommended_role": "hunt",
+      "level": "low",
+      "precision_measurement": {"measured": true, "fp_count": 18, "fp_share_of_category_percent": 0.002475, "category_denominator": 727396, "measured_fp_likelihood_floor": "medium", "detection_hit_public_corpus": false, "verdict": "no-corpus-coverage", "corpus": "evtx-baseline v0.8.4"}
+    },
+    {
+      "path": "sigma/proc_creation_powershell_mount_diskimage.yml",
+      "id": "a270163b-2d0a-4a9c-81f8-3642fe2b8512",
+      "tier": 1,
+      "lab_hit": true,
+      "fp_likelihood": "medium",
+      "recommended_role": "hunt",
+      "level": "low",
+      "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "measured_fp_likelihood_floor": "low", "detection_hit_public_corpus": false, "verdict": "no-corpus-coverage", "corpus": "evtx-baseline v0.8.4"}
+    },
+    {
+      "path": "sigma/proc_creation_schtasks_create_from_xml.yml",
+      "id": "e9958859-3f3c-4263-8f50-fdd139ce4508",
+      "tier": 1,
+      "lab_hit": true,
+      "fp_likelihood": "high",
+      "recommended_role": "hunt",
+      "level": "low",
+      "precision_measurement": {"measured": true, "fp_count": 37, "fp_share_of_category_percent": 0.156151, "category_denominator": 23695, "measured_fp_likelihood_floor": "high", "detection_hit_public_corpus": true, "verdict": "pass after precision correction", "corpus": "evtx-baseline v0.8.4"}
+    },
+    {
+      "path": "sigma/proc_creation_sc_new_kernel_driver_no_cli_filter.yml",
+      "id": "c253bb68-5908-4b65-b366-218a71068939",
+      "tier": 1,
+      "lab_hit": true,
+      "fp_likelihood": "medium",
+      "recommended_role": "hunt",
+      "level": "low",
+      "precision_measurement": {"measured": true, "fp_count": 6, "fp_share_of_category_percent": 0.025322, "category_denominator": 23695, "measured_fp_likelihood_floor": "medium", "detection_hit_public_corpus": false, "verdict": "no-corpus-coverage", "corpus": "evtx-baseline v0.8.4"}
+    }
+  ],
+  "upstream": {
+    "repository": "SigmaHQ/sigma",
+    "ref": "master",
+    "commit": "3c0d35188942eb6a8c373e4f4973ac7e84116993",
+    "comparison": "evidence/upstream-comparison.md",
+    "rules_compared": 12,
+    "local_authorship_gaps": ["process telemetry fallback for Mount-DiskImage", "SYSTEM-context schtasks /Create /XML", "SC kernel creation without attacker-controlled command-line filters", "CLR loads in Notepad", "CLR loads from user-writable staging roots"],
+    "external_report_made": false
+  },
+  "validation": {
+    "sigma_cli": "3.1.0",
+    "pysigma": "1.5.0",
+    "result": "5 rules: 0 errors, 0 condition errors, 0 issues",
+    "numeric_quantifiers_above_one": false,
+    "file_event_service_misdeclarations": false
+  },
+  "network": {
+    "delivery": "clear HTTP from 192.168.1.50 only",
+    "c2_marker": "fixed clear HTTP POST to 192.168.1.50 only",
+    "ja3": "not applicable; no lab TLS rows",
+    "chain_specific_suricata_alerts": 0,
+    "finding": "NSM could identify HTTP delivery and marker metadata but not the memory-only PE, sideload, injection, LSASS access, or persistence"
+  },
+  "safety": {
+    "scenario_scope": "evidence/safety/scenario-scope.json",
+    "poc_review": "evidence/safety/poc-review.md",
+    "post_run_scope_verdicts": ["PASS", "PASS", "PASS", "PASS"],
+    "real_samples_obtained": false,
+    "public_iocs_contacted_or_resolved": false,
+    "execution_on_vm_102_or_vm_108": false,
+    "security_posture_weakened": false
+  },
+  "sanitization": {
+    "raw_pcap_committed": false,
+    "evtx_committed": false,
+    "raw_event_json_committed": false,
+    "binaries_or_source_committed": false,
+    "credentials_or_mimikatz_output_committed": false,
+    "certificates_or_keys_committed": false,
+    "unrelated_host_data_committed": false
+  },
+  "audit_gate": {
+    "status": "PASS",
+    "repo_commit": "4fcecf9",
+    "iteration": 1,
+    "safety_verdict": "safe",
+    "scenario_verdict": "expand",
+    "scenario_coverage": "9/14 grounded lab-runnable use-cases",
+    "harness": {"rule_count": 5, "blocking_count": 0, "verdict_counts": {"no-corpus-coverage": 4, "pass": 1}}
+  },
+  "verified_at": "2026-08-16T11:28:41Z",
+  "verifier": "Codex lab orchestrator"
+}

@@ -1,6 +1,6 @@
 # mimikatz multi-signal verification
 
-Official mimikatz `2.2.0-20220919` was re-verified on VM 104
+Official mimikatz `2.2.0-20220919` was measured on VM 104
 (`WIN10-ANALYSIS`, Windows 10 Enterprise LTSC build 19044) from the
 `win_verify_baseline` snapshot. Sysmon 15.21 was running the verification-grade
 configuration that collects unfiltered process, network, DNS, file, and
@@ -9,7 +9,7 @@ SHA-256 was
 `5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71`.
 Defender real-time and behavior monitoring were off.
 
-## Canonical run
+## Historical disk observation
 
 The x64 binary reported `OriginalFileName=mimikatz.exe`, version `2.2.0.0`, and
 SHA-256
@@ -25,7 +25,12 @@ The bounded invocation ran from `2026-08-09T06:47:26.1701945Z` through
 window was `2026-08-09T06:47:25.170Z` through
 `2026-08-09T06:47:28.259Z`.
 
-## Five observation dimensions
+This run predates the mandatory post-run `check-lab-scope.py` artifact. Its
+sanitized telemetry is retained as historical context, but it is withdrawn as
+current execution/safety proof. Current verification rests on the two
+2026-08-16 in-memory runs, both of which have attributed full-pcap PASS reports.
+
+## Historical five observation dimensions
 
 | Dimension | Result | Verified telemetry |
 | --- | --- | --- |
@@ -49,8 +54,10 @@ Tier 1 favors fields normalized by many endpoint products:
   process context remains useful triage enrichment but is not required.
 
 Tier 2 complements those portable rules with the deeper Sysmon-native
-`process_access_lsass_read.yml`, which detects memory-read-capable access to
-LSASS without depending on a mimikatz name, path, or hash.
+`process_access_lsass_read.yml`, which detects the measured `0x1010`/`4112`
+memory-read access from a user-writable staging root without depending on a
+mimikatz name, command line, or hash. The rule accepts both sensor value
+representations and has no `service: sysmon` mapping defect.
 
 The former Prefetch rule was removed because the `MIMIKATZ.EXE-*.pf` artifact
 changes when the attacker renames the executable and is therefore not a robust
@@ -60,11 +67,58 @@ No registry, file, or network rule is retained because the canonical run did
 not produce a rename-resilient, distinctive signal in those dimensions. This
 avoids rules based on unobserved behavior or attacker-controlled filenames.
 
+## In-memory closure (2026-08-16)
+
+The same approved binary hash was converted to Donut shellcode and executed
+inside a lab-authored ProgramData host, with no Mimikatz executable on VM 104.
+The host exited 0 and produced one LSASS EID 10 with access `0x1010`.
+
+This measured the known structural blind spot: `proc_creation_mimikatz_cmdline.yml`
+stayed silent because no EID 1 contained `sekurlsa::`, `privilege::debug`, or
+another module token. `process_access_lsass_read.yml` replaced it for this run
+and matched the unusual source opening LSASS. `mscoree.dll` loaded, but
+`clr.dll`, `amsi.dll`, EID 8, EID 25, attributed pipes, and attributed network
+did not. The absence of those optional signals is part of the result.
+
+The repaired ProcessAccess rule measured 0 / 1,619,360 clean process-access
+events and hit the public positive corpus. It remains medium-likelihood,
+hunt/medium because legitimate security tools can also run from writable roots.
+
+## In-memory SAM and LSA Secrets expansion
+
+A second bounded run changed only Donut's clear argument field and executed
+`lsadump::sam` plus `lsadump::secrets` in `CredentialManager.exe` under
+ProgramData. Target-side reduction recorded three SAM success markers, five
+Secrets success markers, and zero module errors. The transient output was
+deleted before evidence packaging and was never pulled or human-viewed.
+
+This run also left the command-line rule silent when evaluated with its actual
+module tokens. It produced no host-to-LSASS EID 10, an expected distinction for
+the registry-backed stores. Its post-run scope check returned PASS after reading
+41 EID 3 and 19 EID 22 events, with zero attack-attributed violations. VM 104
+was rolled back before and after the run.
+
 ## Evidence and sanitization
 
-`evidence/multidimensional-signals.json` contains only the event fields needed
-to support the five-dimension findings. The ProcessAccess event is retained in
-`evidence/sysmon-eid10-lsass-process-access.json` for the Tier 2 rule. Native
-mimikatz output was discarded on the VM and was never pulled or inspected. No
-credential material, hashes harvested from LSASS, or raw security log is
-committed.
+`evidence/multidimensional-signals.json` and
+`evidence/sysmon-eid10-lsass-process-access.json` are historical telemetry from
+the ungated 2026-08-09 run and are not current safety proof. No credential
+material, hashes harvested from LSASS, or raw security log is committed.
+
+`evidence/in-memory-donut-execution.json` contains the sanitized in-memory
+closure measurement. The raw pcap, EVTX, opaque shellcode, loader, and any
+native output remain outside the repository.
+
+`evidence/in-memory-sam-secrets.json` and its linked safety report contain only
+derived counts. Donut's PoC-review and Run C scope proof are cross-linked from
+the Mimikatz evidence so the third-party and post-run gates are discoverable
+from this verification directory.
+
+## Audit gate
+
+The first Mimikatz gate blocked the ungated historical run, dead ProcessAccess
+mapping/hex-only comparison, and 2/6 runnable coverage. After the fixes above,
+VM 107 evaluated commit `6b3c500` and returned PASS: safety `safe`, both rules
+non-blocking (one PASS and one `no-corpus-coverage`), and 3/5 lab-runnable
+grounded use cases covered. The remaining offline-minidump and pass-the-hash
+variants are explicitly unexecuted.

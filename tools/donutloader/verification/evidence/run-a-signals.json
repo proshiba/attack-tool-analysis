@@ -1,0 +1,24 @@
+{
+  "scenario": "mounted image, exclusion telemetry, sideload, and local in-memory marker",
+  "window_utc": {"start": "2026-08-16T10:57:01.6138361Z", "end": "2026-08-16T10:57:10.0513774Z"},
+  "results": {
+    "defender_exclusion_command_exit": 0,
+    "mount_disk_image_exit": 0,
+    "host_exit": 0,
+    "marker_created": true,
+    "marker_sha256": "da29a9a07b0609c4faefa0c9acce93ff1ed9292b9933289efef1989dcf96887f",
+    "fixed_marker_post_received": true
+  },
+  "endpoint": {
+    "process_creation": [
+      {"image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "command_shape": "-ep bypass -w hidden -c Add-MpPreference -ExclusionProcess ...; Add-MpPreference -ExclusionPath ..."},
+      {"image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "command_shape": "-ex bypass -command Mount-DiskImage -ImagePath (gc C:\\Windows\\path.txt)"},
+      {"image": "G:\\RunA\\Bginfo64.exe", "original_file_name": "-", "company": "-"}
+    ],
+    "image_load": {"image": "G:\\RunA\\Bginfo64.exe", "image_loaded": "G:\\RunA\\version.dll", "signed": false, "signature_status": "Unavailable"},
+    "managed_runtime": ["mscoree.dll", "clr.dll", "amsi.dll"],
+    "marker_file_event": {"image": "G:\\RunA\\Bginfo64.exe", "target": "C:\\ProgramData\\Microsoft\\NetTokenBroker\\donut-run-a.marker"},
+    "script_block_4104_count": 0
+  },
+  "defender_interpretation": "Defender real-time and behavior protection were already disabled in the baseline. The successful exclusion command proves telemetry only, not evasion."
+}

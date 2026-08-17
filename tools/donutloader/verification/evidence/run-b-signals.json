@@ -1,0 +1,41 @@
+{
+  "scenario": "renamed ttf staging, Notepad injection, and persistence",
+  "canonical_window_utc": {"start": "2026-08-16T11:23:16.3017048Z", "end": "2026-08-16T11:23:26.0517867Z"},
+  "results": {
+    "host_exit": 0,
+    "host_exited_within_45_seconds": true,
+    "marker_created": true,
+    "scheduled_task_present": true,
+    "ms_settings_default_present": true,
+    "ms_settings_delegate_execute_present": true,
+    "kernel_service_present": true,
+    "kernel_service_state": "Stopped",
+    "kernel_service_start_exit": 577,
+    "kernel_service_start_result": "Windows rejected the unsigned native-subsystem stand-in because its digital signature could not be verified; DSE, test-signing, and Secure Boot were not changed."
+  },
+  "sideload": {
+    "host_path": "C:\\ProgramData\\Microsoft\\NetTokenBroker\\ExcelPreview.exe",
+    "loaded_path": "C:\\ProgramData\\Microsoft\\NetTokenBroker\\uxtheme.dll",
+    "loaded_file_version": "-",
+    "loaded_company": "-",
+    "loaded_signed": false,
+    "loaded_signature_status": "Unavailable"
+  },
+  "injection": {
+    "sysmon_eid_8_count": 1,
+    "source_image": "C:\\ProgramData\\Microsoft\\NetTokenBroker\\ExcelPreview.exe",
+    "target_image": "C:\\Windows\\System32\\notepad.exe",
+    "start_module": "-",
+    "sysmon_eid_10_source_to_notepad": {"granted_access": "0x1FFFFF", "call_trace_contains_adjacent_dll": true},
+    "sysmon_eid_25_count": 0
+  },
+  "process_tree": [
+    "powershell.exe -> ExcelPreview.exe",
+    "ExcelPreview.exe -> notepad.exe",
+    "notepad.exe -> cmd.exe /C schtasks.exe /Create /XML ... /F",
+    "cmd.exe -> schtasks.exe /Create /XML ... /F"
+  ],
+  "notepad_runtime_loads": ["mscoree.dll", "clr.dll", "amsi.dll"],
+  "named_pipe_events_attributed_to_host_or_notepad": 0,
+  "initial_attempt": "Injection and marker succeeded, but a hand-authored LogonType value made the task XML invalid. The target was rolled back and the canonical retry used Windows-compatible SYSTEM principal XML."
+}

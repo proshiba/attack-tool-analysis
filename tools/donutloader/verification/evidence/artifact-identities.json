@@ -1,0 +1,29 @@
+{
+  "donut": {
+    "repository": "https://github.com/TheWover/donut",
+    "commit": "47758d787209dd1744f58c140102ac91b649df16",
+    "tag": "v1.1",
+    "review_verdict": "safe-to-run-in-lab",
+    "source_built_generator_sha256": "5f8058a054119f3c3b99665873bb92adff4ab95c615bd45662bafc2438a4c4d9",
+    "forced_options": ["-a 2", "-b 1", "-e 1", "-z 1"],
+    "disabled_features": ["HTTP staging", "AMSI bypass", "WLDP bypass", "ETW bypass", "compression", "encryption", "module overloading"]
+  },
+  "lab_authored_artifacts_not_committed": {
+    "Bginfo64.exe": "ca1c91e77bca8fb4e6cdb9f664419d144fa2df7353b96805c5915d8ed9bc4c58",
+    "ExcelPreview.exe": "f114b4136f8eba04543608fcbfbc960944f95428cbc5dea7eacbf4c050b7dfbb",
+    "version.dll": "7858135825dc513a66e3229dfb5cad7b7040be53aac7185333625697426b5156",
+    "uxtheme.dll": "b3bd96be579a532b41f1ef86e0bfa12e0f862f9b466de9e1bf136ee0c3584910",
+    "moimoi.sys": "ad01b0fb9fea22d752a74c2747a1b3b49ff28c1bf91104b1cda908a5b7ba13d1",
+    "marker_payload.exe": "c95e0f4f464a365b8b040d72b7089315e4260787ef723fc48b5525157aa8d8f4",
+    "inject_payload.exe": "65537b90cbe0b3b0a44b2c31f008387c262048771bd59f42401a44cf2fb396a0"
+  },
+  "opaque_data_blobs_not_committed": {
+    "run_a_dat": "f764182a84c23a645cf41cbe204b08dfb7d7c67ebc3510125ceff8dc05a39781",
+    "run_b_ttf": "7a55f5c37c94d98b24025caf8cc48099f4fe9b1193d34d6595734d0a525b9cb8",
+    "run_c_approved_mimikatz": "ee148d7875fc811611b08c3fd42a0c80c47ef943e67b068688eea920b64a8bd7"
+  },
+  "approved_mimikatz_input_sha256": "61c0810a23580cf492a6ba4f7654566108331e7a4134c968c2d6a05261b2d8a1",
+  "delivery_iso_sha256": "b30f8a0f5df2823ae30607ab0b7898d7ca364a6f625d73cea0e77f0cc68bd031",
+  "signing_note": "The two host stand-ins were signed with an ephemeral self-signed lab certificate. Authenticode reported UnknownError because the root was not trusted; they were not vendor-signed.",
+  "repository_contents": "No Donut binary, data blob, loader, sideload DLL, payload source, certificate, key, pcap, EVTX, or executable is committed."
+}

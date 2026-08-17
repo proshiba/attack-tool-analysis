@@ -1,0 +1,29 @@
+{
+  "scenario": "approved Mimikatz converted to Donut shellcode and executed in memory",
+  "window_utc": {"start": "2026-08-16T11:28:35.9636027Z", "end": "2026-08-16T11:28:41.1442430Z"},
+  "host": {
+    "path": "C:\\ProgramData\\Microsoft\\NetTokenBroker\\RuntimeBroker.exe",
+    "original_file_name": "-",
+    "company": "-",
+    "exit": 0,
+    "exited_within_45_seconds": true
+  },
+  "mimikatz_process_creation": 0,
+  "mimikatz_command_line_token_matches": 0,
+  "silent_rule": "sigma/proc_creation_mimikatz_cmdline.yml",
+  "replacement_signal": {
+    "rule": "sigma/process_access_lsass_read.yml",
+    "event_id": 10,
+    "source_image": "C:\\ProgramData\\Microsoft\\NetTokenBroker\\RuntimeBroker.exe",
+    "target_image": "C:\\Windows\\system32\\lsass.exe",
+    "granted_access": "0x1010",
+    "call_trace": "ntdll.dll -> KERNELBASE.dll -> UNKNOWN(in-memory address)",
+    "count": 1
+  },
+  "runtime_loads_into_host": {"mscoree.dll": 1, "clr.dll": 0, "amsi.dll": 0},
+  "eid8_count": 0,
+  "eid25_count": 0,
+  "named_pipe_events_attributed_to_host": 0,
+  "network_events_attributed_to_host": 0,
+  "credential_output": "never captured, viewed, pulled, or committed"
+}

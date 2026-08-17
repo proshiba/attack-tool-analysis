@@ -1,0 +1,26 @@
+{
+  "subject": "SigmaHQ proc_creation_win_sc_new_kernel_driver optional filters",
+  "upstream_rule_id": "431a1fdb-4799-4f3b-91c3-a683b003fc49",
+  "test_type": "deterministic condition evaluation on synthetic process-creation fields; no command was executed",
+  "cases": [
+    {
+      "id": "canonical_lab_shape",
+      "image": "C:\\Windows\\System32\\sc.exe",
+      "command_shape": "sc.exe create <service> binPath= <unsigned-driver> type= kernel",
+      "upstream_selection": true,
+      "upstream_optional_filter": false,
+      "upstream_result": true,
+      "local_no_filter_result": true
+    },
+    {
+      "id": "attacker_controlled_filter_strings",
+      "image": "C:\\Windows\\System32\\sc.exe",
+      "command_shape": "sc.exe create netprotection_network_filter type= kernel start= demand binPath= System32\\drivers\\netprotection_network_filter DisplayName= netprotection_network_filter group= PNP_TDI tag= yes",
+      "upstream_selection": true,
+      "upstream_optional_filter": true,
+      "upstream_result": false,
+      "local_no_filter_result": true
+    }
+  ],
+  "verdict": "The upstream command-line filter is an attacker-controlled off switch. The local derived rule removes it and accepts the measured precision cost."
+}

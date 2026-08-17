@@ -1,0 +1,39 @@
+title: Scheduled Task Creation From XML
+id: e9958859-3f3c-4263-8f50-fdd139ce4508
+status: experimental
+description: >-
+  Detects schtasks creating a task from an XML definition. The SigmaHQ generic
+  creation rule excludes SYSTEM-context activity and therefore missed the
+  verified injected Notepad chain; this rule intentionally has no user filter.
+references:
+  - https://x.com/tdatwja/status/2082761360321200396
+  - https://github.com/SigmaHQ/sigma/blob/master/rules/windows/process_creation/proc_creation_win_schtasks_creation.yml
+related:
+  - id: 92626ddd-662c-49e3-ac59-f6535f12d189
+    type: derived
+author: Codex lab orchestrator
+date: '2026-08-16'
+tags:
+  - attack.t1053.005
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_image:
+    Image|endswith: '\schtasks.exe'
+  selection_create:
+    CommandLine|contains|windash: ' /Create '
+  selection_xml:
+    CommandLine|contains|windash: ' /XML '
+  condition: all of selection_*
+falsepositives:
+  - Enterprise software deployment, Microsoft Office integration, and administrator task imports
+  - Backup, maintenance, and endpoint-management products that register tasks from XML
+fp_likelihood: high
+recommended_role: hunt
+precision_notes: >-
+  The evtx-baseline v0.8.4 corpus produced 37 matches among 23695 process starts
+  (0.156151%), so this remains a low-level hunt. The rule deliberately retains
+  SYSTEM task creation and has no argument-, path-, filename-, or user-based
+  exclusion. Correlate with an anomalous parent or task XML in a writable path.
+level: low

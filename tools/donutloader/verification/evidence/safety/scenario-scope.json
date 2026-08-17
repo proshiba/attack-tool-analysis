@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "rule": "SAFETY RULE 1 at design time - no scenario targets anything outside the lab",
+  "target": "tools/donutloader/verification/scenarios.md",
+  "files_checked": [
+    "tools/donutloader/verification/scenarios.md"
+  ],
+  "scope_declaration_present": true,
+  "severity_counts": {
+    "high": 4
+  },
+  "findings": [
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "scenarios.md",
+      "line": 14,
+      "detail": "external host x.com",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "- `source_url: https://x.com/bomccss/status/2077318455716679970` — 2026-07-16: archive-to-disk-image delivery, `Mount-DiskImage`, a legitimate executable plus a sideloaded DLL, staging under the NetTo"
+    },
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "scenarios.md",
+      "line": 15,
+      "detail": "external host x.com",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "- `source_url: https://x.com/tdatwja/status/2082761360321200396` — 2026-07-31: a legitimate executable plus a differently named sideloaded DLL, Donut shellcode in a separate `.dat`, injection into Not"
+    },
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "scenarios.md",
+      "line": 16,
+      "detail": "external host x.com",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "- `source_url: https://x.com/bomccss/status/2083123859537137838` — 2026-08-01: a different signed host and sideload name, followed by kernel-service creation and start."
+    },
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "scenarios.md",
+      "line": 17,
+      "detail": "external host x.com",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "- `source_url: https://x.com/bomccss/status/2088132641665249556` — 2026-08-15: a further DonutLoader instance with a `.ttf`-named data file, demonstrating that the staging extension is not an executab"
+    }
+  ],
+  "verdict": "REVIEW"
+}

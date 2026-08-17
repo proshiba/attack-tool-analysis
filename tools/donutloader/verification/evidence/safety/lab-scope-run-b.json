@@ -1,0 +1,23 @@
+{
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and all unrelated operating-system traffic was retained in the checker manifest before sanitization",
+  "allowed_networks": ["192.168.1.0/24"],
+  "declared_tool_images": ["ExcelPreview.exe", "uxtheme.dll", "fontcache.ttf", "moimoi.sys", "notepad.exe", "cmd.exe", "schtasks.exe", "reg.exe"],
+  "inputs": {
+    "raw_inputs_retained_outside_repository": true,
+    "operator_logs": ["operator/run-b-initial.log"],
+    "sysmon_eid3_events_read": 21,
+    "sysmon_eid22_events_read": 7,
+    "attributed_destinations": 8,
+    "attribution_available": true
+  },
+  "capture_scale": {"conn_log_rows": 266, "off_lab_destinations": 52, "prefiltered": false},
+  "violation_count": 0,
+  "violations": [],
+  "manifest_count": 86,
+  "manifest_summary": "86 unrelated operating-system observations were recorded and not judged during the overlong initial attempt; destination and host-specific data are omitted.",
+  "run_disposition": "noncanonical diagnostic run: injection succeeded, but invalid XML prevented task registration; VM 104 was rolled back before retry",
+  "sanitization": "Checker verdict and counts preserved; raw pcap, EVTX, public OS destinations, DNS names, and local scratch paths omitted.",
+  "verdict": "PASS"
+}

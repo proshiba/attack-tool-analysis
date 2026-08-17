@@ -1,0 +1,23 @@
+{
+  "scenario": "approved Mimikatz converted to Donut shellcode and executed without an on-disk Mimikatz PE",
+  "source_verification": "../../donutloader/verification/evidence/run-c-mimikatz-memory.json",
+  "poc_review": "../../../poc-reviews/donut/poc-review.md",
+  "scope_report": "../../donutloader/verification/evidence/safety/lab-scope-run-c.json",
+  "operator_log": "../../donutloader/verification/evidence/safety/operator/run-c.log",
+  "window_utc": {"start": "2026-08-16T11:28:35.9636027Z", "end": "2026-08-16T11:28:41.1442430Z"},
+  "approved_input_sha256": "61c0810a23580cf492a6ba4f7654566108331e7a4134c968c2d6a05261b2d8a1",
+  "mimikatz_executable_on_target": false,
+  "host": "C:\\ProgramData\\Microsoft\\NetTokenBroker\\RuntimeBroker.exe",
+  "host_exit": 0,
+  "process_creation_command_token_matches": 0,
+  "command_line_rule": {"path": "sigma/proc_creation_mimikatz_cmdline.yml", "hit": false, "reason": "module tokens were embedded in the opaque Donut data and never appeared in a process command line"},
+  "process_access_rule": {"path": "sigma/process_access_lsass_read.yml", "hit": true, "event_id": 10, "target_image": "C:\\Windows\\system32\\lsass.exe", "granted_access": "0x1010", "source_image": "C:\\ProgramData\\Microsoft\\NetTokenBroker\\RuntimeBroker.exe", "call_trace_ends_in_unknown_memory": true},
+  "runtime_loads": {"mscoree.dll": 1, "clr.dll": 0, "amsi.dll": 0},
+  "eid8_count": 0,
+  "eid25_count": 0,
+  "named_pipe_events_attributed_to_host": 0,
+  "network_events_attributed_to_host": 0,
+  "credential_output": "never captured, viewed, pulled, or committed",
+  "scope_verdict": "PASS",
+  "rollback": "VM 104 returned to win_verify_baseline; run directory absent; Sysmon running"
+}
