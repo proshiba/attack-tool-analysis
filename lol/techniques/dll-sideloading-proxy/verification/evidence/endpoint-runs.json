@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "instrumentation_dependency": "Every image-load result used the run-scoped instrumentation/windows/sysmon-verification-imageload.xml, an active-config dump, and a positive benign notepad.exe EID 7 before scenario start. The shipped baseline has no EID 7.",
+  "runs": [
+    {
+      "run_id": "control-default",
+      "window_utc": ["2026-08-19T23:47:14.2945042Z", "2026-08-19T23:47:42.6165881Z"],
+      "image_load_event_count": 491,
+      "scenario": "C0",
+      "execute": "success; exit 0; no marker",
+      "upstream_family_hits": 0,
+      "local_behavioral_hits": 0,
+      "safety_verdict": "PASS"
+    },
+    {
+      "run_id": "marker-plain-proxy-rename",
+      "window_utc": ["2026-08-19T23:58:03.1231032Z", "2026-08-19T23:58:56.1952835Z"],
+      "image_load_event_count": 1608,
+      "scenarios": [
+        {
+          "id": "M1",
+          "image": "C:\\Users\\analyst\\AppData\\Local\\VLC-Lab-Plain\\vlc.exe",
+          "dll_form": "plain sideload",
+          "execute": "payload marker created; application timed out after 20 seconds and was killed",
+          "upstream_libvlc": "hit",
+          "local_behavioral": "hit"
+        },
+        {
+          "id": "M2",
+          "image": "C:\\Users\\analyst\\AppData\\Local\\VLC-Lab-Proxy\\vlc.exe",
+          "dll_form": "proxy plus libvlc_org.dll",
+          "execute": "payload marker created; WAV played; application exited 0",
+          "upstream_libvlc": "hit",
+          "local_behavioral": "hit"
+        },
+        {
+          "id": "M3",
+          "image": "C:\\Users\\analyst\\AppData\\Local\\VLC-Lab-Proxy\\updater.exe",
+          "dll_form": "proxy plus libvlc_org.dll",
+          "execute": "payload marker created; WAV played; renamed application exited 0",
+          "upstream_libvlc": "hit",
+          "local_behavioral": "hit"
+        }
+      ],
+      "upstream_family_replay": {
+        "rules_loaded": 59,
+        "findings": 3,
+        "only_rule": "bf9808c4-d24f-44a2-8398-b65227d406b6 Potential Libvlc.DLL Sideloading"
+      },
+      "safety_verdict": "PASS"
+    },
+    {
+      "run_id": "h2-path-filter-falsification",
+      "window_utc": ["2026-08-20T00:03:42.4099854Z", "2026-08-20T00:04:48.5109650Z"],
+      "image_load_event_count": 3243,
+      "detail": "evidence/h2-results.json",
+      "safety_verdict": "PASS"
+    },
+    {
+      "run_id": "persistence-run-key-schtasks-first",
+      "window_utc": ["2026-08-20T00:29:42.2615697Z", "2026-08-20T00:31:22.4985154Z"],
+      "image_load_event_count": 1849,
+      "execute": "Run value registered; SYSTEM scheduled task exit 0; marker created",
+      "safety_verdict": "INCONCLUSIVE",
+      "reason": "No EID 3 was present, so background off-lab packets could not be attributed. This result is preserved and is not a pass; a fresh rolled-back replacement run uses the Kali-hosted WAV."
+    },
+    {
+      "run_id": "persistence-run-key-schtasks-replacement",
+      "window_utc": ["2026-08-20T00:38:23.7144809Z", "2026-08-20T00:40:04.0920610Z"],
+      "image_load_event_count": 1612,
+      "execute": "HKLM Run value registered; SYSTEM scheduled task launched the renamed proxy host, played the Kali WAV, exited 0, and created the bounded marker",
+      "network_attribution": "updater.exe EID 3 to 192.168.1.50:18090",
+      "safety_verdict": "PASS",
+      "safety_report": "evidence/safety/persistence-pass-lab-scope.json"
+    },
+    {
+      "run_id": "proxy-sliver-self-injection-matching-state",
+      "window_utc": ["2026-08-20T00:57:20.5809357Z", "2026-08-20T00:58:30.7218616Z"],
+      "image_load_event_count": 1800,
+      "execute": "proxy application remained alive for 45 seconds; Sliver shellcode self-thread ran and updater.exe opened the configured 31337 connection",
+      "c2_establishment": "partial: server accepted TCP but sent no TLS bytes and no usable operator session appeared",
+      "network_attribution": "Sysmon EID 3 ProcessId 4400 updater.exe -> 192.168.1.50:31337",
+      "safety_verdict": "PASS",
+      "safety_report": "evidence/safety/c2-pass-lab-scope.json"
+    }
+  ],
+  "h5_renamed_original": {
+    "disk_name": "libvlc_org.dll",
+    "sha256": "095d164633af53ac015dcd76540e8523744f57d506db111f19b3fdd9d6180833",
+    "OriginalFileName": "-",
+    "Description": "VLC media player",
+    "Company": "VideoLAN",
+    "Signed": "true",
+    "SignatureStatus": "Valid",
+    "conclusion": "The proposed OriginalFileName mismatch signal is refuted for official VLC 3.0.21: neither PE inspection nor Sysmon EID 7 supplied libvlc.dll as OriginalFileName. No proxy-identity rule was authored. Sigma also cannot compare OriginalFileName with ImageLoaded even when both are populated."
+  },
+  "lab_authored_dlls": {
+    "plain_libvlc_sha256": "9284934a6d37bfab214a01178f78cdf277fe303f9c3f31d3f9ad0dfad5eab6fb",
+    "marker_proxy_libvlc_sha256": "3d38cb72d30a932df7bfdf72a10072bccd6f5027cbd0e5bc07ad05c1e714af50",
+    "exports_forwarded": 316,
+    "forward_target": "libvlc_org.<export> with original ordinals"
+  }
+}

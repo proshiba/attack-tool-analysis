@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "rule": "sigma/image_load_unsigned_dll_by_image_in_user_writable_path.yml",
+  "rule_id": "012b33f0-9e85-47f5-b550-21d83595a5ba",
+  "method": "evtx-sigma-checker with SigmaHQ tests/thor.yml at 8eaafff1f2845a696050e05e72ba1140ee190698; no sample-specific tuning",
+  "samples": [
+    {
+      "file": "Defense Evasion/apt10_jjs_sideloading_prochollowing_persist_as_service_sysmon_1_7_8_13.evtx",
+      "result": "hit",
+      "match_count": 2,
+      "example": "C:\\Users\\IEUser\\Desktop\\info.rar\\jjs.exe loaded unsigned C:\\Users\\IEUser\\Desktop\\info.rar\\jli.dll"
+    },
+    {
+      "file": "Defense Evasion/sideloading_wwlib_sysmon_7_1_11.evtx",
+      "result": "hit",
+      "match_count": 1,
+      "example": "C:\\ProgramData\\Intel\\CV.exe loaded unsigned C:\\ProgramData\\Intel\\wwlib.dll"
+    },
+    {
+      "file": "AutomatedTestingTools/Malware/DE_timestomp_and_dll_sideloading_and_RunPersist.evtx",
+      "result": "hit",
+      "match_count": 1,
+      "example": "C:\\Users\\IEUser\\AppData\\Roaming\\NvSmart.exe loaded unsigned NvSmartMax.dll"
+    },
+    {
+      "file": "AutomatedTestingTools/Malware/sideloading_uacbypass_rundll32_injection_c2.evtx",
+      "result": "miss",
+      "match_count": 0,
+      "reason": "Both Image and ImageLoaded satisfied the user-writable path selections, but the loaded DLL was Signed=true with SignatureStatus=Valid. The rule excludes validly signed malicious or certificate-abuse forms by construction and was not broadened to fit this sample."
+    }
+  ]
+}

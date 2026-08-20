@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "run_id": "h2-path-filter-falsification",
+  "window_utc": ["2026-08-20T00:03:42.4099854Z", "2026-08-20T00:04:48.5109650Z"],
+  "image_load_event_count": 3243,
+  "instrumentation_proved_before_scenario": true,
+  "rule_under_test": {
+    "id": "bf9808c4-d24f-44a2-8398-b65227d406b6",
+    "sigma_commit": "8eaafff1f2845a696050e05e72ba1140ee190698",
+    "filter_prefixes": [
+      "C:\\Program Files (x86)\\VideoLAN\\VLC\\",
+      "C:\\Program Files\\VideoLAN\\VLC\\"
+    ]
+  },
+  "tests": [
+    {
+      "id": "H2A-8dot3",
+      "launch": "C:\\PROGRA~1\\VideoLAN\\VLC-Lab\\vlc.exe",
+      "launch_ok": true,
+      "application_exit": 0,
+      "marker_created": true,
+      "image_loaded": "C:\\PROGRA~1\\VideoLAN\\VLC-Lab\\libvlc.dll",
+      "classification": "detected anyway",
+      "local_hunt_result": "outside local hunt root",
+      "administrator_required_for_plant": true,
+      "reason": "Sysmon preserved the short path, which does not start with either filtered default prefix."
+    },
+    {
+      "id": "H2B-device",
+      "launch": "\\\\?\\C:\\Users\\Public\\VLC-Lab\\vlc.exe",
+      "launch_ok": true,
+      "application_timed_out": true,
+      "marker_created": true,
+      "image_loaded": "C:\\Users\\Public\\VLC-Lab\\libvlc.dll",
+      "classification": "detected anyway",
+      "local_hunt_result": "hit after device-path normalization",
+      "administrator_required_for_plant": false,
+      "reason": "The payload executed, but VLC did not exit normally. Sysmon normalized away the device prefix to a user-writable path. This is degraded execution, not a refusal or evasion."
+    },
+    {
+      "id": "H2C-unc-loopback",
+      "launch": "\\\\127.0.0.1\\C$\\Users\\Public\\VLC-Lab\\vlc.exe",
+      "launch_ok": true,
+      "application_exit": 0,
+      "marker_created": true,
+      "image_loaded": "\\\\127.0.0.1\\C$\\Users\\Public\\VLC-Lab\\libvlc.dll",
+      "classification": "detected anyway",
+      "local_hunt_result": "outside local hunt root",
+      "administrator_required_for_launch": true,
+      "reason": "The administrative share form remained UNC and did not match the default-path filter."
+    },
+    {
+      "id": "H2D-default-prefix",
+      "launch": "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe",
+      "launch_ok": true,
+      "application_exit": 0,
+      "marker_created": true,
+      "image_loaded": "C:\\Program Files\\VideoLAN\\VLC\\libvlc.dll",
+      "classification": "evaded",
+      "local_hunt_result": "outside local hunt root",
+      "administrator_required_for_plant": true,
+      "reason": "A successful malicious load began with the attacker-influenced filtered prefix. This is an elevated planting precondition, not a standard-user bypass."
+    },
+    {
+      "id": "H2E-case",
+      "launch": "c:\\pRoGrAm FiLeS\\vIdEoLaN\\vLc\\vlc.exe",
+      "launch_ok": true,
+      "application_exit": 0,
+      "marker_created": true,
+      "image_loaded": "C:\\Program Files\\VideoLAN\\VLC\\libvlc.dll",
+      "classification": "evaded",
+      "local_hunt_result": "outside local hunt root",
+      "administrator_required_for_plant": true,
+      "reason": "Sysmon emitted canonical path casing and the filter suppressed the successful malicious load."
+    },
+    {
+      "id": "H2F-junction",
+      "launch": "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe",
+      "launch_ok": true,
+      "application_exit": 0,
+      "marker_created": true,
+      "image_loaded": "C:\\Users\\Public\\VLC-Lab\\libvlc.dll",
+      "classification": "detected anyway",
+      "local_hunt_result": "hit after resolved-target normalization",
+      "administrator_required_for_link": true,
+      "reason": "Sysmon resolved the junction to the user-writable target, so the filter did not match."
+    },
+    {
+      "id": "H2G-symlink",
+      "launch": "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe",
+      "launch_ok": true,
+      "application_exit": 0,
+      "marker_created": true,
+      "image_loaded": "C:\\Users\\Public\\VLC-Lab\\libvlc.dll",
+      "classification": "detected anyway",
+      "local_hunt_result": "hit after resolved-target normalization",
+      "administrator_required_for_link": true,
+      "reason": "Sysmon resolved the directory symlink to the user-writable target."
+    },
+    {
+      "id": "H2H-non-C-drive",
+      "classification": "capability gap",
+      "local_hunt_result": "not tested",
+      "launch_ok": false,
+      "reason": "The baseline exposed only C: as a writable filesystem; D:, E:, and F: were read-only media. No execution was attempted, so this is neither a refusal nor an evasion."
+    }
+  ],
+  "safety_verdict": "PASS",
+  "safety_report": "evidence/safety/h2-paths-lab-scope.json"
+}

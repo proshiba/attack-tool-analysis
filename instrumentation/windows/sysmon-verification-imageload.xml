@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Sysmon schemaversion="4.91">
+  <!-- '*' enables every hashing algorithm supported by this Sysmon build. -->
+  <HashAlgorithms>*</HashAlgorithms>
+  <!-- Required for Event ID 23 (File Delete archived). -->
+  <ArchiveDirectory>Sysmon</ArchiveDirectory>
+
+  <EventFiltering>
+    <!-- Empty exclude sets mean that every event in these dimensions is logged. -->
+    <ProcessCreate onmatch="exclude">
+    </ProcessCreate>
+    <NetworkConnect onmatch="exclude">
+    </NetworkConnect>
+    <FileCreate onmatch="exclude">
+    </FileCreate>
+    <RegistryEvent onmatch="exclude">
+    </RegistryEvent>
+    <FileCreateStreamHash onmatch="exclude">
+    </FileCreateStreamHash>
+    <DnsQuery onmatch="exclude">
+    </DnsQuery>
+    <FileDelete onmatch="exclude">
+    </FileDelete>
+    <FileDeleteDetected onmatch="exclude">
+    </FileDeleteDetected>
+
+    <!-- Retain the lab's focused LSASS ProcessAccess collection. -->
+    <ProcessAccess onmatch="include">
+      <TargetImage condition="end with">\lsass.exe</TargetImage>
+    </ProcessAccess>
+
+    <!-- Run-scoped verification depth: log every ImageLoad (EID 7). -->
+    <ImageLoad onmatch="exclude">
+    </ImageLoad>
+  </EventFiltering>
+</Sysmon>

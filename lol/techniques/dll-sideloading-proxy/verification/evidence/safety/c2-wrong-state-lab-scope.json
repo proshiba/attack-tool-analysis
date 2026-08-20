@@ -1,0 +1,149 @@
+{
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+  "allowed_networks": [
+    "192.168.1.0/24"
+  ],
+  "allowed_domains": [],
+  "management_networks": [
+    "10.9.0.0/24"
+  ],
+  "declared_tool_images": [
+    "vlc.exe",
+    "updater.exe",
+    "libvlc.dll",
+    "libvlc_org.dll",
+    "libvlccore.dll"
+  ],
+  "inputs": {
+    "zeek_dir": "/tmp/dllproxy-evidence/c2-wrong-state/nsm",
+    "sysmon_json": "/tmp/dllproxy-evidence/c2-wrong-state/scope-events.json",
+    "operator_logs": [
+      "/tmp/dllproxy-evidence/operator.log"
+    ],
+    "sysmon_eid3_events_read": 24,
+    "sysmon_eid22_events_read": 18,
+    "attributed_destinations": 1,
+    "attribution_available": true
+  },
+  "capture_scale": {
+    "conn_log_rows": 31,
+    "off_lab_destinations": 6,
+    "note": "a capture pre-filtered to in-lab traffic cannot show an off-lab destination, so 0 here proves nothing on its own - never filter the input"
+  },
+  "violation_count": 0,
+  "violations": [],
+  "manifest_count": 6,
+  "manifest": [
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 74.178.232.29:443/tcp (2 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "74.178.232.29",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": [
+        "SHR"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 72.145.35.111:443/tcp (1 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "72.145.35.111",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": [
+        "RSTRH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 20.184.175.0:443/tcp (1 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "20.184.175.0",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": [
+        "RSTRH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 40.126.38.19:443/tcp (1 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "40.126.38.19",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": [
+        "RSTRH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 4.213.25.240:443/tcp (1 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "4.213.25.240",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": [
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 4.150.223.102:443/tcp (1 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "4.150.223.102",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": [
+        "RSTRH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    }
+  ],
+  "verdict": "PASS"
+}

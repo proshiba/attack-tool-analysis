@@ -73,6 +73,21 @@ noise, not an error.
 6. **Snapshot** the clean instrumented baseline as **`win_verify_baseline`** (fs-frozen, via the
    Proxmox API). Every verification run rolls back to this snapshot afterward.
 
+## Optional run-scoped ImageLoad instrumentation
+
+The shipped `win_verify_baseline` deliberately has **no Sysmon EID 7 ImageLoad collection**. For a
+verification that makes any `image_load` claim, copy
+`instrumentation/windows/sysmon-verification-imageload.xml` to the target and apply it with
+`Sysmon64.exe -c <file>` during that run's provisioning. The optional configuration is identical to
+the baseline configuration except that an empty `<ImageLoad onmatch="exclude">` block logs every
+image load.
+
+Prove the change before the scenario starts by dumping the active Sysmon configuration into the run
+evidence and capturing a positive EID 7 from a benign process. Record the total EID 7 volume in the
+run window. This is intentionally run-scoped: do not re-take `win_verify_baseline`; the mandatory
+post-run rollback restores the baseline. **Every image-load claim in this repository depends on this
+step and its per-run proof.**
+
 ## Output / report
 Defender/Tamper state (and reboot-persistence); Sysmon status + which of the five dimensions the
 active config captures (and any config change made); the collection toolset installed; the
