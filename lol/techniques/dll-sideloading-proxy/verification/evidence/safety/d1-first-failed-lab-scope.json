@@ -1,0 +1,28 @@
+{
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+  "allowed_networks": ["192.168.1.0/24"],
+  "allowed_domains": [],
+  "management_networks": ["10.9.0.0/24"],
+  "declared_tool_images": ["vlc.exe", "updater.exe", "libvlc.dll", "libvlc_org.dll", "libvlccore.dll", "dllproxy-delivery.zip"],
+  "inputs": {
+    "zeek_dir": "/tmp/dllproxy-evidence/d1-failed/nsm",
+    "sysmon_json": null,
+    "operator_logs": [".lab-work/d1-operator.log"],
+    "sysmon_eid3_events_read": 0,
+    "sysmon_eid22_events_read": 0,
+    "attributed_destinations": 0,
+    "attribution_available": false
+  },
+  "capture_scale": {
+    "conn_log_rows": 5,
+    "off_lab_destinations": 0,
+    "note": "The complete pktmon packet text was reduced to connection orientation without destination filtering after the raw PCAP proved too large for the failed attempt's recovery path. This PASS is required cleanup evidence, not accepted scenario evidence."
+  },
+  "violation_count": 0,
+  "violations": [],
+  "manifest_count": 0,
+  "manifest": [],
+  "verdict": "PASS"
+}

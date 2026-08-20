@@ -10,17 +10,26 @@
   },
   "audit": {
     "decision": "PASS",
-    "iteration": 2,
+    "iteration": 3,
     "exit_code": 0,
-    "measured_commit": "db9db561aa0551e9aa3bfacec37888bedf960c6f",
+    "measured_commit": "3f2fe975fe4257c64c3a476b35641308fa7c9994",
     "branch": "feat/verify-dll-sideload-proxy-20260819",
     "harness": {"rule_count": 1, "blocking_count": 0, "pass": 1},
     "blocking_count": 0,
     "non_blocking_count": 1,
     "safety_verdict": "safe",
     "scenario_verdict": "expand",
-    "scenario_coverage": "8/12 grounded lab-runnable use-cases (67%, above 60% floor)",
-    "prior_gate_error": "Iteration 1 exit 2: auditor cannot run as root; never treated as a pass"
+    "scenario_coverage": "10/12 grounded lab-runnable use-cases (83%, above 60% floor after adding C1 and D1)",
+    "prior_gate_error": "Iteration 1 exit 2: auditor cannot run as root; never treated as a pass",
+    "expansion_gate_preflight_errors": [
+      "Expansion iteration 1 did not start the remote auditor because audit-gate.sh was mistakenly invoked on the orchestrator and could not create /opt/audit; never treated as a pass.",
+      "Expansion iteration 2 did not reach measurement because the audit VM scratch clone contained root-owned Git objects and the non-root auditor could not fetch; never treated as a pass. Ownership was repaired before the final iteration."
+    ],
+    "pass_pinning_correction": {
+      "old_entry": "iteration 2 / db9db561aa0551e9aa3bfacec37888bedf960c6f",
+      "why_wrong": "Iteration 2 measured the feature commit before the audit-response commit. The gate that actually passed the exact merged PR #42 tree was iteration 3 on 3f2fe975fe4257c64c3a476b35641308fa7c9994; a PASS is pinned to one tree and cannot be silently carried to another.",
+      "corrected_entry": "iteration 3 / 3f2fe975fe4257c64c3a476b35641308fa7c9994"
+    }
   },
   "environment": {
     "orchestrator": {"role": "AI VM / VM 102 provisioning and orchestration only", "scenario_execution": false},
@@ -43,7 +52,9 @@
       "persistence_first_inconclusive": 1849,
       "persistence_replacement": 1612,
       "c2_wrong_state": 1645,
-      "c2_matching_state": 1800
+      "c2_matching_state": 1800,
+      "c1_benign_per_user_apps": 2770,
+      "d1_archive_delivery": 1879
     },
     "fp_denominator_policy": "Run volumes are informational only; precision uses audit/catalog/baseline-category-metrics.json."
   },
@@ -65,7 +76,17 @@
       "source_or_payload_committed": false,
       "plain_libvlc_sha256": "9284934a6d37bfab214a01178f78cdf277fe303f9c3f31d3f9ad0dfad5eab6fb",
       "marker_proxy_libvlc_sha256": "3d38cb72d30a932df7bfdf72a10072bccd6f5027cbd0e5bc07ad05c1e714af50",
-      "sliver_proxy_libvlc_sha256": "66fefae7f0df260f5b415af2d8c54c4ba7119db72351255bfdb5f1e989d6ab3d"
+      "sliver_proxy_libvlc_sha256": "66fefae7f0df260f5b415af2d8c54c4ba7119db72351255bfdb5f1e989d6ab3d",
+      "delivery_proxy_libvlc_sha256": "4e31e656fa4c4f7f4281a118f3b7abcc061b20f2142eaec4f5e43c23047898c2",
+      "delivery_renamed_original_sha256": "095d164633af53ac015dcd76540e8523744f57d506db111f19b3fdd9d6180833",
+      "delivery_renamed_host_sha256": "5d695d8a0bb1d919cc77a2aa2488a61797bfa065238160278ee458120630aaf9",
+      "delivery_zip_sha256": "f1f0ba32ca02b1c4ecf9217720d7391f585094bfbc7365f600809dfa14faa85e",
+      "delivery_archive_committed": false
+    },
+    "benign_controls": {
+      "vscode": {"version": "1.134.0", "installer_sha256": "d564bc373ed3d94eedc813d5c0865e4ef40a40323e856bc838ae5a29723f2fb9", "publisher": "Microsoft Corporation", "published_hash_match": true, "triage": "evidence/safety/vscode-installer-triage/poc-review.md"},
+      "evernote": {"version": "11.29.2", "installer_sha256": "b69ea1e0af323eb6b4ed55054643dbe5805b1c0536bcd16f1b3421f86aa97524", "publisher": "Evernote Corporation", "published_hash_match": true, "triage": "evidence/safety/evernote-installer-triage/poc-review.md"},
+      "installers_or_outputs_committed": false
     },
     "sliver": {
       "version": "1.7.3",
@@ -82,17 +103,21 @@
     "H3": "proved: upstream and local image-load rules fired after vlc.exe was renamed updater.exe; the other upstream process rules missed all three forms",
     "H4": "refuted as a detection dependency: plain sideload stalled while proxy forms exited 0, but signal sets still fired on both",
     "H5": "refuted for VLC 3.0.21: libvlc_org.dll reported OriginalFileName '-' despite valid VideoLAN signature; no proxy-identity rule authored",
-    "H6": "proved gap and authored one name-independent hunt; 505/727396 FP and three of four named recall samples",
+    "H6": "proved gap and relaxed the name-independent hunt; 516/727396 FP, three of four named recall samples, and retained prior-run M1/M2/M3 hits plus C0 silence",
     "H7": "self-injection and host attribution proved; full usable Sliver C2 session not established; existing Sliver JA3/JA3S rules cover the completed-TLS diagnostic and no duplicate rule was authored",
     "H8": "proved: HKLM Run value and SYSTEM scheduled task pointed to the renamed proxy host; scheduled launch exited 0 and wrote the marker",
-    "H9": "default-install control passed with zero detections; no installed baseline application produced the legitimate per-user self-updater control shape, which remains a gap"
+    "H9": "executed: VS Code produced 0 merged/relaxed matches; Evernote produced 7 under both forms across five unsigned application DLL names; no attacker-controlled exclusion added",
+    "H10": "executed: D1 produced one same-writer/same-directory ten-second EXE+DLL cluster, but the baseline measured 278/542441 and Evernote produced three benign clusters, so no file-event rule was shipped",
+    "H11": "partially useful: the D1 ZIP carried ZoneId=3 and EID 15 recorded it, but MOTW did not propagate to the extracted host or DLLs and therefore did not discriminate the eventual sideload"
   },
   "runs": [
     {"ids": ["C0"], "execute": "success", "detect": "expected benign silence", "eid7_volume": 491, "safety": "PASS"},
     {"ids": ["M1", "M2", "M3"], "execute": "M1 payload success/application stall; M2/M3 payload and application success", "detect": "upstream libvlc 3/3; local hunt 3/3", "eid7_volume": 1608, "safety": "PASS"},
     {"ids": ["H2A", "H2B", "H2C", "H2D", "H2E", "H2F", "H2G", "H2H"], "execute": "seven payload executions; H2H capability gap", "detect": "five detected anyway; two Administrator-only evasions; one gap", "eid7_volume": 3243, "safety": "PASS"},
     {"ids": ["P1", "P2"], "execute": "persistence registration and scheduled launch success", "detect": "persistence and proxy telemetry present", "eid7_volume": 1612, "safety": "PASS replacement after preserved INCONCLUSIVE diagnostic"},
-    {"ids": ["N1"], "execute": "proxy and self-injection success; host-attributed callback; C2 establishment partial", "detect": "endpoint attribution plus existing Sliver network hunts", "eid7_volume": 1800, "safety": "PASS"}
+    {"ids": ["N1"], "execute": "proxy and self-injection success; host-attributed callback; C2 establishment partial", "detect": "endpoint attribution plus existing Sliver network hunts", "eid7_volume": 1800, "safety": "PASS"},
+    {"ids": ["C1"], "execute": "VS Code and Evernote installed and launched through normal per-user flows", "detect": "VS Code 0/0 merged/relaxed; Evernote 7/7 merged/relaxed", "eid7_volume": 2770, "safety": "PASS"},
+    {"ids": ["D1"], "execute": "browser download, ZIP extraction, proxy load, and marker success; first evidence attempt rejected and repeated", "detect": "merged 1; relaxed 1; one EID 11 co-write cluster; container-only MOTW", "eid7_volume": 1879, "safety": "PASS on failed-attempt cleanup and accepted retry"}
   ],
   "upstream": {
     "candidate_rules_compared": 61,
@@ -105,12 +130,18 @@
     "only_firing_rule": {"id": "bf9808c4-d24f-44a2-8398-b65227d406b6", "name": "Potential Libvlc.DLL Sideloading"},
     "benign_control_findings": 0,
     "adoption": "adopt by reference; do not duplicate",
-    "precision": {"fp_count": 0, "category_denominator": 727396, "fp_share_percent": 0.0},
+    "precision": [
+      {"id": "bf9808c4-d24f-44a2-8398-b65227d406b6", "fp_count": 0, "category": "image_load", "category_denominator": 727396, "fp_share_percent": 0.0},
+      {"id": "4fc0deee-0057-4998-ab31-d24e46e0aba4", "fp_count": 0, "category": "image_load", "category_denominator": 727396, "fp_share_percent": 0.0},
+      {"id": "2a297820-04ce-41f2-b60d-5afe139aaab3", "fp_count": 200, "category": "image_load", "category_denominator": 727396, "fp_share_percent": 0.027495},
+      {"id": "e2e01011-5910-4267-9c3b-4149ed5479cf", "fp_count": 0, "category": "image_load", "category_denominator": 727396, "fp_share_percent": 0.0},
+      {"id": "b5de0c9a-6f19-43e0-af4e-55ad01f550af", "fp_count": 0, "category": "image_load", "category_denominator": 727396, "fp_share_percent": 0.0}
+    ],
     "detail": "evidence/upstream-comparison.md"
   },
   "sigma": [
     {
-      "path": "sigma/image_load_unsigned_dll_by_image_in_user_writable_path.yml",
+      "path": "sigma/image_load_unsigned_dll_from_user_writable_path.yml",
       "id": "012b33f0-9e85-47f5-b550-21d83595a5ba",
       "role": "name-independent behavioral hunt",
       "logsource": "windows/image_load",
@@ -122,19 +153,19 @@
         "schema_version": 4,
         "measured": true,
         "harness_verdict": "pass",
-        "fp_count": 505,
+        "fp_count": 516,
         "category_denominator": 727396,
-        "fp_share_of_category_percent": 0.069426,
-        "fp_per_million_category": 694.257,
+        "fp_share_of_category_percent": 0.070938,
+        "fp_per_million_category": 709.38,
         "measured_fp_likelihood_floor": "medium",
         "detection_hit": true,
         "verdict": "pass",
         "corpus": "evtx-baseline v0.8.4",
-        "repo_commit_measured": "db9db561aa0551e9aa3bfacec37888bedf960c6f",
+        "repo_commit_measured": "93b6b251b79601dbb736f6e9c47e2356d7df5e91",
         "fp_likelihood": "high",
         "recommended_role": "hunt",
         "recommended_level": "low",
-        "auditor_adjustment": "high because portable applications and per-user updaters commonly load their own unsigned DLLs"
+        "auditor_adjustment": "high because portable applications and per-user updaters commonly load their own unsigned DLLs; relaxing the process path added only 11 baseline matches while recovering Program Files hosts that load a user-writable DLL"
       },
       "limitations": "EID 7 signature fields describe only the loaded DLL; Sigma cannot prove host signature or compare Image and ImageLoaded directories."
     }
@@ -145,8 +176,9 @@
     "accepted_post_run_verdict": "PASS",
     "accepted_claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
     "preserved_non_pass_attempts": ["control-default-lab-scope.json INCONCLUSIVE", "persistence-first-inconclusive-lab-scope.json INCONCLUSIVE"],
+    "added_run_reports": ["c1-lab-scope.json PASS", "d1-first-failed-lab-scope.json PASS", "d1-lab-scope.json PASS"],
     "violations": 0,
-    "declared_images": ["vlc.exe", "updater.exe", "libvlc.dll", "libvlc_org.dll", "libvlccore.dll"],
+    "declared_images": ["vlc.exe", "updater.exe", "libvlc.dll", "libvlc_org.dll", "libvlccore.dll", "dllproxy-delivery.zip"],
     "operator_record": "Kali staging/listener definition and command history; not committed because it is retained only as checker input"
   },
   "sanitization": {
@@ -162,9 +194,9 @@
   },
   "cleanup_confirmation": {
     "target": {"rollback": "win_verify_baseline OK", "sysmon": "Running", "image_load_enabled": false, "baseline_omission_present": true, "default_routes": 1, "scenario_directories": 0, "marker_present": false},
-    "kali": {"http_listener": "inactive", "sliver_listener": "inactive", "temporary_swap_files": "removed", "swap_active": false},
-    "removed_material": "Three temporary Kali build-swap files totaling 16 GiB were deleted after use; they contained only paging data and are not recoverable."
+    "kali": {"http_listener": "inactive", "sliver_listener": "inactive", "temporary_swap_files": "removed", "swap_active": false, "delivery_http_port_18090": "inactive", "delivery_build_directory": "removed"},
+    "removed_material": "Three temporary Kali build-swap files totaling 16 GiB, temporary C1 installer copies, and the D1 container/build directory were deleted after use; these temporary copies are not recoverable."
   },
-  "verified_at": "2026-08-20T01:01:06Z",
+  "verified_at": "2026-08-20T11:08:54Z",
   "verifier": "Codex lab orchestrator"
 }

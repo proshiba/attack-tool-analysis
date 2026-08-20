@@ -1,0 +1,675 @@
+{
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+  "allowed_networks": [
+    "192.168.1.0/24"
+  ],
+  "allowed_domains": [],
+  "management_networks": [
+    "10.9.0.0/24"
+  ],
+  "declared_tool_images": [],
+  "inputs": {
+    "zeek_dir": "/tmp/c1-nsm",
+    "sysmon_json": "/tmp/c1-scope-events-clean.json",
+    "operator_logs": [
+      ".lab-work/c1-operator.log"
+    ],
+    "sysmon_eid3_events_read": 99,
+    "sysmon_eid22_events_read": 34,
+    "attributed_destinations": 23,
+    "attribution_available": true
+  },
+  "capture_scale": {
+    "conn_log_rows": 86,
+    "off_lab_destinations": 27,
+    "note": "a capture pre-filtered to in-lab traffic cannot show an off-lab destination, so 0 here proves nothing on its own - never filter the input"
+  },
+  "violation_count": 0,
+  "violations": [],
+  "manifest_count": 38,
+  "manifest": [
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 4.213.25.242:443/tcp (2 connections, 4878 bytes, 108 packets sent)",
+      "attributed_images": [
+        "C:\\Windows\\System32\\svchost.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "4.213.25.242",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 4878,
+      "packets_sent": 108,
+      "conn_states": [
+        "S0"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 1.1.1.1:53/udp (41 connections, 11016 bytes, 258 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe",
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+        "C:\\Windows\\System32\\svchost.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "1.1.1.1",
+      "port": "53",
+      "proto": "udp",
+      "connections": 41,
+      "bytes_sent": 11016,
+      "packets_sent": 258,
+      "conn_states": [
+        "S0"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 13.107.13.93:443/tcp (2 connections, 4062 bytes, 72 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "13.107.13.93",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 4062,
+      "packets_sent": 72,
+      "conn_states": [
+        "S0",
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 150.171.110.136:443/tcp (2 connections, 1141 bytes, 342 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "150.171.110.136",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 1141,
+      "packets_sent": 342,
+      "conn_states": [
+        "S0",
+        "SH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 131.253.33.203:80/tcp (1 connections, 0 bytes, 6 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "131.253.33.203",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 6,
+      "conn_states": [
+        "S0"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 150.171.74.16:443/tcp (2 connections, 3537 bytes, 78 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "150.171.74.16",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 3537,
+      "packets_sent": 78,
+      "conn_states": [
+        "S0",
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 20.42.73.30:443/tcp (2 connections, 1153731 bytes, 570 packets sent)",
+      "attributed_images": [
+        "C:\\Windows\\System32\\svchost.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "20.42.73.30",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 1153731,
+      "packets_sent": 570,
+      "conn_states": [
+        "S0",
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 4.150.223.104:443/tcp (2 connections, 5207 bytes, 54 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "4.150.223.104",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 5207,
+      "packets_sent": 54,
+      "conn_states": [
+        "S0",
+        "SH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 104.18.38.233:80/tcp (1 connections, 707 bytes, 18 packets sent)",
+      "attributed_images": [
+        "C:\\Windows\\Sysmon64.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "104.18.38.233",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 707,
+      "packets_sent": 18,
+      "conn_states": [
+        "S0"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 142.250.21.102:443/tcp (4 connections, 6077 bytes, 120 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "142.250.21.102",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 4,
+      "bytes_sent": 6077,
+      "packets_sent": 120,
+      "conn_states": [
+        "S0",
+        "SH",
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 34.36.31.173:443/tcp (5 connections, 6905 bytes, 120 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "34.36.31.173",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 5,
+      "bytes_sent": 6905,
+      "packets_sent": 120,
+      "conn_states": [
+        "S0",
+        "SH",
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 209.85.229.39:443/tcp (2 connections, 2484 bytes, 18 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "209.85.229.39",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 2484,
+      "packets_sent": 18,
+      "conn_states": [
+        "S0",
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 150.171.110.137:443/tcp (2 connections, 4089 bytes, 78 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "150.171.110.137",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 4089,
+      "packets_sent": 78,
+      "conn_states": [
+        "SH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 142.251.23.95:443/tcp (2 connections, 2499 bytes, 54 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "142.251.23.95",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 2,
+      "bytes_sent": 2499,
+      "packets_sent": 54,
+      "conn_states": [
+        "S0",
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 34.36.49.68:443/tcp (4 connections, 5143 bytes, 90 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "34.36.49.68",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 4,
+      "bytes_sent": 5143,
+      "packets_sent": 90,
+      "conn_states": [
+        "SH",
+        "S0",
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 199.232.211.52:443/udp (1 connections, 16776 bytes, 30 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "199.232.211.52",
+      "port": "443",
+      "proto": "udp",
+      "connections": 1,
+      "bytes_sent": 16776,
+      "packets_sent": 30,
+      "conn_states": [
+        "S0"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 199.232.211.52:443/tcp (1 connections, 5901 bytes, 263640 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "199.232.211.52",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 5901,
+      "packets_sent": 263640,
+      "conn_states": [
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 34.160.81.0:443/udp (1 connections, 35910 bytes, 72 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "34.160.81.0",
+      "port": "443",
+      "proto": "udp",
+      "connections": 1,
+      "bytes_sent": 35910,
+      "packets_sent": 72,
+      "conn_states": [
+        "S0"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 23.63.226.92:80/tcp (1 connections, 367 bytes, 12 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "23.63.226.92",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 367,
+      "packets_sent": 12,
+      "conn_states": [
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 209.85.229.70:443/udp (1 connections, 18216 bytes, 336 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "209.85.229.70",
+      "port": "443",
+      "proto": "udp",
+      "connections": 1,
+      "bytes_sent": 18216,
+      "packets_sent": 336,
+      "conn_states": [
+        "S0"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 172.67.191.233:443/tcp (1 connections, 1792 bytes, 24 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "172.67.191.233",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 1792,
+      "packets_sent": 24,
+      "conn_states": [
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 34.160.167.81:443/tcp (1 connections, 2507 bytes, 42 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "34.160.167.81",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 2507,
+      "packets_sent": 42,
+      "conn_states": [
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 173.231.16.77:443/tcp (1 connections, 31 bytes, 24 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "173.231.16.77",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 31,
+      "packets_sent": 24,
+      "conn_states": [
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 34.160.81.0:443/tcp (1 connections, 703 bytes, 36 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "34.160.81.0",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 703,
+      "packets_sent": 36,
+      "conn_states": [
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 172.67.191.233:443/udp (1 connections, 12858 bytes, 60 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "172.67.191.233",
+      "port": "443",
+      "proto": "udp",
+      "connections": 1,
+      "bytes_sent": 12858,
+      "packets_sent": 60,
+      "conn_states": [
+        "S0"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 34.36.78.115:443/tcp (1 connections, 2528 bytes, 24 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "34.36.78.115",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 2528,
+      "packets_sent": 24,
+      "conn_states": [
+        "OTH"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 209.85.228.72:443/udp (1 connections, 36030 bytes, 336 packets sent)",
+      "attributed_images": [
+        "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe"
+      ],
+      "source": "192.168.1.52",
+      "destination": "209.85.228.72",
+      "port": "443",
+      "proto": "udp",
+      "connections": 1,
+      "bytes_sent": 36030,
+      "packets_sent": 336,
+      "conn_states": [
+        "S0"
+      ],
+      "severity": "info",
+      "note": "not attributed to a declared tool - recorded, not judged"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "mobile.events.data.microsoft.com",
+      "queries": 24,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'mobile.events.data.microsoft.com' asked of OFF-LAB resolver 1.1.1.1 (24 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "public.evernote.com",
+      "queries": 24,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'public.evernote.com' asked of OFF-LAB resolver 1.1.1.1 (24 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "main.vscode-cdn.net",
+      "queries": 18,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'main.vscode-cdn.net' asked of OFF-LAB resolver 1.1.1.1 (18 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "marketplace.visualstudio.com",
+      "queries": 12,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'marketplace.visualstudio.com' asked of OFF-LAB resolver 1.1.1.1 (12 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "redirector.gvt1.com",
+      "queries": 12,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'redirector.gvt1.com' asked of OFF-LAB resolver 1.1.1.1 (12 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "updates.desktop.evernote.com",
+      "queries": 12,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'updates.desktop.evernote.com' asked of OFF-LAB resolver 1.1.1.1 (12 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "pti.store.microsoft.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'pti.store.microsoft.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "oneocsp.microsoft.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'oneocsp.microsoft.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "www.microsoft.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'www.microsoft.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "ocsp.entrust.net",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'ocsp.entrust.net' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "api.pico.bendingspoonsapps.com",
+      "queries": 6,
+      "resolver": "1.1.1.1",
+      "scope": "off-lab-resolver",
+      "detail": "'api.pico.bendingspoonsapps.com' asked of OFF-LAB resolver 1.1.1.1 (6 queries)"
+    }
+  ],
+  "verdict": "PASS"
+}

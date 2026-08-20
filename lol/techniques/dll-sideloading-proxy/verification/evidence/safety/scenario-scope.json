@@ -1,13 +1,15 @@
 {
   "schema_version": 1,
   "rule": "SAFETY RULE 1 at design time - no scenario targets anything outside the lab",
-  "target": "lol/techniques/dll-sideloading-proxy/verification/scenarios.md",
+  "target": "lol/techniques/dll-sideloading-proxy/verification",
   "files_checked": [
-    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/dll-sideloading-proxy/verification/scenarios.md"
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/dll-sideloading-proxy/verification/scenarios.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/dll-sideloading-proxy/verification/README.md",
+    "/home/operator/lab-workspace/attack-tool-analysis/lol/techniques/dll-sideloading-proxy/verification/verification.json"
   ],
   "scope_declaration_present": true,
   "severity_counts": {
-    "high": 3,
+    "high": 4,
     "info": 2
   },
   "findings": [
@@ -15,7 +17,7 @@
       "severity": "high",
       "check": "external-host",
       "file": "scenarios.md",
-      "line": 95,
+      "line": 107,
       "detail": "external host zerotracelab.com",
       "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
       "evidence": "- Technique and proxy form: [Zero Trace Lab, “DLL Sideloading & Proxying”](https://zerotracelab.com/blog/dll-sideloading-proxying) (`source_url`; citation only)."
@@ -24,7 +26,7 @@
       "severity": "high",
       "check": "external-host",
       "file": "scenarios.md",
-      "line": 96,
+      "line": 108,
       "detail": "external host www.trendmicro.com",
       "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
       "evidence": "- In-the-wild libvlc use: [Trend Micro, Earth Preta updated stealthy strategies](https://www.trendmicro.com/en_us/research/23/c/earth-preta-updated-stealthy-strategies.html) (`source_url`; citation on"
@@ -33,7 +35,7 @@
       "severity": "high",
       "check": "external-host",
       "file": "scenarios.md",
-      "line": 97,
+      "line": 109,
       "detail": "external host hijacklibs.net",
       "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
       "evidence": "- Vulnerable library catalog entry: [HijackLibs `libvlc.dll`](https://hijacklibs.net/entries/3rd_party/vlc/libvlc.html) (`source_url`; citation only)."
@@ -42,7 +44,7 @@
       "severity": "info",
       "check": "citation-host",
       "file": "scenarios.md",
-      "line": 98,
+      "line": 110,
       "detail": "cited host attack.mitre.org",
       "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
       "evidence": "- Technique taxonomy and mitigations: [MITRE ATT&CK T1574.001](https://attack.mitre.org/techniques/T1574/001/) and [T1574.002](https://attack.mitre.org/techniques/T1574/002/) (`source_url`; citations "
@@ -51,10 +53,19 @@
       "severity": "info",
       "check": "citation-host",
       "file": "scenarios.md",
-      "line": 98,
+      "line": 110,
       "detail": "cited host attack.mitre.org",
       "why": "a cited write-up is fine; a host the run would CONTACT is not. Confirm this appears only as a reference.",
       "evidence": "- Technique taxonomy and mitigations: [MITRE ATT&CK T1574.001](https://attack.mitre.org/techniques/T1574/001/) and [T1574.002](https://attack.mitre.org/techniques/T1574/002/) (`source_url`; citations "
+    },
+    {
+      "severity": "high",
+      "check": "external-host",
+      "file": "verification.json",
+      "line": 63,
+      "detail": "external host download.videolan.org",
+      "why": "SAFETY RULE 1: if the run contacts this host, the scenario is rejected. Re-host the payload on Kali (VM 100).",
+      "evidence": "\"source_url\": \"https://download.videolan.org/pub/videolan/vlc/3.0.21/win64/vlc-3.0.21-win64.7z\","
     }
   ],
   "verdict": "REVIEW"
