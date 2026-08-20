@@ -58,5 +58,7 @@ precision_notes: >-
   no exclusions and therefore no attacker-controlled filter off switch. Treat
   each match as a lead and correlate the process signature, exact directory
   equality, parent process, persistence, and network activity before escalation.
+  A validly signed malicious DLL is out of scope by construction; correlate
+  signer reputation and the upstream signed-DLL/no-metadata hunt for that form.
   The measured baseline count and denominator are recorded in verification.json.
 level: low

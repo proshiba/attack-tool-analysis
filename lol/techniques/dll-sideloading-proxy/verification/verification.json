@@ -8,10 +8,19 @@
     "placement": "lol/techniques/dll-sideloading-proxy/verification",
     "placement_reason": "The repository index generator indexes brought-in tools under tools and reference sites under lol/sites. This work verifies a technique with a lab-authored DLL and no brought-in sideload generator, so it belongs under lol/techniques rather than either indexed collection."
   },
-  "audit_gate": {
-    "decision": "pending",
-    "iteration": 0,
-    "branch": "feat/verify-dll-sideload-proxy-20260819"
+  "audit": {
+    "decision": "PASS",
+    "iteration": 2,
+    "exit_code": 0,
+    "measured_commit": "db9db561aa0551e9aa3bfacec37888bedf960c6f",
+    "branch": "feat/verify-dll-sideload-proxy-20260819",
+    "harness": {"rule_count": 1, "blocking_count": 0, "pass": 1},
+    "blocking_count": 0,
+    "non_blocking_count": 1,
+    "safety_verdict": "safe",
+    "scenario_verdict": "expand",
+    "scenario_coverage": "8/12 grounded lab-runnable use-cases (67%, above 60% floor)",
+    "prior_gate_error": "Iteration 1 exit 2: auditor cannot run as root; never treated as a pass"
   },
   "environment": {
     "orchestrator": {"role": "AI VM / VM 102 provisioning and orchestration only", "scenario_execution": false},
@@ -86,7 +95,9 @@
     {"ids": ["N1"], "execute": "proxy and self-injection success; host-attributed callback; C2 establishment partial", "detect": "endpoint attribution plus existing Sliver network hunts", "eid7_volume": 1800, "safety": "PASS"}
   ],
   "upstream": {
-    "candidate_rules_compared": 59,
+    "candidate_rules_compared": 61,
+    "sideload_named_family_rules": 59,
+    "conceptual_neighbor_rules": 2,
     "image_load_rules": 53,
     "process_creation_rules": 4,
     "file_event_rules": 2,
@@ -107,9 +118,10 @@
       "fp_likelihood": "high",
       "recommended_role": "hunt",
       "level": "low",
-      "precision_measurement": {
+      "precision": {
         "schema_version": 4,
         "measured": true,
+        "harness_verdict": "pass",
         "fp_count": 505,
         "category_denominator": 727396,
         "fp_share_of_category_percent": 0.069426,
@@ -118,6 +130,10 @@
         "detection_hit": true,
         "verdict": "pass",
         "corpus": "evtx-baseline v0.8.4",
+        "repo_commit_measured": "db9db561aa0551e9aa3bfacec37888bedf960c6f",
+        "fp_likelihood": "high",
+        "recommended_role": "hunt",
+        "recommended_level": "low",
         "auditor_adjustment": "high because portable applications and per-user updaters commonly load their own unsigned DLLs"
       },
       "limitations": "EID 7 signature fields describe only the loaded DLL; Sigma cannot prove host signature or compare Image and ImageLoaded directories."

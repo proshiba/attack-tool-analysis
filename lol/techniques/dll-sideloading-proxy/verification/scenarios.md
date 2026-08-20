@@ -104,3 +104,7 @@ sample receives an explicit hit or miss.
 - The article's unknown-provenance generator and payload are permanently out of scope.
 - C1 depends on a legitimate per-user application already present in the baseline. If none produces
   the shape, the missing FP control remains an explicit gap.
+- The local hunt intentionally does not cover a validly signed malicious DLL; correlate signer
+  reputation and upstream `2a297820` for the signed/no-metadata form.
+- Phantom System32-DLL hijacks (`6b98b92b`) and enumerated system-DLL names planted outside system
+  directories (`4fc0deee`) are upstream-covered T1574.001 forms outside this local hunt's scope.

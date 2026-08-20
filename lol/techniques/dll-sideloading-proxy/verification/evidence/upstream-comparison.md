@@ -4,8 +4,12 @@ The comparison used SigmaHQ commit `8eaafff1f2845a696050e05e72ba1140ee190698` on
 candidate set was built before local rule authoring and contained every upstream Windows file whose
 name matched the sideload families in scope: 53 `image_load_side_load_*` rules, four
 `proc_creation_win_*sideload*`/`*side_load*` rules, and two `file_event_win_*sideload*` rules (59
-total). The family was replayed together against the complete marker-run Sysmon EVTX and the benign
-default-install control EVTX.
+family rules). The family was replayed together against the complete marker-run Sysmon EVTX and the
+benign default-install control EVTX. Two conceptual neighbours outside that filename family were
+also compared, for 61 relevant rules total: `image_load_susp_unsigned_dll.yml` (`b5de0c9a`) and the
+threat-hunting `image_load_win_signed_dll_no_metadata.yml` (`2a297820`). Other unsigned image-load
+rules were scoped to a specific host or subsystem such as LSASS, Node.js, ClickOnce, or THOR and do
+not cover an arbitrary signed third-party host in a user-writable directory.
 
 ## Like-for-like result
 
@@ -30,6 +34,14 @@ directory and survives `vlc.exe` being renamed. A process rule keyed to `vlc.exe
 no such upstream process rule fired on M1 or M2 either. There is no reason to clone or lightly edit
 the upstream libvlc rule, so it is adopted by reference. The local rule exists only for H6's proven
 cross-application gap.
+
+The unsigned-DLL neighbour `b5de0c9a` requires one of five named LOLBIN hosts, so it misses VLC,
+the renamed host, and the three name-independent recall hits. The signed-DLL/no-metadata hunt
+`2a297820` covers a form the local hunt intentionally misses, but requires the loaded DLL's metadata
+fields to be empty; the signed renamed VLC original has VideoLAN description and company metadata.
+Conversely, upstream `6b98b92b` covers phantom System32-DLL hijacks and `4fc0deee` covers enumerated
+system-DLL names outside system directories, including Program Files plants. Those upstream forms
+are not replaced by the local user-writable/unsigned hunt.
 
 ## Application continuity and signal dependence
 

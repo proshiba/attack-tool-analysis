@@ -26,7 +26,7 @@
       "file": "AutomatedTestingTools/Malware/sideloading_uacbypass_rundll32_injection_c2.evtx",
       "result": "miss",
       "match_count": 0,
-      "reason": "No event satisfied both user-writable process and user-writable unsigned DLL path selections. The rule was not broadened to fit this sample."
+      "reason": "Both Image and ImageLoaded satisfied the user-writable path selections, but the loaded DLL was Signed=true with SignatureStatus=Valid. The rule excludes validly signed malicious or certificate-abuse forms by construction and was not broadened to fit this sample."
     }
   ]
 }

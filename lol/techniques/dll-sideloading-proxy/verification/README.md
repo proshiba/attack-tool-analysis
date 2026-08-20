@@ -33,8 +33,9 @@ placed under `lol/techniques/dll-sideloading-proxy/verification` and deliberatel
 | H2G symlink | proxy/marker success, exit 0 | detected anyway | hit | Sysmon emitted resolved user-writable target |
 | H2H non-C | not executed | not tested | not tested | no writable secondary filesystem; capability gap, not refusal/evasion |
 
-The upstream-family replay loaded all 59 relevant rules (53 image-load, four process-creation, two
-file-event). It returned exactly three attack findings—all the libvlc rule on M1/M2/M3—and zero C0
+The upstream-family replay loaded all 59 sideload-named rules (53 image-load, four process-creation,
+two file-event); two conceptual image-load neighbours outside that filename family were also
+compared. It returned exactly three family findings—all the libvlc rule on M1/M2/M3—and zero C0
 findings. The other rules required other DLL, host, or path literals. The application-breaking
 plain form and normally working proxy form produced the same two primary detections, so neither
 detection depends on VLC breaking. Full comparisons are in `evidence/upstream-comparison.md` and
