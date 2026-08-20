@@ -21,6 +21,10 @@
     "scenario_verdict": "expand",
     "scenario_coverage": "10/12 grounded lab-runnable use-cases (83%, above 60% floor after adding C1 and D1)",
     "prior_gate_error": "Iteration 1 exit 2: auditor cannot run as root; never treated as a pass",
+    "expansion_gate_preflight_errors": [
+      "Expansion iteration 1 did not start the remote auditor because audit-gate.sh was mistakenly invoked on the orchestrator and could not create /opt/audit; never treated as a pass.",
+      "Expansion iteration 2 did not reach measurement because the audit VM scratch clone contained root-owned Git objects and the non-root auditor could not fetch; never treated as a pass. Ownership was repaired before the final iteration."
+    ],
     "pass_pinning_correction": {
       "old_entry": "iteration 2 / db9db561aa0551e9aa3bfacec37888bedf960c6f",
       "why_wrong": "Iteration 2 measured the feature commit before the audit-response commit. The gate that actually passed the exact merged PR #42 tree was iteration 3 on 3f2fe975fe4257c64c3a476b35641308fa7c9994; a PASS is pinned to one tree and cannot be silently carried to another.",
@@ -157,7 +161,7 @@
         "detection_hit": true,
         "verdict": "pass",
         "corpus": "evtx-baseline v0.8.4",
-        "repo_commit_measured": "working tree derived from 5d6756509223fa99828bd45f3ff749e495df553d; final gate commit recorded separately",
+        "repo_commit_measured": "93b6b251b79601dbb736f6e9c47e2356d7df5e91",
         "fp_likelihood": "high",
         "recommended_role": "hunt",
         "recommended_level": "low",
