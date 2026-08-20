@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "payload": {
+    "source_implant_sha256": "93687267b75b076e77e7e199a0a5adefd1727837075363e0f260ac95f612648e",
+    "donut_shellcode_sha256": "5168cca4695abe3092a25a0e2d300b1e764805a51006998b5338708b958d572f",
+    "proxy_dll_sha256": "66fefae7f0df260f5b415af2d8c54c4ba7119db72351255bfdb5f1e989d6ab3d",
+    "callback": "192.168.1.50:31337/mtls",
+    "injection": "self-thread in updater.exe"
+  },
+  "runs": [
+    {
+      "id": "c2-wrong-server-state",
+      "window_utc": ["2026-08-20T00:50:19.7859210Z", "2026-08-20T00:51:29.8855358Z"],
+      "image_load_event_count": 1645,
+      "endpoint": "Sysmon EID 3 attributed updater.exe to 192.168.1.50:31337",
+      "server": "TLS completed, then Sliver rejected the legacy/mismatched state protocol; no C2 session established",
+      "nsm": {
+        "packets": 1748,
+        "bytes": 894388,
+        "zeek_connection": "192.168.1.52:49687 -> 192.168.1.50:31337 TLSv13 established",
+        "ja3": "2196848d251b217de8b2c037e356c11d",
+        "ja3s": "f4febc55ea12b31ae17cfb7e614afda8",
+        "sni": null,
+        "visible_certificate_chain": false
+      },
+      "safety_verdict": "PASS"
+    },
+    {
+      "id": "c2-matching-server-state",
+      "window_utc": ["2026-08-20T00:57:20.5809357Z", "2026-08-20T00:58:30.7218616Z"],
+      "image_load_event_count": 1800,
+      "endpoint": "Sysmon EID 3 ProcessId 4400, updater.exe, SYSTEM, initiated TCP 192.168.1.52:49709 -> 192.168.1.50:31337",
+      "server": "Sliver log accepted the incoming connection; TCP remained established for the observation window, but the listener sent no TLS bytes and no operator session became usable before updater.exe was stopped. C2 establishment is therefore partial, not success.",
+      "nsm": {
+        "packets": 2312,
+        "bytes": 1088500,
+        "zeek_connection": "44.564661 seconds, 1483 originator bytes, 0 responder bytes, RSTO when the host was stopped",
+        "ja3": "2196848d251b217de8b2c037e356c11d",
+        "ja3s": null,
+        "sni": null,
+        "visible_certificate_chain": false
+      },
+      "safety_verdict": "PASS"
+    }
+  ],
+  "existing_sliver_rule_comparison": [
+    {"rules": ["network_zeek_sliver_mtls_ja3_pair.yml", "network_suricata_sliver_mtls_ja3_pair.yml"], "result": "hit on the completed-TLS diagnostic; canonical partial connection lacks JA3S and does not satisfy the pair"},
+    {"rules": ["network_zeek_tls13_no_sni_no_visible_cert.yml"], "result": "hit on the completed-TLS diagnostic; broad hunt only"},
+    {"rules": ["network_zeek_sliver_dns_encoded_query_profile.yml", "network_suricata_sliver_dns_encoded_query_profile.yml", "network_zeek_sliver_http_request_profile.yml", "network_suricata_sliver_http_request_profile.yml"], "result": "miss by design: transport was raw mTLS, not DNS or Sliver HTTP"},
+    {"rules": ["file_event_script_host_writes_executable.yml"], "result": "eligible on PowerShell extraction/copy of the staged EXE and DLL set; delivery support signal, not C2 attribution"},
+    {"rules": ["proc_creation_unversioned_executable_from_script_host.yml"], "result": "miss: updater.exe retained signed VLC version metadata"},
+    {"rules": ["proc_creation_untrusted_parent_spawns_shell.yml"], "result": "miss: no operator tasking or child shell was executed"},
+    {"rules": ["file_event_lnx_curl_writes_hidden_transient_executable.yml", "proc_creation_lnx_hidden_executable_var_tmp.yml"], "result": "not applicable to the Windows target"}
+  ],
+  "what_nsm_adds": "Zeek/Suricata identify TLS framing, direction, duration, lack of SNI/certificate visibility, and the known Sliver JA3/JA3S pair when both sides speak. They cannot identify updater.exe, prove self-injection, see encrypted Sliver tasking, or distinguish the signed renamed VLC host without endpoint correlation.",
+  "new_sliver_rules_authored": false,
+  "reason": "The repository's existing mTLS pair and broad no-SNI TLS hunt already cover the observable full-handshake shape. A client-JA3-only rule would be substantially broader, and the corrected-state run did not produce a usable C2 session."
+}

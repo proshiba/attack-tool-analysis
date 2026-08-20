@@ -1,0 +1,154 @@
+{
+  "schema_version": 4,
+  "scenario": {
+    "id": "dll-sideloading-proxy",
+    "name": "VLC libvlc sideloading, export-forwarding proxying, path-filter falsification, persistence, and Sliver self-injection",
+    "design": "scenarios.md",
+    "attack_mapping": ["T1574.001", "T1574.002"],
+    "placement": "lol/techniques/dll-sideloading-proxy/verification",
+    "placement_reason": "The repository index generator indexes brought-in tools under tools and reference sites under lol/sites. This work verifies a technique with a lab-authored DLL and no brought-in sideload generator, so it belongs under lol/techniques rather than either indexed collection."
+  },
+  "audit_gate": {
+    "decision": "pending",
+    "iteration": 0,
+    "branch": "feat/verify-dll-sideload-proxy-20260819"
+  },
+  "environment": {
+    "orchestrator": {"role": "AI VM / VM 102 provisioning and orchestration only", "scenario_execution": false},
+    "kali": {"vmid": 100, "address": "192.168.1.50", "roles": ["lab build", "HTTP staging", "Sliver listener"], "listener_ports": [18090, 31337]},
+    "target": {"vmid": 104, "address": "192.168.1.52", "baseline_snapshot": "win_verify_baseline", "rollback_before_after_every_run": true},
+    "nsm": {"vmid": 106, "address": "10.9.0.20", "role": "offline nsm-analyze only", "scenario_destination": false},
+    "audit": {"vmid": 107, "sigma_commit": "8eaafff1f2845a696050e05e72ba1140ee190698", "scenario_execution": false},
+    "prohibited_execution_vms": [102, 108],
+    "allowed_scenario_network": "192.168.1.0/24 only"
+  },
+  "instrumentation": {
+    "baseline_image_load": false,
+    "run_scoped_config": "../../../../instrumentation/windows/sysmon-verification-imageload.xml",
+    "config_sha256": "af80508a3374adfd27d9eca0cfaca21fff6442af6439390167156d3d208e79a8",
+    "proof": "Every accepted image-load run dumped the active configuration and captured a positive benign notepad.exe EID 7 before scenario start.",
+    "run_event_volumes": {
+      "control_default": 491,
+      "marker_plain_proxy_rename": 1608,
+      "h2_paths": 3243,
+      "persistence_first_inconclusive": 1849,
+      "persistence_replacement": 1612,
+      "c2_wrong_state": 1645,
+      "c2_matching_state": 1800
+    },
+    "fp_denominator_policy": "Run volumes are informational only; precision uses audit/catalog/baseline-category-metrics.json."
+  },
+  "provenance": {
+    "article_repository_cloned_built_or_executed": false,
+    "article_shellcode_fetched": false,
+    "public_sideload_generator_used": false,
+    "vlc": {
+      "version": "3.0.21 win64",
+      "source_url": "https://download.videolan.org/pub/videolan/vlc/3.0.21/win64/vlc-3.0.21-win64.7z",
+      "archive_sha256": "9d2b24d6bc4196b3da8d181a3878678ba272e2a7690321f8826da76a69b2fb9c",
+      "published_hash_match": true,
+      "authenticode": "Valid, VideoLAN, thumbprint CCF8C4F9272D8A25477AF13EC71F97A3027C7319",
+      "triage": "evidence/safety/vlc-archive-triage/poc-review.md"
+    },
+    "proxy_build": {
+      "authored_in_lab": true,
+      "description": "objdump the official libvlc export table; generate a .def with all 316 names and original ordinals forwarding to libvlc_org.<name>; compile a DLL whose DllMain starts a separate payload thread; retain the signed original as libvlc_org.dll",
+      "source_or_payload_committed": false,
+      "plain_libvlc_sha256": "9284934a6d37bfab214a01178f78cdf277fe303f9c3f31d3f9ad0dfad5eab6fb",
+      "marker_proxy_libvlc_sha256": "3d38cb72d30a932df7bfdf72a10072bccd6f5027cbd0e5bc07ad05c1e714af50",
+      "sliver_proxy_libvlc_sha256": "66fefae7f0df260f5b415af2d8c54c4ba7119db72351255bfdb5f1e989d6ab3d"
+    },
+    "sliver": {
+      "version": "1.7.3",
+      "source_implant_sha256": "93687267b75b076e77e7e199a0a5adefd1727837075363e0f260ac95f612648e",
+      "shellcode_sha256": "5168cca4695abe3092a25a0e2d300b1e764805a51006998b5338708b958d572f",
+      "callback": "192.168.1.50:31337/mtls",
+      "triage": "evidence/safety/sliver-shellcode-triage/poc-review.md",
+      "article_payload_used": false
+    }
+  },
+  "hypotheses": {
+    "H1": "proved: upstream libvlc rule fired on user-writable M1, M2, and M3",
+    "H2": "partially refuted: most alternate spellings were detected, but a successful Administrator-only plant under the exact default prefix, including case variation, was filtered",
+    "H3": "proved: upstream and local image-load rules fired after vlc.exe was renamed updater.exe; the other upstream process rules missed all three forms",
+    "H4": "refuted as a detection dependency: plain sideload stalled while proxy forms exited 0, but signal sets still fired on both",
+    "H5": "refuted for VLC 3.0.21: libvlc_org.dll reported OriginalFileName '-' despite valid VideoLAN signature; no proxy-identity rule authored",
+    "H6": "proved gap and authored one name-independent hunt; 505/727396 FP and three of four named recall samples",
+    "H7": "self-injection and host attribution proved; full usable Sliver C2 session not established; existing Sliver JA3/JA3S rules cover the completed-TLS diagnostic and no duplicate rule was authored",
+    "H8": "proved: HKLM Run value and SYSTEM scheduled task pointed to the renamed proxy host; scheduled launch exited 0 and wrote the marker",
+    "H9": "default-install control passed with zero detections; no installed baseline application produced the legitimate per-user self-updater control shape, which remains a gap"
+  },
+  "runs": [
+    {"ids": ["C0"], "execute": "success", "detect": "expected benign silence", "eid7_volume": 491, "safety": "PASS"},
+    {"ids": ["M1", "M2", "M3"], "execute": "M1 payload success/application stall; M2/M3 payload and application success", "detect": "upstream libvlc 3/3; local hunt 3/3", "eid7_volume": 1608, "safety": "PASS"},
+    {"ids": ["H2A", "H2B", "H2C", "H2D", "H2E", "H2F", "H2G", "H2H"], "execute": "seven payload executions; H2H capability gap", "detect": "five detected anyway; two Administrator-only evasions; one gap", "eid7_volume": 3243, "safety": "PASS"},
+    {"ids": ["P1", "P2"], "execute": "persistence registration and scheduled launch success", "detect": "persistence and proxy telemetry present", "eid7_volume": 1612, "safety": "PASS replacement after preserved INCONCLUSIVE diagnostic"},
+    {"ids": ["N1"], "execute": "proxy and self-injection success; host-attributed callback; C2 establishment partial", "detect": "endpoint attribution plus existing Sliver network hunts", "eid7_volume": 1800, "safety": "PASS"}
+  ],
+  "upstream": {
+    "candidate_rules_compared": 59,
+    "image_load_rules": 53,
+    "process_creation_rules": 4,
+    "file_event_rules": 2,
+    "lab_attack_findings": 3,
+    "only_firing_rule": {"id": "bf9808c4-d24f-44a2-8398-b65227d406b6", "name": "Potential Libvlc.DLL Sideloading"},
+    "benign_control_findings": 0,
+    "adoption": "adopt by reference; do not duplicate",
+    "precision": {"fp_count": 0, "category_denominator": 727396, "fp_share_percent": 0.0},
+    "detail": "evidence/upstream-comparison.md"
+  },
+  "sigma": [
+    {
+      "path": "sigma/image_load_unsigned_dll_by_image_in_user_writable_path.yml",
+      "id": "012b33f0-9e85-47f5-b550-21d83595a5ba",
+      "role": "name-independent behavioral hunt",
+      "logsource": "windows/image_load",
+      "status": "experimental",
+      "fp_likelihood": "high",
+      "recommended_role": "hunt",
+      "level": "low",
+      "precision_measurement": {
+        "schema_version": 4,
+        "measured": true,
+        "fp_count": 505,
+        "category_denominator": 727396,
+        "fp_share_of_category_percent": 0.069426,
+        "fp_per_million_category": 694.257,
+        "measured_fp_likelihood_floor": "medium",
+        "detection_hit": true,
+        "verdict": "pass",
+        "corpus": "evtx-baseline v0.8.4",
+        "auditor_adjustment": "high because portable applications and per-user updaters commonly load their own unsigned DLLs"
+      },
+      "limitations": "EID 7 signature fields describe only the loaded DLL; Sigma cannot prove host signature or compare Image and ImageLoaded directories."
+    }
+  ],
+  "recall": {"hit_samples": 3, "miss_samples": 1, "total_samples": 4, "detail": "evidence/recall.json"},
+  "safety": {
+    "design_gate": "REVIEW with citation-only high findings and no critical finding",
+    "accepted_post_run_verdict": "PASS",
+    "accepted_claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+    "preserved_non_pass_attempts": ["control-default-lab-scope.json INCONCLUSIVE", "persistence-first-inconclusive-lab-scope.json INCONCLUSIVE"],
+    "violations": 0,
+    "declared_images": ["vlc.exe", "updater.exe", "libvlc.dll", "libvlc_org.dll", "libvlccore.dll"],
+    "operator_record": "Kali staging/listener definition and command history; not committed because it is retained only as checker input"
+  },
+  "sanitization": {
+    "raw_pcap_committed": false,
+    "raw_evtx_committed": false,
+    "raw_event_exports_committed": false,
+    "raw_nsm_logs_committed": false,
+    "binaries_or_archives_committed": false,
+    "proxy_source_or_payload_committed": false,
+    "shellcode_committed": false,
+    "credentials_keys_certs_committed": false,
+    "committed": "selected telemetry fields, hashes, aggregate counts, decision tables, and safety reports only"
+  },
+  "cleanup_confirmation": {
+    "target": {"rollback": "win_verify_baseline OK", "sysmon": "Running", "image_load_enabled": false, "baseline_omission_present": true, "default_routes": 1, "scenario_directories": 0, "marker_present": false},
+    "kali": {"http_listener": "inactive", "sliver_listener": "inactive", "temporary_swap_files": "removed", "swap_active": false},
+    "removed_material": "Three temporary Kali build-swap files totaling 16 GiB were deleted after use; they contained only paging data and are not recoverable."
+  },
+  "verified_at": "2026-08-20T01:01:06Z",
+  "verifier": "Codex lab orchestrator"
+}
