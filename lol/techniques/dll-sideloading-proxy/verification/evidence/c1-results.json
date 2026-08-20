@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "run_id": "c1-benign-per-user-app-control",
+  "window_utc": [
+    "2026-08-20T09:58:53.0000000Z",
+    "2026-08-20T10:02:40.1857097Z"
+  ],
+  "instrumentation": {
+    "config_sha256": "af80508a3374adfd27d9eca0cfaca21fff6442af6439390167156d3d208e79a8",
+    "service": "Running",
+    "benign_proof_utc": "2026-08-20T09:53:36.3658148Z",
+    "benign_proof": "C:\\Windows\\System32\\notepad.exe loaded signed, valid C:\\Windows\\System32\\oleacc.dll",
+    "image_load_event_count": 2770
+  },
+  "provisioning": {
+    "account": "WIN10-ANALYSIS\\analyst",
+    "account_note": "The stale unattend credential could not create a user process. The existing account received a run-scoped cryptographically random password through the local account API; no credential appeared in a command line or evidence, and post-run rollback restored the baseline account state.",
+    "vscode": {
+      "version": "1.134.0",
+      "installer_sha256": "d564bc373ed3d94eedc813d5c0865e4ef40a40323e856bc838ae5a29723f2fb9",
+      "install_result": 0,
+      "path": "C:\\Users\\analyst\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+      "installed_signature": "Valid; Microsoft Corporation",
+      "use": "launched under analyst and opened C:\\Users\\analyst\\Documents\\c1-control.txt with extensions disabled"
+    },
+    "evernote": {
+      "version": "11.29.2",
+      "installer_sha256": "b69ea1e0af323eb6b4ed55054643dbe5805b1c0536bcd16f1b3421f86aa97524",
+      "install_result": 0,
+      "path": "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\Evernote.exe",
+      "installed_signature": "Valid; Evernote Corporation",
+      "use": "launched normally under analyst and left running for the bounded observation window"
+    }
+  },
+  "rule_results": {
+    "merged_form": {
+      "vscode_matches": 0,
+      "evernote_matches": 7
+    },
+    "relaxed_form": {
+      "vscode_matches": 0,
+      "evernote_matches": 7
+    },
+    "vscode_dlls": [],
+    "evernote_dlls": [
+      {
+        "image_loaded": "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\ffmpeg.dll",
+        "matches": 2,
+        "signed": "false",
+        "signature": "-",
+        "signature_status": "Unavailable"
+      },
+      {
+        "image_loaded": "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\vk_swiftshader.dll",
+        "matches": 2,
+        "signed": "false",
+        "signature": "-",
+        "signature_status": "Unavailable"
+      },
+      {
+        "image_loaded": "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\vulkan-1.dll",
+        "matches": 1,
+        "signed": "false",
+        "signature": "-",
+        "signature_status": "Unavailable"
+      },
+      {
+        "image_loaded": "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\libEGL.dll",
+        "matches": 1,
+        "signed": "false",
+        "signature": "-",
+        "signature_status": "Unavailable"
+      },
+      {
+        "image_loaded": "C:\\Users\\analyst\\AppData\\Local\\Programs\\Evernote\\libGLESv2.dll",
+        "matches": 1,
+        "signed": "false",
+        "signature": "-",
+        "signature_status": "Unavailable"
+      }
+    ],
+    "exclusion_decision": "No exclusion added. The benign Evernote events are the exact rule shape, and every observed name and directory is attacker-controlled in a sideload scenario."
+  },
+  "file_event_pair": {
+    "eid11_count": 6770,
+    "probe_matching_events": 27,
+    "qualified_clusters": 3,
+    "qualified_constituent_events": 10,
+    "writer": "C:\\lab\\Evernote-11.29.2-setup.exe",
+    "examples": [
+      "Evernote.exe plus d3dcompiler_47.dll in the installed application directory",
+      "Uninstall Evernote.exe plus five application DLLs in the installed application directory",
+      "Evernote.exe plus d3dcompiler_47.dll in the installer's temporary 7z-out directory"
+    ],
+    "assessment": "The benign installer reproduces the proposed D1 delivery correlation and supplies no safe exclusion."
+  },
+  "motw": {
+    "vscode_installer": {"files": 1, "zone_identifier_streams": 0},
+    "vscode_output": {"files": 2417, "zone_identifier_streams": 0},
+    "evernote_installer": {"files": 1, "zone_identifier_streams": 0},
+    "evernote_output": {"files": 108, "zone_identifier_streams": 0},
+    "assessment": "Out-of-band lab-push provisioning did not create MOTW, and neither legitimate installer propagated a Zone.Identifier to installed output."
+  },
+  "raw_artifacts_committed": false
+}

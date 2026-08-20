@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "run_id": "d1-archive-delivery-accepted-retry",
+  "window_utc": [
+    "2026-08-20T10:46:11.370159Z",
+    "2026-08-20T10:46:37.959068Z"
+  ],
+  "instrumentation": {
+    "config_sha256": "af80508a3374adfd27d9eca0cfaca21fff6442af6439390167156d3d208e79a8",
+    "service": "Running",
+    "benign_proof_utc": "2026-08-20T10:46:01.278Z",
+    "benign_proof": "C:\\Windows\\System32\\notepad.exe loaded signed, valid C:\\Windows\\System32\\oleacc.dll",
+    "bounded_sysmon_events": 18706,
+    "image_load_event_count": 1879,
+    "file_create_event_count": 1574,
+    "file_create_stream_hash_event_count": 4
+  },
+  "delivery": {
+    "url": "http://192.168.1.50:18090/dllproxy-delivery.zip",
+    "container": "lab-authored ZIP",
+    "container_sha256": "f1f0ba32ca02b1c4ecf9217720d7391f585094bfbc7365f600809dfa14faa85e",
+    "container_size": 77992758,
+    "downloaded_hash_match": true,
+    "host": "C:\\Users\\analyst\\AppData\\Local\\VLC-Delivered\\VLC-Delivered\\updater.exe",
+    "host_sha256": "5d695d8a0bb1d919cc77a2aa2488a61797bfa065238160278ee458120630aaf9",
+    "proxy_sha256": "4e31e656fa4c4f7f4281a118f3b7abcc061b20f2142eaec4f5e43c23047898c2",
+    "renamed_original_sha256": "095d164633af53ac015dcd76540e8523744f57d506db111f19b3fdd9d6180833",
+    "exports_forwarded": 316,
+    "marker": "LAB-DLL-PROXY-DELIVERY",
+    "marker_utc": "2026-08-20T10:46:33.1861496Z",
+    "execution": "success"
+  },
+  "rule_results": {
+    "merged_form_matches": 1,
+    "relaxed_form_matches": 1,
+    "events": [
+      {
+        "utc_time": "2026-08-20 10:46:33.170",
+        "image": "C:\\Users\\analyst\\AppData\\Local\\VLC-Delivered\\VLC-Delivered\\updater.exe",
+        "image_loaded": "C:\\Users\\analyst\\AppData\\Local\\VLC-Delivered\\VLC-Delivered\\libvlc.dll",
+        "signed": "false",
+        "signature": "-",
+        "signature_status": "Unavailable"
+      }
+    ]
+  },
+  "file_event_pair": {
+    "eid11_count": 1574,
+    "user_writable_exe_dll_creates": 372,
+    "qualified_clusters": 1,
+    "writer": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "directory": "C:\\Users\\analyst\\AppData\\Local\\VLC-Delivered\\VLC-Delivered",
+    "start_utc": "2026-08-20 10:46:21.633",
+    "files": [
+      "axvlc.dll",
+      "libvlc.dll",
+      "libvlc_org.dll",
+      "libvlccore.dll",
+      "npvlc.dll",
+      "updater.exe",
+      "vlc-cache-gen.exe"
+    ],
+    "baseline_measurement": {
+      "qualified_clusters": 278,
+      "file_event_denominator": 542441,
+      "cluster_share_percent": 0.05125,
+      "clusters_per_million_file_events": 512.498
+    },
+    "benign_c1_comparison": "Evernote produced three clusters of the same shape in 6,770 EID 11 events.",
+    "decision": "No rule shipped. The correlation is numerically hunt-sized but has no technique-specific discriminator and converges with legitimate installer behavior."
+  },
+  "motw": {
+    "create_stream_hash_denominator": 220,
+    "archive_zone_identifier": true,
+    "archive_zone_identifier_content": "[ZoneTransfer]\\r\\nZoneId=3\\r\\nHostUrl=about:internet",
+    "archive_eid15_zone_stream_events": 2,
+    "extracted_host_zone_identifier": false,
+    "extracted_proxy_zone_identifier": false,
+    "extracted_renamed_original_zone_identifier": false,
+    "extracted_libvlccore_zone_identifier": false,
+    "benign_installers_zone_identifier": false,
+    "benign_installed_outputs_zone_identifier": false,
+    "assessment": "MOTW identifies the browser-delivered container, but Expand-Archive did not propagate it to the extracted host or DLLs. It therefore does not discriminate the eventual sideload ImageLoad. The C1 installers arrived out of band, so their absent installer MOTW is not a like-for-like browser-delivery comparison; their installed outputs also had none."
+  },
+  "network": {
+    "full_packet_capture_packets": 236578,
+    "full_packet_capture_bytes": 325153212,
+    "sysmon_eid3": 15,
+    "sysmon_eid22": 34,
+    "scope_verdict": "PASS",
+    "attack_attributed_violations": 0,
+    "manifest_note": "Two residual off-lab connection rows carried zero originator bytes and packets and were not attributed to a declared image; all delivery and launch destinations were 192.168.1.50."
+  },
+  "collection_limitations": [
+    "The first D attempt reached the marker but an over-broad recovery query caused ImageLoad volume to overwrite the scenario records. It was scope-checked PASS, rejected as evidence, rolled back, and repeated.",
+    "The standard collect-run.ps1 invocation completed but its time-filtered Sysmon EVTX was empty while other channels yielded 299 records. The accepted measurements use the intact record-ID-bounded 18,706-event Sysmon export captured immediately after execution."
+  ],
+  "raw_artifacts_committed": false
+}

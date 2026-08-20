@@ -1,0 +1,65 @@
+title: Unsigned DLL Loaded From a User-Writable Path
+id: 012b33f0-9e85-47f5-b550-21d83595a5ba
+status: experimental
+description: >-
+  Detects an unsigned or untrusted DLL loaded from a common user-writable
+  root, regardless of the loading executable's path or name. This includes
+  the common case where an application in Program Files loads a DLL planted
+  in a user-writable directory and remains independent of DLL name lists.
+references:
+  - https://zerotracelab.com/blog/dll-sideloading-proxying
+  - https://attack.mitre.org/techniques/T1574/001/
+  - https://attack.mitre.org/techniques/T1574/002/
+  - https://github.com/SigmaHQ/sigma/blob/8eaafff1f2845a696050e05e72ba1140ee190698/rules/windows/image_load/image_load_side_load_libvlc.yml
+related:
+  - id: bf9808c4-d24f-44a2-8398-b65227d406b6
+    type: similar
+author: Codex lab orchestrator
+date: '2026-08-20'
+modified: '2026-08-20'
+tags:
+  - attack.persistence
+  - attack.privilege-escalation
+  - attack.t1574.001
+logsource:
+  category: image_load
+  product: windows
+detection:
+  selection_dll_path:
+    ImageLoaded|startswith:
+      - 'C:\ProgramData\'
+      - 'C:\Users\'
+      - 'C:\Windows\Temp\'
+    ImageLoaded|endswith: '.dll'
+  selection_unsigned:
+    Signed: 'false'
+  selection_untrusted:
+    SignatureStatus:
+      - 'Unavailable'
+      - 'Invalid'
+  condition: selection_dll_path and (selection_unsigned or selection_untrusted)
+falsepositives:
+  - Legitimate portable applications, per-user installers, and self-updaters that load their own unsigned DLLs
+  - Enterprise deployment, inventory, or support software operating from ProgramData
+  - Software development, malware-analysis, and penetration-testing activity
+fp_likelihood: high
+recommended_role: hunt
+precision_notes: >-
+  Relaxing only the loading-process path increased the measured baseline from
+  505 to 516 of 727396 image_load events (0.070938%, 709.380 per million),
+  while removing the loaded-DLL path produced 29906 matches (4.111378%). The
+  DLL path therefore carries the rule's precision; the process path did not.
+  In the C1 lab control, VS Code 1.134.0 produced zero matches but ordinary
+  Evernote 11.29.2 produced seven across five unsigned Chromium-family DLLs;
+  both the merged and relaxed forms fired seven times. This direct benign
+  positive is why the declared likelihood remains high despite the medium
+  corpus floor.
+  Sysmon EID 7 signature fields describe the loaded DLL, not the loading
+  executable. Sigma also cannot compare the Image and ImageLoaded directory
+  fields, so this rule cannot prove a signed host or same-directory placement.
+  It has no exclusions and therefore no attacker-controlled filter off switch.
+  Treat each match as a lead and correlate process signature, exact directory,
+  parent process, persistence, delivery, and network activity. A validly
+  signed malicious DLL is out of scope by construction; correlate signer
+  reputation and the upstream signed-DLL/no-metadata hunt for that form.
+level: low

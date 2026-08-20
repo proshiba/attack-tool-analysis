@@ -1,0 +1,70 @@
+{
+  "schema_version": 3,
+  "rule": "SAFETY RULE 1 - attack activity never leaves the isolated lab",
+  "claim": "no traffic attributable to the declared attack left the lab, and everything else that did is in the manifest",
+  "allowed_networks": ["192.168.1.0/24"],
+  "allowed_domains": [],
+  "management_networks": ["10.9.0.0/24"],
+  "declared_tool_images": ["vlc.exe", "updater.exe", "libvlc.dll", "libvlc_org.dll", "libvlccore.dll", "dllproxy-delivery.zip"],
+  "inputs": {
+    "zeek_dir": "/tmp/dllproxy-evidence/d2/nsm",
+    "sysmon_json": "/tmp/dllproxy-evidence/d2/d2-scope-events.json",
+    "operator_logs": [".lab-work/d1-operator.log"],
+    "sysmon_eid3_events_read": 15,
+    "sysmon_eid22_events_read": 34,
+    "attributed_destinations": 7,
+    "attribution_available": true
+  },
+  "capture_scale": {
+    "conn_log_rows": 20,
+    "off_lab_destinations": 2,
+    "note": "a capture pre-filtered to in-lab traffic cannot show an off-lab destination, so 0 here proves nothing on its own - never filter the input"
+  },
+  "violation_count": 0,
+  "violations": [],
+  "manifest_count": 3,
+  "manifest": [
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 206.206.82.204:80/tcp (7 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "206.206.82.204",
+      "port": "80",
+      "proto": "tcp",
+      "connections": 7,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": ["SHR", "OTH"],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "conn.log",
+      "scope": "outside-lab",
+      "detail": "192.168.1.52 -> 4.243.160.20:443/tcp (1 connections, 0 bytes, 0 packets sent)",
+      "attributed_images": [],
+      "source": "192.168.1.52",
+      "destination": "4.243.160.20",
+      "port": "443",
+      "proto": "tcp",
+      "connections": 1,
+      "bytes_sent": 0,
+      "packets_sent": 0,
+      "conn_states": ["RSTRH"],
+      "severity": "info",
+      "note": "no process attribution available - recorded, not judged"
+    },
+    {
+      "check": "dns.log",
+      "severity": "info",
+      "query": "*",
+      "queries": 18,
+      "resolver": "192.168.1.50",
+      "scope": "external-name-queried-in-lab",
+      "detail": "'*' asked of in-lab resolver 192.168.1.50 (18 queries)"
+    }
+  ],
+  "verdict": "PASS"
+}

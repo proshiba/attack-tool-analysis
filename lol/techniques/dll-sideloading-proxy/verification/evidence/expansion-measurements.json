@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "measured_at": "2026-08-20",
+  "baseline_catalog": "audit/catalog/baseline-category-metrics.json",
+  "host_path_variant_measurement": {
+    "category": "image_load",
+    "denominator": 727396,
+    "merged_two_path_form": {
+      "fp_count": 505,
+      "fp_share_percent": 0.069426,
+      "fp_per_million": 694.257
+    },
+    "relaxed_host_path_form": {
+      "fp_count": 516,
+      "fp_share_percent": 0.070938,
+      "fp_per_million": 709.38,
+      "harness_verdict": "pass",
+      "detection_hit": true,
+      "measured_fp_likelihood_floor": "medium",
+      "change_events": 11,
+      "relative_change_percent": 2.178218
+    },
+    "no_path_constraints": {
+      "fp_count": 29906,
+      "fp_share_percent": 4.111378,
+      "fp_per_million": 41113.776,
+      "relative_to_merged": 59.219802
+    },
+    "decision": "ship the relaxed host-path form; retain the loaded-DLL path because it carries nearly all measured precision"
+  },
+  "previous_run_revalidation": {
+    "provenance": "Retained telemetry from the previously merged PR #42 run, not newly generated execution.",
+    "marker_main": {
+      "source": "/tmp/dllproxy-evidence/marker-main/sysmon.zip raw EVTX",
+      "merged_hits": 3,
+      "relaxed_hits": 3,
+      "rows": ["M1", "M2", "M3"]
+    },
+    "control_pass": {
+      "source": "/tmp/dllproxy-evidence/control-pass/sysmon.zip raw EVTX",
+      "merged_hits": 0,
+      "relaxed_hits": 0,
+      "row": "C0"
+    },
+    "h2": {
+      "source": "/tmp/dllproxy-evidence/h2/evidence.zip image-load-summary.json",
+      "merged_hits": 3,
+      "relaxed_hits": 3,
+      "limitation": "The retained h2/sysmon.zip is zero bytes, so H2 was re-evaluated from the retained selected EID 7 field summary rather than raw EVTX.",
+      "program_files_plant_result": "H2D and H2E remain missed because both the host and DLL are in Program Files. Relaxing only the host path does not change the DLL-path requirement."
+    }
+  },
+  "recall": {
+    "samples": 4,
+    "merged_hit_samples": 3,
+    "relaxed_hit_samples": 3,
+    "merged_match_events": 4,
+    "relaxed_match_events": 4,
+    "changed": false
+  },
+  "upstream_precision": [
+    {
+      "id": "bf9808c4-d24f-44a2-8398-b65227d406b6",
+      "title": "Potential Libvlc.DLL Sideloading",
+      "fp_count": 0,
+      "category": "image_load",
+      "denominator": 727396
+    },
+    {
+      "id": "4fc0deee-0057-4998-ab31-d24e46e0aba4",
+      "title": "Potential System DLL Sideloading From Non System Locations",
+      "fp_count": 0,
+      "category": "image_load",
+      "denominator": 727396
+    },
+    {
+      "id": "2a297820-04ce-41f2-b60d-5afe139aaab3",
+      "title": "Signed DLL Loaded With Missing PE Version Metadata",
+      "fp_count": 200,
+      "fp_share_percent": 0.027495,
+      "category": "image_load",
+      "denominator": 727396
+    },
+    {
+      "id": "e2e01011-5910-4267-9c3b-4149ed5479cf",
+      "title": "Potential WWlib.DLL Sideloading",
+      "fp_count": 0,
+      "category": "image_load",
+      "denominator": 727396
+    },
+    {
+      "id": "b5de0c9a-6f19-43e0-af4e-55ad01f550af",
+      "title": "Unsigned DLL Loaded by Windows Utility",
+      "fp_count": 0,
+      "category": "image_load",
+      "denominator": 727396
+    }
+  ],
+  "file_event_pair_measurement": {
+    "category": "file_event",
+    "denominator": 542441,
+    "definition": "same ProcessGuid writes at least one EXE and one DLL to the same user-writable directory within 10 seconds",
+    "broad_probe_matching_events": 4152,
+    "qualified_clusters": 278,
+    "cluster_share_percent": 0.05125,
+    "clusters_per_million_file_events": 512.498,
+    "qualified_constituent_events": 2237,
+    "c1_observation": "Evernote produced 3 qualifying clusters in 6,770 EID 11 events",
+    "d1_observation": "The accepted ZIP-delivery run produced 1 qualifying cluster in 1,574 EID 11 events; powershell.exe wrote updater.exe and six DLLs/companion executables to the extracted application directory within 10 seconds",
+    "assessment": "not shipped: the baseline clusters are dominated by legitimate extraction, installation, updating, and security software, and the C1 controls reproduce the same shape"
+  },
+  "motw_baseline_denominator": {
+    "category": "create_stream_hash",
+    "denominator": 220,
+    "d1_observation": "4 EID 15 events, including 2 Zone.Identifier events for the browser-downloaded ZIP; the ZIP carried ZoneId=3, while updater.exe, libvlc.dll, libvlc_org.dll, and libvlccore.dll carried no Zone.Identifier after Expand-Archive",
+    "c1_observation": "The out-of-band-provisioned VS Code and Evernote installers and all enumerated installed outputs carried no Zone.Identifier",
+    "decision": "MOTW distinguishes the downloaded container in D1 but is not propagated to the eventual sideloaded files, so it cannot discriminate the ImageLoad and does not rescue the generic file-event correlation.",
+    "note": "Used only for EID 15 context; the delivery-correlation precision denominator remains file_event as required."
+  }
+}

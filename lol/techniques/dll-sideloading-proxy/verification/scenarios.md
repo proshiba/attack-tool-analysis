@@ -12,9 +12,10 @@
   scenario destination. `nsm-analyze` sends a completed capture there only after the target run.
 - **VM 107 — audit — offline dataset and gate host.** It is never a scenario destination and runs no
   scenario payload.
-- **VM 102 — AI VM — provisioning and orchestration only.** It downloads the official VLC archive,
-  verifies VideoLAN's published SHA-256, and mechanically screens the archive. No sideload set,
-  proxy DLL, marker DLL, shellcode, or scenario process executes here.
+- **VM 102 — AI VM — provisioning and orchestration only.** It downloads the official VLC archive
+  and the official VS Code and Evernote per-user installers, verifies each published SHA-256 and
+  publisher signature, and mechanically screens each archive/installer. No sideload set, proxy DLL,
+  marker DLL, shellcode, installer, or scenario process executes here.
 - **Permitted attack destinations.** The only network destination allowed to any planted component is
   Kali `192.168.1.50`. All scenario traffic is confined to `192.168.1.0/24`; public hosts and the
   management network are forbidden scenario destinations.
@@ -29,12 +30,14 @@ or second stage from them.
 
 ## Run order and instrumentation invariant
 
-Every run follows this order: rollback VM 104; provision the exact official VLC set; apply
+Every run follows this order: rollback VM 104; provision the exact official software; apply
 `instrumentation/windows/sysmon-verification-imageload.xml`; dump the active Sysmon configuration;
 launch a benign process and prove a positive Sysmon EID 7; start the bounded capture; execute only the
 listed row(s); collect endpoint and, where applicable, full-packet telemetry; run
 `check-lab-scope.py` with every planted/renamed image and the operator record; require `PASS`; then
-rollback VM 104 again. A refused launch is recorded as non-execution, never as evasion.
+rollback VM 104 again. For C1, the signed vendor installers are ordinary provisioning performed after
+the pre-run rollback and EID 7 proof; they are used only as their vendors intend and are reverted by
+the post-run rollback. A refused launch is recorded as non-execution, never as evasion.
 
 ## Like-for-like matrix
 
@@ -51,7 +54,8 @@ scenario destination.
 | P1 | launch | renamed `updater.exe` | `%LOCALAPPDATA%\VLC-Lab` | proxy + `libvlc_org.dll` | marker | Run key | launch only vs M3 | M3 image loads plus Run-key EID 12/13 and host process start |
 | P2 | launch | renamed `updater.exe` | `%LOCALAPPDATA%\VLC-Lab` | proxy + `libvlc_org.dll` | marker | scheduled task | launch only vs M3 | M3 image loads plus task registration/process telemetry and task-engine ancestry |
 | N1 | payload | renamed `updater.exe` | `%LOCALAPPDATA%\VLC-Lab` | proxy + `libvlc_org.dll` | Sliver shellcode self-thread | interactive | payload tier only vs M3 | Same proxy EID 7 shape; host-attributed EID 3 to `192.168.1.50`; Sliver flow/fingerprint evidence if observable; no public/mgmt connection |
-| C1 | benign-user-app | genuine legitimate app | `%LOCALAPPDATA%` | app's own legitimate DLLs | none | interactive | control | Candidate FP shape for the name-independent hunt; if no installed app can produce it, record the control as an unexecuted lab gap |
+| C1 | benign-user-app | signed VS Code 1.134.0 and Evernote 11.29.2 | `%LOCALAPPDATA%\Programs` | each app's own legitimate DLLs | none | normal per-user install; launch and open a local text file | control | Measure exact merged/relaxed-rule hits, DLL names, and EID 7 signature fields; allow only an unprompted vendor updater and add no attacker-controlled exclusion |
+| D1 | archive-delivery | genuine renamed VLC host | `%LOCALAPPDATA%\VLC-Delivered` after browser-style download/extraction | proxy + `libvlc_org.dll`, delivered beside host in one lab-authored ZIP | marker | fetch `http://192.168.1.50:18090/dllproxy-delivery.zip`, extract, launch | container delivery only vs M3 | EID 11 for archive/executable/DLL creation, EID 15 for zone streams if present, EID 7 relaxed hunt hit, bounded marker, application continuity, and only Kali HTTP traffic |
 | H2A | path-form | genuine `vlc.exe` | `C:\PROGRA~1\VideoLAN\VLC-Lab` | proxy + renamed original | marker | interactive | 8.3 path only vs M2 | Record loader success/refusal and the normalized EID 7 path; test filter, never infer from the command string |
 | H2B | path-form | genuine `vlc.exe` | `\\?\C:\Users\Public\VLC-Lab` | proxy + renamed original | marker | interactive | device-path prefix only | Record success/refusal and normalized EID 7; user-writable target remains outside default VLC path |
 | H2C | path-form | genuine `vlc.exe` | `\\127.0.0.1\C$\Users\Public\VLC-Lab` | proxy + renamed original | marker | interactive | loopback UNC path only | Record whether execution is refused or needs Administrator; if it loads, evaluate the EID 7 value actually emitted |
@@ -73,15 +77,23 @@ scenario destination.
   on-disk `libvlc_org.dll`. If identity and disk name differ, test an enumerated naming-convention hunt
   and state that Sigma cannot compare two fields.
 - **H6.** The local behavioral rule must not enumerate `libvlc.dll`, VLC, or any host executable. EID 7
-  can establish that both paths are under user-writable roots and that the loaded DLL is untrusted; it
-  cannot prove same-directory equality or that the host is signed. Those are explicit correlation and
-  enrichment requirements.
+  can establish that the loaded DLL is under a user-writable root and is untrusted; the loading
+  process may remain under Program Files. It cannot prove same-directory equality or that the host
+  is signed. Those are explicit correlation and enrichment requirements.
 - **H7.** Attribute C2 using host EID 3 plus full NSM analysis. Compare all 12 existing
   `tools/sliver/verification/sigma` rules before considering any new network rule.
 - **H8.** P1 and P2 test persistence launches; adopt upstream persistence coverage where it already
   matches rather than cloning it.
-- **H9.** C0 is mandatory. C1 is attempted only with software already present at baseline; its absence
-  is reported rather than manufactured with another attacker-authored binary.
+- **H9.** C0 is mandatory. C1 installs two ordinary signed per-user applications through their
+  vendor-supported installers and uses them normally. Any repeated positive is a finding about the
+  hunt's precision; no exclusion may depend on an attacker-controlled name or directory.
+- **H10.** D1 changes delivery only: one lab-authored ZIP carries the genuine signed host, unsigned
+  proxy DLL, signed renamed original, and dependencies together. Measure both the image-load signal
+  and whether one creator process writes an executable and DLL into the same user-writable directory
+  within ten seconds. Compare that file-event shape with C1 before deciding whether it is shippable.
+- **H11.** Check `Zone.Identifier` on the delivered ZIP and every extracted D1 component, and on the
+  C1 installers and their installed outputs. MOTW is useful only if observed and discriminating; no
+  propagation is reported as a negative result, not inferred.
 
 ## Recall samples
 
@@ -102,9 +114,10 @@ sample receives an explicit hit or miss.
 - The lab has one Windows target and cannot measure enterprise allowlisting, domain software
   deployment, or cross-host SMB delivery. These are future scenarios and are not counted as covered.
 - The article's unknown-provenance generator and payload are permanently out of scope.
-- C1 depends on a legitimate per-user application already present in the baseline. If none produces
-  the shape, the missing FP control remains an explicit gap.
+- Windows service persistence launched from the sideloaded set is a future scenario by explicit user
+  decision on 2026-08-20; it is not executed in this run.
 - The local hunt intentionally does not cover a validly signed malicious DLL; correlate signer
-  reputation and upstream `2a297820` for the signed/no-metadata form.
+  reputation and upstream `2a297820` for the signed/no-metadata form. No certificate is available,
+  so that scenario remains out of scope by explicit user decision on 2026-08-20.
 - Phantom System32-DLL hijacks (`6b98b92b`) and enumerated system-DLL names planted outside system
   directories (`4fc0deee`) are upstream-covered T1574.001 forms outside this local hunt's scope.

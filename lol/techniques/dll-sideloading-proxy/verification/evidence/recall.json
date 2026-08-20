@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "rule": "sigma/image_load_unsigned_dll_by_image_in_user_writable_path.yml",
+  "rule": "sigma/image_load_unsigned_dll_from_user_writable_path.yml",
   "rule_id": "012b33f0-9e85-47f5-b550-21d83595a5ba",
-  "method": "evtx-sigma-checker with SigmaHQ tests/thor.yml at 8eaafff1f2845a696050e05e72ba1140ee190698; no sample-specific tuning",
+  "method": "evtx-sigma-checker with SigmaHQ tests/thor.yml at 8eaafff1f2845a696050e05e72ba1140ee190698; no sample-specific tuning. The merged two-path form and relaxed host-path form produced the same per-sample counts shown below (4 events across 3/4 samples).",
   "samples": [
     {
       "file": "Defense Evasion/apt10_jjs_sideloading_prochollowing_persist_as_service_sysmon_1_7_8_13.evtx",

@@ -64,19 +64,77 @@ had no writable secondary filesystem. Full classifications and emitted paths are
 
 The local behavioral hunt has no exclusions, so it has no filter off switch to test.
 
+Relaxing only the local hunt's loading-process path does not make H2D or H2E visible: in both rows
+the malicious `libvlc.dll` itself was planted in Program Files, so it still fails the retained
+loaded-DLL user-writable-path selection. The relaxed form does recover the distinct and dominant
+real-world shape in which a Program Files application loads an untrusted DLL from a user-writable
+directory. The retained H2 EID 7 field summary produced three matches under both forms. The raw H2
+`sysmon.zip` retained from the previous run is zero bytes, so this part of revalidation is explicitly
+based on the retained selected-field summary rather than raw EVTX; raw marker and C0 EVTX were
+available and replayed directly.
+
 ## Precision measurements
 
-- Adopted upstream libvlc rule: **0 / 727,396** baseline image-load events, **0.0%**. The raw upstream
-  file received a harness `needs-work` result only because upstream does not carry this repository's
-  mandatory precision metadata and the generic attack corpus did not supply a libvlc positive. The
-  three lab hits provide the missing positive evidence; this repository does not modify the upstream
-  YAML.
-- Local name-independent hunt: **505 / 727,396**, **0.069426%** (694.257 per million image-load
-  events), with positive-corpus and three-of-four explicit recall-sample hits. The measured floor is
-  `medium`; analyst judgement raises `fp_likelihood` to `high`, keeps `recommended_role: hunt`, and
-  keeps `level: low` because legitimate portable software and per-user updaters can have the same
-  shape.
+- Adopted upstream libvlc rule `bf9808c4`: **0 / 727,396** baseline image-load events, **0.0%**.
+  The raw upstream file received a harness `needs-work` result only because upstream does not carry
+  this repository's mandatory precision metadata and the generic attack corpus did not supply a
+  libvlc positive. The three lab hits provide the missing positive evidence; this repository does
+  not modify the upstream YAML.
+- Upstream enumerated system-DLL rule `4fc0deee`: **0 / 727,396**, **0.0%**, with an attack-corpus
+  hit.
+- Upstream signed-DLL/no-version-metadata hunt `2a297820`: **200 / 727,396**, **0.027495%**
+  (274.953 per million), with no matching attack-corpus sample in the harness. It remains a measured
+  upstream mitigation for the validly signed form that this run does not execute.
+- Upstream WWLIB rule `e2e01011`: **0 / 727,396**, **0.0%**, with an attack-corpus hit.
+- Upstream named-Windows-utility unsigned-DLL rule `b5de0c9a`: **0 / 727,396**, **0.0%**, with an
+  attack-corpus hit.
+- The merged local name-independent hunt measured **505 / 727,396**, **0.069426%** (694.257 per
+  million). Removing only its process-path selection measured **516 / 727,396**, **0.070938%**
+  (709.380 per million): eleven more events, or a 2.18% relative increase. Removing both path
+  selections measured **29,906 / 727,396**, **4.111378%**, about 59.2 times the merged form. The
+  loaded-DLL path is carrying the precision, so the process-path selection was removed. Explicit
+  four-sample recall is unchanged at three samples and four events. The measured floor remains
+  `medium`; analyst judgement keeps `fp_likelihood: high`, `recommended_role: hunt`, and
+  `level: low` because legitimate portable software and per-user updaters have the same shape.
 
 The denominator is the `image_load` value read from
 `audit/catalog/baseline-category-metrics.json`, not the target's run volume. Per-run EID 7 volumes
-are informational sensor-load measurements only.
+are informational sensor-load measurements only. These measurements are the contribution for the
+five adopted-by-reference upstream rules; none of their YAML was edited or cloned.
+
+C1 then supplied the missing observed benign positive. VS Code produced zero merged-form and zero
+relaxed-form matches. Evernote produced seven under both forms: two each for `ffmpeg.dll` and
+`vk_swiftshader.dll`, and one each for `vulkan-1.dll`, `libEGL.dll`, and `libGLESv2.dll`. Every DLL
+reported `Signed=false`, `Signature=-`, and `SignatureStatus=Unavailable`. This is the exact hunt
+shape, so it supports the high FP judgement. No exclusion was added: all observed names and paths
+are attacker-controlled in a sideload.
+
+## File-delivery comparison and decision
+
+The two upstream sideload-named `file_event` rules were compared again before considering a
+delivery rule. `1908fcc1` detects a single `iphlpapi.dll` drop in Teams or OneDrive folders;
+`b6f91281` detects a DLL beneath an additional-space Program Files path. Neither binds one writer,
+an executable and DLL, the same directory, or a time window. Conversely, the proposed generic
+co-write correlation would miss both upstream forms unless their separate executable write also
+appeared in the same ten-second window, and it would not preserve their useful filename/path
+specificity. They are complementary, so neither was cloned or edited.
+
+The independent baseline probe then measured the proposed correlation—one `ProcessGuid` writing at
+least one EXE and one DLL into the same user-writable directory within ten seconds—at **278 clusters
+/ 542,441 file events** (**0.051250%**, 512.498 clusters per million). The broad prerequisite matched
+4,152 events and the qualifying clusters contained 2,237 events. Top writers and locations were
+ordinary 7-Zip extraction stubs, VS Code, Eclipse/JRE extraction, OneDrive, browser installers,
+Defender, and Malwarebytes. C1 reproduces this same benign installer shape. Although the rate could
+support a low hunt numerically, the correlation contains no technique-specific discriminator and
+the true-positive and benign-installer populations converge. No file-event rule is shipped.
+
+The accepted D1 ZIP run also reproduced it: one PowerShell `Expand-Archive` process wrote
+`updater.exe`, `libvlc.dll`, `libvlc_org.dll`, `libvlccore.dll`, `axvlc.dll`, `npvlc.dll`, and
+`vlc-cache-gen.exe` to the same user-writable directory inside ten seconds. The same run produced
+one merged-form and one relaxed-form ImageLoad match on `updater.exe` loading unsigned
+`libvlc.dll`. Its downloaded ZIP carried a `Zone.Identifier` with `ZoneId=3`, and EID 15 recorded
+two writes to that stream, but `Expand-Archive` propagated no stream to the extracted host, proxy,
+renamed original, or `libvlccore.dll`. The legitimate C1 outputs also carried no stream (their
+installers were provisioned out of band and therefore are not a like-for-like browser-download
+control). MOTW is useful at the container boundary here, but does not separate the eventual
+sideload files or make the generic file-event correlation shippable.
